@@ -1279,6 +1279,25 @@ body.in-game .hero-say{display:none;}
   .ic-state{display:none;}
 }
 @media (prefers-reduced-motion:reduce){ .rcard,.rcard.sel,.rcard.sel.lockin,#selectBtn.lockin{animation:none;} #chars-screen.lockin .lockin-flash{display:none;} }
+
+/* ---------- HIDE & SEEK: the hiders' map, and who the seeker is ---------- */
+#dgMap{position:absolute;top:62px;right:14px;z-index:12;pointer-events:none;border-radius:14px;overflow:hidden;
+  box-shadow:0 0 0 2px rgba(203,184,255,.35),0 10px 26px rgba(0,0,0,.5);animation:dgMapIn .5s cubic-bezier(.2,1.3,.3,1) both;}
+#dgMap canvas{display:block;}
+#dgMap b{position:absolute;left:8px;top:6px;font-family:var(--ui);font-size:9px;letter-spacing:.24em;color:#cbb8ff;text-shadow:0 1px 2px #000;}
+@keyframes dgMapIn{from{opacity:0;transform:translateY(-10px) scale(.9);}}
+.dg-role{position:absolute;left:50%;top:26%;transform:translateX(-50%);z-index:40;pointer-events:none;text-align:center;
+  padding:16px 34px 18px;border-radius:18px;background:rgba(10,8,22,.82);box-shadow:0 0 0 2px rgba(143,216,255,.45),0 16px 40px rgba(0,0,0,.55);
+  animation:dgRoleIn .55s cubic-bezier(.2,1.5,.3,1) both;}
+.dg-role.seek{box-shadow:0 0 0 2px rgba(255,58,90,.6),0 16px 40px rgba(120,0,20,.5);}
+.dg-role small{display:block;font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.3em;color:#9fb4d8;}
+.dg-role b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(34px,6vw,58px);line-height:1;margin:4px 0 6px;color:#8fd8ff;transform:skewX(-8deg);text-shadow:3px 3px 0 #0a0816;}
+.dg-role.seek b{color:#ff4a64;}
+.dg-role em{display:block;font-style:normal;font-family:var(--ui);font-size:12px;color:#d6dcf0;letter-spacing:.04em;}
+.dg-role.out{transition:opacity .5s,transform .5s;opacity:0;transform:translateX(-50%) translateY(-14px) scale(.96);}
+@keyframes dgRoleIn{from{opacity:0;transform:translateX(-50%) scale(.7);}}
+body.dg-seeker #ultBar{background:linear-gradient(90deg,#ff9bb0,#ff3a5a) !important;}
+@media (max-width:860px){ #dgMap{top:56px;right:10px;} .dg-role{top:20%;padding:12px 22px 14px;} }
 </style>
 </head>
 <body>
@@ -2420,6 +2439,7 @@ const SFX=(function(){
     fire(){ this.attack('def',null); }, hit(){ this.hitConfirm(); }, lose(){ this.defeat(); }, chest(){ this.chestShake(); },
     /* ---- ambience under the match music ---- */
     ambience(id){
+      id=({frostkeep:'glacier',forge:'gallows',temple:'forest'})[id]||id;
       this.ambienceStop(); if(!on()) return;
       const o=ctx.createGain(); o.gain.value=.0001; o.connect(dry); o.gain.exponentialRampToValueAtTime(1,ctx.currentTime+2.5);
       const nodes=[], timers=[]; const A={o,nodes,timers}; amb=A;
@@ -2806,7 +2826,7 @@ const Score=(function(){
   function play(id){
     stop(true);
     if(!enabled||!setup()) return;
-    const th=TH[id]||TH.forest;
+    const th=TH[id]||TH[({frostkeep:"tundra",forge:"gallows",temple:"sahara"})[id]]||TH.forest;
     const sp=60/th.bpm/4;
     dL.delayTime.value=sp*3; dR.delayTime.value=sp*3;
     master.gain.cancelScheduledValues(ctx.currentTime);
@@ -2827,7 +2847,7 @@ const Score=(function(){
     const keep={ctx,master,bus,verb,dly,dL,dR,nbuf,tensGain,tension,strips};
     const sr=44100; ctx=new OfflineAudioContext(2,Math.ceil(sr*secs),sr); master=null;
     setup(true); master.gain.value=vol*1.05; tension=k||0; if(tensGain) tensGain.gain.value=tension;
-    const th=TH[id]||TH.forest, sp=60/th.bpm/4; dL.delayTime.value=sp*3; dR.delayTime.value=sp*3;
+    const th=TH[id]||TH[({frostkeep:"tundra",forge:"gallows",temple:"sahara"})[id]]||TH.forest, sp=60/th.bpm/4; dL.delayTime.value=sp*3; dR.delayTime.value=sp*3;
     for(let b=0,t=.05;t<secs;b++,t+=sp*16){ const S=sectionOf(th,b); th.bar(t,S.k,S.i,sp,S,tension); }
     const job=ctx.startRendering();
     ({ctx,master,bus,verb,dly,dL,dR,nbuf,tensGain,tension,strips}=keep);
@@ -7339,11 +7359,26 @@ const BIOMES={
     sun:{dir:[-.4,.66,-.5],col:0xfff2e0,i:1.7},hemi:{sky:0xdceaf8,gnd:0xa8bccc,i:.66},
     gcol:[0xe8f0f8,0xd6e4f2,0xc8daee],path:0xc6d6e8,wet:0xb8cfe2,rock:0x7a8088,water:{deep:0x5f9fcf,shallow:0xa8d8f2},
     char:{light:0xfff4e8,li:1.0,sky:0xe6eef8,si:.6,gnd:0xc8d4e2,gi:.5,rim:0xffffff,ri:.36}},
-  dungeon:{name:'Tenebrous Dungeon',tag:'Hide from the monster in the dark maze',mode:'Hide & Seek',hide:true,
+  dungeon:{name:'Tenebrous Dungeon',tag:'Hide from the seeker in the dark maze',mode:'Hide & Seek',hide:true,
     sky:{top:0x05040a,hor:0x0a0810,low:0x05040a},fog:{col:0x07060c,d:.02},exposure:1.0,
     sun:{dir:[.3,.9,.2],col:0x6a5a8a,i:.35},hemi:{sky:0x3a3450,gnd:0x141018,i:.5},
     gcol:[0x4a4652,0x3e3a46,0x55505e],path:0x4a4652,wet:0x2a2830,rock:0x5a5664,water:{deep:0x101820,shallow:0x203040},
     char:{light:0xffc890,li:.72,sky:0x5a5078,si:.34,gnd:0x241c20,gi:.2,rim:0xff9a5a,ri:.45}},
+  frostkeep:{name:'Frost Keep',tag:'A snowed-in castle courtyard under the aurora',mode:'Execution',
+    sky:{top:0x061230,hor:0x2a5a8a,low:0x0c1a30},fog:{col:0x1c2a44,d:.017},exposure:1.08,
+    sun:{dir:[-.45,.7,-.5],col:0xcfe2ff,i:1.35},hemi:{sky:0x8aa4d8,gnd:0x3a4458,i:1.1},
+    gcol:[0xdfe8f2,0xcfdbe8,0xeef4fa],path:0xa8b8cc,wet:0x9cc8e8,rock:0x7a8494,water:{deep:0x3a6a9a,shallow:0x9fd4f0},
+    char:{light:0xdfeaff,li:1.05,sky:0x8aa0d0,si:.6,gnd:0x6a7890,gi:.4,rim:0x9fd8ff,ri:.7}},
+  forge:{name:'Ember Forge',tag:'Black rock, lava pools and a forge that never goes out',mode:'Execution',
+    sky:{top:0x0c0404,hor:0x6a200c,low:0x1a0804},fog:{col:0x2a120c,d:.018},exposure:1.15,
+    sun:{dir:[.4,.75,-.5],col:0xffa070,i:1.4},hemi:{sky:0xb0603a,gnd:0x1a0c08,i:1.0},
+    gcol:[0x3a3230,0x2e2826,0x463c38],path:0x5a4a40,wet:0x2a1008,rock:0x4a403c,water:{deep:0xc02a08,shallow:0xffa020},
+    char:{light:0xffd0b0,li:1.05,sky:0xb07050,si:.55,gnd:0x3a1a10,gi:.34,rim:0xff7a3a,ri:.85}},
+  temple:{name:'Sunken Temple',tag:'Jungle ruins at dusk, round a golden idol',mode:'Execution',
+    sky:{top:0x2a3a6a,hor:0xf0a070,low:0x3a5a4a},fog:{col:0x6a806a,d:.014},exposure:.95,
+    sun:{dir:[.6,.55,.5],col:0xffc890,i:1.6},hemi:{sky:0xa8d0c0,gnd:0x3a4a2a,i:1.05},
+    gcol:[0x4a7a34,0x3e6a2c,0x5a8a3c],path:0xa89878,wet:0x2a5a4a,rock:0x8a8a7a,water:{deep:0x1a5a5a,shallow:0x4ac0b0},
+    char:{light:0xffe6c8,li:1.05,sky:0xa0c8c0,si:.6,gnd:0x4a5a3a,gi:.4,rim:0xffd08a,ri:.6}},
   gallows:{name:'Gallows Moor',tag:'A dead moor under a blood moon, where the condemned fight',mode:'Execution',
     sky:{top:0x07040c,hor:0x3a1624,low:0x0c0608},fog:{col:0x17121c,d:.02},exposure:1.18,
     sun:{dir:[.42,.72,-.55],col:0xffb8a8,i:1.5},hemi:{sky:0x7a6a9a,gnd:0x1c1a1e,i:1.05},
@@ -7351,16 +7386,16 @@ const BIOMES={
     char:{light:0xffd2c8,li:1.02,sky:0x7a6a92,si:.56,gnd:0x2e1c20,gi:.32,rim:0xff5a4a,ri:.8}}
 };
 /* every map there is */
-const MAP_LIST=['forest','sahara','ocean','tundra','autumn','glacier','dungeon','gallows'];
+const MAP_LIST=['forest','sahara','ocean','tundra','autumn','glacier','dungeon','gallows','frostkeep','forge','temple'];
 const MAP_ROTATION=['forest','sahara','ocean','tundra','autumn','glacier'];
 /* the game modes. You pick a mode; the map is drawn at random from its pool
    every match */
 const MODES=[
   {id:'last',name:'Last Standing',tag:'SOLO',desc:'Everyone for themselves. The storm closes in: be the last one standing.',maps:MAP_ROTATION,
     art:['#58b4f4','#c9f2cf','#6cc052','#3f8a34']},
-  {id:'exec',name:'Execution',tag:'3V3',desc:'Three against three, no respawns. Wipe out the other team to take the round. First to two rounds wins.',maps:['gallows'],
+  {id:'exec',name:'Execution',tag:'3V3',desc:'Three against three, no respawns. Wipe out the other team to take the round. First to two rounds wins.',maps:['gallows','frostkeep','forge','temple'],
     art:['#12060c','#5a1626','#2e2228','#0e070a'],isNew:true},
-  {id:'hide',name:'Hide & Seek',tag:'SOLO',desc:'Hide from the monster in a dark maze, and survive the hunt.',maps:['dungeon'],
+  {id:'hide',name:'Hide & Seek',tag:'SOLO',desc:'One of you is the seeker. Everyone else hides in a dark maze.',maps:['dungeon'],
     art:['#0a0716','#3a1a4a','#4a3a5c','#1c1228']}
 ];
 const modeById=id=>MODES.find(m=>m.id===id)||MODES[0];
@@ -7521,9 +7556,11 @@ function lpGrassField(G,o){
         transformed.x+=(sin(ph)+.4*sin(ph*2.7+ip.z))*.09*h; transformed.z+=cos(ph*.8+.6)*.06*h; }`);
   };
   mat.customProgramCacheKey=()=>'lpGrass';
-  const mesh=new THREE.InstancedMesh(geo,mat,want);
-  const M=new THREE.Matrix4(), Q=new THREE.Quaternion(), E=new THREE.Euler(), Sv=new THREE.Vector3(), Pv=new THREE.Vector3(), C=new THREE.Color();
+  const M=new THREE.Matrix4(), Q=new THREE.Quaternion(), E=new THREE.Euler(), Sv=new THREE.Vector3(), Pv=new THREE.Vector3();
   const cols=o.cols.map(h=>new THREE.Color(h));
+  /* the blades go into tiles, one draw each, so only the tiles on screen are drawn
+     (the whole field in one draw was drawn in full every frame, most of it off screen) */
+  const TILE=o.tile||14, tiles=new Map();
   let n=0, tries=0;
   while(n<want&&tries<want*4){
     tries++;
@@ -7532,19 +7569,39 @@ function lpGrassField(G,o){
     const hgt=o.h*(.6+rnd()*.8);
     E.set((rnd()-.5)*.5,rnd()*Math.PI*2,(rnd()-.5)*.5); Q.setFromEuler(E);
     Pv.set(x,o.hAt(x,z)-.02,z); Sv.set(.8+rnd()*.6,hgt,1);
-    M.compose(Pv,Q,Sv); mesh.setMatrixAt(n,M);
-    C.copy(cols[Math.floor(rnd()*cols.length)]).multiplyScalar(.85+rnd()*.3); mesh.setColorAt(n,C);
+    M.compose(Pv,Q,Sv);
+    const C=cols[Math.floor(rnd()*cols.length)].clone().multiplyScalar(.85+rnd()*.3);
+    const key=Math.floor(x/TILE)+','+Math.floor(z/TILE);
+    if(!tiles.has(key)) tiles.set(key,[]);
+    tiles.get(key).push({m:M.clone(),c:C,x,z,y:Pv.y});
     n++;
   }
-  mesh.count=n; mesh.instanceMatrix.needsUpdate=true; if(mesh.instanceColor) mesh.instanceColor.needsUpdate=true;
-  mesh.receiveShadow=true; mesh.castShadow=false; mesh.frustumCulled=false;
-  G.add(mesh);
-  return mesh;
+  const meshes=[];
+  tiles.forEach(list=>{
+    const tg=new THREE.BufferGeometry();                            // shares the blade's buffers, with its own bounds
+    for(const k in geo.attributes) tg.setAttribute(k,geo.attributes[k]);
+    let cx=0,cz=0,cy=0; list.forEach(b=>{ cx+=b.x; cz+=b.z; cy+=b.y; }); cx/=list.length; cz/=list.length; cy/=list.length;
+    let rr=0; list.forEach(b=>{ rr=Math.max(rr,Math.hypot(b.x-cx,b.z-cz)+Math.abs(b.y-cy)); });
+    tg.boundingSphere=new THREE.Sphere(new THREE.Vector3(cx,cy,cz),rr+o.h*1.6+.3);
+    const mesh=new THREE.InstancedMesh(tg,mat,list.length);
+    list.forEach((b,i)=>{ mesh.setMatrixAt(i,b.m); mesh.setColorAt(i,b.c); });
+    mesh.instanceMatrix.needsUpdate=true; if(mesh.instanceColor) mesh.instanceColor.needsUpdate=true;
+    mesh.receiveShadow=true; mesh.castShadow=false; mesh.userData.c=tg.boundingSphere.center; mesh.userData.r=tg.boundingSphere.radius;
+    G.add(mesh); meshes.push(mesh);
+  });
+  return meshes;
+}
+/* grass farther than this from the action is left out: out there a blade is smaller than a pixel */
+const GRASS_VIEW=30;
+function grassCull(list,x,z,on){
+  if(!list) return;
+  for(const m of list){ const c=m.userData.c; m.visible=on&&Math.hypot(c.x-x,c.z-z)-m.userData.r<GRASS_VIEW; }
 }
 /* ---------- an outdoor map ---------- */
 function buildWorld(id,parent,o){
   if(BIOMES[id]&&BIOMES[id].hide) return buildDungeon(parent,o);
   if(id==='gallows') return buildGallows(parent,o);
+  if(ARENA_THEMES[id]) return buildArena(parent,id);
   o=o||{};
   const B0=BIOMES[id];
   const W={id,name:B0.name,obstacles:[],bushes:[],ponds:[],water:[],updaters:[],group:new THREE.Group()};
@@ -7745,9 +7802,9 @@ function buildWorld(id,parent,o){
     if(id==='sahara') for(let i=0;i<3;i++){ const a=i/3*6.28+rnd(), r=p.r+1.7; const x=p.x+Math.cos(a)*r, z=p.z+Math.sin(a)*r; addCols(LPP.palm(B,x,z,{s:1,h:4.4,leafA:0x6a8a34,leafB:0xa8a84a})); }
     if(id==='ocean') for(let i=0;i<8;i++){ const a=i/8*6.28, r=p.r+.6; LPP.rock(B,p.x+Math.cos(a)*r,p.z+Math.sin(a)*r,Object.assign({s:.45+rnd()*.25,y:-.15},rockO)); }
   });
-  B.build(G,{chunk:44});
+  B.build(G,{chunk:26});                          // small enough chunks that what's off screen is left out
   /* ---- real grass over the open ground ---- */
-  if(GRASS) lpGrassField(G,Object.assign({seed:id.length*31,rmax:ARENA+8,hAt,mask:(x,z)=>{
+  if(GRASS) W.grass=lpGrassField(G,Object.assign({seed:id.length*31,rmax:ARENA+8,hAt,mask:(x,z)=>{
     const r=Math.hypot(x,z);
     if(r<2.6||blocked(x,z,.35)||(r<ARENA&&pathD(x,z)<1.3)) return false;
     if(ponds.some(p=>Math.hypot(x-p.x,z-p.z)<p.r+.9)) return false;
@@ -7766,8 +7823,10 @@ function buildWorld(id,parent,o){
   const parts=makeParticles(pcfg); G.add(parts); W.particles=parts;
   if(ocean) W.updaters.push(lpGulls(G));
   W.light={sun:B0.sun,hemi:B0.hemi,fog:B0.fog,exposure:B0.exposure,skyHor:B0.sky.hor};
+  W.grassOn=true;
   W.update=(dt,t,px,pz)=>{
     WORLD_UNI.uTime.value=t;
+    grassCull(W.grass,px,pz,W.grassOn);
     if(W.particles) W.particles.userData.update(dt,t,px,pz);
     W.updaters.forEach(f=>f(dt,t));
   };
@@ -7889,6 +7948,182 @@ function buildGallows(parent){
   W.light={sun:B0.sun,hemi:B0.hemi,fog:B0.fog,exposure:B0.exposure,skyHor:B0.sky.hor};
   W.update=(dt,t,px,pz)=>{
     WORLD_UNI.uTime.value=t;
+    if(W.particles) W.particles.userData.update(dt,t,px,pz);
+    W.updaters.forEach(f=>f(dt,t));
+  };
+  return W;
+}
+
+/* ---------- more EXECUTION arenas ----------
+   The same fair layout as Gallows Moor (every piece mirrored through the
+   centre, the spawns at each end kept clear), dressed three more ways:
+   FROST KEEP — a snowed-in castle courtyard under the aurora, frozen pools;
+   EMBER FORGE — a black-rock forge with lava pools you can't cross and
+     embers rising out of the cracks;
+   SUNKEN TEMPLE — jungle ruins at dusk round a stepped shrine, green
+     pools, fireflies. */
+const ARENA_THEMES={
+  frostkeep:{
+    rock:{col:0x8a9098,dark:0x6a7078,top:0xf6f9fc,topMin:.35}, wall:{col:0x8e96a8,dark:0x6a7288,top:0xf4f8fc}, bush:[0x2f6a54,0x245a44,0x3f7a60], snowBush:true,
+    pools:'ice', glow:0x8fd8ff, moon:0xcfe8ff, stars:.9,
+    parts:{n:520,colors:[0xffffff,0xe6f2ff],size:.1,vy:-1,vx:.3,sway:.3,box:[44,14,44]},
+    tuft:[0xd2c290,0xb8ac7a], stain:0xc8d6e6, trample:[0xb8c6d8,0xa8b8cc],
+    centre(B,W,addCols){ const r=LPS.iceShrine(B,0,0,{s:1}); addCols(r.cols); return r; },
+    small(B,x,z,ry,i){ LPP.crate(B,x,z,{s:.8,ry,snow:true}); return {r:.55,h:.9}; },
+    tree(B,x,z,s,i){ LPP.pine(B,x,z,{s:s*.95,h:4.4,snow:true,leaves:0x2f6a54,light:0x3f7a60}); return {r:.5,h:4}; },
+    fencePiece(B,x,z,len,ry){ return LPP.fence(B,x,z,{len,ry,a:0x7a5a3c,b:0x5a4230,snow:true}); },
+    ring(B,x,z,len,ry){ LPP.wall(B,x,z,{len,h:1.05,ry,col:0x8e96a8,dark:0x6a7288,top:0xf4f8fc}); },
+    outside(B,x,z,y,t,i,rnd){ if(t<.55) LPP.pine(B,x,z,{s:1+rnd()*.6,y,h:4.8,snow:true,leaves:0x2f6a54,light:0x3f7a60}); else if(t<.8) LPP.rock(B,x,z,{s:1+rnd()*1.6,y:y-.2,col:0x8a9098,dark:0x6a7078,top:0xf6f9fc,topMin:.35});
+      else B.add(lpBlob0(lpSeed(x,z)),lpM(x,y-.1,z,x,[1.3+rnd(),.35,.9+rnd()*.5]),0xf4f8fc,{vary:.03}); }
+  },
+  forge:{
+    rock:{col:0x4a403c,dark:0x2e2826,top:0x6a3a2a,topMin:.8}, wall:{col:0x4a423e,dark:0x2e2826,top:0x5a2a1a}, bush:[0x4a2a1a,0x3a1a10,0x6a3a1a], berries:0xff7a2a,
+    pools:'lava', glow:0xff6a2a, moon:0xff7a3a, stars:.2,
+    parts:{n:380,colors:[0xff6a2a,0xffb040,0xff3a1a],size:.08,vy:.7,vx:.2,sway:.4,box:[44,10,44],additive:true},
+    tuft:[0x5a4a40,0x4a3c34], stain:0x2a1e1a, trample:[0x3e302a,0x322824],
+    centre(B,W,addCols){
+      // the great forge: a stone hearth with a glowing mouth, a chimney, and an anvil on a block
+      const st=0x4a423e, stD=0x2e2826, iron=0x2a2a30;
+      B.add(lpDent(lpBox(3.6,1.4,2.6),.05,5,{keepBottom:true}),lpM(0,0,0),(c,n)=>lpShade(n.y>.8?0x5a504a:st,n,.25),{mat:'tall'});
+      B.add(lpBox(1.6,.8,.1),lpM(0,.25,1.31),0xff8a2a,{mat:'glow'});
+      B.add(lpBox(1.1,.5,.12),lpM(0,.35,1.33),0xffe07a,{mat:'glow'});
+      B.add(lpCyl(.55,.75,3.2,6),lpM(-.9,1.4,-.6),(c,n)=>lpShade(stD,n,.25),{mat:'tall'});
+      B.add(lpCyl(.62,.62,.25,6),lpM(-.9,4.55,-.6),(c,n)=>lpShade(st,n,.2),{mat:'tall'});
+      B.add(lpCyl(.4,.4,.06,6),lpM(-.9,4.8,-.6),0xff6a2a,{mat:'glow'});
+      B.add(lpCyl(.42,.5,.7,7),lpM(1.9,0,1.9),(c,n)=>lpShade(0x5a3a2a,n,.2),{mat:'tall'});
+      B.add(lpBox(1,.28,.42),lpM(1.9,.7,1.9,.4),(c,n)=>lpShade(iron,n,.4),{mat:'tall'});
+      B.add(lpCone(.21,.5,4),lpM(2.4,.84,2.1,[0,.4,-Math.PI/2]),(c,n)=>lpShade(iron,n,.4),{mat:'tall'});
+      return {cols:[{x:0,z:0,r:1.9,h:1.4},{x:-.9,z:-.6,r:.75,h:4.8},{x:1.9,z:1.9,r:.6,h:1}]};
+    },
+    small(B,x,z,ry,i){ LPP.barrel(B,x,z,{}); return {r:.45,h:1}; },
+    tree(B,x,z,s,i){ lpDeadTree(B,x,z,0,s,i+11); return {r:.4,h:3}; },
+    fencePiece(B,x,z,len,ry){ return lpIronFence(B,x,z,len,ry); },
+    ring(B,x,z,len,ry){ lpIronFence(B,x,z,len,ry,{noCols:true}); },
+    outside(B,x,z,y,t,i,rnd){ if(t<.4) lpDeadTree(B,x,z,y,1+rnd()*.8,i); else if(t<.85) LPP.rock(B,x,z,{s:1+rnd()*2,y:y-.2,col:0x4a403c,dark:0x2e2826,top:0x6a3a2a,topMin:.8});
+      else B.add(lpCone(.3+rnd()*.3,.05,6),lpM(x,y+.02,z),0xff6a1a,{mat:'glow'}); }
+  },
+  temple:{
+    rock:{col:0x9a988e,dark:0x74726a,top:0x5a9a3a,topMin:.6}, wall:{col:0xb8b4a6,dark:0x8e8a7e,moss:0x5a9a3a}, bush:[0x3f9a44,0x2f7a34,0x5ab450], berries:0xff5a8a,
+    pools:'water', glow:0xffc070, moon:0xffe0a8, stars:.25, grass:{n:2600,cols:[0x5aa23a,0x6cb444,0x4f8f34,0x7ec24e],h:.4},
+    parts:{n:160,colors:[0xfff4a0,0xd8ff90],size:.1,additive:true,vy:.05,sway:.5,box:[44,6,44],y0:.3,sprite:'mote'},
+    tuft:[0x8ac84c,0x6ab040], stain:0x3a6a2c, trample:[0x8a7a5a,0x7a6a4a],
+    centre(B,W,addCols){
+      // a stepped shrine in three tiers, with a golden idol turning over the top
+      const st=0xb8b4a6, stD=0x8e8a7e, moss=0x5a9a3a;
+      [[4.4,.7,0],[3.3,.7,.7],[2.2,.7,1.4]].forEach(([w,h,y])=>B.add(lpDent(lpBox(w,h,w),.04,Math.round(w*3),{keepBottom:true}),lpM(0,y,0),(c,n)=>n.y>.8&&((c.x*7+c.z*3)|0)%3===0?moss:lpShade(n.y>.8?st:stD,n,.2),{mat:'tall'}));
+      for(const k of [-1,1]) B.add(lpBox(.7,.35,1.6),lpM(0,0,k*2.9),(c,n)=>lpShade(stD,n,.2),{mat:'tall'});
+      const anim=new THREE.Group(); anim.position.set(0,2.75,0);
+      const gold=new THREE.MeshStandardMaterial({color:0xffc84a,metalness:.7,roughness:.3,emissive:0x6a4a10,emissiveIntensity:.6,flatShading:true});
+      const idol=new THREE.Mesh(new THREE.OctahedronGeometry(.42,0),gold); idol.scale.set(1,1.5,1); anim.add(idol);
+      const halo=new THREE.Mesh(new THREE.TorusGeometry(.7,.04,6,32),new THREE.MeshBasicMaterial({color:0xffe08a,toneMapped:false})); halo.rotation.x=Math.PI/2; anim.add(halo);
+      addCols([{x:0,z:0,r:2.3,h:2.1}]);
+      return {anim,spin:.7,bob:.12};
+    },
+    small(B,x,z,ry,i){ LPP.column(B,x,z,{h:1.2,broken:true}); return {r:.45,h:1.2}; },
+    tree(B,x,z,s,i){ LPP.palm(B,x,z,{s:s,h:4.6,leafA:0x3f9a3a,leafB:0x5ab448}); return {r:.4,h:4}; },
+    fencePiece(B,x,z,len,ry){ return LPP.log(B,x,z,{len,ry,bark:0x7a5a3a}); },
+    ring(B,x,z,len,ry){ LPP.wall(B,x,z,{len,h:.9,ry,col:0xb8b4a6,dark:0x8e8a7e,moss:0x5a9a3a}); },
+    outside(B,x,z,y,t,i,rnd){ if(t<.45) LPP.palm(B,x,z,{s:1+rnd()*.4,y,h:5.2,leafA:0x3f9a3a,leafB:0x5ab448}); else if(t<.75) LPP.tree(B,x,z,{s:1.1+rnd()*.4,y,h:3.8,leaves:[0x3f9a3a,0x5ab448,0x2f7a34]});
+      else if(t<.9) LPP.rock(B,x,z,{s:1+rnd()*1.4,y:y-.2,col:0x9a988e,dark:0x74726a,top:0x5a9a3a,topMin:.6}); else LPP.column(B,x,z,{h:1.6+rnd()*1.4,broken:true,y}); }
+  }
+};
+function buildArena(parent,id){
+  const B0=BIOMES[id], T=ARENA_THEMES[id], R=GALLOWS_R;
+  const W={id,name:B0.name,obstacles:[],bushes:[],ponds:[],water:[],updaters:[],group:new THREE.Group(),limit:R};
+  parent.add(W.group);
+  const G=W.group, sunDir=new THREE.Vector3().fromArray(B0.sun.dir).normalize(), C=B0.char;
+  W.sunDir=sunDir;
+  W.charEnv=makeCharEnv({dir:B0.sun.dir,light:C.light,li:C.li,sky:C.sky,si:C.si,gnd:C.gnd,gi:C.gi,rim:C.rim,ri:C.ri});
+  const B=new LPBuilder(4242+id.length*13), rnd=mulberry32(977+id.length*29), addCols=cs=>{ (cs||[]).forEach(c=>W.obstacles.push(c)); };
+  /* two pools, one on each flank: water to wade through, ice to walk on, or lava nobody crosses */
+  const pools=[{x:-11.2*GK,z:3.4*GK,r:2.3,depth:T.pools==='ice'?.05:.8},{x:11.2*GK,z:-3.4*GK,r:2.3,depth:T.pools==='ice'?.05:.8}];
+  if(T.pools==='water') W.ponds=pools;
+  const hAt=(x,z)=>{ const r=Math.hypot(x,z); let h=sstep(R+1.5,R+12,r)*(1.2+(fbm2(x*.05,z*.05,3)*.5+.5)*5);
+    pools.forEach(p=>{ h-=p.depth*sstep(p.r+1.2,p.r-.4,Math.hypot(x-p.x,z-p.z)); }); return h; };
+  W.heightAt=hAt;
+  const gc=B0.gcol;
+  B.add(lpTerrainGeo(150,72,hAt,rnd),null,(c,n)=>{
+    const x=c.x, z=c.z, r=Math.hypot(x,z), n1=fbm2(x*.06+3,z*.06,3)*.5+.5, n2=fbm2(x*.17,z*.17+9,2)*.5+.5;
+    let col=n1>.6?gc[1]:n2>.64?gc[2]:gc[0];
+    if(r<R&&n2<.2) col=T.stain;
+    if(r<3.8) col=n1>.5?T.trample[0]:T.trample[1];
+    else if(r<R+.3&&Math.abs(x)<1.25+Math.sin(z*.5)*.3) col=B0.path;
+    for(const p of pools){ if(Math.hypot(x-p.x,z-p.z)<p.r+.9){ col=B0.wet; break; } }
+    if(1-n.y>.3) col=B0.rock;
+    return col;
+  },{mat:'ground',vary:.07});
+  const glowAt=[];
+  pools.forEach((p,i)=>{
+    if(T.pools==='ice'){
+      B.add(lpDiscGeo(p.r+.8,.9,.3,i+3),lpM(p.x,.03,p.z),(c)=>{ const k=noise2(c.x*1.3,c.z*1.3); return k>.35?0xf2f8fc:k>0?0xbfe0f4:0xa8d4f0; },{mat:'solid',vary:.05});
+    } else if(T.pools==='lava'){
+      const lm=new THREE.Mesh(lpDiscGeo(p.r+1,1,.3,i+21),lpWaterMat({deep:0xc02a08,shallow:0xffa020,sky:0xff7a2a,sunDir,radius:p.r+1,alpha:1,amp:.02}));
+      lm.position.set(p.x,-.1,p.z); lm.renderOrder=2; G.add(lm);
+      W.obstacles.push({x:p.x,z:p.z,r:p.r+.5,h:.3});                   // nobody walks into it (shots fly over)
+      glowAt.push([p.x,p.z,4.2]);
+      for(let k=0;k<8;k++){ const a=rnd()*Math.PI*2, rr=p.r+.9+rnd()*.7; LPP.rock(B,p.x+Math.cos(a)*rr,p.z+Math.sin(a)*rr,Object.assign({s:.45+rnd()*.3,y:-.1},T.rock)); }
+    } else {
+      const wm=new THREE.Mesh(lpDiscGeo(p.r+1,1,.3,i+21),lpWaterMat(Object.assign({sky:B0.sky.hor,sunDir,radius:p.r+1,alpha:.93,amp:.04},B0.water)));
+      wm.position.set(p.x,-.12,p.z); wm.renderOrder=2; G.add(wm);
+      for(let k=0;k<9;k++){ const a=rnd()*Math.PI*2, rr=p.r+.5+rnd()*.8, x=p.x+Math.cos(a)*rr, z=p.z+Math.sin(a)*rr; LPP.reeds(B,x,z,{s:.8+rnd()*.4,y:hAt(x,z),cattail:true}); }
+      for(let k=0;k<5;k++){ const a=rnd()*Math.PI*2, r=rnd()*p.r*.8; LPP.lily(B,p.x+Math.cos(a)*r,p.z+Math.sin(a)*r,{y:-.09,flower:k%2===0,s:.8+rnd()*.4}); }
+    }
+  });
+  const ctr=T.centre(B,W,addCols);
+  if(ctr&&ctr.anim){ G.add(ctr.anim); const a=ctr.anim, y0=a.position.y; W.updaters.push((dt,t)=>{ a.rotation.y=t*(ctr.spin||.6); if(ctr.bob) a.position.y=y0+Math.sin(t*1.4)*ctr.bob; }); }
+  /* half the layout — the far end (z<0) — mirrored through the centre for the near end (as on Gallows Moor) */
+  const P=(x,z,k)=>[x*k*GK,z*k*GK];
+  const bush=(x,z,sc0)=>{ const sc=(sc0||1)*1.1; LPP.bush(B,x,z,{s:sc,cols:T.bush,snow:!!T.snowBush,berries:T.berries||null}); W.bushes.push({x,z,r:sc*1.25}); };
+  const wallO=Object.assign({},T.wall);
+  const glows=[];
+  for(const k of [1,-1]){
+    let q;
+    q=P(0,-8.6,k); addCols(LPP.wall(B,q[0],q[1],Object.assign({len:4.6,h:1.5,ry:0},wallO)));
+    q=P(-9.6,-4.4,k); addCols(LPP.wall(B,q[0],q[1],Object.assign({len:3.4,h:1.4,ry:Math.PI/2},wallO)));
+    q=P(5.8,-4.4,k); addCols(LPP.rock(B,q[0],q[1],Object.assign({s:1.15},T.rock)));
+    q=P(-6.4,-12.6,k); addCols(LPP.rock(B,q[0],q[1],Object.assign({s:.95},T.rock)));
+    [[-4.4,-3.4,.2],[-3,-4.1,-.1],[4.3,-7.6,.3]].forEach(([x,z,ry],i)=>{ q=P(x,z,k); const c=T.small(B,q[0],q[1],ry+(k<0?Math.PI:0),i+(k<0?3:0)); W.obstacles.push({x:q[0],z:q[1],r:c.r,h:c.h}); });
+    bush(...P(-13.2,-1.4,k),1.25); bush(...P(-10.6,-9.6,k),1); bush(...P(6.8,-11.4,k),1.1); bush(...P(12.8,-6.8,k),1); bush(...P(2.6,-4.6,k),.8);
+    q=P(-14.6,-8.4,k); { const c=T.tree(B,q[0],q[1],1.3,k>0?3:7); W.obstacles.push({x:q[0],z:q[1],r:c.r,h:c.h}); }
+    q=P(10.2,-13.8,k); { const c=T.tree(B,q[0],q[1],1.15,k>0?5:9); W.obstacles.push({x:q[0],z:q[1],r:c.r,h:c.h}); }
+    q=P(9,-8.4,k); addCols(T.fencePiece(B,q[0],q[1],3.4,.7));
+    q=P(-2.8,-12.2,k); addCols(LPP.crate(B,q[0],q[1],{s:.9,ry:.3,snow:id==='frostkeep'}));
+    [[-2.9,-8.3],[2.9,-8.3],[-2.6,1.9]].forEach(([x,z])=>{ q=P(x,z,k); lpTorch(B,q[0],q[1],0); glows.push(q); });
+  }
+  /* the edge of the fight, all the way round */
+  const NF=id==='forge'?64:40;
+  for(let i=0;i<NF;i++){ const a0=i/NF*Math.PI*2, a1=(i+1)/NF*Math.PI*2, am=(a0+a1)/2, rr=R+.4;
+    const L=2*rr*Math.sin(Math.PI/NF); T.ring(B,Math.cos(am)*rr,Math.sin(am)*rr,L+(id==='forge'?0:.05),-am+Math.PI/2); }
+  /* beyond it */
+  for(let i=0;i<130;i++){ const a=rnd()*Math.PI*2, r=R+2+Math.pow(rnd(),.8)*26, x=Math.cos(a)*r, z=Math.sin(a)*r; T.outside(B,x,z,hAt(x,z)-.05,rnd(),i,rnd); }
+  /* ground cover inside */
+  const blocked=(x,z)=>W.obstacles.some(c=>Math.hypot(x-c.x,z-c.z)<c.r+.3)||pools.some(p=>Math.hypot(x-p.x,z-p.z)<p.r+.7);
+  for(let i=0;i<(id==='temple'?300:560)*GK*GK*GFX.density;i++){ const a=rnd()*Math.PI*2, r=Math.sqrt(rnd())*(R+4), x=Math.cos(a)*r, z=Math.sin(a)*r;
+    if(blocked(x,z)) continue; LPP.tuft(B,x,z,{y:hAt(x,z),tip:T.tuft[i%2],h:.32,n:3}); }
+  if(id==='temple') for(let i=0;i<90*GFX.density;i++){ const a=rnd()*Math.PI*2, r=Math.sqrt(rnd())*R, x=Math.cos(a)*r, z=Math.sin(a)*r; if(!blocked(x,z)) LPP.flower(B,x,z,{y:hAt(x,z),col:[0xff8aa8,0xffffff,0xf2d34a,0xc89ae8][i%4]}); }
+  if(id==='forge') for(let i=0;i<34;i++){                                 // glowing cracks in the black rock
+    const a=rnd()*Math.PI*2, r=3+Math.sqrt(rnd())*(R-2), x=Math.cos(a)*r, z=Math.sin(a)*r; if(blocked(x,z)) continue;
+    let px=x, pz=z, ang=rnd()*Math.PI;
+    for(let s2=0;s2<3;s2++){ const L=.5+rnd()*.7; ang+=(rnd()-.5)*1.2; B.add(lpBox(.07,.02,L),lpM(px+Math.cos(ang)*L/2,hAt(px,pz)+.015,pz+Math.sin(ang)*L/2,-ang+Math.PI/2),s2%2?0xffb040:0xff5a1a,{mat:'glow'}); px+=Math.cos(ang)*L; pz+=Math.sin(ang)*L; } }
+  if(id==='frostkeep') for(let i=0;i<24;i++){ const a=rnd()*Math.PI*2, r=4+rnd()*(R-6), x=Math.cos(a)*r, z=Math.sin(a)*r; if(!blocked(x,z)) B.add(lpBlob0(lpSeed(x,z)),lpM(x,hAt(x,z)-.1,z,x,[.9+rnd()*.6,.22,.7+rnd()*.4]),0xf4f8fc,{vary:.03}); }
+  B.build(G,{chunk:26});
+  if(T.grass) W.grass=lpGrassField(G,Object.assign({seed:id.length*31,rmax:R+3,hAt,mask:(x,z)=>{ const r=Math.hypot(x,z); if(r<3.2||blocked(x,z)) return false; if(r<R&&Math.abs(x)<1.5) return false; return true; }},T.grass));
+  /* light pooling under each torch (and over the lava), flickering */
+  const gm=[];
+  glows.map(q=>[q[0],q[1],2.4]).concat(glowAt).forEach(([x,z,sz])=>{ const m=new THREE.Mesh(new THREE.CircleGeometry(sz,24),new THREE.MeshBasicMaterial({map:glowTex(),color:T.glow,transparent:true,opacity:.4,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending}));
+    m.rotation.x=-Math.PI/2; m.position.set(x,.05,z); m.renderOrder=3; G.add(m); gm.push(m); });
+  W.updaters.push((dt,t)=>gm.forEach((m,i)=>{ m.material.opacity=.32+.1*Math.sin(t*9+i*2.1)+.06*Math.sin(t*23+i); }));
+  /* sky, the moon, and whatever is in the air */
+  const sky=makeSky({top:B0.sky.top,hor:B0.sky.hor,low:B0.sky.low,sunDir,sunCol:B0.sun.col,clouds:0,stars:T.stars});
+  G.add(sky); W.sky=sky;
+  const moon=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:T.moon,transparent:true,depthWrite:false,fog:false,toneMapped:false,blending:THREE.AdditiveBlending}));
+  moon.position.copy(sunDir).multiplyScalar(150); moon.scale.setScalar(50); moon.renderOrder=-9; G.add(moon);
+  const parts=makeParticles(T.parts); G.add(parts); W.particles=parts;
+  W.light={sun:B0.sun,hemi:B0.hemi,fog:B0.fog,exposure:B0.exposure,skyHor:B0.sky.hor};
+  W.grassOn=true;
+  W.update=(dt,t,px,pz)=>{
+    WORLD_UNI.uTime.value=t;
+    grassCull(W.grass,px,pz,W.grassOn);
     if(W.particles) W.particles.userData.update(dt,t,px,pz);
     W.updaters.forEach(f=>f(dt,t));
   };
@@ -8408,6 +8643,7 @@ const Lobby=(function(){
   let look=null, faceCam=null;
   const LOOK_FOR={hub:[1,1,1],chars:[.85,0,1],stash:[.6,0,.9],show:[.35,0,.7],panel:[1,0,1],maps:[0,0,0],load:[.55,0,.5]};
   const lookNow={s:1,b:0,h:1,flash:0}, lookTo={s:1,b:1,h:1};
+  const ENV_K=.75; let shadowN=0;
   const _v1=new THREE.Vector3(), _v2=new THREE.Vector3(), _v3=new THREE.Vector3();
   const cloudMatFar=new THREE.MeshBasicMaterial({vertexColors:true,color:0xffffff,fog:false,transparent:true,opacity:.55,depthWrite:false});
   const camPos=V3(0,6,18), camLook=V3(0,1,0), tgtPos=V3(), tgtLook=V3();
@@ -8445,7 +8681,8 @@ const Lobby=(function(){
   function init(){
     if(R) return;
     const cv=document.getElementById('menu3d');
-    R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:false,powerPreference:'high-performance'});
+    // the screen itself only ever gets one full-screen quad (the passes below are drawn off screen), so no multisampling here
+    R=new THREE.WebGLRenderer({canvas:cv,antialias:false,alpha:false,powerPreference:'high-performance'});
     R.outputEncoding=THREE.sRGBEncoding; R.toneMapping=THREE.ACESFilmicToneMapping; R.toneMappingExposure=1.0;
     R.shadowMap.enabled=true; R.shadowMap.type=THREE.PCFSoftShadowMap; R.shadowMap.autoUpdate=false;
     scene=new THREE.Scene();
@@ -8500,7 +8737,7 @@ const Lobby=(function(){
     // on tall screens pull back so the character still fits (applyShift picks the field of view)
     cam.updateProjectionMatrix(); applyShift();
     if(look){ R.getDrawingBufferSize(_v1); const w=Math.max(4,_v1.x|0), h=Math.max(4,_v1.y|0);
-      look.rtEnv.setSize(w,h); look.rtHero.setSize(w,h); look.mat.uniforms.uRes.value.set(w,h); look.mat.uniforms.uPr.value=R.getPixelRatio(); placeBand(); }
+      look.rtEnv.setSize(Math.max(4,Math.round(w*ENV_K)),Math.max(4,Math.round(h*ENV_K))); look.rtHero.setSize(w,h); look.mat.uniforms.uRes.value.set(w,h); look.mat.uniforms.uPr.value=R.getPixelRatio(); placeBand(); }
   }
   /* ---------- the look ---------- */
   function makeLook(){
@@ -8508,7 +8745,7 @@ const Lobby=(function(){
     const mk=(w,h,ms)=>{ const o={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat,encoding:THREE.sRGBEncoding};
       const rt=ms&&gl2&&THREE.WebGLMultisampleRenderTarget?new THREE.WebGLMultisampleRenderTarget(w,h,o):new THREE.WebGLRenderTarget(w,h,o);
       rt.texture.encoding=THREE.sRGBEncoding; return rt; };
-    look={rtEnv:mk(4,4,true),rtHero:mk(4,4,true),rtFace:mk(768,384,false)};
+    look={rtEnv:mk(4,4,false),rtHero:mk(4,4,true),rtFace:mk(768,384,false)};   // (the world is printed in dots anyway: drawn smaller and without multisampling)
     look.mat=new THREE.ShaderMaterial({vertexShader:LOOK_VS,fragmentShader:LOOK_FS,depthTest:false,depthWrite:false,toneMapped:false,
       uniforms:{tEnv:{value:look.rtEnv.texture},tHero:{value:look.rtHero.texture},tFace:{value:look.rtFace.texture},
         uRes:{value:new THREE.Vector2(4,4)},uPr:{value:1},uTime:{value:0},uStyle:{value:1},uHero:{value:1},uBandK:{value:0},uFlash:{value:0},
@@ -8550,8 +8787,8 @@ const Lobby=(function(){
     U.uAcc.value.lerp(inkTo.acc,ki); U.uMid.value.lerp(inkTo.mid,ki); U.uInk.value.lerp(inkTo.ink,ki); U.uPaper.value.lerp(inkTo.paper,ki);
     U.uStyle.value=lookNow.s; U.uHero.value=lookNow.h; U.uBandK.value=lookNow.b<.01?0:lookNow.b; U.uFlash.value=lookNow.flash*lookNow.flash;
     U.uTime.value=t;
-    // 1) the world, your character included (for its shadow)
-    R.shadowMap.needsUpdate=true;
+    // 1) the world, your character included (for its shadow; the shadows are redrawn every other frame)
+    if((++shadowN)&1) R.shadowMap.needsUpdate=true;
     cam.layers.set(0);
     R.setRenderTarget(L.rtEnv); R.render(scene,cam);
     // 2) your character alone, on a clear background
@@ -8742,6 +8979,7 @@ const Lobby=(function(){
   }
   function setIsland(id){
     if(!R) init();
+    id=({frostkeep:'glacier',forge:'gallows',temple:'forest'})[id]||id;
     if(islandId===id) return;
     // everything from the old island goes back to the GPU: geometry, materials, textures
     if(island){ scene.remove(island); disposeTree(island,true); }
@@ -9103,7 +9341,10 @@ const MAP_ICONS={
   autumn:'<path d="M12 21v-6M12 15c-5 0-8-3-8-8 3 0 5 1 6 3 0-3 1-5 2-7 1 2 2 4 2 7 1-2 3-3 6-3 0 5-3 8-8 8z"/>',
   glacier:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9 4l3 2 3-2M9 20l3-2 3 2"/>',
   dungeon:'<path d="M5 21V10a7 7 0 0 1 14 0v11"/><path d="M9 21v-9.5M12 21V9M15 21v-9.5M3 21h18"/><circle cx="12" cy="6.6" r=".9" fill="#fff"/>',
-  gallows:'<path d="M5 21V3h11M5 7l4-4M16 3v4"/><circle cx="16" cy="10" r="2.6"/><path d="M3 21h10"/>'
+  gallows:'<path d="M5 21V3h11M5 7l4-4M16 3v4"/><circle cx="16" cy="10" r="2.6"/><path d="M3 21h10"/>',
+  frostkeep:'<path d="M4 21V9l2-2 2 2V5l2-2 2 2v4l2-2 2 2v3l2-2 2 2v9z"/><path d="M10 21v-4h4v4"/>',
+  forge:'<path d="M4 14h13a3 3 0 0 0 3-3H8M9 14l-2 5h10l-2-5"/><path d="M12 8c0-2 2-3 1-5 2 1 3 3 2 5"/>',
+  temple:'<path d="M3 21h18M5 21v-4h14v4M7 17v-4h10v4M9 13V9h6v4M12 9V6"/><circle cx="12" cy="4.5" r="1.3"/>'
 };
 /* the modes' icons: a crown for the last one standing, a skull for the execution */
 const MODE_ICONS={
@@ -9114,7 +9355,8 @@ const MODE_ICONS={
 /* the colours of each map's card: sky, light, ground, shade */
 const MAP_ART={forest:['#58b4f4','#c9f2cf','#6cc052','#3f8a34'],sahara:['#4f9ee8','#ffe8b8','#f2c983','#d38f4e'],ocean:['#2f94ea','#c6f0ff','#3fd0d4','#efd9a2'],
   tundra:['#6f94c4','#e2e8ea','#9aab62','#667a46'],autumn:['#6a94d0','#ffd9a8','#ea922c','#c6401e'],glacier:['#4f92dc','#edf6fd','#dceaf6','#a4c4e6'],
-  dungeon:['#0a0716','#3a1a4a','#4a3a5c','#1c1228'],gallows:['#12060c','#5a1626','#2e2228','#0e070a']};
+  dungeon:['#0a0716','#3a1a4a','#4a3a5c','#1c1228'],gallows:['#12060c','#5a1626','#2e2228','#0e070a'],
+  frostkeep:['#0c1a3a','#9fd4f0','#dfe8f2','#6a7288'],forge:['#140604','#ff7a2a','#3a3230','#1a0804'],temple:['#2a3a6a','#f0a070','#4a7a34','#b8b4a6']};
 const mapSvg=id=>`<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${MAP_ICONS[id]}</svg>`;
 const modeSvg=id=>`<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${MODE_ICONS[id]}</svg>`;
 /* the mode you'll play, and the island the lobby shows for it: the map of
@@ -10102,8 +10344,9 @@ function beginRun(){
   const tips=ex?['Three against three: no respawns this round','Wipe out the other team to take the round — first to two wins',
       'After 40 seconds the poison closes in','Stick with your team: bushes only hide you from enemies that are far away',
       'If you fall, you watch your team finish the round','Your super starts empty every round']:
-    dun?['You have 20 seconds to hide before the cage opens','Straw heaps and drapes hide you — unless it saw you slip in','Sprinting is loud: the monster hears it',
-      'You only get 10 seconds of sprint for the whole match','A red glow on the walls means it is close','Survive one minute after it gets loose: +25 coins']:
+    dun?['Anyone can be the seeker — even you','You have 30 seconds to hide, and you can sprint the whole time','After that, only 10 seconds of sprint for the rest of the match',
+      'Straw heaps and drapes hide you — unless the seeker saw you slip in','Sprinting is loud: the seeker hears it','Your map shows the other hiders, and a cross where one was found',
+      'Never found: +30 coins · The seeker who finds everyone: +50']:
     ['Bushes hide you from anyone further than a few steps away','Walls and rocks stop shots — lobbed ones fly over','Wading through water slows you down, but shots fly right over it',
     'The storm closes in — stay inside the ring','Your super charges as you land hits','Hard mode brings a BEAST character into the fight'];
   const tipEl=document.getElementById('loadTip'), pctEl=document.getElementById('loadPct'), fill=document.getElementById('loadFill');
@@ -10127,29 +10370,39 @@ function beginRun(){
    ========================================================== */
 const Perf=(function(){
   function governor(){
-    let scale=1, ema=16.7, last=0, good=0, slowAtMin=0, changedAt=0;
-    return {
+    let scale=1, ema=16.7, last=0, good=0, slowAtMin=0, changedAt=0, tier=0, graceUntil=0, backoff=1, lastUp=0;
+    const G={
+      /* tier: 0 = everything; 1 = the sun's shadows off; 2 = grass and weather off as well (onTier applies it) */
+      get tier(){ return tier; }, onTier:null,
       get scale(){ return scale; },
-      reset(){ scale=1; ema=16.7; last=0; good=0; slowAtMin=0; changedAt=0; },
+      /* a new scene: a couple of seconds of grace, since the first frames compile shaders and stutter */
+      reset(){ scale=1; ema=16.7; last=0; good=0; slowAtMin=0; changedAt=0; tier=0; backoff=1; lastUp=0; graceUntil=performance.now()+2500; },
       /* once a frame, with the rAF time; true when the scale changed */
       tick(now){
         if(!last){ last=now; return false; }
         const dt=now-last; last=now;
         if(dt>250||document.hidden) return false;            // a stall or a hidden tab tells us nothing
+        if(now<graceUntil){ ema=16.7; return false; }
         ema+=(dt-ema)*.06;
         if(GFX.auto===false||now-changedAt<1500) return false;
         if(ema>21){
           good=0;
+          if(now-lastUp<10000) backoff=Math.min(8,backoff*2);        // it just stepped up and couldn't hold it: wait longer next time
+          // the extras go first (they cost the most), then the resolution
+          if(G.onTier&&tier<2&&(tier===0||scale<=.72)){ tier++; G.onTier(tier); changedAt=now; ema=16.7; return false; }
           if(scale>.56){ scale=Math.max(.55,scale*.85); changedAt=now; ema=16.7; return true; }
           slowAtMin+=dt;
           if(slowAtMin>3000&&!document.body.classList.contains('lite-ui')){ document.body.classList.add('lite-ui'); changedAt=now; }
-        } else if(ema<14.5&&scale<1){
+        } else if(ema<17.8){
+          // smooth (at least a steady 60): after a while, try stepping back up
           good+=dt; slowAtMin=0;
-          if(good>4000){ scale=Math.min(1,scale*1.12); changedAt=now; good=0; return true; }
+          if(scale<1&&good>4000*backoff){ scale=Math.min(1,scale*1.12); changedAt=now; good=0; lastUp=now; return true; }
+          if(scale>=1&&tier>0&&G.onTier&&good>9000*backoff){ tier--; G.onTier(tier); changedAt=now; good=0; lastUp=now; }
         } else { good=0; slowAtMin=0; }
         return false;
       }
     };
+    return G;
   }
   return {lobby:governor(),game:governor()};
 })();
@@ -10439,13 +10692,15 @@ function startGame(ch){
 
   const cv=document.getElementById('gameCanvas');
   if(!renderer){
-    renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:'high-performance'});
+    // multisampling on a high-density screen costs a lot and shows little
+    renderer=new THREE.WebGLRenderer({canvas:cv,antialias:devicePixelRatio<1.5,powerPreference:'high-performance'});
     renderer.outputEncoding=THREE.sRGBEncoding;
     renderer.toneMapping=THREE.ACESFilmicToneMapping;
     renderer.shadowMap.enabled=true;
-    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type=THREE.PCFShadowMap;                 // (soft PCF looked the same from this far up, at many times the cost)
+    renderer.shadowMap.autoUpdate=false;                         // redrawn every other frame in the loop (shadowTick)
   }
-  Perf.game.reset();
+  Perf.game.reset(); Perf.game.onTier=applyGameTier; hudReset(); hudEl('dashLine')._ready=undefined; hudEl('ultBar')._full=undefined;
   scene=new THREE.Scene();
   camera=new THREE.PerspectiveCamera(56,innerWidth/innerHeight,.1,320);
   if(!gameResizeOn){ gameResizeOn=true; addEventListener('resize',gameResize); }
@@ -10460,7 +10715,7 @@ function startGame(ch){
   scene.add(new THREE.HemisphereLight(LC(L.hemi.sky),LC(L.hemi.gnd),L.hemi.i));
   sunLight=new THREE.DirectionalLight(LC(L.sun.col),L.sun.i);
   sunLight.castShadow=!world.hide;
-  sunLight.shadow.mapSize.setScalar(GFX.q==='low'?1024:2048);
+  sunLight.shadow.mapSize.setScalar(GFX.q==='low'?1024:1536);
   const sc2=sunLight.shadow.camera; sc2.left=-26; sc2.right=26; sc2.top=26; sc2.bottom=-26; sc2.near=1; sc2.far=140;
   sunLight.shadow.bias=-.0004; sunLight.shadow.normalBias=.03;
   scene.add(sunLight); scene.add(sunLight.target);
@@ -10543,11 +10798,21 @@ function spawnFighter(c,isP,display,pos,team){
   if(isP){ pUnit=u; player=mesh; }
   return u;
 }
+/* what the frame-rate governor gives up when the resolution alone isn't enough (Perf.game.tier) */
+function applyGameTier(tier){
+  if(sunLight&&!(world&&world.hide)) sunLight.castShadow=tier<1;
+  if(world&&world.grass){ world.grassOn=tier<2; if(!world.grassOn) world.grass.forEach(m=>{ m.visible=false; }); }
+  if(world&&world.particles) world.particles.visible=tier<2;
+  if(renderer) renderer.shadowMap.needsUpdate=true;
+}
+/* the shadow map is redrawn every other frame: nobody sees a shadow a sixtieth of a second late */
+let _shadowN=0;
+function shadowTick(){ if(renderer&&((++_shadowN)&1)) renderer.shadowMap.needsUpdate=true; }
 /* the match view follows the window; the pixel ratio also follows the frame-rate governor */
 let gameResizeOn=false;
 function gameResize(){
   if(!renderer||!camera) return;
-  renderer.setPixelRatio(Math.min(devicePixelRatio,GFX.q==='low'?1:1.75)*Perf.game.scale);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,GFX.q==='low'?1:1.5)*Perf.game.scale);
   renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.fov=camera.aspect<1?64:56; camera.updateProjectionMatrix();
 }
 /* --- input --- */
@@ -11304,19 +11569,26 @@ function collide(p,rad,y){
 }
 
 /* --- hud --- */
+/* the HUD is refreshed every frame, but the page is only touched where something changed
+   (rewriting the same text and HTML sixty times a second made the browser redo its layout every frame) */
+const _hudEls={};
+function hudEl(id){ return _hudEls[id]||(_hudEls[id]=document.getElementById(id)); }
+function hudSet(id,prop,v){ const e=hudEl(id); if(e['_'+prop]===v) return; e['_'+prop]=v;
+  if(prop==='text') e.textContent=v; else if(prop==='html') e.innerHTML=v; else e.style[prop]=v; }
+function hudReset(){ ['timerBox','aliveCount','hpBar','hpText','ultBar','buffRow'].forEach(id=>{ const e=hudEl(id); e._text=e._width=e._html=e._c=undefined; }); }
 function hud(){
-  document.getElementById('aliveCount').textContent=alive;
+  hudSet('aliveCount','text',String(alive));
   if(isExec()) execHud();
-  document.getElementById('hpBar').style.width=Math.max(0,(pUnit.hp/pUnit.maxHp)*100)+'%';
-  document.getElementById('hpText').textContent=Math.max(0,Math.ceil(pUnit.hp))+' / '+pUnit.maxHp;
-  document.getElementById('ultBar').style.width=pUnit.ult+'%';
+  hudSet('hpBar','width',Math.max(0,(pUnit.hp/pUnit.maxHp)*100).toFixed(1)+'%');
+  hudSet('hpText','text',Math.max(0,Math.ceil(pUnit.hp))+' / '+pUnit.maxHp);
+  hudSet('ultBar','width',Math.round(pUnit.ult*2)/2+'%');
   /* announce the super the moment it fills, and only once per charge */
   if(pUnit.ult>=100){
     if(!pUnit.ultAnnounced){ pUnit.ultAnnounced=true; SFX.ultReady(); toast('SUPER READY — E'); }
   } else pUnit.ultAnnounced=false;
-  document.getElementById('ultBar').classList.toggle('full', pUnit.ult>=100);
+  const ub=hudEl('ultBar'), full=pUnit.ult>=100; if(ub._full!==full){ ub._full=full; ub.classList.toggle('full',full); }
   const e=matchStart?Math.floor((performance.now()-matchStart)/1000):0;
-  document.getElementById('timerBox').textContent=Math.floor(e/60)+':'+String(e%60).padStart(2,'0');
+  hudSet('timerBox','text',Math.floor(e/60)+':'+String(e%60).padStart(2,'0'));
   const now=performance.now();
   let c='';
   if(now<pUnit.speedUntil) c+=`<span class="buff-chip">SPEED ${Math.ceil((pUnit.speedUntil-now)/1000)}s</span>`;
@@ -11354,13 +11626,13 @@ function hud(){
     if(spOn(pUnit,now)) c+=`<span class="buff-chip good">${nm} ${((pUnit.spUntil-now)/1000).toFixed(1)}s</span>`;
     else if(pUnit.spArm>0) c+=`<span class="buff-chip good">${nm} · NEXT ${SP.arm>1?pUnit.spArm+' SHOTS':'SHOT'}</span>`;
     else if(!ready) c+=`<span class="buff-chip dim">${nm} ${Math.ceil((pUnit.spCd-now)/1000)}s</span>`;
-    const dl=document.getElementById('dashLine'); dl.classList.toggle('cd',!ready); dl.classList.toggle('ready',ready);
+    const dl=hudEl('dashLine'); if(dl._ready!==ready){ dl._ready=ready; dl.classList.toggle('cd',!ready); dl.classList.toggle('ready',ready); }
   }
   if(pUnit.wade>.3) c+=`<span class="buff-chip">WADING</span>`;
   const fanCount=minions.filter(m=>m.isFan).length;
   if(fanCount) c+=`<span class="buff-chip">FANS ${fanCount}</span>`;
   if(isExec()&&!pUnit.alive){ const w=units.find(u=>u.alive&&u.team===pUnit.team); if(w) c=`<span class="buff-chip">WATCHING ${w.display.toUpperCase()}</span>`; }
-  document.getElementById('buffRow').innerHTML=c;
+  hudSet('buffRow','html',c);
 }
 function hurt(u,dmg,instant,src,dot){
   const now=performance.now();
@@ -11538,7 +11810,7 @@ function runIntro(dt,t){
   }
   hud();
   charLightsFor(camera,world.charEnv);
-  renderer.render(scene,camera);
+  shadowTick(); renderer.render(scene,camera);
   raf=requestAnimationFrame(loop);
 }
 /* --- loop --- */
@@ -11762,7 +12034,7 @@ function loop(t){
   updatePops();
   KiraFx.step(now,dt); SanityFx.step(now,dt); Blizzard.step(now,dt); updateDecals(now);
   charLightsFor(camera,Blizzard.env(SanityFx.env(KiraFx.env(world.charEnv))));
-  renderer.render(scene,camera);
+  shadowTick(); renderer.render(scene,camera);
   raf=requestAnimationFrame(loop);
 }
 
@@ -12036,7 +12308,7 @@ function finish(won,title){
   SFX.ambienceStop();
   if(won) SFX.victory(); else SFX.defeat();
   const dung=isDungeon(), ex=isExec(), XS=execState;
-  const base = dung ? (won?DGM.REWARD:0) : ex ? (won?10:XS&&XS.wins.blue>0?3:0) : pUnit.place===1?10 : pUnit.place===2?5 : pUnit.place===3?3 : 0;
+  const base = dung ? (DG?DG.coins||0:0) : ex ? (won?10:XS&&XS.wins.blue>0?3:0) : pUnit.place===1?10 : pUnit.place===2?5 : pUnit.place===3?3 : 0;
   const earned = dung ? base : base * (settings.hard?2:1);       // Hard Mode pays double (there is none in the dungeon)
   if(earned){ State.coins+=earned; }
   State.matches=(State.matches||0)+1;
@@ -12048,7 +12320,7 @@ function finish(won,title){
   }
   document.getElementById('resultTitle').textContent=title;
   document.getElementById('resultTitle').style.color=won?'var(--teal)':'#ff5f8d';
-  document.getElementById('resultDesc').textContent=dung?(won?'You made it through the dark.':'The monster found you.'):
+  document.getElementById('resultDesc').textContent=dung?(DG&&DG.desc||''):
     ex?(won?'Your team won the execution ':'Your team was executed ')+(XS?XS.wins.blue+' – '+XS.wins.red:'')+'.':
     (won?'Last character standing.':'Better luck next drop.');
   document.getElementById('resultCoins').textContent =
@@ -12232,7 +12504,8 @@ const Touch=(function(){
    ========================================================== */
 const BUSH_FADE=.4;                 // how much of you is left while you hide
 const LEAF_COLS={
-  forest:[0x4a7c34,0x2f5e26,0x7fa84a], gallows:[0x4e2c3a,0x3c2232,0x643848], autumn:[0xc8521e,0xe08a2a,0xa83a1a,0xf0b44a],
+  forest:[0x4a7c34,0x2f5e26,0x7fa84a], gallows:[0x4e2c3a,0x3c2232,0x643848],
+  frostkeep:[0x2f5a44,0x3a6a50,0xf2f6fa,0xf2f6fa], forge:[0x4a2a1a,0x6a3a1a,0xff6a2a], temple:[0x3f9a44,0x2f7a34,0x5ab450], autumn:[0xc8521e,0xe08a2a,0xa83a1a,0xf0b44a],
   sahara:[0x8a8a4a,0x6a6a36,0xb0a462], ocean:[0x2f7a3a,0x1f5a2c,0x5a9a44],
   tundra:[0x7a4a2a,0x6a6a36,0x8a5a3a,0xa88a4a], glacier:[0x2f5a44,0x3a6a50,0xf2f6fa,0xf2f6fa]};
 
@@ -12800,121 +13073,92 @@ function resetStatusFx(){
 
 /* ---- 57-dungeon-mode.js ---- */
 /* ==========================================================
-   HIDE & SEEK — the Tenebrous Dungeon's rules. Everyone has 10 HP and
-   no weapons. You get 20 seconds to hide, then the monster leaves its
-   cage and hunts for a minute. Shift sprints, but only for 10 seconds
-   in the whole match. You can barely see past your own lantern.
-   Survive the minute: +25 coins.
+   HIDE & SEEK — in the Tenebrous Dungeon. One of the twelve is picked at
+   random to be the SEEKER (it might be you). Everyone else has 30 seconds
+   to hide, sprinting as much as they like, while the seeker counts in the
+   cage with their eyes shut. Then the cage drops and the seeker has 100
+   seconds to find everyone: one touch and you're found.
+   Hiders: short sight in the dark, but a map of the maze showing where the
+     other hiders are (and a crossed-out head where one was found). Once
+     the count is over, only 10 seconds of sprint for the rest of the match.
+   Seeker: normal sight, a little quicker, and a sprint that lasts 3
+     seconds and then has to recharge.
+   Coins: hiders by place — never found 30, 2nd–3rd 10, 4th–5th 5, lower 3.
+     The seeker: everyone found 50, otherwise 5.
    ========================================================== */
-const DGM={HIDE:20,HUNT:60,HP:10,WALK:4,SPRINT:7.2,STAMINA:10,SIGHT:5.2,
-  PATROL:4,SEARCH:4.4,CHASE:5.8,DMG:5,EYE:9,REWARD:25};
+const DGM={HIDE:30,HUNT:100,WALK:4,SPRINT:7.2,STAMINA:10,SIGHT:5.2,
+  S_WALK:4.5,S_SPRINT:8.2,BURST:3,RECHARGE:4.5,S_EYE:11,CATCH:1.15,PATROL:4.4,SEARCH:4.8};
+const DG_PRIZE=place=>place<=1?30:place<=3?10:place<=5?5:3;
+const ordinal=n=>n+(n%100>=11&&n%100<=13?'th':['th','st','nd','rd'][n%10]||'th');
 let DG=null;                       // the live state of a dungeon match
-
-/* ---------- the monster: a hunched shadow beast with a lantern-red glare ---------- */
-function buildMonster(){
-  const root=new THREE.Group();
-  const part=fn=>{ const g=new THREE.Group(), B=new LPBuilder(7); fn(B); B.build(g,{px:true,cast:false}); return g; };
-  const skin=0x2e2440, skinL=0x40345a, belly=0x4a3a52, spike=0x1c1626, bone=0xd8ccb8;
-  const body=part(B=>{
-    B.add(lpBlob(3),lpM(0,.78,0,0,[1.05,.95,.82]),(c,n)=>n.z>.45&&c.y<1.1?belly:lpShade(n.y>.2?skinL:skin,n,.2));
-    B.add(lpBlob(4),lpM(0,.15,.02,0,[.72,.5,.62]),(c,n)=>lpShade(skin,n,.2));
-    for(let i=0;i<5;i++){ const y=1.45-i*.28, z=-.62+i*.05; B.add(lpCone(.16-i*.015,.5-i*.05,4),lpM(0,y,z,[-.9,0,0]),spike); }
-    for(const s of [-1,1]) B.add(lpBlob0(s+3),lpM(s*.78,1.2,.05,0,[.42,.36,.42]),(c,n)=>lpShade(skinL,n,.2));
-  });
-  body.position.y=.95; body.rotation.x=.22; root.add(body);
-  const head=part(B=>{
-    B.add(lpDent(new THREE.DodecahedronGeometry(.46,0),.05,8),lpM(0,0,0,0,[1,.85,1.05]),(c,n)=>lpShade(skin,n,.25));
-    B.add(lpBox(.62,.18,.5),lpM(0,-.36,.14),(c,n)=>lpShade(skin,n,.2));
-    for(let i=0;i<6;i++) B.add(lpCone(.035,.12,3),lpM(-.24+i*.096,-.2,.38,[Math.PI,0,0]),0xf2eee4);
-    for(const s of [-1,1]){ const h=lpCone(.11,.62,5); B.add(h,lpM(s*.28,.22,-.05,[-.35,0,-s*.55]),(c,n)=>lpShade(bone,n,.3)); }
-    for(const s of [-1,1]) B.add(lpBox(.16,.05,.05),lpM(s*.17,.2,.4,[0,0,s*.35]),0x120c18);
-  });
-  head.position.set(0,1.55,.42); body.add(head);
-  const eyes=[];
-  const eyeMat=new THREE.MeshBasicMaterial({color:0xff2a3a,fog:false,toneMapped:false});
-  for(const s of [-1,1]){ const e=new THREE.Mesh(new THREE.OctahedronGeometry(.075,0),eyeMat); e.scale.set(1.3,.7,.6); e.position.set(s*.17,.08,.42); head.add(e); eyes.push(e); }
-  const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:0xff2040,transparent:true,opacity:.7,depthWrite:false,fog:false,toneMapped:false,blending:THREE.AdditiveBlending}));
-  glow.scale.set(1.3,.7,1); glow.position.set(0,.08,.5); head.add(glow);
-  const arms=[-1,1].map(s=>{
-    const g=part(B=>{
-      B.add(lpCyl(.17,.22,.95,5),lpM(0,-.95,0),(c,n)=>lpShade(skin,n,.2));
-      B.add(lpCyl(.12,.17,.95,5),lpM(0,-1.85,.05),(c,n)=>lpShade(skinL,n,.2));
-      B.add(lpBlob0(s+5),lpM(0,-1.95,.08,0,[.24,.2,.26]),skin);
-      for(let i=0;i<3;i++) B.add(lpCone(.05,.34,4),lpM(-.1+i*.1,-2.05,.18,[Math.PI*.82,0,0]),0xe8e2d4);
-    });
-    g.position.set(s*.98,1.18,.12); body.add(g); return g; });
-  const legs=[-1,1].map(s=>{
-    const g=part(B=>{
-      B.add(lpCyl(.22,.3,.95,5),lpM(0,-.95,0),(c,n)=>lpShade(skin,n,.2));
-      B.add(lpBox(.42,.2,.6),lpM(0,-.97,.12),(c,n)=>lpShade(skinL,n,.2));
-      for(let i=0;i<3;i++) B.add(lpCone(.04,.16,3),lpM(-.13+i*.13,-.9,.44,[Math.PI/2,0,0]),0xe8e2d4);
-    });
-    g.position.set(s*.44,.95,0); root.add(g); return g; });
-  root.userData={body,head,arms,legs,eyes,glow};
-  root.scale.setScalar(1.05);
-  return root;
-}
-function animateMonster(M,dt,now){
-  const m=M.mesh, ud=m.userData, moving=M.moveSp>.2;
-  M.ph+=dt*(moving?M.moveSp*1.5:0);
-  const sw=Math.sin(M.ph), lean=M.state==='chase'?.18:0;
-  ud.legs[0].rotation.x=moving?sw*.6:0; ud.legs[1].rotation.x=moving?-sw*.6:0;
-  ud.body.position.y=.95+(moving?Math.abs(sw)*.07:Math.sin(now/700)*.02);
-  ud.body.rotation.x+=((.22+lean)-ud.body.rotation.x)*Math.min(1,dt*5);
-  let ax=moving?-sw*.45:Math.sin(now/900)*.08;
-  if(M.state==='attack'){ const k=M.atkT; ax=k<.3?-2.5*(k/.3):k<.42?-2.5+3.2*((k-.3)/.12):.7*(1-Math.min(1,(k-.42)/.3)); }
-  ud.arms[0].rotation.x=ax; ud.arms[1].rotation.x=M.state==='attack'?ax:-ax;
-  ud.arms[0].rotation.z=-.12; ud.arms[1].rotation.z=.12;
-  const pulse=.55+.45*Math.sin(now/170);
-  ud.glow.material.opacity=M.state==='chase'||M.state==='attack'?.9:.45+.2*pulse;
-  ud.eyes.forEach(e=>e.scale.set(1.3,M.state==='chase'?.9:.7,.6));
-}
 
 /* ---------- setting a match up ---------- */
 function dungeonSetup(ch){
   const W=world;
-  // you, and eleven others (the SECRET ones stay out unless you are one)
+  // you, and eleven others (the BEAST ones stay out unless you are one)
   const others=CHARACTERS.filter(c=>c.key!==ch.key&&c.rarity!=='celestial').sort(()=>Math.random()-.5).slice(0,11);
   const roster=[ch,...others];
-  alive=roster.length;
+  // the seeker: anyone at all, you included (a test can pin it: dgForceSeeker = 'you' | 'bot')
+  const force=window.dgForceSeeker;
+  const si=force==='you'?0:force==='bot'?1+Math.floor(Math.random()*others.length):Math.floor(Math.random()*roster.length);
+  alive=roster.length-1;
   const namePool=BOT_NAMES.slice().sort(()=>Math.random()-.5);
   KIT_DETAIL=GFX.q==='low'?.38:.6;
+  let seeker=null;
   roster.forEach((c,i)=>{
-    const a=i/roster.length*Math.PI*2+.2, R=4.9;
+    const isS=i===si, a=i/roster.length*Math.PI*2+.2, R=4.9;
     const mesh=c.build();
-    mesh.position.set(Math.cos(a)*R,0,Math.sin(a)*R);
+    if(isS) mesh.position.set(0,0,0); else mesh.position.set(Math.cos(a)*R,0,Math.sin(a)*R);
     mesh.rotation.y=Math.atan2(mesh.position.x,mesh.position.z);
     scene.add(mesh);
     const isP=c.key===ch.key;
-    const u={mesh,key:c.key,name:c.name,accent:c.accent,cfg:c,hp:DGM.HP,maxHp:DGM.HP,alive:true,isPlayer:isP,
+    const u={mesh,key:c.key,name:c.name,accent:c.accent,cfg:c,hp:1,maxHp:1,alive:true,isPlayer:isP,role:isS?'seeker':'hider',
       shootCd:0,bob:Math.random()*10,ult:0,dashCd:0,rootUntil:0,immuneUntil:0,speedUntil:0,dmgUntil:0,shield:0,
-      dashing:null,partnerPhase:0,airY:0,wade:0,landed:true,stamina:DGM.STAMINA,sprinting:false,
+      dashing:null,partnerPhase:0,airY:0,wade:0,landed:true,stamina:DGM.STAMINA,burst:DGM.BURST,burstLock:false,sprinting:false,
       ai:{state:'idle',path:null,pi:0,dest:null,spot:null,repath:0,clumsy:!isP&&Math.random()<.18,stuck:0,lx:0,lz:0,skill:Math.random(),threatAt:0,panicked:false}};
     u.display=isP?(State.username||'Player'):(namePool.pop()||('Bot'+i));
     u.tag=makeNameTag(u.display,isP); mesh.add(u.tag); syncNameTag(u);
     units.push(u);
     if(isP){ pUnit=u; player=mesh; }
+    if(isS){
+      seeker=u;
+      // the seeker wears a red ring, and a red glow anyone can spot down a corridor
+      const ring=new THREE.Mesh(new THREE.RingGeometry(.52,.7,36),new THREE.MeshBasicMaterial({color:0xff2a44,transparent:true,opacity:.85,depthWrite:false,side:THREE.DoubleSide,toneMapped:false}));
+      ring.rotation.x=-Math.PI/2; ring.position.y=.05; ring.renderOrder=3; mesh.add(ring); u.teamRing=ring;
+      const glow=new THREE.PointLight(0xff2444,1.6,7,1.6); glow.position.y=1.6; mesh.add(glow);
+    }
   });
-  // the cage keeps everyone off the monster until the hunt
+  // the cage holds the seeker until the count is done
   const cageCol={x:0,z:0,r:2.45,h:4}; W.obstacles.push(cageCol);
-  const mon={mesh:buildMonster(),pos:null,yaw:0,state:'caged',path:null,pi:0,dest:null,target:null,lastSeen:null,lastSeenAt:0,
-    atkT:0,hitDone:false,repath:0,ph:0,moveSp:0,stepT:0,look:0,checked:{},stuck:0,lx:0,lz:0,growlT:4};
-  mon.mesh.position.set(0,0,0); mon.pos=mon.mesh.position; scene.add(mon.mesh);
-  // light: your lantern, and the monster's red glare
-  const lamp=new THREE.PointLight(0xffd6a8,2.3,13,1.25); scene.add(lamp);
-  const eye=new THREE.PointLight(0xff2444,2.2,9,1.6); eye.position.set(0,2.1,0); mon.mesh.add(eye);
+  const mon={unit:seeker,mesh:seeker.mesh,pos:seeker.mesh.position,player:seeker.isPlayer,yaw:0,state:'caged',path:null,pi:0,dest:null,target:null,lastSeen:null,lastSeenAt:0,
+    repath:0,moveSp:0,look:0,checked:{},stuck:0,lx:0,lz:0};
+  // your lantern: a small circle for a hider, the whole corridor for the seeker
+  const you=seeker.isPlayer;
+  const lamp=new THREE.PointLight(0xffd6a8,you?2.8:2.3,you?24:13,you?1:1.25); scene.add(lamp);
   const veilMesh=dgVeilMesh(); scene.add(veilMesh);
-  DG={phase:'intro',t:0,mon,lamp,veilMesh,cageCol,count:0,hideEnd:0,huntEnd:0,beatT:0,dangerK:0,sprintHeld:false,caughtN:0,started:performance.now()};
-  document.body.classList.add('dungeon');
-  ['timerBox','aliveCount','hpBar','hpText','ultBar'].forEach(id=>{ const e=document.getElementById(id); e._text=e._width=undefined; });
-  document.getElementById('ultLine').textContent=Touch.on?'SPRINT · HOLD THE GREEN BUTTON':'SPRINT · HOLD SHIFT';
-  document.getElementById('dashLine').textContent='10 SECONDS FOR THE WHOLE MATCH';
-  document.getElementById('hintText').textContent='WASD move · Shift sprint (10s for the whole match) · Hide in straw heaps and behind drapes';
+  DG={phase:'intro',t:0,mon,seeker,lamp,veilMesh,cageCol,count:0,hideEnd:0,huntEnd:0,beatT:0,dangerK:0,sprintHeld:false,
+    hiders:roster.length-1,found:0,dead:[],coins:0,desc:'',started:performance.now()};
+  document.body.classList.add('dungeon'); document.body.classList.toggle('dg-seeker',you);
+  hudReset();
+  const sprintKey=Touch.on?'SPRINT · HOLD THE GREEN BUTTON':'SPRINT · HOLD SHIFT';
+  document.getElementById('ultLine').textContent=sprintKey;
+  document.getElementById('dashLine').textContent=you?'3 SECONDS AT A TIME · IT RECHARGES':'FREE WHILE HIDING · THEN 10 SECONDS';
+  document.getElementById('hintText').textContent=you?'WASD move · Shift sprint (3s, recharges) · Touch a hider to find them':
+    'WASD move · Shift sprint · Hide in straw heaps and behind drapes · The map shows the other hiders';
   document.getElementById('mapLabel').textContent=W.name;
+  if(!you) dgMapInit();
   camera.position.set(player.position.x+Math.sin(.9)*16,26,player.position.z+Math.cos(.9)*16);
   camera.lookAt(player.position.x,0,player.position.z);
 }
-function dungeonCam(){ return camera&&camera.aspect<1?{h:15.5,b:5.2}:{h:12.2,b:5.6}; }
+function dungeonCam(){ const s=DG&&DG.seeker.isPlayer; return camera&&camera.aspect<1?{h:s?18:15.5,b:s?6:5.2}:{h:s?14.5:12.2,b:s?6.4:5.6}; }
+/* who's who, for a moment before the count */
+function dgRoleCard(){
+  const you=DG.seeker.isPlayer, el=document.createElement('div'); el.className='dg-role'+(you?' seek':'');
+  el.innerHTML=you?'<small>YOU ARE THE</small><b>SEEKER</b><em>Count to 30 in the cage, then find all '+DG.hiders+' of them</em>':
+    '<small>THE SEEKER IS</small><b>'+DG.seeker.display.replace(/[<>&]/g,'')+'</b><em>'+DG.seeker.name+' · you have 30 seconds to hide</em>';
+  document.getElementById('game-screen').appendChild(el);
+  setTimeout(()=>el.classList.add('out'),2300); setTimeout(()=>el.remove(),2900);
+}
 
 /* ---------- the loop ---------- */
 function dungeonLoop(t){
@@ -12923,50 +13167,98 @@ function dungeonLoop(t){
   const now=performance.now();
   DG.t+=dt;
   world.update(dt,t/1000,player.position.x,player.position.z);
-  const C=dungeonCam();
+  const C=dungeonCam(), S=DG.seeker, youSeek=S.isPlayer;
   if(DG.phase==='intro'){
+    if(!DG.roleShown&&DG.t>.25){ DG.roleShown=true; dgRoleCard(); }
     const k0=Math.min(1,DG.t/2.2), k=k0<.5?4*k0*k0*k0:1-Math.pow(-2*k0+2,3)/2;
     const a=(1-k)*.9, dist=16+(C.b-16)*k, h=26+(C.h-26)*k;
     camera.position.set(player.position.x+Math.sin(a)*dist,h,player.position.z+Math.cos(a)*dist);
     camera.lookAt(player.position.x,.85*k,player.position.z);
-    const steps=[[2.3,3],[3.1,2],[3.9,1]];
+    const steps=[[2.9,3],[3.7,2],[4.5,1]];
     steps.forEach(([at,n],i)=>{ if(DG.t>=at&&DG.count<=i){ DG.count=i+1; countBanner(String(n)); SFX.count(n); } });
-    if(DG.t>=4.7&&DG.count<=3){ DG.count=4; countBanner('HIDE!','go hide'); SFX.countGo(true); DG.phase='hide'; DG.hideEnd=now+DGM.HIDE*1000; matchStart=now;
-      setTimeout(()=>{ const b=document.getElementById('banner'); if(b.textContent==='HIDE!'){ b.classList.add('out'); setTimeout(()=>{ if(b.textContent==='HIDE!') banner(''); },400); } },900); }
+    if(DG.t>=5.3&&DG.count<=3){ DG.count=4; countBanner(youSeek?'COUNT!':'HIDE!','go hide'); SFX.countGo(true); DG.phase='hide'; DG.hideEnd=now+DGM.HIDE*1000; matchStart=now;
+      setTimeout(()=>{ const b=document.getElementById('banner'); if(b.textContent==='HIDE!'||b.textContent==='COUNT!'){ b.classList.add('out'); setTimeout(()=>{ if(DG&&DG.phase!=='intro') banner(''); },400); } },900); }
   } else {
+    if(youSeek) dgCageStep(dt);
     dgPlayer(dt,now);
     camera.position.lerp(new THREE.Vector3(player.position.x,C.h,player.position.z+C.b),Math.min(1,dt*4));
     camera.lookAt(player.position.x,.85,player.position.z);
   }
   if(DG.phase==='hide'&&now>=DG.hideEnd) dgRelease(now);
-  if(DG.phase==='hunt'&&now>=DG.huntEnd&&pUnit.alive){ DG.phase='over'; finish(true,'SURVIVED!'); return; }
-  units.forEach(u=>{ if(!u.isPlayer&&u.alive) dgBot(u,dt,now); });
-  dgMonster(dt,now);
+  if(DG.phase==='hunt'&&now>=DG.huntEnd){ dgTimeUp(); return; }
+  units.forEach(u=>{ if(!u.isPlayer&&u.alive&&u!==S) dgBot(u,dt,now); });
+  if(!youSeek) dgSeekerBot(dt,now);
+  else if(DG.phase==='hunt') units.forEach(u=>{ if(u.alive&&u!==S&&fd(u.mesh.position,player.position)<DGM.CATCH) dgCatch(u); });   // a touch is enough
+  if(!gameOn) return;
+  // who you can see: the seeker sees down the corridors (nothing while counting), a hider only round the lantern
+  const blind=youSeek&&DG.phase!=='hunt', sight=youSeek?DGM.S_EYE+4:DGM.SIGHT+1.2;
   units.forEach(u=>{ if(!u.alive) return;
     animateFlair(u.mesh,now,u.bob); syncNameTag(u);
     if(!u.isPlayer){ const d=fd(u.mesh.position,player.position);
-      u.seen=d<DGM.SIGHT+1.2&&mazeSight(player.position,u.mesh.position)&&!(inBush(u.mesh.position)&&d>BUSH_REVEAL); } });
+      u.seen=!blind&&d<sight&&mazeSight(player.position,u.mesh.position)&&!(inBush(u.mesh.position)&&d>BUSH_REVEAL); } });
   updateBushFade(dt); updateLeaves(dt);
   DG.lamp.position.set(player.position.x,2.3,player.position.z);
   WORLD_UNI.uCam.value.copy(camera.position); WORLD_UNI.uPlayer.value.copy(player.position); WORLD_UNI.uSee.value=DG.phase==='intro'?0:1;
-  dgVeil(now); dgHud(now);
+  dgVeil(now); dgHud(now); dgMapDraw(now);
   updatePops();
   charLightsFor(camera,world.charEnv);
-  renderer.render(scene,camera);
+  shadowTick(); renderer.render(scene,camera);
   if(gameOn) raf=requestAnimationFrame(loop);
 }
-/* the monster is let out */
+/* the count is done: the cage drops */
 function dgRelease(now){
   DG.phase='hunt'; DG.huntEnd=now+DGM.HUNT*1000;
-  countBanner('IT\'S LOOSE!','go loose'); SFX.cageDrop(); setTimeout(()=>{ if(DG) SFX.monsterRoar(DG.mon.pos); },350);
+  countBanner(DG.seeker.isPlayer?'GO FIND THEM!':'READY OR NOT!','go loose'); SFX.cageDrop();
   setTimeout(()=>{ const b=document.getElementById('banner'); b.classList.add('out'); setTimeout(()=>{ if(DG&&DG.phase!=='intro') banner(''); },400); },1300);
   const M=DG.mon; M.state='rising'; M.riseT=0;
   shakeCam(.4);
 }
+/* somebody is found */
+function dgCatch(h){
+  if(!DG||!h.alive||h===DG.seeker) return;
+  h.alive=false; DG.found++;
+  const left=units.filter(u=>u.alive&&u!==DG.seeker).length;       // hiders still out there
+  h.place=left+2; alive=left;
+  const p=h.mesh.position;
+  DG.dead.push({key:h.key,x:p.x,z:p.z});
+  dgRelease1(h);
+  if(scene){ puff(p.clone(),0xff3a5a); shardBurst(p.clone().setY(1),[0xff3a5a,0xffffff,0xffc2cc],12,1.8,600); }
+  drop(h.mesh);
+  if(DG.mon.target===h){ DG.mon.target=null; DG.mon.state='patrol'; DG.mon.path=null; }
+  if(h.isPlayer){
+    SFX.caught(); DG.phase='over';
+    DG.coins=DG_PRIZE(h.place);
+    DG.desc=DG.seeker.display+' found you. You placed '+ordinal(h.place)+' of '+(DG.hiders+1)+'.';
+    finish(false,'FOUND!'); return;
+  }
+  SFX.ko(p);
+  if(DG.seeker.isPlayer){ popAt(DG.seeker,'FOUND!','ult'); SFX.hitConfirm(); toast('Found '+h.display+' · '+left+' left'); }
+  else toast(h.display+' was found · '+left+' left');
+  if(left===0){
+    DG.phase='over';
+    if(DG.seeker.isPlayer){ DG.coins=50; DG.desc='You found all '+DG.hiders+' of them.'; finish(true,'EVERYONE FOUND!'); }
+  }
+}
+/* the hunt ran out of time */
+function dgTimeUp(){
+  if(!DG||DG.phase==='over') return;
+  DG.phase='over';
+  const left=DG.hiders-DG.found;
+  if(DG.seeker.isPlayer){ DG.coins=5; DG.desc='Time\'s up. You found '+DG.found+' of '+DG.hiders+'.'; finish(false,'TIME\'S UP'); }
+  else { pUnit.place=1; DG.coins=DG_PRIZE(1); DG.desc=DG.seeker.display+' never found you. '+left+' of '+DG.hiders+' made it.'; finish(true,'YOU WIN!'); }
+}
 
 /* ---------- you ---------- */
+/* the seeker's sprint: 3 seconds, then it has to fill back up before it works again */
+function seekerBurst(u,want,dt){
+  if(want&&!u.burstLock&&u.burst>0){ u.burst=Math.max(0,u.burst-dt); if(u.burst<=0) u.burstLock=true; return true; }
+  u.burst=Math.min(DGM.BURST,u.burst+dt*DGM.BURST/DGM.RECHARGE); if(u.burstLock&&u.burst>=DGM.BURST) u.burstLock=false;
+  return false;
+}
 function dgPlayer(dt,now){
   const u=pUnit; if(!u.alive) return;
+  const seek=u===DG.seeker;
+  if(seek&&(DG.phase!=='hunt'||DG.mon.state==='rising')){ u.sprinting=false; animateWalk(player,u,dt,false); return; }     // counting in the cage, eyes shut
   const mv=new THREE.Vector3();
   Touch.tick();
   if(touchMove.active){ mv.x+=touchMove.x; mv.z+=touchMove.z; }
@@ -12974,14 +13266,15 @@ function dgPlayer(dt,now){
   if(keys['s']||keys['arrowdown']) mv.z+=1;
   if(keys['a']||keys['arrowleft']) mv.x-=1;
   if(keys['d']||keys['arrowright']) mv.x+=1;
-  const moving=mv.lengthSq()>0;
-  const want=(keys['shift']||DG.sprintHeld)&&moving&&u.stamina>0;
-  if(want&&!u.sprinting) SFX.sprint();
-  u.sprinting=want;
-  if(u.sprinting) u.stamina=Math.max(0,u.stamina-dt);
+  const moving=mv.lengthSq()>0, held=(keys['shift']||DG.sprintHeld)&&moving;
+  let run;
+  if(seek) run=seekerBurst(u,held,dt);
+  else { const free=DG.phase==='hide'; run=held&&(free||u.stamina>0); if(run&&!free) u.stamina=Math.max(0,u.stamina-dt); }
+  if(run&&!u.sprinting) SFX.sprint();
+  u.sprinting=run;
   if(moving){
     mv.normalize();
-    player.position.addScaledVector(mv,(u.sprinting?DGM.SPRINT:DGM.WALK)*dt); mazeCollide(player.position,.4);
+    player.position.addScaledVector(mv,(seek?(run?DGM.S_SPRINT:DGM.S_WALK):(run?DGM.SPRINT:DGM.WALK))*dt); mazeCollide(player.position,.4);
     const ta=Math.atan2(mv.x,mv.z); let da=ta-player.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); player.rotation.y+=da*Math.min(1,dt*12);
   }
   player.position.y=0;
@@ -13025,25 +13318,33 @@ function dgFollow(u,sp,dt){
 function dgPickSpot(u,now){
   const ai=u.ai, M=world.maze, dist=mazeDist(M,M.cellOf(u.mesh.position.x,u.mesh.position.z));
   const mon=DG.mon, hunting=DG.phase==='hunt';
-  const free=world.spots.filter(s=>!s.taken&&fd(s,player.position)>s.r&&!(hunting&&fd(s,mon.pos)<9)).map(s=>({s,d:dist[s.cell[0]*M.N+s.cell[1]]})).filter(o=>o.d>=0).sort((a,b)=>a.d-b.d);
+  const free=world.spots.filter(s=>!s.taken&&(DG.seeker.isPlayer||fd(s,player.position)>s.r)&&!(hunting&&fd(s,mon.pos)<9)).map(s=>({s,d:dist[s.cell[0]*M.N+s.cell[1]]})).filter(o=>o.d>=0).sort((a,b)=>a.d-b.d);
   if(ai.clumsy||!free.length){
     // no spot: find a quiet corner somewhere and stand in it
     const k=[Math.floor(Math.random()*M.N),Math.floor(Math.random()*M.N)];
     ai.spot=null; dgGo(u,dgCellPt(M,k)); ai.state='lurk'; return;
   }
-  const pick=free[Math.min(free.length-1,Math.floor(Math.random()*Math.min(3,free.length)))].s;
+  // while there's time, the better ones walk further for a better spot
+  const reach=DG.phase==='hide'?Math.min(free.length,3+Math.floor(ai.skill*6)):Math.min(3,free.length);
+  const pick=free[Math.min(free.length-1,Math.floor(Math.random()*reach))].s;
   pick.taken=u; ai.spot=pick; dgGo(u,pick); ai.state='toSpot';
 }
-function dgRelease1(u){ const s=u.ai.spot; if(s&&s.taken===u) s.taken=null; u.ai.spot=null; }
+function dgRelease1(u){ const s=u.ai&&u.ai.spot; if(s&&s.taken===u) s.taken=null; if(u.ai) u.ai.spot=null; }
+/* does the seeker have eyes on this hider right now? */
+function dgChasing(u,now){
+  const M=DG.mon, p=u.mesh.position, d=fd(M.pos,p);
+  if(M.player) return d<5.5&&mazeSight(M.pos,p)&&!(inBush(p)&&d>1.7);
+  return M.target===u&&M.state==='chase';
+}
 function dgBot(u,dt,now){
   const ai=u.ai, p=u.mesh.position, mon=DG.mon;
   let moving=false;
   u.sprinting=false;
   if(DG.phase==='intro'){ animateWalk(u.mesh,u,dt,false); return; }
-  const hunt=DG.phase==='hunt', dm=fd(mon.pos,p);
-  const chased=hunt&&mon.target===u&&(mon.state==='chase'||mon.state==='attack');
+  const hunt=DG.phase==='hunt', dm=fd(mon.pos,p), free=DG.phase==='hide';
+  const chased=hunt&&dgChasing(u,now);
   const exposed=hunt&&dm<6&&!inBush(p)&&mazeSight(mon.pos,p);
-  // a nervous hider can lose their nerve when it comes close, and bolt from cover
+  // a nervous hider can lose their nerve when the seeker comes close, and bolt from cover
   const nerves=hunt&&ai.state==='hidden'&&!ai.panicked&&dm<3.6&&mazeSight(mon.pos,p);
   if(nerves){ ai.panicked=true; if(Math.random()<(1-ai.skill)*.55){ ai.threatAt=now-5000; } }
   const threat=chased||exposed||(ai.panicked&&ai.threatAt<now-4000&&dm<3.6);
@@ -13052,7 +13353,7 @@ function dgBot(u,dt,now){
     // how long it takes to react depends on the bot
     if(now-ai.threatAt>=(1-ai.skill)*900||chased&&dm<2.4){
       dgRelease1(u); ai.state='flee'; ai.fleeUntil=now+3500+Math.random()*2000; ai.threatAt=0;
-      // run for a cell far from the monster (the less skilled, the more they guess)
+      // run for a cell far from the seeker (the less skilled, the more they guess)
       const M=world.maze, dMon=mazeDist(M,M.cellOf(mon.pos.x,mon.pos.z)), dMe=mazeDist(M,M.cellOf(p.x,p.z));
       let best=null, bs=-1e9;
       for(let i=0;i<M.N;i++) for(let j=0;j<M.N;j++){ const c=i*M.N+j; if(dMe[c]<0) continue; const sc=dMon[c]*1.4*ai.skill-dMe[c]*.6+Math.random()*(1.5+4*(1-ai.skill)); if(sc>bs){ bs=sc; best=[i,j]; } }
@@ -13060,12 +13361,14 @@ function dgBot(u,dt,now){
     }
   }
   if(dm>7) ai.panicked=false;
+  const drain=r=>{ if(r&&!free) u.stamina=Math.max(0,u.stamina-dt); };
   if(ai.state==='idle'){ if(!ai.wait) ai.wait=now+Math.random()*900; else if(now>ai.wait) dgPickSpot(u,now); }
   else if(ai.state==='toSpot'||ai.state==='lurk'){
-    const left=DG.phase==='hide'?(DG.hideEnd-now)/1000:99;
+    const left=free?(DG.hideEnd-now)/1000:99;
     const remain=ai.path?ai.path.slice(ai.pi).length*3.2:0;
-    const rush=u.stamina>0&&((DG.phase==='hide'&&remain/DGM.WALK>left-1.5)||(hunt&&dm<4.5));
-    u.sprinting=rush; if(rush) u.stamina=Math.max(0,u.stamina-dt);
+    // while hiding, sprinting is free: most run for it (the dawdlers only when time's short)
+    const rush=free?(ai.skill>.25||remain/DGM.WALK>left-3):(u.stamina>0&&hunt&&dm<4.5);
+    u.sprinting=rush; drain(rush);
     if(dgFollow(u,rush?DGM.SPRINT:DGM.WALK,dt)) ai.state=ai.state==='toSpot'?'hidden':'lurking';
     else moving=true;
     if(ai.spot&&ai.spot.taken!==u&&ai.spot.taken) dgPickSpot(u,now);
@@ -13075,9 +13378,9 @@ function dgBot(u,dt,now){
   }
   else if(ai.state==='flee'){
     const run=u.stamina>0&&(ai.skill<.4||dm<6.5);         // the jittery ones sprint at once and run dry
-    u.sprinting=run; if(run) u.stamina=Math.max(0,u.stamina-dt);
+    u.sprinting=run; drain(run);
     const there=dgFollow(u,run?DGM.SPRINT:DGM.WALK,dt); moving=!there;
-    if((there||now>ai.fleeUntil)&&!(mon.target===u&&mon.state==='chase')){ ai.state='idle'; ai.wait=0; dgPickSpot(u,now); }
+    if((there||now>ai.fleeUntil)&&!dgChasing(u,now)){ ai.state='idle'; ai.wait=0; dgPickSpot(u,now); }
   }
   // unstick: if walking but not getting anywhere, plan again
   if(moving){ ai.stuck=Math.hypot(p.x-ai.lx,p.z-ai.lz)<.02?ai.stuck+dt:0; if(ai.stuck>1.2&&ai.dest){ ai.stuck=0; dgGo(u,ai.dest); } }
@@ -13086,24 +13389,22 @@ function dgBot(u,dt,now){
   animateWalk(u.mesh,u,dt,moving);
 }
 
-/* ---------- the monster's mind ---------- */
+/* ---------- a bot seeker's mind ---------- */
 function monCanSee(M,u,now){
   const q=u.mesh.position, d=fd(M.pos,q);
-  if(d>DGM.EYE) return false;
+  if(d>DGM.S_EYE) return false;
   if(!mazeSight(M.pos,q)) return false;
   if(inBush(q)&&d>1.7&&now-(u.monSeenAt||-1e9)>1100) return false;     // hidden, and it didn't see you slip in
   if(d>3){ const fx=Math.sin(M.yaw), fz=Math.cos(M.yaw); if(fx*(q.x-M.pos.x)/d+fz*(q.z-M.pos.z)/d<-.25) return false; }
   return true;
 }
-function monGo(M,to){ M.path=mazeRoute(world.maze,M.pos,to,.7); M.pi=0; M.dest=to; }
+function monGo(M,to){ M.path=mazeRoute(world.maze,M.pos,to,.45); M.pi=0; M.dest=to; }
 function monPatrolDest(M,now){
   const W=world.maze;
   const spots=world.spots.filter(s=>!(M.checked[s.i]&&now-M.checked[s.i]<18000));
-  if(spots.length&&Math.random()<.65){
-    // it has a nose for them: an occupied hiding place is likelier to get a visit, and so is a near one
-    // ...and the longer the hunt goes on, the better it smells you
-    const late=DG.huntEnd-now<40000;
-    const occ=s=>{ const u=units.find(u=>u.alive&&fd(u.mesh.position,s)<s.r); return !u?1:u.isPlayer?(late?4:1.6):2.5; };
+  if(spots.length&&Math.random()<.6){
+    // a good seeker knows where people hide: an occupied spot is likelier to get a look, and so is a near one
+    const occ=s=>units.some(u=>u.alive&&u!==DG.seeker&&fd(u.mesh.position,s)<s.r)?2.2:1;
     const w=spots.map(s=>occ(s)/(1+fd(M.pos,s)/12)), tot=w.reduce((a,b)=>a+b,0);
     let r=Math.random()*tot, pick=spots[0]; for(let i=0;i<spots.length;i++){ r-=w[i]; if(r<=0){ pick=spots[i]; break; } }
     M.checked[pick.i]=now; return {x:pick.x,z:pick.z}; }
@@ -13115,39 +13416,35 @@ function monPatrolDest(M,now){
 function monStep(M,sp,dt){
   if(!M.path||M.pi>=M.path.length){ M.moveSp=0; return true; }
   const w=M.path[M.pi], p=M.pos, dx=w.x-p.x, dz=w.z-p.z, d=Math.hypot(dx,dz), last=M.pi===M.path.length-1;
-  if(d<(last?.35:.9)){ M.pi++; return M.pi>=M.path.length; }
-  const st=Math.min(d,sp*dt); p.x+=dx/d*st; p.z+=dz/d*st; mazeCollide(p,.7);
+  if(d<(last?.3:.7)){ M.pi++; return M.pi>=M.path.length; }
+  const st=Math.min(d,sp*dt); p.x+=dx/d*st; p.z+=dz/d*st; mazeCollide(p,.4);
   M.moveSp=sp; M.wantYaw=Math.atan2(dx,dz);
   return false;
 }
-function dgMonster(dt,now){
-  const M=DG.mon, m=M.mesh;
+function dgSeekerBot(dt,now){
+  const M=DG.mon, S=M.unit;
+  M.moveSp=0; S.sprinting=false;
   if(M.state==='caged'){
-    M.moveSp=0; M.growlT-=dt;
-    if(M.growlT<=0){ M.growlT=3+Math.random()*4; SFX.monsterGrowl(M.pos); }
-    const tg=player.position; M.wantYaw=Math.atan2(tg.x-M.pos.x,tg.z-M.pos.z);
+    M.wantYaw=(M.wantYaw||0)+dt*.4;                    // turning slowly in the cage while it counts
   } else if(M.state==='rising'){
     M.riseT+=dt; const k=Math.min(1,M.riseT/1.1);
     world.cage.position.y=-3.6*k*k;
     if(k>=1){ world.cage.visible=false; const i=world.obstacles.indexOf(DG.cageCol); if(i>=0) world.obstacles.splice(i,1); M.state='patrol'; M.path=null; }
-  } else {
+  } else if(DG.phase==='hunt'){
     // eyes and ears
     let best=null, bd=1e9, keep=false;
-    for(const u of units){ if(!u.alive) continue; if(monCanSee(M,u,now)){ u.monSeenAt=now; const d=fd(M.pos,u.mesh.position); if(u===M.target) keep=d; if(d<bd){ bd=d; best=u; } } }
+    for(const u of units){ if(!u.alive||u===S) continue; if(monCanSee(M,u,now)){ u.monSeenAt=now; const d=fd(M.pos,u.mesh.position); if(u===M.target) keep=d; if(d<bd){ bd=d; best=u; } } }
     if(keep!==false&&best!==M.target&&bd>keep*.6) best=M.target;
-    if(best&&M.state!=='attack'){
-      if(M.state!=='chase'||M.target!==best){ SFX.monsterGrowl(M.pos); if(best.isPlayer) toast('IT SEES YOU — RUN!'); }
+    if(best){
+      if(M.state!=='chase'||M.target!==best){ if(best.isPlayer) toast(S.display+' SEES YOU — RUN!'); }
       M.target=best; M.state='chase'; M.lastSeen={x:best.mesh.position.x,z:best.mesh.position.z}; M.lastSeenAt=now;
     }
     if((M.state==='patrol'||M.state==='search')&&!best){
       for(const sp of world.spots){ const d=fd(M.pos,sp); if(d>3.2){ if(sp.sniffed&&d>5) sp.sniffed=false; continue; } if(sp.sniffed) continue; sp.sniffed=true;
-        const hid=units.find(u=>u.alive&&fd(u.mesh.position,sp)<sp.r&&mazeSight(M.pos,u.mesh.position));
-        if(hid&&Math.random()<.6){ hid.monSeenAt=now; SFX.monsterGrowl(M.pos); } }
-    }
-    if(M.state==='patrol'||M.state==='search'){
-      // footsteps of someone sprinting carry: it goes to look (a new noise only
-      // pulls it away from the one it is following if it is closer)
-      const loud=units.find(u=>u.alive&&u.sprinting&&fd(M.pos,u.mesh.position)<11);
+        const hid=units.find(u=>u.alive&&u!==S&&fd(u.mesh.position,sp)<sp.r&&mazeSight(M.pos,u.mesh.position));
+        if(hid&&Math.random()<.6) hid.monSeenAt=now; }
+      // footsteps of someone sprinting carry: it goes to look
+      const loud=units.find(u=>u.alive&&u!==S&&u.sprinting&&fd(M.pos,u.mesh.position)<11);
       if(loud&&(!M.heardAt||now-M.heardAt>1200)){
         const q=loud.mesh.position, dNew=fd(M.pos,q);
         if(M.state!=='search'||!M.dest||(fd(q,M.dest)>3&&dNew<fd(M.pos,M.dest))){ M.heardAt=now; M.state='search'; monGo(M,{x:q.x,z:q.z}); M.look=0; }
@@ -13156,70 +13453,109 @@ function dgMonster(dt,now){
     if(M.state==='patrol'){
       if(!M.path||M.pi>=M.path.length) monGo(M,monPatrolDest(M,now));
       if(monStep(M,DGM.PATROL,dt)) M.path=null;
+      seekerBurst(S,false,dt);
     } else if(M.state==='search'){
       if(monStep(M,DGM.SEARCH,dt)){ M.look+=dt; M.moveSp=0; M.wantYaw=(M.wantYaw||0)+dt*2.2; if(M.look>1.6){ M.state='patrol'; M.path=null; } }
+      seekerBurst(S,false,dt);
     } else if(M.state==='chase'){
       const T=M.target;
       if(!T||!T.alive){ M.state='patrol'; M.path=null; M.target=null; }
       else if(now-M.lastSeenAt>2600){ M.state='search'; monGo(M,M.lastSeen); M.look=0; }
       else {
-        const q=T.mesh.position, d=fd(M.pos,q);
-        if(d<1.6&&now-M.lastSeenAt<300){ M.state='attack'; M.atkT=0; M.hitDone=false; M.moveSp=0; SFX.monsterSwipe(M.pos); }
-        else {
-          const W=world.maze, mc=W.cellOf(M.pos.x,M.pos.z), tc=W.cellOf(q.x,q.z), fresh=now-M.lastSeenAt<300;
-          if(fresh&&(d<3||(mc[0]===tc[0]&&mc[1]===tc[1]))&&mazeSight(M.pos,q)){
-            // close and in the open: straight at them
-            const dx=q.x-M.pos.x, dz=q.z-M.pos.z, st=Math.min(d,DGM.CHASE*dt);
-            M.pos.x+=dx/d*st; M.pos.z+=dz/d*st; mazeCollide(M.pos,.7); M.moveSp=DGM.CHASE; M.wantYaw=Math.atan2(dx,dz); M.path=null;
-          } else {
-            // further off: through the middle of each doorway, so it never snags a corner
-            M.repath-=dt; if(M.repath<=0||!M.path){ M.repath=.3; monGo(M,fresh?{x:q.x,z:q.z}:M.lastSeen); }
-            monStep(M,DGM.CHASE,dt);
-          }
+        const q=T.mesh.position, d=fd(M.pos,q), fresh=now-M.lastSeenAt<300;
+        if(d<DGM.CATCH+.1){ dgCatch(T); return; }
+        const run=seekerBurst(S,d>1.8,dt); S.sprinting=run;             // it sprints at them in 3-second bursts
+        const sp=run?DGM.S_SPRINT:DGM.S_WALK;
+        const W=world.maze, mc=W.cellOf(M.pos.x,M.pos.z), tc=W.cellOf(q.x,q.z);
+        if(fresh&&(d<3||(mc[0]===tc[0]&&mc[1]===tc[1]))&&mazeSight(M.pos,q)){
+          const dx=q.x-M.pos.x, dz=q.z-M.pos.z, st=Math.min(d,sp*dt);
+          M.pos.x+=dx/d*st; M.pos.z+=dz/d*st; mazeCollide(M.pos,.4); M.moveSp=sp; M.wantYaw=Math.atan2(dx,dz); M.path=null;
+        } else {
+          M.repath-=dt; if(M.repath<=0||!M.path){ M.repath=.3; monGo(M,fresh?{x:q.x,z:q.z}:M.lastSeen); }
+          monStep(M,sp,dt);
         }
       }
-    } else if(M.state==='attack'){
-      M.atkT+=dt; const T=M.target;
-      if(T&&T.alive){ M.wantYaw=Math.atan2(T.mesh.position.x-M.pos.x,T.mesh.position.z-M.pos.z);
-        // it lunges while it winds up: walking away is not enough, you have to run
-        if(!M.hitDone){ const q=T.mesh.position, d=fd(M.pos,q); if(d>.9){ const st=Math.min(d-.9,DGM.CHASE*1.25*dt); M.pos.x+=(q.x-M.pos.x)/d*st; M.pos.z+=(q.z-M.pos.z)/d*st; mazeCollide(M.pos,.7); } } }
-      if(M.atkT>=.3&&!M.hitDone){
-        M.hitDone=true;
-        if(T&&T.alive&&fd(M.pos,T.mesh.position)<2.05){
-          hurt(T,DGM.DMG,false,null);
-          if(T.isPlayer){ shakeCam(.5); DG.hitFlash=now; }
-          if(T.alive){ const k=V3().subVectors(T.mesh.position,M.pos); k.y=0; if(k.lengthSq()<1e-4) k.set(0,0,1); k.normalize(); T.mesh.position.addScaledVector(k,1.3); mazeCollide(T.mesh.position,.4); }
-        }
-      }
-      if(M.atkT>=.9){ M.state=T&&T.alive?'chase':'patrol'; M.path=null; if(!(T&&T.alive)) M.target=null; }
     }
     // stuck against something while walking: try another way
     if(M.moveSp>0){ M.stuck=Math.hypot(M.pos.x-M.lx,M.pos.z-M.lz)<.02?M.stuck+dt:0; if(M.stuck>1){ M.stuck=0; M.path=null; if(M.state==='search') M.state='patrol'; } }
     M.lx=M.pos.x; M.lz=M.pos.z;
-    if(M.moveSp>0){ M.stepT-=dt; if(M.stepT<=0){ M.stepT=M.state==='chase'?.36:.52; SFX.monsterStep(M.pos); } }
   }
-  if(M.wantYaw!==undefined){ let da=M.wantYaw-M.yaw; da=Math.atan2(Math.sin(da),Math.cos(da)); M.yaw+=da*Math.min(1,dt*(M.state==='chase'?9:5)); }
-  m.rotation.y=M.yaw;
-  m.visible=fd(M.pos,player.position)<DGM.EYE+4;
-  animateMonster(M,dt,now);
+  if(M.wantYaw!==undefined){ let da=M.wantYaw-M.yaw; da=Math.atan2(Math.sin(da),Math.cos(da)); M.yaw+=da*Math.min(1,dt*(M.state==='chase'?10:6)); }
+  S.mesh.rotation.y=M.yaw; M.pos.y=0;
+  animateWalk(S.mesh,S,dt,M.moveSp>0);
+}
+/* a player seeker's cage drops the same way */
+function dgCageStep(dt){
+  const M=DG.mon; if(M.state!=='rising') return;
+  M.riseT+=dt; const k=Math.min(1,M.riseT/1.1);
+  world.cage.position.y=-3.6*k*k;
+  if(k>=1){ world.cage.visible=false; const i=world.obstacles.indexOf(DG.cageCol); if(i>=0) world.obstacles.splice(i,1); M.state='free'; }
+}
+
+/* ---------- the hiders' map: the maze, the other hiders, and a crossed-out head where one was found ---------- */
+function dgMapInit(){
+  const M=world.maze, N=M.N, CSS=Math.min(172,Math.round(Math.min(innerWidth,innerHeight)*.3)), dpr=Math.min(2,devicePixelRatio||1), S=Math.round(CSS*dpr);
+  const wrap=document.createElement('div'); wrap.id='dgMap'; wrap.innerHTML='<canvas></canvas><b>MAP</b>';
+  document.getElementById('game-screen').appendChild(wrap);
+  const cv=wrap.querySelector('canvas'); cv.width=cv.height=S; cv.style.width=cv.style.height=CSS+'px';
+  const pad=S*.07, cell=(S-pad*2)/N;
+  const base=document.createElement('canvas'); base.width=base.height=S;
+  const b=base.getContext('2d');
+  b.fillStyle='rgba(18,14,30,.92)'; b.fillRect(0,0,S,S);
+  // the floor of each cell, the room in the middle a little lighter
+  for(let i=0;i<N;i++) for(let j=0;j<N;j++){ const room=i>=M.c0&&i<=M.c1&&j>=M.c0&&j<=M.c1;
+    b.fillStyle=room?'rgba(120,60,90,.35)':'rgba(70,60,100,.28)'; b.fillRect(pad+i*cell+1,pad+j*cell+1,cell-2,cell-2); }
+  b.strokeStyle='#cbb8ff'; b.lineWidth=Math.max(2,S*.012); b.lineCap='round'; b.beginPath();
+  for(let L=0;L<=N;L++) for(let j=0;j<N;j++) if(M.V[L][j]){ b.moveTo(pad+L*cell,pad+j*cell); b.lineTo(pad+L*cell,pad+(j+1)*cell); }
+  for(let L=0;L<=N;L++) for(let i=0;i<N;i++) if(M.H[L][i]){ b.moveTo(pad+i*cell,pad+L*cell); b.lineTo(pad+(i+1)*cell,pad+L*cell); }
+  b.stroke();
+  // everyone's head, from their portraits
+  const heads={};
+  units.forEach(u=>{ if(u===DG.seeker) return; const im=new Image(); try{ im.src=Lobby.cachedPortrait(u.key)||Lobby.portrait(u.key); }catch(e){} heads[u.key]=im; });
+  DG.map={cv,ctx:cv.getContext('2d'),base,heads,S,pad,cell,N,drawAt:0};
+}
+function dgMapDraw(now){
+  const m=DG&&DG.map; if(!m||now-m.drawAt<90) return; m.drawAt=now;
+  const x=m.ctx, CSv=DGN.CS, toP=(wx,wz)=>[m.pad+(wx/CSv+m.N/2)*m.cell,m.pad+(wz/CSv+m.N/2)*m.cell];
+  x.clearRect(0,0,m.S,m.S); x.drawImage(m.base,0,0);
+  const R=m.cell*.42;
+  const head=(key,px,py,r)=>{
+    x.save(); x.beginPath(); x.arc(px,py,r,0,Math.PI*2); x.closePath();
+    x.fillStyle='#2a2440'; x.fill(); x.clip();
+    const im=m.heads[key]; if(im&&im.complete&&im.naturalWidth){ const w=im.naturalWidth, h=im.naturalHeight; x.drawImage(im,w*.22,h*.04,w*.56,h*.56,px-r,py-r,r*2,r*2); }
+    x.restore();
+  };
+  // the ones who were found: where it happened, greyed out and crossed through
+  DG.dead.forEach(d=>{ const [px,py]=toP(d.x,d.z); head(d.key,px,py,R*.9);
+    x.fillStyle='rgba(16,12,24,.55)'; x.beginPath(); x.arc(px,py,R*.9,0,Math.PI*2); x.fill();
+    x.strokeStyle='#ff3a5a'; x.lineWidth=Math.max(2,R*.28); x.lineCap='round';
+    x.beginPath(); x.moveTo(px-R*.75,py-R*.75); x.lineTo(px+R*.75,py+R*.75); x.moveTo(px+R*.75,py-R*.75); x.lineTo(px-R*.75,py+R*.75); x.stroke(); });
+  // the ones still hiding (the seeker is never on it)
+  units.forEach(u=>{ if(!u.alive||u===DG.seeker||u.isPlayer) return; const [px,py]=toP(u.mesh.position.x,u.mesh.position.z);
+    head(u.key,px,py,R); x.strokeStyle='#8fd8ff'; x.lineWidth=Math.max(1.5,R*.16); x.beginPath(); x.arc(px,py,R,0,Math.PI*2); x.stroke(); });
+  if(pUnit.alive){ const [px,py]=toP(player.position.x,player.position.z), k=.5+.5*Math.sin(now/220);
+    x.strokeStyle='rgba(255,255,255,'+(.35+.4*k)+')'; x.lineWidth=Math.max(2,R*.2); x.beginPath(); x.arc(px,py,R*(1.35+.25*k),0,Math.PI*2); x.stroke();
+    head(pUnit.key,px,py,R*1.1); x.strokeStyle='#ffffff'; x.lineWidth=Math.max(2,R*.2); x.beginPath(); x.arc(px,py,R*1.1,0,Math.PI*2); x.stroke(); }
 }
 
 /* ---------- darkness: only the circle round your lantern is clear ----------
    A full-screen pass drawn after everything else (name tags included): clear
-   round you, dark beyond, and a red bruise at the edges when it's close. */
+   round you, dark beyond, and a red bruise at the edges when the seeker's
+   close. The seeker sees normally, and nothing at all while counting. */
 const VEIL_VS=`void main(){ gl_Position=vec4(position.xy,0.0,1.0); }`;
-const VEIL_FS=`uniform vec2 uC; uniform vec2 uR; uniform vec2 uRes; uniform float uDanger; uniform float uHit; uniform float uChased;
+const VEIL_FS=`uniform vec2 uC; uniform vec2 uR; uniform vec2 uRes; uniform float uDanger; uniform float uHit; uniform float uChased; uniform float uOpen; uniform float uBlind;
 void main(){
   vec2 p=gl_FragCoord.xy; float r=length((p-uC)/uR);
-  float a=smoothstep(.42,.8,r)*.74+smoothstep(.8,1.05,r)*.22;
+  float a=(smoothstep(.42,.8,r)*.74+smoothstep(.8,1.05,r)*.22)*(1.0-uOpen);
   vec2 q=p/uRes-.5; q.x*=uRes.x/uRes.y; float e=smoothstep(.35,.95,length(q));
+  a=max(a,e*.35*uOpen);                                           // the seeker: just a soft vignette
   vec3 dark=mix(vec3(.016,.012,.04),vec3(.17,.012,.05),uChased);
   vec3 col=mix(dark,vec3(.55,.02,.1),clamp(uDanger*e*.9+uHit*.6,0.0,1.0));
-  gl_FragColor=vec4(col,clamp(a+uDanger*e*.35+uHit*.35,0.0,.97));
+  gl_FragColor=vec4(col,clamp(max(a+uDanger*e*.35+uHit*.35,uBlind*.985),0.0,.985));
 }`;
 function dgVeilMesh(){
   const m=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({vertexShader:VEIL_VS,fragmentShader:VEIL_FS,transparent:true,depthTest:false,depthWrite:false,
-    uniforms:{uC:{value:new THREE.Vector2()},uR:{value:new THREE.Vector2(100,100)},uRes:{value:new THREE.Vector2(1,1)},uDanger:{value:0},uHit:{value:0},uChased:{value:0}}}));
+    uniforms:{uC:{value:new THREE.Vector2()},uR:{value:new THREE.Vector2(100,100)},uRes:{value:new THREE.Vector2(1,1)},uDanger:{value:0},uHit:{value:0},uChased:{value:0},uOpen:{value:0},uBlind:{value:0}}}));
   m.frustumCulled=false; m.renderOrder=200; return m;
 }
 const _dv=new THREE.Vector3();
@@ -13228,44 +13564,55 @@ function dgVeil(now){
   _dv.set(p.x,.9,p.z).project(camera); const sx=(_dv.x*.5+.5)*W, sy=(_dv.y*.5+.5)*H;
   _dv.set(p.x+R,.9,p.z).project(camera); const rx=Math.abs((_dv.x*.5+.5)*W-sx);
   _dv.set(p.x,.9,p.z-R).project(camera); const ry=Math.abs((_dv.y*.5+.5)*H-sy);
-  const M=DG.mon, d=fd(M.pos,p), hunt=DG.phase==='hunt';
-  const k=hunt?Math.max(0,Math.min(1,1-(d-2.5)/14)):0;
+  const M=DG.mon, you=DG.seeker.isPlayer, d=fd(M.pos,p), hunt=DG.phase==='hunt';
+  const k=hunt&&!you?Math.max(0,Math.min(1,1-(d-2.5)/14)):0;
   DG.dangerK+=(k-DG.dangerK)*.08;
-  const chased=hunt&&M.target===pUnit&&(M.state==='chase'||M.state==='attack');
+  const chased=hunt&&!you&&dgChasing(pUnit,now);
   DG.chasedK=(DG.chasedK||0)+((chased?1:0)-(DG.chasedK||0))*.1;
-  const hit=DG.hitFlash&&now-DG.hitFlash<400?1-(now-DG.hitFlash)/400:0;
   const U=DG.veilMesh.material.uniforms;
+  const blindTo=you&&DG.phase!=='hunt'&&DG.phase!=='over'&&DG.t>2.2?1:0;
+  U.uBlind.value+=(blindTo-U.uBlind.value)*.12;
+  U.uOpen.value=you?1:0;
   U.uC.value.set(sx*pr,sy*pr); U.uR.value.set(Math.max(20,rx)*pr,Math.max(20,ry)*pr); U.uRes.value.set(W*pr,H*pr);
-  U.uDanger.value=DG.dangerK; U.uHit.value=hit; U.uChased.value=DG.chasedK;
+  U.uDanger.value=DG.dangerK; U.uHit.value=0; U.uChased.value=DG.chasedK;
   if(typeof Score!=='undefined') Score.setTension(DG.dangerK);
   const bdt=Math.min(.1,(now-(DG.beatNow||now))/1000); DG.beatNow=now;
   if(hunt&&DG.dangerK>.12&&pUnit.alive){ DG.beatT-=bdt; if(DG.beatT<=0){ DG.beatT=1.15-.7*DG.dangerK; SFX.heartbeat(DG.dangerK); } }
 }
-/* ---------- the HUD while hiding ---------- */
+/* ---------- the HUD ---------- */
 function dgHud(now){
-  const u=pUnit, left=DG.phase==='hide'?(DG.hideEnd-now)/1000:DG.phase==='hunt'?(DG.huntEnd-now)/1000:DG.phase==='intro'?DGM.HIDE:0;
+  const u=pUnit, you=u===DG.seeker, left=DG.phase==='hide'?(DG.hideEnd-now)/1000:DG.phase==='hunt'?(DG.huntEnd-now)/1000:DG.phase==='intro'?DGM.HIDE:0;
   const s=Math.max(0,Math.ceil(left));
-  const set=(id,prop,v)=>{ const e=document.getElementById(id); if(e['_'+prop]!==v){ e['_'+prop]=v; if(prop==='text') e.textContent=v; else e.style[prop]=v; } };
-  const tb=document.getElementById('timerBox');
-  set('timerBox','text',(DG.phase==='hunt'?'SURVIVE ':'HIDE ')+Math.floor(s/60)+':'+String(s%60).padStart(2,'0'));
+  const tb=hudEl('timerBox');
+  const lbl=DG.phase==='hunt'?(you?'SEEK ':'SURVIVE '):(you?'COUNTING ':'HIDE ');
+  hudSet('timerBox','text',lbl+Math.floor(s/60)+':'+String(s%60).padStart(2,'0'));
   tb.classList.toggle('hunt',DG.phase==='hunt'); tb.classList.toggle('urgent',DG.phase!=='intro'&&s<=5);
-  set('aliveCount','text',String(alive));
-  set('hpBar','width',Math.max(0,u.hp/u.maxHp*100)+'%');
-  set('hpText','text',Math.max(0,Math.ceil(u.hp))+' / '+u.maxHp);
-  set('ultBar','width',(u.stamina/DGM.STAMINA*100).toFixed(1)+'%');
-  document.getElementById('ultBar').classList.toggle('full',false);
+  hudSet('aliveCount','text',String(alive));
+  hudSet('hpBar','width','100%');
+  hudSet('hpText','text',you?'SEEKER · FOUND '+DG.found+' / '+DG.hiders:'HIDER');
+  const free=!you&&DG.phase!=='hunt';
+  hudSet('ultBar','width',(you?u.burst/DGM.BURST*100:free?100:u.stamina/DGM.STAMINA*100).toFixed(1)+'%');
+  const ub=hudEl('ultBar'), full=free; if(ub._full!==full){ ub._full=full; ub.classList.toggle('full',full); }
   let c='';
-  if(inBush(player.position)) c+='<span class="buff-chip good">HIDDEN</span>';
-  if(u.sprinting) c+='<span class="buff-chip">SPRINTING</span>';
-  if(u.stamina<=0) c+='<span class="buff-chip dim">NO SPRINT LEFT</span>';
-  const M=DG.mon; if(DG.phase==='hunt'&&M.target===u&&(M.state==='chase'||M.state==='attack')) c+='<span class="buff-chip bad">IT SEES YOU</span>';
-  const bh=document.getElementById('buffRow'); if(bh._c!==c){ bh._c=c; bh.innerHTML=c; }
+  if(you){
+    if(DG.phase!=='hunt') c+='<span class="buff-chip bad">EYES SHUT · COUNTING</span>';
+    else { if(u.sprinting) c+='<span class="buff-chip good">SPRINTING</span>'; if(u.burstLock) c+='<span class="buff-chip dim">SPRINT RECHARGING</span>';
+      c+='<span class="buff-chip">'+alive+' LEFT</span>'; }
+  } else {
+    if(inBush(player.position)) c+='<span class="buff-chip good">HIDDEN</span>';
+    if(free) c+='<span class="buff-chip good">UNLIMITED SPRINT</span>';
+    else { if(u.sprinting) c+='<span class="buff-chip">SPRINTING</span>'; if(u.stamina<=0) c+='<span class="buff-chip dim">NO SPRINT LEFT</span>'; }
+    if(DG.phase==='hunt'&&dgChasing(u,now)) c+='<span class="buff-chip bad">'+DG.seeker.display.toUpperCase().replace(/[<>&]/g,'')+' SEES YOU</span>';
+  }
+  hudSet('buffRow','html',c);
 }
 function dungeonStop(){
   if(!DG) return;
   if(typeof Score!=='undefined') Score.setTension(0);
-  document.body.classList.remove('dungeon');
-  document.getElementById('timerBox').classList.remove('hunt','urgent');
+  document.body.classList.remove('dungeon','dg-seeker');
+  const mp=document.getElementById('dgMap'); if(mp) mp.remove();
+  document.querySelectorAll('.dg-role').forEach(e=>e.remove());
+  hudEl('timerBox').classList.remove('hunt','urgent');
   document.getElementById('hintText').textContent='WASD move · Mouse aim · Click attack · E super · Shift ability · Bushes hide you';
   DG=null;
 }
