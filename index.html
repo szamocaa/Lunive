@@ -1697,7 +1697,7 @@ body.truth-touch .ti-keys{display:none;}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.2.0 · BETA</span>
+    <span class="hub-version">VERSION 3.3.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -1817,7 +1817,7 @@ body.truth-touch .ti-keys{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.2.0</div></div>
+</svg><div class="set-ver">VERSION 3.3.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -2427,16 +2427,22 @@ const SFX=(function(){
     return {
       /* the loops that never stop: the building's rumble, the tubes' hum, the television, your ears ringing */
       start(){
-        if(!ready()) return; this.stop();
+        if(!ready()) return; this.stop(); tW.gain.value=1.5;
         const out=ctx.createGain(); out.gain.value=.0001; out.connect(tD); out.gain.setTargetAtTime(1,ctx.currentTime,1.2);
         const nodes=[];
         const src=()=>{ const s=ctx.createBufferSource(); s.buffer=noiseBuf; s.loop=true; s.start(0,Math.random()*1.5); nodes.push(s); return s; };
         const osc=(type,f)=>{ const o=ctx.createOscillator(); o.type=type; o.frequency.value=f; o.start(); nodes.push(o); return o; };
         const flt=(n,type,f,q)=>{ const x=ctx.createBiquadFilter(); x.type=type; x.frequency.value=f; x.Q.value=q===undefined?.7:q; n.connect(x); return x; };
         const amp=(n,v,dst)=>{ const g=ctx.createGain(); g.gain.value=v; n.connect(g); g.connect(dst||out); return g; };
-        amp(flt(src(),'lowpass',130),.08);
-        const sub=amp(osc('sine',41),.012); amp(osc('sine',.07),.01,sub.gain);
-        amp(flt(src(),'bandpass',700,6),.004);
+        const bld=ctx.createGain(); bld.connect(out);
+        amp(flt(src(),'lowpass',130),.08,bld);
+        const sub=amp(osc('sine',41),.012,bld); amp(osc('sine',.07),.01,sub.gain);
+        amp(flt(src(),'bandpass',700,6),.004,bld);
+        // outside, in the dream: wind over grass, gusting
+        const wind=ctx.createGain(); wind.gain.value=0; wind.connect(out);
+        const wg=amp(flt(src(),'bandpass',420,.6),.05,wind); amp(osc('sine',.11),.035,wg.gain);
+        const wr=amp(flt(src(),'highpass',2600,.5),.012,wind); amp(osc('sine',.17),.01,wr.gain);
+        amp(flt(src(),'lowpass',160),.05,wind);
         const hum=amp(flt(osc('sawtooth',100),'lowpass',420),0);
         const buzz=amp(flt(osc('square',100),'bandpass',1700,2.5),0);
         const tvIn=flt(src(),'bandpass',3200,.5), tv=ctx.createGain(); tv.gain.value=0; tvIn.connect(tv);
@@ -2447,7 +2453,7 @@ const SFX=(function(){
         const trip=ctx.createGain(); trip.gain.value=0; trip.connect(out);
         [196,246.9,293.7,392,523.3].forEach((f,i)=>{ const o=osc(i%2?'triangle':'sine',f); o.detune.value=(Math.random()-.5)*20; const lf=osc('sine',.1+i*.07); const lg=ctx.createGain(); lg.gain.value=f*.012; lf.connect(lg); lg.connect(o.frequency); amp(o,.012,trip); });
         const sh=flt(src(),'bandpass',6000,8); amp(sh,.04,trip);
-        L={out,nodes,hum,buzz,tv,tvP,tinn,water,trip};
+        L={out,nodes,hum,buzz,tv,tvP,tinn,water,trip,bld,wind};
       },
       set(o){
         if(!L||!ctx) return; const t=ctx.currentTime;
@@ -2460,6 +2466,10 @@ const SFX=(function(){
         if(o.deaf!==undefined) tVol.gain.setTargetAtTime(1-o.deaf*.85,t,.3);
         if(o.water!==undefined) L.water.gain.setTargetAtTime(o.water*.05,t,.3);
         if(o.trip!==undefined) L.trip.gain.setTargetAtTime(o.trip*1.2,t,.8);
+        if(o.bld!==undefined) L.bld.gain.setTargetAtTime(o.bld,t,.5);
+        if(o.wind!==undefined) L.wind.gain.setTargetAtTime(o.wind,t,.6);
+        if(o.wet!==undefined) tW.gain.setTargetAtTime(o.wet,t,.3);
+        if(o.loops!==undefined) L.out.gain.setTargetAtTime(Math.max(.0001,o.loops),t,.04);
       },
       stop(){
         if(!ctx) return;
@@ -2474,6 +2484,8 @@ const SFX=(function(){
         if(s==='tile'){ noise(b,{hz:2400,q:1.2,dur:.045,peak:.06*k,send:.5}); noise(b,{ft:'lowpass',hz:800,dur:.07,peak:.09*k,send:.3}); tone(b,{f:150,f1:90,dur:.05,peak:.06*k}); }
         else if(s==='wood'){ noise(b,{ft:'lowpass',hz:520,hz2:220,dur:.12,peak:.16*k,send:.3}); tone(b,{f:100,f1:62,dur:.1,peak:.12*k});
           if(Math.random()<.22) tone(b,{type:'sawtooth',f:180+Math.random()*120,f1:150,dur:.4,peak:.018*k,cut:900,q:10,ft:'bandpass',delay:.06,atk:.08,send:.4}); }
+        else if(s==='grass'){ noise(b,{hz:3400,q:.5,dur:.11,peak:.045*k,atk:.02,send:.03}); noise(b,{ft:'lowpass',hz:420,dur:.08,peak:.06*k});
+          for(let i=0;i<4;i++) noise(b,{hz:4500+Math.random()*2500,q:2.5,dur:.018,peak:.02*k,delay:.01+Math.random()*.08}); }
         else if(s==='soft'){ noise(b,{ft:'lowpass',hz:420,hz2:180,dur:.12,peak:.1*k,send:.12}); tone(b,{f:80,f1:55,dur:.08,peak:.05*k}); }
         else { noise(b,{ft:'lowpass',hz:950,hz2:320,dur:.09,peak:.13*k,send:.35}); tone(b,{f:115,f1:72,dur:.07,peak:.09*k}); noise(b,{hz:3000,q:2,dur:.03,peak:.02*k,delay:.02});
           if(Math.random()<.06) tone(b,{type:'triangle',f:1900+Math.random()*700,f1:2500,dur:.09,peak:.012*k,delay:.03,send:.3}); }
@@ -2528,6 +2540,22 @@ const SFX=(function(){
       sting(at){ if(!ready()) return; const b=tb(Object.assign({},at,{gain:(at&&at.gain||1)*1.4+.5}));
         [110,116.5,155.6,233].forEach((f,i)=>tone(b,{type:'sawtooth',f,f1:f*.97,dur:2.2,peak:.03,cut:1400,cut2:400,q:2,atk:.02,send:.7,delay:i*.01})); noise(b,{hp:4000,dur:.5,peak:.05,send:.5}); },
       herBreath(at){ if(!ready()) return; const b=tb(at); noise(b,{hz:420,hz2:260,q:3,dur:1.6,peak:.07,atk:.6,send:.5}); tone(b,{type:'sawtooth',f:62,f1:50,dur:1.4,peak:.02,cut:300,q:4,atk:.5}); },
+      /* a body hitting the floor: the knees, then the rest */
+      thud(k){ if(!ready()) return; k=k||1; const b=tbIn({gain:k}); tone(b,{f:85,f1:38,dur:.4,peak:.5}); noise(b,{ft:'lowpass',hz:420,hz2:120,dur:.3,peak:.35});
+        if(k>.7){ tone(b,{f:120,f1:60,dur:.18,peak:.25,delay:.13}); noise(b,{hz:2200,q:1,dur:.05,peak:.05,delay:.12}); } },
+      /* outside: birds, far off; a wind chime on the porch */
+      bird(at){ if(!ready()) return; const b=tb(at), n=2+Math.floor(Math.random()*4), f0=2600+Math.random()*1600; let t=0;
+        for(let i=0;i<n;i++){ const up=Math.random()<.5, d=.05+Math.random()*.08; tone(b,{f:up?f0:f0*1.35,f1:up?f0*1.4:f0*.9,dur:d,peak:.02,atk:.01,delay:t,send:.1,fm:{r:.5,i:.05,i2:.01}}); t+=d+.03+Math.random()*.1; } },
+      chime(at){ if(!ready()) return; const b=tb(at), sc=[0,2,4,7,9,12,14]; let t=0;
+        for(let i=0;i<4+Math.floor(Math.random()*4);i++){ const f=880*Math.pow(2,sc[Math.floor(Math.random()*sc.length)]/12); tone(b,{f,fm:{r:3.5,i:.5,i2:.01},dur:2.2,peak:.016,delay:t,send:.2}); t+=.12+Math.random()*.35; } },
+      /* the clock in the living room, stopped at 3:33, still ticking */
+      clock(at){ if(!ready()) return; const b=tb(at); tone(b,{type:'triangle',f:2400,dur:.014,peak:.03,send:.3}); noise(b,{hz:3600,q:6,dur:.012,peak:.025}); },
+      /* the hammer going back */
+      cock(){ if(!ready()) return; const b=tbIn({gain:1}); tone(b,{type:'square',f:1500,dur:.012,peak:.05}); noise(b,{hz:2600,q:3,dur:.03,peak:.12,delay:.06}); tone(b,{type:'square',f:900,dur:.015,peak:.05,delay:.07}); },
+      /* the last one. very loud, very close; then only the ringing */
+      bang(){ if(!ready()) return; const b=tbIn({gain:1.4});
+        noise(b,{ft:'lowpass',hz:9000,hz2:300,dur:.5,peak:1,atk:.001}); tone(b,{f:70,f1:25,dur:.7,peak:1,atk:.001}); noise(b,{hz:1200,q:.4,dur:1.2,peak:.25,atk:.001});
+        tone(b,{f:4100,dur:7.5,peak:.05,atk:.2,delay:.15}); tone(b,{f:4130,dur:6,peak:.02,atk:.4,delay:.3}); },
       fall(){ if(!ready()) return; const b=tbIn({gain:1}); noise(b,{ft:'lowpass',hz:300,hz2:3000,hzT:2.5,dur:3,peak:.25,atk:.8}); },
       /* the dream: a music box slowed down, far away, over and over */
       dream(on){ if(!ctx) return; if(this._dt){ clearInterval(this._dt); this._dt=null; }
@@ -16910,7 +16938,7 @@ const Truth=(function(){
   /* the needles: colour and what it does (the ledger in the pharmacy says which is which) */
   const NEEDLES={heavy:{col:0xd08a2a,name:'amber'},blur:{col:0xdfe8ee,name:'clear'},halluc:{col:0x2a6aff,name:'blue'},vertigo:{col:0x3ad060,name:'green'},
     numb:{col:0x8a9098,name:'grey'},rush:{col:0xe0302a,name:'red'},mirror:{col:0x9a4ae0,name:'violet'},bright:{col:0xffd23a,name:'gold'},
-    deaf:{col:0x1a1a1a,name:'black'},dark:{col:0x2a2a8a,name:'indigo'},drowse:{col:0xf2eee4,name:'milky'},lethal:{col:0xb4d020,name:'yellow-green'}};
+    deaf:{col:0x1a1a1a,name:'black'},dark:{col:0x2a2a8a,name:'indigo'},drowse:{col:0xf2eee4,name:'milky'},lethal:{col:0xb4d020,name:'yellow-green'},wake:{col:0xfff4e0,name:'white'}};
 
   /* ---------- building: static parts are collected per material and merged ---------- */
   const _m=new THREE.Matrix4(), _q=new THREE.Quaternion(), _e=new THREE.Euler(), _v=new THREE.Vector3(), _v2=new THREE.Vector3(), _s=new THREE.Vector3(), _c=new THREE.Color(), YUP=new THREE.Vector3(0,1,0);
@@ -16942,11 +16970,23 @@ const Truth=(function(){
     stain:{tex:'stains',transparent:true,rough:1,po:true},
     void:{color:0x080706,rough:1},
     blood:{tex:'blood',nrm:'bloodN',rgh:'bloodR',transparent:true,po:true,rough:1},
-    dream:{tex:'dreamTile',rough:.35,tri:.5},
     white:{color:0xd6d2cc,rough:.4},
     toy:{vc:true,rough:.45,tex:'grime',tri:2},
     candle:{color:0xe8e0c8,rough:.6},
-    gold:{color:0xb08a40,rough:.35,metal:.8}
+    gold:{color:0xb08a40,rough:.35,metal:.8},
+    siding:{tex:'siding',rough:.7,tri:.5},
+    roof:{tex:'roof',rough:.85,tri:.5},
+    wallp:{tex:'wallp',rough:.9,tri:.45},
+    hcarpet:{tex:'hcarpet',rough:1,tri:.7},
+    bcarpet:{tex:'bcarpet',rough:1,tri:.7},
+    trim:{color:0xf0eee8,rough:.45},
+    brick:{tex:'brick',rough:.9,tri:1.2},
+    concrete:{color:0xaaa69e,rough:.95,tex:'grime',tri:.6},
+    glassW:{color:0x9ab8c8,rough:.04,metal:.5,transparent:true,opacity:.26},
+    fabric:{vc:true,rough:.95,tex:'sheet',tri:1.5},
+    hwood:{tex:'wood',rough:.5,tri:1.1,color:0xd8b894},
+    plastic:{vc:true,rough:.38},
+    ceilW:{color:0xf2f0ea,rough:.95}
   };
   function mat(mk){
     if(T.mats[mk]) return T.mats[mk];
@@ -16956,7 +16996,7 @@ const Truth=(function(){
     if(s.rgh) p.roughnessMap=T.tx[s.rgh];
     if(s.vc) p.vertexColors=true;
     if(s.side===2) p.side=THREE.DoubleSide;
-    if(s.transparent){ p.transparent=true; p.depthWrite=false; }
+    if(s.transparent){ p.transparent=true; p.depthWrite=false; if(s.opacity!==undefined) p.opacity=s.opacity; }
     if(s.po){ p.polygonOffset=true; p.polygonOffsetFactor=-2; p.polygonOffsetUnits=-2; }
     return T.mats[mk]=new THREE.MeshStandardMaterial(p);
   }
@@ -17610,7 +17650,65 @@ const Truth=(function(){
     T.root.add(g); return g;
   }
 
-  /* ---------- the mirror in the white room: it shows what's behind you ---------- */
+  /* ---------- you, as the mirror sees you: a patient's gown, bare feet, the gun when you hold it ---------- */
+  function buildSelf(){
+    const g=new THREE.Group(), skin=stdMat({map:T.tx.skin,color:0xf2e0d4,roughness:.6}), gown=stdMat({map:T.tx.sheet,color:0xb2c6ce,roughness:.95,side:THREE.DoubleSide});
+    const hair=stdMat({color:0x17110d,roughness:.75}), dark=stdMat({color:0x0c0808,roughness:.4}), lip=stdMat({color:0xa27a78,roughness:.6});
+    const mk=(geo,m,x,y,z,sx,sy,sz,rx,ry,rz,par)=>{ const me=new THREE.Mesh(geo,m); me.position.set(x,y,z); me.scale.set(sx,sy,sz); me.rotation.set(rx||0,ry||0,rz||0); (par||g).add(me); return me; };
+    const prof=[[.04,.54],[.215,.55],[.225,.8],[.2,1.05],[.215,1.26],[.205,1.39],[.13,1.46],[.05,1.49]].map(([r,y])=>new THREE.Vector2(r,y));
+    const lg=new THREE.LatheGeometry(prof,26), p=lg.attributes.position;
+    for(let i=0;i<p.count;i++){ const x=p.getX(i), y=p.getY(i), z=p.getZ(i), a=Math.atan2(z,x), k=1+.05*Math.sin(a*6+y*3)*(1-y/1.6); p.setX(i,x*k); p.setZ(i,z*k*.62); }
+    lg.computeVertexNormals(); const body=new THREE.Mesh(lg,gown); g.add(body);
+    const legs=[]; for(const sx of [-1,1]){ const hip=new THREE.Group(); hip.position.set(sx*.09,.62,0); g.add(hip); mk(GEO.cyl,skin,0,-.3,0,.045,.6,.045,0,0,0,hip); mk(GEO.box,skin,0,-.6,.05,.08,.05,.22,0,0,0,hip); legs.push(hip); }
+    mk(GEO.cyl,skin,0,1.52,0,.048,.12,.048);
+    const head=new THREE.Group(); head.position.set(0,1.58,0); g.add(head);
+    mk(GEO.sph,skin,0,.04,0,.092,.118,.102,0,0,0,head);
+    mk(GEO.sph,hair,0,.086,-.014,.1,.086,.108,0,0,0,head);
+    for(let i=0;i<9;i++){ const a=-1.2+i*.3; mk(GEO.sph,hair,Math.sin(a)*.084,.078-Math.abs(a)*.022,Math.cos(a)*.068,.032,.036,.03,.3,0,a*.4,head); }
+    for(const sx of [-1,1]){ mk(GEO.sph,dark,sx*.034,.045,.086,.016,.011,.01,0,0,0,head); mk(GEO.sph,skin,sx*.095,.035,0,.015,.03,.02,0,0,0,head); mk(GEO.box,hair,sx*.034,.068,.09,.03,.006,.01,0,0,-sx*.1,head); }
+    mk(GEO.box,skin,0,.02,.1,.016,.04,.02,-.2,0,0,head); mk(GEO.box,lip,0,-.022,.093,.034,.007,.01,0,0,0,head);
+    const arms={};
+    for(const sx of [-1,1]){ const sh=new THREE.Group(); sh.position.set(sx*.205,1.4,0); g.add(sh);
+      mk(GEO.cyl,gown,0,-.08,0,.06,.17,.06,0,0,0,sh); mk(GEO.cyl,skin,0,-.2,0,.042,.2,.042,0,0,0,sh);
+      const el=new THREE.Group(); el.position.y=-.3; sh.add(el); mk(GEO.sph,skin,0,0,0,.036,.036,.036,0,0,0,el); mk(GEO.cyl,skin,0,-.135,0,.037,.27,.034,0,0,0,el);
+      mk(GEO.box,skin,0,-.31,0,.07,.1,.03,0,0,0,el); for(let f=0;f<4;f++) mk(GEO.cyl,skin,(f-1.5)*.016,-.38,.004,.007,.07,.007,0,0,0,el);
+      mk(GEO.cyl,skin,-sx*.035,-.3,.02,.008,.06,.008,.4,0,sx*.6,el);
+      arms[sx]={sh,el}; }
+    const gun=gunMesh(); g.add(gun); gun.visible=false;
+    g.userData={head,legs,arms,gun,body};
+    g.traverse(m=>{ if(m.isMesh) m.layers.set(2); }); g.layers.set(2);
+    T.root.add(g); return g;
+  }
+  const _S=new THREE.Vector3(), _E=new THREE.Vector3(), _Hh=new THREE.Vector3(), _pole=new THREE.Vector3(), _t1=new THREE.Vector3(), _t2=new THREE.Vector3(), NEGY=new THREE.Vector3(0,-1,0);
+  const _qa=new THREE.Quaternion(), _qb=new THREE.Quaternion(), _qg=new THREE.Quaternion();
+  const QF=new THREE.Quaternion().setFromEuler(new THREE.Euler(0,Math.PI,0)), QA=new THREE.Quaternion().setFromEuler(new THREE.Euler(0,-Math.PI/2,.15));
+  /* two bones, shoulder to hand: bend the elbow toward the pole */
+  function ikArm(arm,S,Hp,pole){
+    const a=.3, bl=.31; _t1.subVectors(Hp,S); const d=Math.min(_t1.length(),a+bl-.002); _t1.normalize();
+    const ca=clamp((a*a+d*d-bl*bl)/(2*a*d),-1,1), sa=Math.sqrt(1-ca*ca);
+    _t2.copy(pole).addScaledVector(_t1,-pole.dot(_t1)).normalize();
+    _E.copy(S).addScaledVector(_t1,a*ca).addScaledVector(_t2,a*sa);
+    const hx=S.x+_t1.x*d, hy=S.y+_t1.y*d, hz=S.z+_t1.z*d;
+    _t2.subVectors(_E,S).normalize(); arm.sh.quaternion.setFromUnitVectors(NEGY,_t2);
+    _t2.set(hx-_E.x,hy-_E.y,hz-_E.z).normalize(); _qb.setFromUnitVectors(NEGY,_t2); _qa.copy(arm.sh.quaternion).invert(); arm.el.quaternion.copy(_qa.multiply(_qb));
+  }
+  function poseSelf(){
+    const S=T.self, u=S.userData, P=T.p, h=T.hand, a=T.aimK||0, walk=P.speed>.2?Math.min(1,P.speed/1.8):0, sw=Math.sin(P.bob);
+    S.position.set(P.x+Math.sin(P.yaw)*.09,0,P.z+Math.cos(P.yaw)*.09); S.rotation.y=P.yaw+Math.PI;
+    u.head.rotation.set(clamp(-P.pitch*.75,-.6,.7),0,-a*.14+Math.sin(T.t*.7)*.01);
+    u.body.scale.set(1+Math.sin(T.t*1.6)*.008,1,1+Math.sin(T.t*1.6)*.012+a*.01*Math.sin(T.t*9));
+    u.legs[0].rotation.x=sw*.32*walk; u.legs[1].rotation.x=-sw*.32*walk;
+    ikArm(u.arms[1],_S.set(.205,1.4,0),_Hh.set(.24,.86,.03-sw*.12*walk),_pole.set(.2,0,-1));
+    const gun=!!h&&h.it.kind==='gun';
+    if(gun){ const tr=a*.004; _Hh.set(lerp(-.19,-.33,a)+Math.sin(T.t*27)*tr,lerp(1.1,1.585,a)+Math.cos(T.t*31)*tr,lerp(.36,.02,a)); _pole.set(lerp(-.2,-1,a),lerp(-1,-.25,a),lerp(-.3,.1,a)); }
+    else if(h){ _Hh.set(-.2,1.06,.33); _pole.set(-.2,-1,-.3); }
+    else { _Hh.set(-.24,.86,.03+sw*.12*walk); _pole.set(-.2,0,-1); }
+    ikArm(u.arms[-1],_S.set(-.205,1.4,0),_Hh,_pole);
+    u.gun.visible=gun;
+    if(gun){ _qg.copy(QF).slerp(QA,a); u.gun.quaternion.copy(_qg); _t1.set(0,-.055,.045).applyQuaternion(_qg); u.gun.position.copy(_Hh).sub(_t1); }
+  }
+
+  /* ---------- the mirror in the white room: it shows you, and what's behind you ---------- */
   function buildMirror(){
     const w=1.3, h=2.1, cx=59.5, cy=1.55, zw=45-.012;
     const size=T.touchMode?256:512, rt=new THREE.WebGLRenderTarget(size,size*h/w|0,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat});
@@ -17643,58 +17741,352 @@ const Truth=(function(){
     _cp.multiplyScalar(2/_cp.dot(_qq)); pm[2]=_cp.x; pm[6]=_cp.y; pm[10]=_cp.z+1-.003; pm[14]=_cp.w;
     // she stands right behind you, in there
     const hm=T.herM; if(hm&&!M.cracked){ hm.visible=true; hm.position.set(lerp(P.x,M.cx,.45)+.28,0,Math.max(42.18,P.z-.6)); hm.scale.setScalar(.88); hm.rotation.y=Math.atan2(M.cx-hm.position.x,M.zw-hm.position.z); hm.userData.head.rotation.y=0; }
+    poseSelf(); const hv=T.hand&&T.hand.vm; if(hv) hv.visible=false;
     M.m.visible=false; const fl=T.flash; const fv=fl&&fl.visible; if(fl) fl.visible=false;
     renderer.setRenderTarget(M.rt); renderer.clear(); renderer.render(T.scene,mc);
-    M.m.visible=true; if(fl) fl.visible=fv; if(hm) hm.visible=false;
+    M.m.visible=true; if(fl) fl.visible=fv; if(hm) hm.visible=false; if(hv) hv.visible=true;
   }
 
-  /* ---------- the dream you fall into ---------- */
-  const DX=300, DZ=0;
-  const DPLAT=[[-2.5,-2.5,2.5,2.5],[-1,-15,1,-2.5],[-1,-17,12,-15],[10,-31,12,-17],[-10,-33,12,-31],[-10,-47,-8,-33],[-14,-55,-4,-47],[10,-47,12,-33],[-1,-49,12,-47],[-1,-63,1,-49],[-4,-72,4,-63]];
-  function texDreamTile(){ const W=256, c=C(W,W), x=c.getContext('2d');
-    for(let i=0;i<4;i++) for(let j=0;j<4;j++){ x.fillStyle=(i+j)%2?'#f6c6d8':'#fbf6f0'; x.fillRect(i*64,j*64,64,64); }
-    x.strokeStyle='rgba(200,160,190,.5)'; x.lineWidth=2; for(let i=0;i<=4;i++){ x.beginPath(); x.moveTo(i*64,0); x.lineTo(i*64,W); x.moveTo(0,i*64); x.lineTo(W,i*64); x.stroke(); }
+  /* ---------- the dream you fall into: green hills under a blue sky, as far as you can walk; somewhere, a house ----------
+     The hills never end: the ground is one sheet that follows you, lifted into hills by the same sums on the CPU and in
+     the shaders. There is a house. There is always a house, and if you walk away from it, it is waiting behind you. */
+  const DX=2000, DZ=0, DREAM_LEN=150, HOUSE0={x:16,z:-78,ry:-.2}, SUN=new THREE.Vector3(-.45,.6,.66).normalize();
+  const HGLSL=`uniform vec4 uHouse;
+float hRaw(vec2 p){ return 5.5*sin(p.x*.019+1.7*sin(p.y*.011))*cos(p.y*.016+.5)+3.2*sin((p.x*.6+p.y*.8)*.029+1.3)+1.6*sin((p.y*.9-p.x*.44)*.061+.4)+.45*sin(p.x*.13+p.y*.07)*sin(p.y*.11-p.x*.05); }
+float hgt(vec2 p){ return mix(uHouse.z,hRaw(p),smoothstep(uHouse.w,uHouse.w*2.2,length(p-uHouse.xy))); }
+`;
+  const NOISE=`float hs2(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
+float vn2(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f); return mix(mix(hs2(i),hs2(i+vec2(1.,0.)),f.x),mix(hs2(i+vec2(0.,1.)),hs2(i+vec2(1.,1.)),f.x),f.y); }
+float cloudSh(vec2 p,float t){ return smoothstep(.52,.74,vn2(p*.016+t*vec2(.045,.018))*.7+vn2(p*.047+t*vec2(.07,.03))*.3); }
+`;
+  const hRaw=(x,z)=>5.5*Math.sin(x*.019+1.7*Math.sin(z*.011))*Math.cos(z*.016+.5)+3.2*Math.sin((x*.6+z*.8)*.029+1.3)+1.6*Math.sin((z*.9-x*.44)*.061+.4)+.45*Math.sin(x*.13+z*.07)*Math.sin(z*.11-x*.05);
+  const sstep=(a,b,v)=>{ const t=clamp((v-a)/(b-a),0,1); return t*t*(3-2*t); };
+  function hgt(x,z){ const u=T.dreamW.uHouse.value; return lerp(u.z,hRaw(x,z),sstep(u.w,u.w*2.2,Math.hypot(x-u.x,z-u.y))); }
+
+  function texGrass(){ const W=512, c=C(W,W), x=c.getContext('2d'), r=mulberry32(31);
+    x.fillStyle='#5c9c2e'; x.fillRect(0,0,W,W);
+    for(let i=0;i<220;i++) spot(x,W,W,r()*W,r()*W,12+r()*46,r()<.5?'48,110,24':'132,184,58',.1+r()*.12,true);
+    for(let i=0;i<14000;i++){ const px=r()*W, py=r()*W, l=4+r()*10, a=-Math.PI/2+(r()-.5)*1.1, g=100+r()*120|0;
+      x.strokeStyle=`rgba(${g*.42|0},${g},${g*.2|0},${.22+r()*.4})`; x.lineWidth=.7+r()*1.3; x.beginPath(); x.moveTo(px,py); x.lineTo(px+Math.cos(a)*l,py+Math.sin(a)*l); x.stroke(); }
     return mkTex(c); }
+  function texSiding(){ const W=512, c=C(W,W), x=c.getContext('2d'), r=mulberry32(41);
+    for(let i=0;i<8;i++){ const y=i*64, g=x.createLinearGradient(0,y,0,y+64); g.addColorStop(0,'#dfe3dc'); g.addColorStop(.8,'#f3f4ef'); g.addColorStop(1,'#a9aea6'); x.fillStyle=g; x.fillRect(0,y,W,64);
+      x.fillStyle='rgba(70,76,70,.6)'; x.fillRect(0,y+61,W,3); }
+    grime(x,W,W,r,50,'140,140,120',.07,10,70,true);
+    for(let i=0;i<500;i++){ x.fillStyle=rgba('110,110,100',.04+r()*.06); x.fillRect(r()*W,r()*W,20+r()*70,1); }
+    return mkTex(c); }
+  function texRoof(){ const W=512, c=C(W,W), x=c.getContext('2d'), r=mulberry32(42);
+    x.fillStyle='#2e2a28'; x.fillRect(0,0,W,W);
+    for(let row=0;row<16;row++){ const y=row*32, off=(row%2)*24;
+      for(let i=-1;i<12;i++){ const px=i*46+off+(r()-.5)*4, l=44+r()*4, g=52+r()*34|0;
+        x.fillStyle=`rgb(${g+10},${g+3},${g})`; x.fillRect(px+1,y+1,l-2,30); x.fillStyle='rgba(0,0,0,.5)'; x.fillRect(px+1,y+26,l-2,6); x.fillStyle='rgba(255,255,255,.06)'; x.fillRect(px+1,y+1,l-2,3); } }
+    for(let i=0;i<4000;i++){ x.fillStyle=rgba(r()<.5?'0,0,0':'210,200,190',.12); x.fillRect(r()*W,r()*W,1.6,1.6); }
+    grime(x,W,W,r,30,'60,70,40',.1,10,50,true);
+    return mkTex(c); }
+  function texWallp(){ const W=512, c=C(W,W), x=c.getContext('2d'), r=mulberry32(43);
+    x.fillStyle='#e6eedd'; x.fillRect(0,0,W,W);
+    for(let i=0;i<8;i++){ x.fillStyle=i%2?'rgba(160,196,164,.32)':'rgba(244,222,214,.5)'; x.fillRect(i*64,0,32,W); }
+    for(let i=0;i<8;i++) for(let j=0;j<6;j++){ const cx=i*64+48, cy=j*86+(i%2)*43+20;
+      x.fillStyle='rgba(222,146,160,.6)'; for(let k=0;k<5;k++){ const a=k/5*6.28; x.beginPath(); x.arc(cx+Math.cos(a)*4.2,cy+Math.sin(a)*4.2,3.3,0,7); x.fill(); }
+      x.fillStyle='rgba(240,200,90,.85)'; x.beginPath(); x.arc(cx,cy,2.1,0,7); x.fill();
+      x.strokeStyle='rgba(110,156,104,.65)'; x.lineWidth=1.5; x.beginPath(); x.moveTo(cx,cy+6); x.quadraticCurveTo(cx+6,cy+14,cx+1,cy+23); x.stroke(); }
+    grime(x,W,W,r,40,'150,140,100',.06,20,90,true);
+    return mkTex(c); }
+  function texHCarpet(col,seed){ const W=256, c=C(W,W), x=c.getContext('2d'), r=mulberry32(seed);
+    x.fillStyle=col; x.fillRect(0,0,W,W);
+    for(let i=0;i<11000;i++){ x.fillStyle=r()<.5?'rgba(60,50,40,.14)':'rgba(255,250,240,.16)'; x.fillRect(r()*W,r()*W,1+r(),1+r()); }
+    grime(x,W,W,r,16,'90,80,60',.07,10,50,true);
+    return mkTex(c); }
+  function texBrick(){ const W=256, c=C(W,W), x=c.getContext('2d'), r=mulberry32(49);
+    x.fillStyle='#8a8278'; x.fillRect(0,0,W,W);
+    for(let row=0;row<8;row++) for(let i=-1;i<5;i++){ const g=110+r()*50|0; x.fillStyle=`rgb(${g+40},${g*.55|0},${g*.42|0})`; x.fillRect(i*64+(row%2)*32+2,row*32+2,60,28); }
+    grime(x,W,W,r,30,'30,20,10',.15,8,40,true);
+    return mkTex(c); }
+  function texBliss(){ // the picture on the television: the same hills, the same sky, the same house
+    const W=256, Hh=192, c=C(W,Hh), x=c.getContext('2d'), r=mulberry32(45);
+    const s=x.createLinearGradient(0,0,0,Hh*.7); s.addColorStop(0,'#1f5bd0'); s.addColorStop(1,'#acd2f4'); x.fillStyle=s; x.fillRect(0,0,W,Hh);
+    for(let i=0;i<16;i++) spot(x,W,Hh,20+r()*220,14+r()*64,8+r()*20,'255,255,255',.75);
+    const g=x.createLinearGradient(0,Hh*.5,0,Hh); g.addColorStop(0,'#86c840'); g.addColorStop(1,'#2e7a18'); x.fillStyle=g;
+    x.beginPath(); x.moveTo(0,Hh*.74); x.quadraticCurveTo(W*.35,Hh*.44,W*.7,Hh*.62); x.quadraticCurveTo(W*.88,Hh*.7,W,Hh*.65); x.lineTo(W,Hh); x.lineTo(0,Hh); x.fill();
+    x.fillStyle='#f4f4ee'; x.fillRect(W*.6,Hh*.555,10,7); x.fillStyle='#3a302c'; x.beginPath(); x.moveTo(W*.6-1.5,Hh*.555); x.lineTo(W*.6+5,Hh*.555-5); x.lineTo(W*.6+11.5,Hh*.555); x.fill();
+    x.fillStyle='rgba(10,10,10,.8)'; x.fillRect(W*.6+2,Hh*.555+3,2,4);
+    for(let y=0;y<Hh;y+=2){ x.fillStyle='rgba(0,0,0,.14)'; x.fillRect(0,y,W,1); }
+    const v=x.createRadialGradient(W/2,Hh/2,Hh*.3,W/2,Hh/2,W*.62); v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,.45)'); x.fillStyle=v; x.fillRect(0,0,W,Hh);
+    return mkTex(c,{clamp:true}); }
+  function texFamily(){ // three people on a lawn; the child's face has been rubbed away
+    const W=256, Hh=200, c=C(W,Hh), x=c.getContext('2d'), r=mulberry32(46);
+    const s=x.createLinearGradient(0,0,0,Hh); s.addColorStop(0,'#8ab8e0'); s.addColorStop(.55,'#cfe0ea'); s.addColorStop(.56,'#6aa040'); s.addColorStop(1,'#3a7020'); x.fillStyle=s; x.fillRect(0,0,W,Hh);
+    const fig=(cx,h,col,hair)=>{ x.fillStyle=col; x.beginPath(); x.moveTo(cx-18*h,Hh-10); x.quadraticCurveTo(cx-16*h,Hh-100*h,cx,Hh-104*h); x.quadraticCurveTo(cx+16*h,Hh-100*h,cx+18*h,Hh-10); x.fill();
+      x.fillStyle='#e0c0a8'; x.beginPath(); x.arc(cx,Hh-118*h,13*h,0,7); x.fill(); x.fillStyle=hair; x.beginPath(); x.arc(cx,Hh-122*h,13.5*h,Math.PI,0); x.fill(); };
+    fig(70,1.3,'#5a6a8a','#3a2a1a'); fig(186,1.25,'#a05a6a','#5a3a1a'); fig(128,.8,'#e8e8e0','#2a1a10');
+    for(let i=0;i<70;i++){ x.strokeStyle=rgba('250,250,245',.4+r()*.5); x.lineWidth=1+r()*2.5; x.beginPath(); const a=118+r()*20, b=Hh-106+r()*18; x.moveTo(a,b); x.lineTo(a+(r()-.5)*16,b+(r()-.5)*16); x.stroke(); }
+    x.fillStyle='rgba(255,236,190,.1)'; x.fillRect(0,0,W,Hh); grime(x,W,Hh,r,24,'120,100,60',.1,10,40);
+    return mkTex(c,{clamp:true}); }
+  function texSampler(){ // cross-stitch over the sofa
+    const W=320, Hh=220, c=C(W,Hh), x=c.getContext('2d'), r=mulberry32(47);
+    x.fillStyle='#efe8d6'; x.fillRect(0,0,W,Hh);
+    for(let y=0;y<Hh;y+=4) for(let i=0;i<W;i+=4){ x.fillStyle=rgba('170,160,140',.1+r()*.06); x.fillRect(i,y,3,3); }
+    x.strokeStyle='#b04a5a'; x.lineWidth=3; x.strokeRect(14,14,W-28,Hh-28); x.strokeStyle='#6a9a5a'; x.setLineDash([4,4]); x.strokeRect(22,22,W-44,Hh-44); x.setLineDash([]);
+    x.textAlign='center'; x.fillStyle='#3a5a8a'; x.font="700 36px 'Courier New',monospace"; x.fillText('YOU ARE',W/2,92); x.fillText('DREAMING',W/2,136);
+    x.fillStyle='#b04a5a'; x.font="700 17px 'Courier New',monospace"; x.fillText('~ home sweet home ~',W/2,178);
+    for(let i=0;i<5;i++){ x.fillStyle='#e0a0b0'; x.beginPath(); x.arc(40+i*60,48,5,0,7); x.fill(); }
+    return mkTex(c,{clamp:true}); }
+  function texClock(){ const W=128, c=C(W,W), x=c.getContext('2d');
+    x.fillStyle='#f6f2e6'; x.beginPath(); x.arc(64,64,62,0,7); x.fill(); x.strokeStyle='#3a3028'; x.lineWidth=5; x.stroke();
+    x.fillStyle='#2a2420'; x.textAlign='center'; x.textBaseline='middle'; x.font="700 15px Georgia,serif";
+    for(let i=1;i<=12;i++){ const a=i/12*6.283-1.5708; x.fillText(String(i),64+Math.cos(a)*46,64+Math.sin(a)*46); }
+    const hand=(a,l,w)=>{ x.lineWidth=w; x.beginPath(); x.moveTo(64,64); x.lineTo(64+Math.cos(a-1.5708)*l,64+Math.sin(a-1.5708)*l); x.stroke(); };
+    x.strokeStyle='#1a1614'; hand((3+33/60)/12*6.283,30,4); hand(33/60*6.283,44,2.5); x.strokeStyle='#a02020'; hand(33/60*6.283+.02,48,1);
+    return mkTex(c,{clamp:true}); }
+
+  /* the clouds, drawn once on the GPU; the pattern repeats with no seam, so the sky can drift forever */
+  function cloudRT(){
+    const n=T.touchMode?512:1024, rt=new THREE.WebGLRenderTarget(n,n,{minFilter:THREE.LinearMipmapLinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat,depthBuffer:false,generateMipmaps:true});
+    rt.texture.wrapS=rt.texture.wrapT=THREE.RepeatWrapping;
+    const m=new THREE.ShaderMaterial({vertexShader:VS,depthTest:false,depthWrite:false,fragmentShader:`varying vec2 vUv;
+float hs(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+float vn(vec2 p,float P){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(hs(mod(i,P)),hs(mod(i+vec2(1.,0.),P)),f.x),mix(hs(mod(i+vec2(0.,1.),P)),hs(mod(i+vec2(1.,1.),P)),f.x),f.y); }
+float fbm(vec2 p){ float s=0., a=.5, P=6.; for(int i=0;i<6;i++){ s+=a*vn(p,P); p*=2.; P*=2.; a*=.5; } return s; }
+void main(){ vec2 p=vUv*6.;
+  vec2 w=vec2(fbm(p+vec2(1.7,9.2)),fbm(p+vec2(8.3,2.8)));
+  float f=fbm(p+w*1.8), g=fbm(p+w*1.8+vec2(-.07,.1));
+  gl_FragColor=vec4(smoothstep(.5,.72,f),clamp(.6+(f-g)*5.,0.,1.),f,1.); }`});
+    const sc=new THREE.Scene(), me=new THREE.Mesh(new THREE.PlaneGeometry(2,2),m); me.frustumCulled=false; sc.add(me);
+    renderer.setRenderTarget(rt); renderer.render(sc,new THREE.OrthographicCamera(-1,1,1,-1,0,1)); renderer.setRenderTarget(null);
+    me.geometry.dispose(); m.dispose(); return rt; }
+
+  /* one clump of grass: a few bent, tapered blades */
+  function grassGeo(){
+    const P=[], BT=[], r=mulberry32(51), B=6, SEG=3;
+    for(let b=0;b<B;b++){ const a=r()*6.28, rr=r()*.15, ox=Math.cos(a)*rr, oz=Math.sin(a)*rr, h=.15+r()*.27, w=.018+r()*.014, lean=(r()-.3)*.8, ry=r()*6.28, cs=Math.cos(ry), sn=Math.sin(ry);
+      const lv=[]; for(let s=0;s<=SEG;s++){ const t=s/SEG, ww=w*(1-t*.9), y=h*t, lz=lean*t*t*h;
+        const pt=lx=>[ox+lx*cs-lz*sn,y,oz+lx*sn+lz*cs,t]; lv.push(s===SEG?[pt(0)]:[pt(-ww),pt(ww)]); }
+      const tri=(p,q,s)=>{ for(const v of [p,q,s]){ P.push(v[0],v[1],v[2]); BT.push(v[3]); } };
+      for(let s=0;s<SEG;s++){ const [a0,a1]=lv[s], nx=lv[s+1]; if(nx.length===2){ tri(a0,a1,nx[1]); tri(a0,nx[1],nx[0]); } else tri(a0,a1,nx[0]); } }
+    const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); g.setAttribute('bt',new THREE.Float32BufferAttribute(BT,1)); return g; }
+  /* a triangle, thick: the gable ends of a roof */
+  function triPrism(w,h,d){ const a0=[-d/2,0,-w/2], b0=[-d/2,0,w/2], c0=[-d/2,h,0], a1=[d/2,0,-w/2], b1=[d/2,0,w/2], c1=[d/2,h,0], P=[];
+    for(const v of [a1,c1,b1, a0,b0,c0, a0,c1,a1, a0,c0,c1, b0,b1,c1, b0,c1,c0]) P.push(v[0],v[1],v[2]);
+    const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); g.computeVertexNormals(); return g; }
+
   function buildDream(){
-    const g=new THREE.Group(); g.position.set(DX,0,DZ); g.visible=false; T.scene.add(g);
-    const tile=stdMat({map:T.tx.dreamTile,roughness:.4,color:0xc8b8c4}), side=stdMat({color:0xb8a8c8,roughness:.6});
-    const plats=DPLAT.map(([x0,z0,x1,z1],i)=>{ const w=x1-x0, d=z1-z0, bg=new THREE.BoxGeometry(w,.6,d), uv=bg.attributes.uv;
-      for(let k=0;k<uv.count;k++) uv.setXY(k,uv.getX(k)*w/2,uv.getY(k)*d/2);
-      const m=new THREE.Mesh(bg,[side,side,tile,side,side,side]); m.position.set((x0+x1)/2,-.3,(z0+z1)/2); g.add(m);
-      return {x0,z0,x1,z1,m,alive:true,left:-1,fall:0,idx:i}; });
-    const sky=new THREE.Mesh(new THREE.SphereGeometry(55,32,16),new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,uniforms:{uT:{value:0},uK:{value:0}},
-      vertexShader:'varying vec3 vD; void main(){ vD=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-      fragmentShader:'uniform float uT,uK; varying vec3 vD; float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); } float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y); }'+
-        'void main(){ float y=vD.y; vec3 top=mix(vec3(.3,.48,.92),vec3(.25,0.,.05),uK); vec3 hor=mix(vec3(.82,.52,.7),vec3(.7,.05,.08),uK); vec3 low=mix(vec3(.55,.62,.92),vec3(.05,0.,0.),uK);'+
-        'vec3 c=y>0.?mix(hor,top,pow(y,.6)):mix(hor,low,pow(-y,.5)); vec2 p=vD.xz/(abs(vD.y)+.25)*2.+uT*.03; float cl=n(p)*.6+n(p*2.1)*.3+n(p*4.3)*.1; c=mix(c,vec3(1.,.96,.98)-uK*.8,smoothstep(.58,.82,cl)*.55*(1.-abs(y)));'+
-        'gl_FragColor=vec4(c,1.); }'}));
-    sky.renderOrder=-1; g.add(sky); T.mats._sky=sky.material;
-    const cloudM=new THREE.SpriteMaterial({map:T.tx.cloud,transparent:true,opacity:.4,depthWrite:false,fog:true}); T.mats._cloud=cloudM;
-    const r=mulberry32(21);
-    for(let i=0;i<46;i++){ const s=new THREE.Sprite(cloudM); const a=r()*6.28, d=12+r()*50; s.position.set(Math.cos(a)*d,-7-r()*14,-35+Math.sin(a)*d); s.scale.set(14+r()*14,7+r()*7,1); g.add(s); }
-    for(let i=0;i<16;i++){ const s=new THREE.Sprite(cloudM); s.position.set((r()-.5)*100,16+r()*18,-35+(r()-.5)*100); s.scale.set(18+r()*20,9+r()*9,1); g.add(s); }
-    const eye=new THREE.Sprite(new THREE.SpriteMaterial({map:T.tx.eye,fog:false,transparent:true,depthWrite:false})); eye.position.set(0,22,-44); eye.scale.set(20,20,1); eye.renderOrder=0; g.add(eye); T.mats._eyeS=eye.material;
-    const words=[['YOU ARE SAFE HERE',-6,6,-12,0xffffff],["DON'T WAKE UP",16,9,-40,0xffffff],['TIME TO GO BACK',0,7,-78,0xffffff],['WAKE UP',-18,14,-50,0xff3040]].map(([t,x,y,z,c])=>{
-      const s=new THREE.Sprite(new THREE.SpriteMaterial({map:texWords(t),color:c,transparent:true,depthWrite:false,fog:false,opacity:t==='WAKE UP'?0:.9})); s.position.set(x,y,z); s.scale.set(16,2.5,1); g.add(s); T.mats['_w'+t]=s.material; return s; });
-    // things that float by
-    const b=new Batch();
-    const fdoor=(x,y,z,ry)=>{ b.at(x,y,z,ry); b.box('white',-.55,1.1,0,.1,2.3,.14); b.box('white',.55,1.1,0,.1,2.3,.14); b.box('white',0,2.25,0,1.2,.1,.14); b.end(); };
-    fdoor(-5,-1,-8,.4); fdoor(15,2,-24,-.3); fdoor(-6,1.5,-40,.8); fdoor(6,-2,-58,-.5);
-    b.at(-12,-2,-20,.6); b.box('dream',0,3,0,4,.4,4); for(const sx of [-1,1]) for(const sz of [-1,1]) b.box('white',sx*1.7,1.4,sz*1.7,.3,2.8,.3); b.box('white',0,6,-1.8,4,6,.4); b.end();
-    for(let i=0;i<9;i++) b.box('white',18+i*.02,-4+i*.6,-12-i*.9,3,.3,.9);
-    b.at(16,4,-48,2.4,2.8); b.box('mattress',0,.63,0,.86,.17,1.92); for(const sx of [-1,1]) b.box('steel',sx*.44,.52,0,.04,.05,1.96); b.end();
-    b.at(-16,0,-34,.3); b.bar('white',[-1.2,0,0],[-1.2,4,0],.06); b.bar('white',[1.2,0,0],[1.2,4,0],.06); b.bar('white',[-1.3,4,0],[1.3,4,0],.06); b.end();
-    for(let i=0;i<14;i++){ const pl=DPLAT[Math.min(DPLAT.length-1,Math.floor(i*.8))], px=(pl[0]+pl[2])/2+(i%2?1.6:-1.6), pz=(pl[1]+pl[3])/2; b.cyl('white',px,1,pz,.05,2.2); }
-    // the way back: a plain white door, standing open, full of light
-    b.at(0,0,-69,0); b.box('white',-.65,1.2,0,.14,2.4,.2); b.box('white',.65,1.2,0,.14,2.4,.2); b.box('white',0,2.45,0,1.44,.14,.2); b.end();
-    b.flush(g);
-    const lamps=new THREE.MeshBasicMaterial({color:0xfff0f8,toneMapped:false}); T.mats._lamps=lamps;
-    for(let i=0;i<14;i++){ const pl=DPLAT[Math.min(DPLAT.length-1,Math.floor(i*.8))], px=(pl[0]+pl[2])/2+(i%2?1.6:-1.6), pz=(pl[1]+pl[3])/2; const s=new THREE.Mesh(GEO.sph,lamps); s.scale.setScalar(.16); s.position.set(px,2.15,pz); g.add(s); }
-    const light=new THREE.Mesh(new THREE.PlaneGeometry(1.16,2.3),new THREE.MeshBasicMaterial({color:new THREE.Color(3,3,3),toneMapped:false})); light.position.set(0,1.15,-69.02); g.add(light);
-    const swing=new THREE.Group(); swing.position.set(-16,4,-34.3); g.add(swing); const sb=new Batch(); sb.bar('steel',[-.4,0,0],[-.4,-2.6,0],.01); sb.bar('steel',[.4,0,0],[.4,-2.6,0],.01); sb.box('wood',0,-2.62,0,.9,.05,.3); sb.flush(swing);
-    const tvs=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.9),T.tvMat); tvs.position.set(7,1.2,-44); tvs.rotation.y=-.6; g.add(tvs);
-    const sun=new THREE.DirectionalLight(0xfff0f4,0); sun.position.set(DX+20,40,DZ+10); sun.target.position.set(DX,0,DZ-35); T.scene.add(sun); T.scene.add(sun.target);
-    T.dreamW={g,plats,sky,eye,words,swing,sun,active:false};
+    const D={g:new THREE.Group(),uHouse:{value:new THREE.Vector4()},uHB:{value:new THREE.Vector4()},uT:{value:0},uK:{value:0},uHaze:{value:new THREE.Vector3(.64,.78,.95)},
+      hfix:[],hBoxes:[],fBoxes:[],items:[],house:{x:0,z:0,y:0,ry:0},inside:0,hall:0,knock:0,tick:0,bird:3,chime:9,whisper:4};
+    T.dreamW=D; D.g.position.set(DX,0,DZ); D.g.visible=false; T.scene.add(D.g);
+    Object.assign(T.tx,{grass:texGrass(),siding:texSiding(),roof:texRoof(),wallp:texWallp(),hcarpet:texHCarpet('#cdbd9c',44),bcarpet:texHCarpet('#a4b8d8',48),brick:texBrick()});
+    D.clouds=cloudRT();
+    // the sky: deep blue overhead, pale at the edge of the world, clouds drifting, a sun behind you
+    const skyM=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,uniforms:{tCl:{value:D.clouds.texture},uT:D.uT,uK:D.uK,uSun:{value:SUN}},
+      vertexShader:'varying vec3 vD; void main(){ vD=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
+      fragmentShader:`uniform sampler2D tCl; uniform float uT,uK; uniform vec3 uSun; varying vec3 vD;
+void main(){ vec3 d=normalize(vD); float y=d.y, sd=max(dot(d,uSun),0.);
+  vec3 zen=vec3(.09,.28,.76), mid=vec3(.25,.5,.9), hor=vec3(.64,.78,.95);
+  vec3 c=mix(hor,mix(mid,zen,smoothstep(.15,.8,y)),smoothstep(0.,.22,y));
+  c+=vec3(1.,.94,.82)*(pow(sd,900.)*3.+pow(sd,60.)*.25+pow(sd,5.)*.06);
+  if(y>0.){ vec2 uv=d.xz/(y+.1)*.085+uT*vec2(.0021,.0008); vec3 cl=texture2D(tCl,uv).rgb; float cov=cl.r*smoothstep(.02,.24,y);
+    vec3 cc=mix(vec3(.64,.7,.8),vec3(1.),cl.g)+vec3(1.,.9,.75)*pow(sd,6.)*.35*cl.g;
+    c=mix(c,mix(cc,cc*vec3(.9,.4,.4),uK),cov); }
+  vec3 late=mix(vec3(.95,.42,.34),vec3(.3,.03,.05),smoothstep(0.,.8,y));
+  c=mix(c,late*(.65+.35*c),uK*.85);
+  gl_FragColor=vec4(c,1.); }`});
+    const sky=new THREE.Mesh(new THREE.SphereGeometry(300,40,20),skyM); sky.renderOrder=-1; sky.frustumCulled=false; D.g.add(sky); D.sky=sky; T.mats._sky=skyM;
+    const eye=new THREE.Sprite(new THREE.SpriteMaterial({map:T.tx.eye,fog:false,transparent:true,depthWrite:false,opacity:0})); eye.visible=false; D.g.add(eye); D.eye=eye; T.mats._eyeS=eye.material;
+    const wk=new THREE.Sprite(new THREE.SpriteMaterial({map:texWords('WAKE UP'),color:0xff3040,transparent:true,depthWrite:false,fog:false,opacity:0})); wk.scale.set(46,7.2,1); wk.visible=false; D.g.add(wk); D.wake=wk; T.mats._wake=wk.material;
+    // the ground: one sheet that follows you, lifted into hills in its shader
+    const N=T.touchMode?110:150, S=460; D.tSp=S/N;
+    const tg=new THREE.PlaneGeometry(S,S,N,N); tg.rotateX(-Math.PI/2);
+    const tm=new THREE.MeshStandardMaterial({map:T.tx.grass,roughness:.93,metalness:0}); T.mats._terrain=tm;
+    const TU={uHouse:D.uHouse,uOff:{value:new THREE.Vector2()},uT:D.uT,uK:D.uK,uHaze:D.uHaze}; D.uOff=TU.uOff;
+    tm.onBeforeCompile=sh=>{ Object.assign(sh.uniforms,TU);
+      sh.vertexShader=HGLSL+'uniform vec2 uOff; varying float vH; varying vec2 vLp;\n'+sh.vertexShader
+        .replace('#include <uv_vertex>','vec2 lp=position.xz+uOff; vUv=lp*.28; float h0=hgt(lp); vH=h0; vLp=lp;')
+        .replace('#include <beginnormal_vertex>','vec3 objectNormal=normalize(vec3(hgt(lp-vec2(.7,0.))-hgt(lp+vec2(.7,0.)),1.4,hgt(lp-vec2(0.,.7))-hgt(lp+vec2(0.,.7))));')
+        .replace('#include <begin_vertex>','vec3 transformed=vec3(position.x,h0,position.z);');
+      sh.fragmentShader='uniform float uT,uK; uniform vec3 uHaze; varying float vH; varying vec2 vLp;\n'+NOISE+sh.fragmentShader
+        .replace('#include <map_fragment>','#include <map_fragment>\n float pn=vn2(vLp*.05)*.6+vn2(vLp*.17)*.4; diffuseColor.rgb*=mix(vec3(.74,.9,.6),vec3(1.14,1.08,.78),smoothstep(-5.,7.,vH))*(.84+.3*pn);\n diffuseColor.rgb*=1.-cloudSh(vLp,uT)*.32; diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.5,.42,.4),uK*.7);')
+        .replace('#include <dithering_fragment>','#include <dithering_fragment>\n gl_FragColor.rgb=mix(gl_FragColor.rgb,uHaze,smoothstep(125.,222.,fogDepth));'); };
+    const ter=new THREE.Mesh(tg,tm); ter.frustumCulled=false; ter.receiveShadow=true; D.g.add(ter); D.terrain=ter;
+    // grass, near you: every clump wraps round as you walk, so there is always grass at your feet
+    const base=grassGeo(), ig=new THREE.InstancedBufferGeometry(); ig.setAttribute('position',base.attributes.position); ig.setAttribute('bt',base.attributes.bt);
+    const n=T.touchMode?3000:9000, R=T.touchMode?15:22, off=new Float32Array(n*3), rr=mulberry32(52), side=Math.ceil(Math.sqrt(n));
+    for(let i=0;i<n;i++){ off[i*3]=((i%side)+rr())/side*2*R-R; off[i*3+1]=(Math.floor(i/side)+rr())/side*2*R-R; off[i*3+2]=rr(); }
+    ig.setAttribute('off',new THREE.InstancedBufferAttribute(off,3)); ig.instanceCount=n;
+    D.gU={uHouse:D.uHouse,uHB:D.uHB,uCam:{value:new THREE.Vector2()},uR:{value:R},uT:D.uT,uK:D.uK,uHaze:D.uHaze,uL:{value:1}};
+    const gm=new THREE.ShaderMaterial({uniforms:D.gU,side:THREE.DoubleSide,
+      vertexShader:HGLSL+NOISE+`uniform vec2 uCam; uniform float uR,uT; uniform vec4 uHB; attribute vec3 off; attribute float bt; varying float vBt,vD,vSh,vR;
+void main(){
+  vec2 p=uCam+mod(off.xy-uCam+uR,2.*uR)-uR;
+  float d=length(p-uCam), s=(1.-smoothstep(uR*.55,uR,d))*(.65+.7*off.z);
+  vec2 hq=p-uHB.xy; hq=vec2(hq.x*uHB.z-hq.y*uHB.w,hq.x*uHB.w+hq.y*uHB.z);
+  vec2 hb=abs(hq)-vec2(5.3,4.3); float hd=max(hb.x,hb.y); if(hq.y>3.9&&hq.y<6.&&hq.x>-4.5&&hq.x<-1.6) hd=-1.;
+  s*=hd<0.?0.:mix(.35,1.,smoothstep(2.,13.,length(max(hb,0.))+hs2(p*3.1)*2.));
+  float a=off.z*43.7; vec3 v=position; v.xz=mat2(cos(a),sin(a),-sin(a),cos(a))*v.xz; v.y*=s; v.xz*=.7+.6*s;
+  float w=sin(uT*1.6+p.x*.33+p.y*.21)*.6+sin(uT*2.7+p.x*.8-p.y*.5)*.25+sin(uT*.7+p.y*.05)*.3;
+  v.x+=w*.16*bt*bt*s; v.z+=w*.07*bt*bt*s;
+  vec2 aw=p+v.xz-uCam; float ad=length(aw); v.xz+=aw/max(ad,.01)*max(0.,.6-ad)*.8*bt*s;
+  vec4 mv=modelViewMatrix*vec4(p.x+v.x,hgt(p)+v.y-.02,p.y+v.z,1.); gl_Position=projectionMatrix*mv;
+  vBt=bt; vD=-mv.z; vR=off.z; vSh=cloudSh(p,uT); }`,
+      fragmentShader:`uniform float uK,uL; uniform vec3 uHaze; varying float vBt,vD,vSh,vR;
+void main(){ vec3 base=mix(vec3(.035,.15,.008),vec3(.06,.21,.012),vR), tip=mix(vec3(.12,.46,.02),vec3(.2,.56,.035),vR);
+  vec3 c=mix(base,tip,sqrt(vBt));
+  if(vR>.985&&vBt>.82) c=vR>.993?vec3(1.,.95,.6):vec3(1.,1.,.96);
+  c*=uL*(1.-vSh*.3); c=mix(c,c*vec3(.5,.42,.4),uK*.7);
+  gl_FragColor=vec4(c,1.);
+  #include <tonemapping_fragment>
+  #include <encodings_fragment>
+  gl_FragColor.rgb=mix(gl_FragColor.rgb,uHaze,smoothstep(125.,222.,vD)); }`});
+    T.mats._grass=gm; const gr=new THREE.Mesh(ig,gm); gr.frustumCulled=false; D.g.add(gr); D.grass=gr;
+    buildHouse(D); buildField(D);
+    placeHouse(HOUSE0.x,HOUSE0.z,HOUSE0.ry);
+  }
+
+  /* ---------- the house ---------- */
+  const HW=5, HD=4, WH=2.7;
+  function buildHouse(D){
+    const hg=new THREE.Group(), b=new Batch(), keep=T.boxes, R=mulberry32(61), t=.18, IN=HD-t, PX=.85, PZ=.95; T.boxes=D.hBoxes;
+    D.g.add(hg); D.hg=hg;
+    // a wall along x (at z=c) or along z (at x=c), with holes for doors and windows; solid where it meets the floor
+    const wall=(ax,c,a0,a1,holes,th,mk,lin)=>{
+      const piece=(p0,p1,y0,y1)=>{ if(p1-p0<.005||y1-y0<.005) return; const am=(p0+p1)/2, len=p1-p0, ym=(y0+y1)/2, hh=y1-y0;
+        if(ax==='x'){ b.box(mk,am,ym,c,len,hh,th); for(const s of lin||[]) b.box('wallp',am,ym,c+s*(th/2+.01),len,hh,.02); }
+        else { b.box(mk,c,ym,am,th,hh,len); for(const s of lin||[]) b.box('wallp',c+s*(th/2+.01),ym,am,.02,hh,len); }
+        if(y0<.01){ const bs=lin||[-1,1];
+          const bo=th/2+(lin?.03:.01); for(const s of bs){ if(ax==='x') b.box('trim',am,.06,c+s*bo,len,.12,.02); else b.box('trim',c+s*bo,.06,am,.02,.12,len); }
+          if(ax==='x') b.solid(p0,c-th/2,p1,c+th/2); else b.solid(c-th/2,p0,c+th/2,p1); } };
+      let p=a0; for(const h of holes.slice().sort((u,v)=>u.a0-v.a0)){ piece(p,h.a0,0,WH); if(h.y0>0) piece(h.a0,h.a1,0,h.y0); piece(h.a0,h.a1,h.y1,WH); p=h.a1; } piece(p,a1,0,WH); };
+    // what fills a hole: a window with its frame, glass, sill and curtains; or just a door frame
+    const opening=(ax,c,h,out,th)=>{ const w=h.a1-h.a0, hh=h.y1-h.y0, am=(h.a0+h.a1)/2, ym=(h.y0+h.y1)/2;
+      const at=(u,y,v,sx,sy,sz,mk,col)=>ax==='x'?b.box(mk||'trim',am+u,y,c+v,sx,sy,sz,0,0,0,col):b.box(mk||'trim',c+v,y,am+u,sz,sy,sx,0,0,0,col);
+      for(const s of out?[-1,1]:[-1,1]){ const fv=s*(th/2+.015);
+        at(-w/2-.05,ym-(h.y0>0?0:.0),fv,.1,hh+(h.y0>0?.1:.05),.03); at(w/2+.05,ym,fv,.1,hh+(h.y0>0?.1:.05),.03); at(0,h.y1+.05,fv,w+.2,.1,.03);
+        if(h.y0>0) at(0,h.y0-.05,fv,w+.2,.1,.03); }
+      at(-w/2+.02,ym,0,.04,hh,th+.02); at(w/2-.02,ym,0,.04,hh,th+.02); at(0,h.y1-.02,0,w,.04,th+.02);
+      if(h.y0>0){ at(0,h.y0+.02,0,w+.12,.045,th+.14);
+        at(0,ym,0,.035,hh,.05); at(0,ym+hh*.08,0,w,.035,.05); at(0,ym,0,w-.04,hh-.04,.012,'glassW');
+        const cv=-out*(th/2+.07), col=[0xe8b8c0,0xb8d0e8,0xf0e0a8][Math.floor(R()*3)];
+        for(const s of [-1,1]) at(s*(w/2+.1),ym+.1,cv,.26,hh+.4,.035,'fabric',col);
+        at(0,h.y1+.24,cv-out*.01,w+.6,.025,.025,'steel'); } };
+    const FW=[{a0:-3.55,a1:-2.6,y0:0,y1:2.12},{a0:-1.75,a1:-.35,y0:.95,y1:2.15},{a0:2.35,a1:3.55,y0:.95,y1:2.15}];
+    const BW=[{a0:-3.65,a1:-2.05,y0:1.0,y1:2.15},{a0:2.2,a1:3.5,y0:.95,y1:2.15}];
+    const WW=[{a0:-.8,a1:.8,y0:1.02,y1:2.15}], EW=[{a0:-2.95,a1:-1.75,y0:1.0,y1:2.15}];
+    wall('x',HD-t/2,-HW,HW,FW,t,'siding',[-1]); wall('x',-HD+t/2,-HW,HW,BW,t,'siding',[1]);
+    wall('z',-HW+t/2,-IN,IN,WW,t,'siding',[1]); wall('z',HW-t/2,-IN,IN,EW,t,'siding',[-1]);
+    for(const h of FW) opening('x',HD-t/2,h,1,t); for(const h of BW) opening('x',-HD+t/2,h,-1,t);
+    for(const h of WW) opening('z',-HW+t/2,h,-1,t); for(const h of EW) opening('z',HW-t/2,h,1,t);
+    // inside: the living room on the left; a hall, and a small bedroom, on the right
+    const P1=[{a0:1.75,a1:2.65,y0:0,y1:2.1}], P2=[{a0:2.6,a1:3.5,y0:0,y1:2.1}];
+    wall('z',PX,-IN,IN,P1,.12,'wallp'); wall('x',PZ,PX+.06,HW-t,P2,.12,'wallp');
+    opening('z',PX,P1[0],0,.12); opening('x',PZ,P2[0],0,.12);
+    b.box('hcarpet',(-HW+t+PX-.06)/2,.01,0,PX-.06+HW-t,.02,2*IN);
+    b.box('hwood',(PX+.06+HW-t)/2,.01,(PZ+.06+IN)/2,HW-t-PX-.06,.02,IN-PZ-.06);
+    b.box('bcarpet',(PX+.06+HW-t)/2,.01,(-IN+PZ-.06)/2,HW-t-PX-.06,.02,IN+PZ-.06);
+    b.box('ceilW',0,WH+.02,0,2*HW,.04,2*HD); b.box('concrete',0,-.3,0,2*HW+.12,.62,2*HD+.12);
+    // the roof
+    const ov=.55, rh=2.3, run=HD+ov, L=Math.hypot(run,rh), th=Math.atan2(rh,run);
+    for(const s of [-1,1]){ b.at(0,WH+rh/2+.03,s*run/2,0,s*th,0); b.box('roof',0,0,0,2*HW+.9,.13,L+.06); b.end();
+      b.box('trim',0,WH+.03,s*(HD+ov/2),2*HW+.5,.03,ov); b.box('trim',0,WH-.06,s*(run+.05),2*HW+.9,.11,.11); b.box('siding',0,WH+.15,s*(HD-t/2),2*HW,.3,t); }
+    const gp=triPrism(2*HD+.02,rh*HD/run+.02,t); for(const s of [-1,1]) b.add('siding',gp,s*(HW-t/2),WH,0,1,1,1); gp.dispose();
+    for(const s of [-1,1]){ b.at(s*(HW+.42),WH+rh/2+.02,0); b.box('trim',0,0,-run/2,.05,.2,L,-th,0,0); b.box('trim',0,0,run/2,.05,.2,L,th,0,0); b.end(); }
+    b.box('brick',3.1,WH+rh*.7,-1.6,.75,2.8,.75); b.box('concrete',3.1,WH+rh*.7+1.42,-1.6,.86,.08,.86);
+    // the porch and the front door, standing open
+    b.box('concrete',-3.07,.07,HD+.8,2.7,.14,1.6);
+    for(const px of [-4.25,-1.9]) b.box('trim',px,1.35,HD+1.45,.12,2.56,.12);
+    b.at(-3.07,2.62,HD+.85,0,.12); b.box('roof',0,0,0,2.9,.08,1.85); b.box('trim',0,-.08,.9,2.9,.14,.05); b.end();
+    b.box('fabric',-3.07,.15,HD+.55,.9,.012,.55,0,0,0,0x7a5a3a);
+    b.box('glossy',-3.5,1.04,HD-t-.47,.045,2.06,.9,0,0,0,0xa8323a); b.sph('steel',-3.45,1.0,HD-t-.85,.03); b.sph('steel',-3.55,1.0,HD-t-.85,.03);
+    b.solid(-3.56,HD-t-.94,-3.44,HD-t);
+    b.box('trim',2.62,1.04,PZ-.06-.44,.04,2.05,.86); b.sph('steel',2.67,1.0,PZ-.06-.8,.028); b.solid(2.58,PZ-.94,2.66,PZ-.06);
+    // the living room
+    sofa(b,-4.35,-.1,Math.PI/2,0x7e9e70);
+    for(const [z,c] of [[-.7,0xe8c8d0],[.45,0xf0e0b0]]) b.box('fabric',-4.35,.66,z,.14,.34,.34,0,0,.25,c);
+    table(b,-2.85,-.1,Math.PI/2,1.1,.6,.44,'hwood');
+    b.cyl('porcelain',-2.7,.5,.1,.035,.1); b.cyl('glossy',-2.7,.54,.1,.03,.01,0,0,0,0xf4f2ee); b.box('dark',-3.0,.455,-.3,.05,.02,.16);
+    b.cyl('glossy',-2.95,.52,.25,.05,.14,0,0,0,0x5a8ab0); for(let i=0;i<5;i++) b.sph('fabric',-2.95+(R()-.5)*.1,.66+R()*.06,.25+(R()-.5)*.1,.035,[0xf0d040,0xe87090,0xffffff][i%3]);
+    b.box('fabric',-2.85,.025,-.1,2.3,.006,1.7,0,0,0,0xb86a5a); b.box('fabric',-2.85,.028,-.1,2.0,.006,1.4,0,0,0,0xe0c090);
+    b.box('hwood',.44,.28,-.2,.6,.56,1.3); b.solid(.12,-.86,.76,.46); b.box('dark',.14,.3,-.2,.01,.36,1.1);
+    b.box('plastic',.44,.83,-.2,.54,.5,.66,0,0,0,0xd8d2c2); b.box('plastic',.62,.83,-.2,.3,.38,.46,0,0,0,0xc8c2b2);
+    b.box('dark',.166,.63,-.1,.01,.035,.3); for(const z of [-1,1]) b.cyl('steel',.46,1.24,-.2+z*.07,.006,.36,z*.5,0,0);
+    books(b,.6,-3.2,-Math.PI/2,1.0,R);
+    armchair(b,-1.3,2.6,Math.PI*.82,0xb8a888);
+    b.cyl('steel',-4.35,.8,1.55,.015,1.6); b.cyl('dark',-4.35,.02,1.55,.16,.03);
+    b.box('hwood',-.9,1.65,-IN+.03,.66,.48,.02); b.box('hwood',PX-.07,1.55,1.0,.02,.38,.47);
+    // the hall
+    b.box('fabric',2.9,.025,2.4,3.4,.006,.8,0,0,0,0x5a6a9a);
+    for(let i=0;i<3;i++) b.sph('steel',1.25+i*.35,1.78,PZ+.08,.02);
+    b.box('sheet',1.6,1.32,PZ+.1,.52,.9,.03,0,.05,.04);
+    b.box('hwood',1.45,.4,IN-.2,.8,.8,.36); b.solid(1.05,IN-.38,1.85,IN);
+    b.box('plastic',1.35,.85,IN-.2,.2,.08,.18,0,0,0,0x2a2a2a); b.box('plastic',1.35,.92,IN-.2,.24,.05,.07,0,0,0,0x2a2a2a);
+    b.box('trim',HW-t-.03,1.07,2.45,.04,2.05,.9); b.sph('steel',HW-t-.06,1.02,2.1,.028);
+    for(const z of [1.97,2.93]) b.box('trim',HW-t-.02,1.08,z,.05,2.16,.08); b.box('trim',HW-t-.02,2.16,2.45,.05,.08,1.04);
+    // the bedroom: a small bed, and something on the pillow
+    b.box('hwood',4.28,.2,-2.77,.98,.3,2.04); b.box('hwood',4.28,.55,-3.74,.98,.9,.06); b.box('hwood',4.28,.4,-1.77,.98,.5,.05);
+    b.box('mattress',4.28,.43,-2.77,.9,.16,1.94); b.box('fabric',4.28,.53,-2.4,.94,.05,1.3,0,0,0,0x5a7ac0); b.box('fabric',4.28,.555,-3.08,.93,.02,.1,0,0,0,0xf4f0e8);
+    b.add('sheet',GEO.sph,4.28,.585,-3.45,.3,.075,.17,0,.06,0); b.solid(3.78,-IN,4.78,-1.74);
+    b.box('hwood',3.45,.3,-3.55,.45,.6,.4); b.solid(3.22,-IN,3.68,-3.34); b.cyl('glossy',3.45,.64,-3.55,.05,.08,0,0,0,0xe8d8c0);
+    b.box('hwood',1.4,.95,PZ-.34,.9,1.9,.5); b.box('steel',1.4,1.0,PZ-.6,.02,.3,.02); b.solid(.95,PZ-.6,1.85,PZ-.06);
+    b.cyl('fabric',2.6,.025,-1.9,.8,.008,0,0,0,0xe8b8c8);
+    for(let i=0;i<7;i++) b.box('toy',2.1+R()*.8,.05+(i>4?.1:0),-1.4-R()*.6,.1,.1,.1,0,R()*3,0,[0xe03a3a,0x3a7ae0,0xf0c030,0x3ac060][i%4]);
+    { const br=0x8a6040; b.at(1.5,0,-3.2,.5); b.sph('toy',0,.17,0,.17,br); b.sph('toy',0,.42,.02,.12,br); b.sph('toy',-.09,.52,.02,.045,br); b.sph('toy',.09,.52,.02,.045,br); b.sph('toy',0,.39,.11,.05,0xc8a888);
+      b.sph('toy',-.045,.45,.1,.015,0x080808); b.sph('toy',.045,.45,.1,.015,0x080808); b.sph('toy',-.17,.2,.06,.06,br); b.sph('toy',.17,.2,.06,.06,br); b.sph('toy',-.09,.04,.14,.07,br); b.sph('toy',.09,.04,.14,.07,br); b.end(); }
+    b.flush(hg); T.boxes=keep;
+    hg.traverse(o=>{ if(o.isMesh){ o.castShadow=!o.material.transparent; o.receiveShadow=true; } });
+    // pictures, the television's picture, the lamps
+    const pic=(tex,w,h,x,y,z,ry)=>{ const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),stdMat({map:tex,roughness:.6})); m.position.set(x,y,z); m.rotation.y=ry; hg.add(m); m.receiveShadow=true; return m; };
+    pic(texSampler(),.6,.42,-.9,1.65,-IN+.042,0);
+    pic(texFamily(),.42,.33,PX-.082,1.55,1.0,-Math.PI/2);
+    pic(texClock(),.3,.3,-3.07,2.42,IN-.032,Math.PI);
+    pic(texDrawing(),.34,.42,PX+.072,1.35,-1.4,Math.PI/2).rotation.z=-.05;
+    pic(texDrawingHer(),.34,.42,2.0,1.4,-IN+.032,0).rotation.z=.06;
+    const scr=new THREE.Mesh(new THREE.PlaneGeometry(.46,.36),new THREE.MeshBasicMaterial({map:texBliss(),color:LCc(0xd8d8d8)})); scr.position.set(.165,.86,-.2); scr.rotation.y=-Math.PI/2; hg.add(scr); D.scr=scr; T.mats._scr=scr.material;
+    const scr2=new THREE.Mesh(new THREE.PlaneGeometry(.46,.36),T.tvMat); scr2.position.copy(scr.position); scr2.rotation.y=-Math.PI/2; scr2.visible=false; hg.add(scr2); D.scr2=scr2;
+    const lamp=(x,y,z,col,pow,range,sx,sy,mode)=>{ const m=new THREE.Mesh(GEO.cyl,new THREE.MeshBasicMaterial({color:0x000000,toneMapped:false})); m.scale.set(sx,sy,sx*.8); m.position.set(x,y,z); hg.add(m); T.mats['_hl'+Object.keys(T.mats).length]=m.material;
+      const f={lx:x,ly:y,lz:z,x:0,y:0,z:0,mode:mode||'lamp',kind:'lamp',col:LCc(col),pow,range,on:1,lvl:1,t:1,burst:0,light:-1,fade:0,glowK:1.6,glow:m,dream:true}; T.fix.push(f); D.hfix.push(f); return f; };
+    lamp(-4.35,1.66,1.55,0xffd8a0,1.3,6.5,.2,.26); lamp(3.45,.78,-3.55,0xffd0a0,.9,4.5,.1,.14); lamp(-2.3,2.0,HD+.1,0xffe0b0,.8,5,.07,.12);
+    const tvf=lamp(.17,.86,-.2,0x9ab8ff,.45,3.2,.01,.01,'tv'); tvf.glow.visible=false; D.tvF=tvf;
+    b.box('trim',-2.3,2.08,HD+.04,.16,.06,.1); b.flush(hg);
+    // the fake door at the end of the hall: light comes from under it
+    const lm=new THREE.MeshBasicMaterial({color:LCc(0xfff2d0).multiplyScalar(2.2),toneMapped:false}); T.mats._under=lm;
+    const ul=new THREE.Mesh(new THREE.PlaneGeometry(.84,.024),lm); ul.position.set(HW-t-.03,.03,2.45); ul.rotation.y=-Math.PI/2; hg.add(ul);
+    // the needle that wakes you up
+    const sy=syringe(0xfff4e0); sy.scale.setScalar(1.35); sy.rotation.set(0,.4,Math.PI/2,'YXZ'); sy.position.set(4.18,.672,-3.42); hg.add(sy);
+    D.needle=addItem('needle',{fx:'wake',obj:sy,x:0,y:0,z:0,r:.2,dream:true,house:true,lp:[4.18,.672,-3.42]}); D.items.push(D.needle);
+  }
+  /* the house stands at x,z (dream-local), turned ry; the ground under it goes flat */
+  function placeHouse(x,z,ry){
+    const D=T.dreamW, H=D.house; H.x=x; H.z=z; H.ry=ry; H.y=hRaw(x,z);
+    D.uHouse.value.set(x,z,H.y,9); D.uHB.value.set(x,z,Math.cos(ry),Math.sin(ry));
+    D.hg.position.set(x,H.y,z); D.hg.rotation.y=ry; D.g.updateMatrixWorld(true);
+    const w=(lx,ly,lz,o)=>{ _v.set(lx,ly,lz); D.hg.localToWorld(_v); o.x=_v.x; o.y=_v.y; o.z=_v.z; };
+    for(const f of D.hfix) w(f.lx,f.ly,f.lz,f);
+    for(const it of D.items){ w(it.lp[0],it.lp[1],it.lp[2],it); it.home={x:it.x,y:it.y,z:it.z}; }
+    D.tvW={x:D.tvF.x,z:D.tvF.z};
+    const s=T.sun; s.target.position.set(DX+x,H.y+1,DZ+z); s.position.copy(s.target.position).addScaledVector(SUN,60); s.target.updateMatrixWorld();
+    s.shadow.needsUpdate=true; renderer.shadowMap.needsUpdate=true;
+  }
+  /* the field: your bed, out here in the grass; a door that goes nowhere; a television; the wires to the house */
+  function buildField(D){
+    const b=new Batch(), keep=T.boxes, R=mulberry32(71), gy=(x,z)=>hRaw(x,z); T.boxes=D.fBoxes;
+    b.at(0,gy(1.7,1.1)-.02,0); bed(b,1.7,1.1,.35,{}); b.end();
+    b.at(0,gy(2.9,.2),0); ivStand(b,2.9,.2,.8,true); b.end();
+    { const x=-2.2, z=-4.6, y=gy(x,z); b.at(x,y,z,.3); b.box('hwood',0,.8,0,.08,1.6,.08); b.solid(-.1,-.1,.1,.1); b.end(); }
+    { const x=-8, z=-24, y=gy(x,z)-.05; b.at(x,y,z,.3); for(const sx of [-1,1]) b.box('trim',sx*.52,1.1,0,.1,2.3,.14); b.box('trim',0,2.25,0,1.14,.1,.14);
+      b.box('trim',0,1.1,0,.92,2.1,.05); b.sph('steel',.36,1.0,.05,.03); b.sph('steel',.36,1.0,-.05,.03); b.solid(-.6,-.1,.6,.1); b.end(); D.lone={x,z,y,ry:.3}; }
+    { const x=6.5, z=-38, y=gy(x,z); b.at(x,y,z,-.5,-.06); b.box('plastic',0,.26,0,.62,.5,.55,0,0,0,0xd0cabc); b.box('plastic',0,.26,-.3,.4,.36,.3,0,0,0,0xc0baac); b.solid(-.32,-.46,.32,.28); b.end(); D.ftv={x,z,y}; }
+    // the wires: poles from where you woke to the house
+    const H0=HOUSE0, a={x:5,z:-8}, e={x:H0.x-7,z:H0.z+12}, n=Math.max(2,Math.round(Math.hypot(e.x-a.x,e.z-a.z)/17)), tops=[];
+    for(let i=0;i<=n;i++){ const x=lerp(a.x,e.x,i/n)+(R()-.5)*1.2, z=lerp(a.z,e.z,i/n)+(R()-.5)*1.2, y=gy(x,z), ry=Math.atan2(e.x-a.x,e.z-a.z)+Math.PI/2+(R()-.5)*.1, lean=(R()-.5)*.05;
+      b.at(x,y-.3,z,ry,lean); b.cyl('hwood',0,3.9,0,.12,7.8); b.box('hwood',0,7.3,0,1.9,.12,.12); for(const sx of [-.8,0,.8]) b.cyl('porcelain',sx,7.42,0,.035,.12); b.solid(-.14,-.14,.14,.14); b.end();
+      const c=Math.cos(ry), s=Math.sin(ry); tops.push([-.8,0,.8].map(o=>[x+o*c,y-.3+7.48,z-o*s])); }
+    for(let i=0;i<n;i++) for(let k=0;k<3;k++){ const p=tops[i][k], q=tops[i+1][k]; let prev=p;
+      for(let j=1;j<=8;j++){ const t=j/8, pt=[lerp(p[0],q[0],t),lerp(p[1],q[1],t)-Math.sin(t*Math.PI)*.9,lerp(p[2],q[2],t)]; b.bar('dark',prev,pt,.008); prev=pt; } }
+    b.flush(D.g); T.boxes=keep;
+    const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.58),stdMat({map:texSign('YOU ARE SAFE HERE',{bg:'#ece4d0',fg:'#4a3020',edge:'#8a6a4a',w:512,h:196}),roughness:.8}));
+    { const x=-2.2, z=-4.6; sg.position.set(x+Math.sin(.3)*.05,gy(x,z)+1.5,z+Math.cos(.3)*.05); sg.rotation.y=.3; D.g.add(sg); }
+    const ts=new THREE.Mesh(new THREE.PlaneGeometry(.5,.38),T.tvMat); ts.position.set(D.ftv.x+Math.sin(-.5)*.28,D.ftv.y+.27,D.ftv.z+Math.cos(-.5)*.28); ts.rotation.set(-.06,-.5,0,'YXZ'); D.g.add(ts);
+    const lm=T.mats._under||new THREE.MeshBasicMaterial({color:LCc(0xfff2d0).multiplyScalar(2.2),toneMapped:false});
+    for(const s of [-1,1]){ const ul=new THREE.Mesh(new THREE.PlaneGeometry(.86,.03),lm); const L=D.lone; ul.position.set(L.x+Math.sin(L.ry)*.03*s,L.y+.03,L.z+Math.cos(L.ry)*.03*s); ul.rotation.y=L.ry+(s<0?Math.PI:0); D.g.add(ul); }
+    D.g.traverse(o=>{ if(o.isMesh&&o.parent===D.g&&o!==D.terrain&&o!==D.grass&&o!==D.sky){ o.castShadow=false; o.receiveShadow=true; } });
   }
 
   /* ---------- the east wing, the white room, and the rooms that aren't there ---------- */
@@ -17929,8 +18321,14 @@ void main(){ vec2 uv=vUv;
   c=mix(c,c+(vec3(.95,.93,1.)-c)*(.06+.1*l),uHaze);
   c=mix(c,vec3(l*1.3,l*.42,l*.38),uRed);
   vec2 q=vUv-.5; q.x*=uRes.x/uRes.y*.72; c*=clamp(1.-dot(q,q)*uVig,0.,1.);
-  float e=abs(vUv.y-.5)*2.+pow(abs(vUv.x-.5)*1.6,2.)*.6;
-  c*=1.-smoothstep(uLid-.22,uLid+.02,e);
+  if(uLid<.999){ // eyelids: uLid is how open your eyes are. curved lids, soft lashes, and light coming through the skin when they're shut
+    vec2 e=vUv-.5; e.x*=uRes.x/uRes.y; float o=uLid*.6+pow(uLid,4.)*.55, cv=.3+.26*(1.-uLid);
+    float top=o*1.04-cv*e.x*e.x+.01*sin(e.x*8.+1.), bot=-o*.8+cv*.5*e.x*e.x, sf=.01+.03*(1.-uLid);
+    float m=smoothstep(-sf,sf,top-e.y)*smoothstep(-sf,sf,e.y-bot);
+    vec3 av=(texture2D(tSrc,vec2(.3,.35)).rgb+texture2D(tSrc,vec2(.7,.35)).rgb+texture2D(tSrc,vec2(.3,.7)).rgb+texture2D(tSrc,vec2(.7,.7)).rgb+texture2D(tSrc,vec2(.5,.5)).rgb)*.2;
+    vec3 skin=vec3(.2,.045,.025)*(.18+dot(av,vec3(.5,.4,.1))*1.7);
+    float ed=min(abs(top-e.y),abs(e.y-bot)); c*=1.-(1.-smoothstep(0.,.02+.035*(1.-uLid),ed))*m*.6;
+    c=mix(skin,c,m); }
   c+=(h(vUv*uRes+fract(uTime*7.3)*91.)-.5)*uGrain*(1.25-l);
   if(uStatic>.01) c=mix(c,vec3(h(floor(vUv*uRes/2.)+floor(uTime*40.))),uStatic*.3);
   if(uCrack>.01) c+=texture2D(tCrack,vUv).r*uCrack*.9;
@@ -18028,7 +18426,8 @@ void main(){ vec2 uv=vUv;
   }
   function doorsStep(dt){ for(const d of T.doors){ if(Math.abs(d.w)<.002) continue; d.a=clamp(d.a+d.w*dt,d.min,d.max); if(d.a===d.min||d.a===d.max) d.w*=-.2; d.w*=Math.exp(-dt*2.6); placeDoor(d); } }
   function footstep(spr){
-    const P=T.p, k=T.inDream?'t':cellAt(Math.floor(P.x),Math.floor(P.z)), surf=k==='o'?'wood':(k==='t'||k==='f'||k==='p'||k==='x')?'tile':(k==='q'||k==='k'||k==='s')?'soft':'lino';
+    const P=T.p, k=T.inDream?'':cellAt(Math.floor(P.x),Math.floor(P.z)), hp=(T.inDream&&T.dreamW.hpos)||{x:99,z:99};
+    const surf=T.inDream?(Math.abs(hp.x)<HW&&Math.abs(hp.z)<HD?(hp.x>.9&&hp.z>1?'wood':'soft'):'grass'):k==='o'?'wood':(k==='t'||k==='f'||k==='p'||k==='x')?'tile':(k==='q'||k==='k'||k==='s')?'soft':'lino';
     const loud=(spr?1.25:.8)*(1-.35*lv('numb'))*(1-.2*lv('heavy'));
     P.side=-(P.side||1); SFX.tr.step(surf,loud,{gain:1,pan:P.side*.12});
     if((lv('halluc')>.3||lv('drowse')>.3)&&Math.random()<.75) T.echo.push({t:T.t+.3+Math.random()*.14,surf,loud:loud*.5});
@@ -18056,7 +18455,7 @@ void main(){ vec2 uv=vUv;
     const acc=1-Math.exp(-dt*(mag>0?(sprint?5:7):9));
     P.vx+=(tx-P.vx)*acc; P.vz+=(tz-P.vz)*acc;
     const q={x:P.x+P.vx*dt,z:P.z+P.vz*dt};
-    if(T.inDream) dreamMove(q,dt); else collide(q);
+    if(T.inDream) dreamMove(q); else collide(q);
     const moved=Math.hypot(q.x-P.x,q.z-P.z); P.x=q.x; P.z=q.z; P.speed=moved/Math.max(dt,1e-4); P.sprinting=sprint&&P.speed>1.5;
     P.bob+=moved/(sprint?.98:.74)*Math.PI;
     const st=Math.floor(P.bob/Math.PI); if(st!==P.lastStep){ P.lastStep=st; if(P.speed>.25&&!T.fall) footstep(P.sprinting); }
@@ -18064,38 +18463,51 @@ void main(){ vec2 uv=vUv;
   /* breath and heart: how hard you're working, and what's in your blood */
   function body(dt){
     const P=T.p, heavy=lv('heavy'), rush=lv('rush'), pz=T.poison?clamp(T.poison.t/T.poison.dur,0,1):0;
-    const ex=clamp((.6-P.stam)/.6,0,1)*.85+P.exh*.35+(P.sprinting?.15:0)+rush*.3+pz*.6+(T.her.on&&T.her.seen>0?.35:0);
+    const ex=clamp((.6-P.stam)/.6,0,1)*.85+P.exh*.35+(P.sprinting?.15:0)+rush*.3+pz*.6+(T.her.on&&T.her.seen>0?.35:0)+(T.aimK||0)*.75;
     P.exK+=(ex-P.exK)*Math.min(1,dt*1.5);
     if(T.phase==='dead') return;
-    if(P.exK>.08||T.phase==='wake'){ P.breathT-=dt; if(P.breathT<=0){ const per=clamp(2.8-P.exK*1.7,.9,2.8); P.breathIn=!P.breathIn; P.breathT=per*(P.breathIn?.45:.55);
+    if(P.exK>.08||T.phase==='wake'||T.phase==='collapse'){ P.breathT-=dt; if(P.breathT<=0){ const per=clamp(2.8-P.exK*1.7,.9,2.8); P.breathIn=!P.breathIn; P.breathT=per*(P.breathIn?.45:.55);
         SFX.tr.breath(P.breathIn,T.phase==='wake'?.5:Math.min(1,P.exK*1.1)); } }
-    const hb=Math.max(heavy*.75,rush*.85,P.exh*.55,T.phase==='wake'?.6:0,T.heartKick||0,pz*.9,lv('deaf')*.8,lv('drowse')*.5);
-    if(hb>.05){ P.heartT-=dt; if(P.heartT<=0){ const bpm=pz>.5?38+Math.random()*30:rush>.3?138:(heavy>.3||lv('drowse')>.3)?50:(P.exh||T.her.seen>0)?112:72; P.heartT=60/bpm; SFX.tr.heart(Math.min(1,hb)); } }
+    const hb=Math.max(heavy*.75,rush*.85,P.exh*.55,T.phase==='wake'?.6:0,T.heartKick||0,pz*.9,lv('deaf')*.8,lv('drowse')*.5,(T.aimK||0)*.95,T.phase==='collapse'?.7:0);
+    if(hb>.05){ P.heartT-=dt; if(P.heartT<=0){ const bpm=T.phase==='collapse'?Math.max(34,70-T.col.t*8):pz>.5?38+Math.random()*30:(T.aimK||0)>.3?132:rush>.3?138:(heavy>.3||lv('drowse')>.3)?50:(P.exh||T.her.seen>0)?112:72; P.heartT=60/bpm; SFX.tr.heart(Math.min(1,hb)); } }
     if(T.heartKick) T.heartKick=Math.max(0,T.heartKick-dt*.08);
   }
 
   /* ---------- waking up, dying, and waking up again ---------- */
+  const LID_WAKE=[[0,0],[1.1,0],[1.5,.34],[1.8,.3],[2.0,.03],[2.35,.03],[2.9,.64],[3.3,.56],[3.45,.08],[3.6,.08],[3.95,.86],[4.7,1]];
+  function wakeUp(mode){ T.phase='wake'; T.wakeMode=mode; T.wakeT=0; T.w1=T.w2=T.w3=0; T.lid=0; T.black=0; T.dRoll=mode==='floor'?1.28:0; T.introBlur=3.4; T.introTrail=.55; }
   function wakeStep(dt){
-    const e=(T.wakeT+=dt), P=T.p;
-    T.lid=keyed([[0,0],[1.5,0],[1.9,.45],[2.3,.04],[2.6,.04],[3.4,.9],[3.65,.25],[3.9,.35],[5,1.75]],e);
-    T.introBlur=Math.max(1.3,7.5-e*1.1); T.introTrail=e<6?.7:Math.max(0,.7-(e-6)*.2);
-    const s1=ease(clamp((e-5.2)/2.2,0,1)), s2=ease(clamp((e-7.6)/1.7,0,1));
-    P.x=lerp(lerp(3.3,3.45,s1),4.35,s2); P.z=lerp(lerp(7.6,8.35,s1),9.0,s2); P.y=lerp(lerp(.98,1.25,s1),EYE,s2);
-    P.pitch=lerp(lerp(1.42,-.3,s1),-.06,s2); P.yaw=lerp(lerp(Math.PI+.35,Math.PI+.05,s1),Math.PI-.3,s2);
-    if(e>1.6&&!T.w1){ T.w1=1; T.bedLight.burst=7; T.bedLight.t=.05; }
-    if(e>3.3&&!T.w2){ T.w2=1; SFX.tr.gasp(); }
-    if(e>5.3&&!T.w3){ T.w3=1; SFX.tr.creak({gain:.7,pan:-.2}); }
-    if(e>9.4){ T.phase='play'; if(!T.touchMode&&!locked()) setPaused(true); }
+    const e=(T.wakeT+=dt), P=T.p, m=T.wakeMode||'bed';
+    T.lid=keyed(LID_WAKE,e);
+    T.introBlur=Math.max(0,3.4-e*.62); T.introTrail=e<5?.55:Math.max(0,.55-(e-5)*.2);
+    if(m==='bed'){
+      const s1=ease(clamp((e-5.2)/2.2,0,1)), s2=ease(clamp((e-7.6)/1.7,0,1));
+      P.x=lerp(lerp(3.3,3.45,s1),4.35,s2); P.z=lerp(lerp(7.6,8.35,s1),9.0,s2); P.y=lerp(lerp(.98,1.25,s1),EYE,s2);
+      P.pitch=lerp(lerp(1.42,-.3,s1),-.06,s2); P.yaw=lerp(lerp(Math.PI+.35,Math.PI+.05,s1),Math.PI-.3,s2);
+      if(e>1.6&&!T.w1){ T.w1=1; T.bedLight.burst=7; T.bedLight.t=.05; }
+      if(e>3.3&&!T.w2){ T.w2=1; SFX.tr.gasp(); }
+      if(e>5.3&&!T.w3){ T.w3=1; SFX.tr.creak({gain:.7,pan:-.2}); }
+      if(e>9.4) toPlay();
+    } else { // on your back in the grass, looking at the sky; or on your side on the floor, where you fell
+      const g=m==='grass', s1=ease(clamp((e-4.6)/1.8,0,1)), s2=ease(clamp((e-6.6)/1.6,0,1));
+      P.y=lerp(lerp(g?.2:.26,.88,s1),EYE,s2);
+      P.pitch=g?lerp(lerp(1.32,.3,s1),0,s2):lerp(lerp(.03,.28,s1),0,s2);
+      T.dRoll=g?lerp(.1,0,s1):lerp(1.28,0,ease(clamp((e-4.2)/1.7,0,1)));
+      if(e>3.2&&!T.w2){ T.w2=1; SFX.tr.gasp(); }
+      if(e>5&&!T.w3){ T.w3=1; SFX.tr.breath(true,.7); }
+      if(e>8.4) toPlay();
+    }
   }
+  function toPlay(){ T.phase='play'; T.dRoll=0; if(!T.touchMode&&!locked()) setPaused(true); }
   function die(cause){
-    if(T.phase==='dead'||T.phase==='exit') return;
-    T.phase='dead'; T.deadT=0; T.cause=cause; T.fall=null;
+    if(T.phase==='dead'||T.phase==='shot') return;
+    T.phase='dead'; T.deadT=0; T.cause=cause; T.col=null;
     if(T.doc) forceCloseDoc(); if(T.invOpen) closeInv(true); unequip(true);
     SFX.tr.flatline(); T.target=null; prompt(false);
   }
   function deadStep(dt){
     const e=(T.deadT+=dt), P=T.p, k=ease(clamp(e/1.3,0,1));
-    if(!T.inDream||T.cause!=='fall'){ P.y=lerp(P.y,.3,k*.15); P.pitch=lerp(P.pitch,.35,k*.1); }
+    P.y=lerp(P.y,.3,k*.15); P.pitch=lerp(P.pitch,.35,k*.1);
     T.dRoll=lerp(T.dRoll||0,1.2,k*.08);
     T.black=clamp((e-.9)/1.6,0,1);
     if(e>3&&!T.dreamShown){ T.dreamShown=1; $t('truthDream').classList.add('on'); }
@@ -18105,28 +18517,26 @@ void main(){ vec2 uv=vUv;
   function wakeAgain(){
     $t('truthDream').classList.remove('on'); T.dreamShown=0;
     if(T.inDream) leaveDreamWorld();
-    T.fx={}; T.poison=null; T.lsd=null; T.inv=[]; T.flashOn=false; T.echo=[]; T.blackout=0;
+    T.fx={}; T.poison=null; T.lsd=null; T.inv=[]; T.flashOn=false; T.echo=[]; T.blackout=0; T.aimK=0; T.gy=0; T.col=null;
     for(const it of T.items){ it.taken=false; it.obj.visible=true; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; }
     T.bulletBack=0; herHide(false); closePhantom(true); T.fadeOut=null; if(T.fig){ T.root.remove(T.fig.m); T.fig=null; }
-    T.deaths++; T.dRoll=0; T.black=0; T.white=0; T.pulse=0; T.stat=0; T.introBlur=7.5; T.introTrail=.7;
+    T.deaths++; T.dRoll=0; T.black=0; T.white=0; T.pulse=0; T.stat=0;
     const P=T.p; Object.assign(P,{x:3.3,z:7.6,y:.98,yaw:Math.PI+.35,pitch:1.42,vx:0,vz:0,stam:1,exh:0,exK:0});
-    T.phase='wake'; T.wakeT=0; T.w1=T.w2=T.w3=0; T.lid=0;
-    SFX.tr.set({muffle:20000,deaf:0,trip:0}); SFX.tr.wake();
+    wakeUp('bed');
+    SFX.tr.set({muffle:20000,deaf:0,trip:0,loops:1}); SFX.tr.wake();
   }
 
-  /* ---------- the way out: one bullet, one mirror ---------- */
-  function shatter(){
-    const M=T.mirror2; M.cracked=true; M.mat.uniforms.uCrack.value=1;
-    T.phase='exit'; T.exitT=0; T.target=null; prompt(false); SFX.tr.shatter(); T.stat=.7; herHide(false);
+  /* ---------- the way out: one bullet, and the mirror to watch yourself in ---------- */
+  function shootSelf(){
+    const b=T.inv.find(i=>i.kind==='bullet'); if(b) consume(b);
+    SFX.tr.bang(); SFX.tr.set({loops:0,muffle:250});
+    if(T.invOpen) closeInv(true); unequip(true); herHide(false);
+    T.phase='shot'; T.shotT=0; T.black=1; T.target=null; prompt(false);
   }
-  function exitStep(dt){
-    const e=(T.exitT+=dt);
-    T.pF.u.uCrack.value=e>.7?Math.min(1,(e-.7)*6):0;
-    if(e>.7&&!T.x2){ T.x2=1; SFX.tr.shatter(1.4); }
-    T.white=clamp((e-1.3)/1.1,0,1)*(1-clamp((e-3.6)/.9,0,1)); T.black=clamp((e-3.6)/.9,0,1);
-    if(e>3.6) T.pF.u.uCrack.value=0;
-    if(e>4.4&&!T.endShown){ T.endShown=1; $t('truthEnd').classList.add('on'); }
-    if(e>10) finish();
+  function shotStep(dt){
+    const e=(T.shotT+=dt); T.black=1;
+    if(e>2.8&&!T.endShown){ T.endShown=1; $t('truthDream').classList.add('on'); }
+    if(e>8.5){ finish(); if(typeof toast==='function') toast('It was all just a dream.'); }
   }
 
   /* ---------- lights ---------- */
@@ -18163,7 +18573,7 @@ void main(){ vec2 uv=vUv;
     }
     T.hum=hum; T.buzz=buzz;
     const cand=T.cand; cand.length=0;
-    for(const f of T.fix){ if(f.mode==='dead') continue; const d=Math.hypot(f.x-P.x,f.z-P.z); if(d>f.range+5) continue; f.vis=los(P.x,P.z,f.x,f.z); f.rank=d+(f.vis?0:6); cand.push(f); }
+    for(const f of T.fix){ if(f.mode==='dead') continue; const d=Math.hypot(f.x-P.x,f.z-P.z); if(d>f.range+5) continue; f.vis=f.dream?true:los(P.x,P.z,f.x,f.z); f.rank=d+(f.vis?0:6); cand.push(f); }
     cand.sort((a,b)=>a.rank-b.rank);
     const keep=new Set(cand.slice(0,T.pool.length));
     for(const f of T.fix) if(f.light>=0&&!keep.has(f)){ T.poolOwner[f.light]=null; f.light=-1; }
@@ -18207,7 +18617,7 @@ void main(){ vec2 uv=vUv;
   /* ---------- what you carry ---------- */
   const DESC={
     flashlight:()=>'Heavy, rubber grip. The beam shakes when something is near.',
-    needle:it=>it.fx==='drowse'?'Milky. Someone wrote K-0 on the barrel in a child\'s hand.':'Something '+NEEDLES[it.fx].name+' in a glass barrel.',
+    needle:it=>it.fx==='drowse'?'Milky. Someone wrote K-0 on the barrel in a child\'s hand.':it.fx==='wake'?'Someone wrote WAKE UP on the barrel. It\'s your handwriting.':'Something '+NEEDLES[it.fx].name+' in a glass barrel.',
     vial:()=>'No label. The cork is new.',
     blotter:()=>'A square of paper with an eye printed on it.',
     gun:()=>'A revolver. Six chambers. '+(hasBullet()?'One is loaded.':'All empty.'),
@@ -18215,7 +18625,7 @@ void main(){ vec2 uv=vUv;
     doc:it=>it.doc.title+'. You can read it again.'
   };
   const ACT={flashlight:'Hold',needle:'Hold',vial:'Hold',blotter:'Hold',gun:'Hold',bullet:'Load',doc:'Read'};
-  const USE={flashlight:'click to switch it on or off',needle:'click to inject',vial:'click to drink',blotter:'click to put it on your tongue',gun:'click to fire'};
+  const USE={flashlight:'click to switch it on or off',needle:'click to inject',vial:'click to drink',blotter:'click to put it on your tongue',gun:'click to put it to your head'};
   const ICON={
     flashlight:'<rect x="5" y="17" width="16" height="7" rx="2"/><path d="M21 16l6-4v17l-6-4z"/><path d="M28 18l3-1M28 20.5h3.5M28 23l3 1" stroke-width="1.4"/>',
     needle:'<path d="M26 6l3 3M24 8l3 3M8.5 23.5l-4 4M12 20l12-12 3 3-12 12z"/><path d="M11 20l4 4" /><rect class="liq" x="14" y="12" width="6" height="4" transform="rotate(-45 17 14)"/>',
@@ -18228,9 +18638,10 @@ void main(){ vec2 uv=vUv;
   const hasBullet=()=>T.inv.some(i=>i.kind==='bullet');
   function iconFor(it){ const col=it.kind==='needle'?'#'+NEEDLES[it.fx].col.toString(16).padStart(6,'0'):it.kind==='vial'?'#9aa890':it.kind==='blotter'?'#ff7ab8':'none';
     return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" style="--liq:${col}">${ICON[it.kind]}</svg>`; }
+  function hint(txt){ const h=$t('truthHint'); h.textContent=txt; h.classList.add('on'); clearTimeout(T.hintTo); T.hintTo=setTimeout(()=>h.classList.remove('on'),3800); }
   function toInventory(it){
     it.taken=true; it.obj.visible=false; T.inv.push(it);
-    if(!T.hinted){ T.hinted=1; const h=$t('truthHint'); h.textContent=T.touchMode?'tap the bag to see what you carry':'1 — what you carry'; h.classList.add('on'); setTimeout(()=>h.classList.remove('on'),3800); }
+    if(!T.hinted){ T.hinted=1; hint(T.touchMode?'tap the bag to see what you carry':'1 — what you carry'); }
   }
   function openInv(){ if(T.phase!=='play'||T.doc||T.inj) return; T.invOpen=true; T.keys={}; T.invSel=Math.min(T.invSel||0,Math.max(0,T.inv.length-1));
     renderInv(); $t('truthInv').classList.add('on'); prompt(false); SFX.tr.paper(.35);
@@ -18268,7 +18679,7 @@ void main(){ vec2 uv=vUv;
     T.cam.add(vm); T.hand={it,vm,t:0,act:null}; SFX.tr.glass(it.kind==='needle'||it.kind==='vial'?1:.3);
   }
   function unequip(silent){ const h=T.hand; if(!h) return;
-    T.cam.remove(h.vm); h.vm.traverse(o=>{ if(o.geometry&&!GEOSET.has(o.geometry)) o.geometry.dispose(); });
+    T.cam.remove(h.vm); h.vm.traverse(o=>{ if(o.geometry&&!GEOSET.has(o.geometry)) o.geometry.dispose(); }); T.aimK=0;
     if(h.it.kind==='flashlight'){ T.flashOn=false; T.mats._lens.color.setScalar(.05); if(!silent) SFX.tr.click({gain:.6}); }
     T.hand=null; }
   function consume(it){ T.inv.splice(T.inv.indexOf(it),1); if(T.invSel>=T.inv.length) T.invSel=Math.max(0,T.inv.length-1); }
@@ -18277,13 +18688,20 @@ void main(){ vec2 uv=vUv;
     const h=T.hand; if(!h||h.act) return;
     const k=h.it.kind;
     if(k==='flashlight'){ T.flashOn=!T.flashOn; SFX.tr.click({gain:.9}); return; }
-    if(k==='gun'){ fire(); return; }
+    if(k==='gun'){ if(!h.aimOn){ h.aimOn=true; SFX.tr.cock(); T.heartKick=1; if(!T.aimHinted){ T.aimHinted=1; hint(T.touchMode?'tap again to pull the trigger':'click to pull the trigger · Q to lower it'); } }
+      else if((h.aimK||0)>.92) fire(); return; }
     h.act={t:0};
   }
   function handStep(dt){
     const h=T.hand; if(!h) return; const vm=h.vm, P=T.p, k=h.it.kind;
     const sway=Math.sin(T.t*1.3)*.006, bob=Math.sin(P.bob)*P.bobAmp*.25;
     h.t=Math.min(1,h.t+dt*3); const up=ease(h.t);
+    if(k==='gun'){ // held out in front of you; or up, against the side of your head, shaking
+      h.aimK=clamp((h.aimK||0)+dt*(h.aimOn?.95:-1.5),0,1); const a=ease(h.aimK), kg=T.kickG||0, tr=a*(.0022+.0016*Math.sin(T.t*1.7));
+      const lift=Math.sin(a*Math.PI)*.05;       // up and round, not through your face
+      vm.position.set(lerp(.17+sway,.2,a)+lift*.6+Math.sin(T.t*29)*tr,lerp(lerp(-.34,-.165,up)+bob,-.035,a)+lift+Math.cos(T.t*23)*tr+kg*.03,lerp(-.34,-.2,a)+kg*.05);
+      _e.set(kg*.6+a*.12,lerp(.05,2.63,a),lerp(0,-.22,a),'YXZ'); vm.quaternion.setFromEuler(_e);
+      if(T.kickG) T.kickG=Math.max(0,T.kickG-dt*5); T.aimK=a; return; }
     if(!h.act){
       if(k==='flashlight'){ vm.position.set(.2+sway,lerp(-.34,-.19,up)+bob,-.34); vm.rotation.set(.04+(T.kickG||0)*.2,.1,0); }
       else if(k==='gun'){ vm.position.set(.17+sway,lerp(-.34,-.165,up)+bob+(T.kickG||0)*.03,-.34+(T.kickG||0)*.05); vm.rotation.set((T.kickG||0)*.6,.05,0); }
@@ -18298,7 +18716,7 @@ void main(){ vec2 uv=vUv;
       vm.position.set(lerp(.16,.04,a),lerp(-.14,-.2,a)-drop*.35,lerp(-.34,-.3,a)); vm.quaternion.copy(VM_REST).slerp(VM_JAB,a);
       vm.userData.plunger.position.y=lerp(.06,.014,push); const l=vm.userData.liq; l.scale.y=lerp(.052,.004,push); l.position.y=lerp(-.006,-.029,push);
       if(e>.62&&!h.act.hit){ h.act.hit=1; SFX.tr.inject(); T.pulse=1; T.heartKick=.8; }
-      if(e>1.75){ const it=h.it; consume(it); unequip(true); if(it.fx==='lethal') startPoison(22); else giveFx(it.fx,FX_DUR[it.fx]); T.used=(T.used||0)+1; }
+      if(e>1.75){ const it=h.it; consume(it); unequip(true); if(it.fx==='lethal') startPoison(22); else if(it.fx==='wake') startCollapse('wake'); else giveFx(it.fx,FX_DUR[it.fx]); T.used=(T.used||0)+1; }
     } else if(k==='vial'){
       const a=ease(clamp(e/.6,0,1)), back=ease(clamp((e-1.5)/.4,0,1));
       vm.position.set(lerp(.15,.02,a),lerp(-.17,-.06,a)-back*.4,lerp(-.3,-.2,a)); vm.quaternion.setFromEuler(_e.set(lerp(0,1.9,a),0,lerp(.1,.3,a)));
@@ -18318,14 +18736,8 @@ void main(){ vec2 uv=vUv;
   }
   function startPoison(dur){ if(!T.poison) T.poison={t:0,dur}; }
   function fire(){
-    const P=T.p; if(!hasBullet()){ SFX.tr.dry(); T.kickG=.2; return; }
-    const b=T.inv.find(i=>i.kind==='bullet'); consume(b);
-    SFX.tr.gun(); T.kickG=1; T.kick=1; T.stat=Math.max(T.stat,.25); if(T.flashP){ T.flashP.intensity=8; }
-    const cam=T.cam; cam.getWorldDirection(_v); const o=cam.position, M=T.mirror2;
-    if(M&&!M.cracked&&_v.z>1e-4){ const t=(M.zw-o.z)/_v.z, hx=o.x+_v.x*t, hy=o.y+_v.y*t;
-      if(t>0&&t<14&&Math.abs(hx-M.cx)<M.w/2&&Math.abs(hy-M.cy)<M.h/2&&los(o.x,o.z,hx,M.zw-.05)){ shatter(); return; } }
-    if(T.her.on){ const g=T.her.g.position, wx=g.x-o.x, wz=g.z-o.z, t=wx*_v.x+wz*_v.z, d2=wx*wx+wz*wz-t*t; if(t>0&&t<22&&d2<.16) herVanish(true); }
-    T.bulletBack=T.t+4;                                   // it will be on the table again. it always is
+    if(!hasBullet()){ SFX.tr.dry(); T.kickG=.25; T.heartKick=1; return; }    // click. nothing. your heart
+    shootSelf();
   }
 
   /* ---------- picking things up, reading ---------- */
@@ -18334,7 +18746,7 @@ void main(){ vec2 uv=vUv;
     let best=null, bt=1.9;
     for(const it of T.items){ if(it.taken) continue;
       const wx=it.x-ox, wy=it.y-oy, wz=it.z-oz, t=wx*_v.x+wy*_v.y+wz*_v.z; if(t<.1||t>bt) continue;
-      const d2=wx*wx+wy*wy+wz*wz-t*t; if(d2>it.r*it.r) continue; if(!los(ox,oz,it.x,it.z)) continue; best=it; bt=t; }
+      const d2=wx*wx+wy*wy+wz*wz-t*t; if(d2>it.r*it.r) continue; if(!T.inDream&&!los(ox,oz,it.x,it.z)) continue; if(it.house&&!(T.dreamW&&T.dreamW.inside>.5)) continue; best=it; bt=t; }
     return best;
   }
   function prompt(onoff){ const el=$t('truthPrompt'); if(!el) return;
@@ -18439,61 +18851,118 @@ void main(){ vec2 uv=vUv;
     if(loud){ SFX.tr.stat(at3(g.position.x,g.position.z,1.3),.5,1.1); SFX.tr.whisper(at3(g.position.x,g.position.z,1)); T.stat=.9; stutterNear(g.position.x,g.position.z); } }
   function herHide(){ const H0=T.her; H0.on=false; H0.g.visible=false; H0.cool=5+Math.random()*7; }
 
-  /* ---------- the blotter, and the dream it drops you into ---------- */
+  /* ---------- the blotter, the fall, and the dream it drops you into ----------
+     About twenty seconds of it at full strength; then your legs go, you're on the floor, your eyes close.
+     You wake up in the grass. To wake up for real you have to find the house, and the needle in it. */
+  const LSD_ON=3.5, LSD_FULL=7.5, LSD_END=28;
   function startLSD(){ if(T.lsd) return; T.lsd={t:0,lvl:0,stage:'onset'}; }
   function lsdStep(dt){
     const L=T.lsd; if(!L) return; L.t+=dt;
-    if(L.stage==='onset'){ if(L.t>6){ L.stage='peak'; SFX.tr.set({trip:.2}); } }
-    else if(L.stage==='peak'){ L.lvl=Math.min(1,(L.t-6)/16); SFX.tr.set({trip:L.lvl});
-      if(L.t>22){ T.white=Math.min(1,(L.t-22)/1.5); } if(L.t>23.6&&T.phase==='play'){ L.stage='dream'; enterDream(); } }
-    else if(L.stage==='dream'){ L.lvl+=(.5-L.lvl)*dt*.5; if(T.white>0&&!T.dreamOut) T.white=Math.max(0,T.white-dt*.8); }
-    else if(L.stage==='after'){ L.lvl=Math.max(0,L.lvl-dt/14); SFX.tr.set({trip:L.lvl}); if(L.lvl<=0){ T.lsd=null; SFX.tr.set({trip:0}); } }
+    if(L.stage==='onset'){ L.lvl=Math.min(.3,L.t/LSD_ON*.3); SFX.tr.set({trip:L.lvl*.6}); if(L.t>LSD_ON) L.stage='peak'; }
+    else if(L.stage==='peak'){ L.lvl=Math.min(1,.3+(L.t-LSD_ON)/(LSD_FULL-LSD_ON)*.7); SFX.tr.set({trip:L.lvl});
+      if(L.t>LSD_END&&T.phase==='play'){ L.stage='fall'; startCollapse('lsd'); } }
+    else if(L.stage==='fall'){ const c=T.col; L.lvl=c?clamp(1-(c.t-2.5)/2.5,0,1):L.lvl; SFX.tr.set({trip:L.lvl}); }
+    else if(L.stage==='dream'){ L.lvl=Math.max(0,L.lvl-dt); SFX.tr.set({trip:0}); }
+    else if(L.stage==='after'){ L.lvl=Math.max(0,L.lvl-dt/12); SFX.tr.set({trip:L.lvl*.6}); if(L.lvl<=0){ T.lsd=null; SFX.tr.set({trip:0}); } }
+  }
+  /* falling down: the knees go, then the rest; the eyes close on their own */
+  function startCollapse(kind){
+    const P=T.p; if(T.doc) forceCloseDoc(); if(T.invOpen) closeInv(true); unequip(true); prompt(false); T.target=null;
+    if(kind==='lsd') T.dreamSave={x:P.x,z:P.z,yaw:P.yaw};
+    T.phase='collapse'; T.col={t:0,kind,y0:P.y,p0:P.pitch,yaw0:P.yaw}; T.keys={}; P.vx=P.vz=0; SFX.tr.gasp();
+  }
+  function collapseStep(dt){
+    const c=T.col, e=(c.t+=dt), P=T.p;
+    P.y=keyed([[0,c.y0],[.45,1.08],[.62,1.02],[1.12,.24],[1.26,.31],[1.45,.26]],e);
+    P.pitch=keyed([[0,c.p0],[.45,.55],[1.1,.12],[1.4,.02]],e);
+    T.dRoll=keyed([[0,0],[.5,.14],[1.12,1.32],[1.3,1.22],[1.5,1.28]],e);
+    P.yaw=c.yaw0+keyed([[0,0],[1.1,.28],[1.5,.3]],e);
+    T.lid=keyed([[0,1],[1.15,1],[1.35,.72],[1.9,.8],[2.45,.12],[2.85,.48],[3.5,.04],[4.05,.26],[4.9,0]],e);
+    if(e>.5&&!c.k1){ c.k1=1; SFX.tr.thud(.5); }
+    if(e>1.12&&!c.k2){ c.k2=1; SFX.tr.thud(1); T.kick=.8; T.heartKick=.9; T.stat=Math.max(T.stat,.15); }
+    if(e>2.2&&!c.k3){ c.k3=1; SFX.tr.breath(false,.8); }
+    T.black=clamp((e-5.0)/.6,0,1);
+    if(e>6.2){ T.col=null; T.dRoll=0;
+      if(c.kind==='lsd') enterDream();
+      else { const s=T.dreamSave||{x:4.35,z:9,yaw:Math.PI}; leaveDreamWorld(); Object.assign(P,{x:s.x,z:s.z,yaw:s.yaw,vx:0,vz:0});
+        if(T.lsd){ T.lsd.stage='after'; T.lsd.lvl=.55; } wakeUp('floor'); } }
   }
   function enterDream(){
+    if(!T.dreamW) buildDream();
     const D=T.dreamW, P=T.p;
-    T.dreamSave={x:P.x,z:P.z,yaw:P.yaw}; T.inDream=true; D.g.visible=true; D.active=true; T.dreamT=0; T.fall=null;
-    for(const p of D.plats){ p.alive=true; p.left=-1; p.fall=0; p.m.visible=true; p.m.position.y=-.3; p.m.rotation.set(0,0,0); }
-    P.x=DX; P.z=DZ+.8; P.y=EYE; P.yaw=0; P.pitch=0; P.vx=P.vz=0;
-    T.scene.fog.color.setRGB(.94,.84,.9); T.scene.fog.density=.014; T.hemi.intensity=.75; D.sun.intensity=.6; renderer.toneMappingExposure=.9;
-    for(const w of D.words) w.material.opacity=w.material===T.mats['_wWAKE UP']?0:.9;
-    SFX.tr.dream(true); herHide(false); if(T.fig){ T.root.remove(T.fig.m); T.fig=null; }
+    T.inDream=true; T.root.visible=false; D.g.visible=true; T.dreamT=0; D.inside=0; D.hall=0; D.knock=0; D.late=0;
+    placeHouse(HOUSE0.x,HOUSE0.z,HOUSE0.ry);
+    for(const it of D.items){ it.taken=false; it.obj.visible=true; const i=T.inv.indexOf(it); if(i>=0) T.inv.splice(i,1); }
+    Object.assign(P,{x:DX,z:DZ,vx:0,vz:0,yaw:0});
+    const f=T.scene.fog; f.color.setRGB(.36,.56,.88); f.density=.0032; T.scene.background.setRGB(.36,.56,.88);
+    T.hemi.color.copy(LCc(0xb4d4f4)); T.hemi.groundColor.copy(LCc(0x5a8a34)); T.hemi.intensity=.95;
+    const s=T.sun; s.color.copy(LCc(0xfff1d8)); s.intensity=2.5; s.castShadow=true; s.shadow.needsUpdate=true; renderer.shadowMap.needsUpdate=true;
+    renderer.toneMappingExposure=1; T.cam.far=420; T.cam.near=.05; T.cam.updateProjectionMatrix();
+    SFX.tr.dream(true); SFX.tr.set({bld:0,wind:1,wet:.2,trip:0,muffle:20000}); herHide(false); if(T.fig){ T.root.remove(T.fig.m); T.fig=null; }
+    if(T.lsd) T.lsd.stage='dream';
+    wakeUp('grass');
   }
   function leaveDreamWorld(){
-    const D=T.dreamW; D.g.visible=false; D.active=false; T.inDream=false; T.fall=null;
-    T.scene.fog.color.setHex(T.fogCol); T.scene.fog.density=T.fogD; T.hemi.intensity=T.hemiI; D.sun.intensity=0; renderer.toneMappingExposure=T.expo;
-    SFX.tr.dream(false);
+    const D=T.dreamW; T.inDream=false; T.root.visible=true; if(!D) return; D.g.visible=false;
+    T.scene.fog.color.setHex(T.fogCol); T.scene.fog.density=T.fogD; T.scene.background.setHex(0x060708);
+    T.hemi.color.copy(T.hemiSky); T.hemi.groundColor.copy(T.hemiGround); T.hemi.intensity=T.hemiI;
+    T.sun.intensity=0; T.sun.castShadow=false; renderer.toneMappingExposure=T.expo;
+    T.cam.far=70; T.cam.near=.03; T.cam.updateProjectionMatrix();
+    for(const it of D.items){ const i=T.inv.indexOf(it); if(i>=0) T.inv.splice(i,1); if(T.hand&&T.hand.it===it) unequip(true); }
+    SFX.tr.dream(false); SFX.tr.set({bld:1,wind:0,wet:1.5});
   }
-  function dreamMove(q,dt){
-    const P=T.p, D=T.dreamW;
-    if(T.fall){ q.x=P.x+P.vx*dt*.3; q.z=P.z+P.vz*dt*.3; return; }
-    const lx=q.x-DX, lz=q.z-DZ, m=.12;
-    let on=null; for(const p of D.plats) if(p.alive&&lx>p.x0-m&&lx<p.x1+m&&lz>p.z0-m&&lz<p.z1+m){ on=p; break; }
-    if(!on){ T.fall={vy:0}; SFX.tr.fall(); }
+  /* the house's walls, and the few things standing in the grass */
+  function toHouse(x,z){ const H=T.dreamW.house, lx=x-DX-H.x, lz=z-DZ-H.z, c=Math.cos(H.ry), s=Math.sin(H.ry); return {x:lx*c-lz*s,z:lx*s+lz*c}; }
+  function dreamMove(q){
+    const D=T.dreamW, H=D.house, c=Math.cos(H.ry), s=Math.sin(H.ry);
+    const p=toHouse(q.x,q.z);
+    if(Math.abs(p.x)<HW+1.5&&Math.abs(p.z)<HD+2.5){ for(let i=0;i<2;i++) for(const b of D.hBoxes) if(p.x>b.x0-.6&&p.x<b.x1+.6&&p.z>b.z0-.6&&p.z<b.z1+.6) pushBox(p,b.x0,b.z0,b.x1,b.z1);
+      q.x=DX+H.x+p.x*c+p.z*s; q.z=DZ+H.z-p.x*s+p.z*c; }
+    const f={x:q.x-DX,z:q.z-DZ}; for(const b of D.fBoxes) if(f.x>b.x0-.6&&f.x<b.x1+.6&&f.z>b.z0-.6&&f.z<b.z1+.6) pushBox(f,b.x0,b.z0,b.x1,b.z1);
+    q.x=f.x+DX; q.z=f.z+DZ;
   }
   function dreamStep(dt){
-    const D=T.dreamW, P=T.p; if(!T.inDream) return;
-    T.dreamT+=dt; const k=T.dreamT/100;
-    D.sky.material.uniforms.uT.value=T.t; D.sky.material.uniforms.uK.value=clamp((k-.45)/.55,0,1);
-    D.sky.position.set(P.x-DX,P.y,P.z-DZ); D.eye.position.set(P.x-DX,22+k*6,P.z-DZ-44+k*18); D.eye.scale.setScalar(20*(1+k*.9)); D.eye.material.color.setRGB(1,1-k*.7,1-k*.7);
-    const wu=T.mats['_wWAKE UP']; wu.opacity=k>.7?(Math.sin(T.t*6)>0?.9:0):0;
-    D.swing.rotation.x=Math.sin(T.t*.9)*.5;
-    const lx=P.x-DX, lz=P.z-DZ;
-    for(const p of D.plats){
-      const inside=lx>p.x0&&lx<p.x1&&lz>p.z0&&lz<p.z1;
-      if(inside){ p.left=-1; if(p.idx===6){ p.trap=(p.trap||0)+dt; if(p.trap>2.5&&p.alive&&!p.fall) p.fall=.01; } }
-      else if(p.alive&&p.left<0) p.left=T.dreamT;
-      const late=k>.9?1.5:k>.75?3:6;
-      if(p.alive&&!p.fall&&p.left>=0&&T.dreamT-p.left>late&&(p.idx!==4||k>.8)) p.fall=.01;
-      if(k>=1&&p.alive&&!p.fall) p.fall=.01;
-      if(p.fall){ p.fall+=dt; if(p.fall<1){ p.m.position.x=(p.x0+p.x1)/2+Math.sin(p.fall*60)*.05; } else { p.alive=false; p.m.position.y-=(p.fall-1)*dt*25; p.m.rotation.x+=dt*.3; if(p.m.position.y<-40) p.m.visible=false; } }
+    const D=T.dreamW, P=T.p; if(!T.inDream||!D) return;
+    if(T.phase==='play') T.dreamT+=dt;
+    const k=clamp(T.dreamT/DREAM_LEN,0,1), late=clamp((k-.55)/.45,0,1), lk=late*late, lx=P.x-DX, lz=P.z-DZ, rnd=Math.random;
+    D.late=late; D.uT.value=T.t; D.uK.value=lk;
+    T.gy=hgt(lx,lz);
+    const sp=D.tSp; D.terrain.position.set(Math.round(lx/sp)*sp,0,Math.round(lz/sp)*sp); D.uOff.value.set(D.terrain.position.x,D.terrain.position.z);
+    D.gU.uCam.value.set(lx,lz); D.sky.position.set(lx,T.gy+P.y,lz);
+    // inside the house or out
+    const hp=toHouse(P.x,P.z), inH=Math.abs(hp.x)<HW-.15&&Math.abs(hp.z)<HD-.15;
+    D.inside+=((inH?1:0)-D.inside)*Math.min(1,dt*2.5); D.hpos=hp;
+    // light: the sun behind you; when you're inside, your eyes get used to the dark
+    const inK=D.inside, s=T.sun;
+    s.intensity=2.5*(1-lk*.55); s.color.copy(LCc(0xfff1d8)).lerp(LCc(0xff5a3a),lk);
+    T.hemi.intensity=lerp(.95,.42,inK)*(1-lk*.45); T.hemi.color.copy(LCc(0xb4d4f4)).lerp(LCc(0xeae2d4),inK).lerp(LCc(0x8a2a30),lk); T.hemi.groundColor.copy(LCc(0x5a8a34)).lerp(LCc(0xa89880),inK);
+    renderer.toneMappingExposure=lerp(1,1.3,inK);
+    D.gU.uL.value=(s.intensity*.42+T.hemi.intensity*.55)*(1-inK*.2);
+    D.uHaze.value.set(lerp(.64,.62,lk),lerp(.78,.2,lk),lerp(.95,.2,lk)); T.scene.fog.color.setRGB(lerp(.36,.45,lk),lerp(.56,.05,lk),lerp(.88,.06,lk));
+    // the sun, late in the dream, is an eye
+    const ey=D.eye; ey.visible=late>.02; if(ey.visible){ ey.position.set(lx+SUN.x*240,T.gy+P.y+SUN.y*240,lz+SUN.z*240); ey.scale.setScalar(26+late*46); ey.material.opacity=Math.min(1,late*1.6); ey.material.color.setRGB(1,1-late*.5,1-late*.5); }
+    const wk=D.wake; wk.visible=late>.55; if(wk.visible){ _v2.set(-Math.sin(P.yaw),0,-Math.cos(P.yaw)); wk.position.set(lx+_v2.x*120,T.gy+P.y+34,lz+_v2.z*120); wk.material.opacity=Math.sin(T.t*5)>0?.85:0; }
+    D.scr.visible=late<.25; D.scr2.visible=!D.scr.visible;
+    // the house is always there: walk away from it and it waits behind you
+    const H=D.house, hd=Math.hypot(lx-H.x,lz-H.z);
+    if(hd>150&&T.phase==='play'&&!inView(DX+H.x,H.y+3,DZ+H.z,1.3)){
+      for(let i=0;i<8;i++){ const a=P.yaw+Math.PI+(i%2?1:-1)*(Math.floor(i/2)*.35), nx=lx-Math.sin(a)*95, nz=lz-Math.cos(a)*95;
+        if(!inView(DX+nx,hRaw(nx,nz)+3,DZ+nz,1.4)){ placeHouse(nx,nz,Math.atan2(lx-nx,lz-nz)); break; } } }
+    // sounds: wind and birds outside, the clock inside, someone at the door at the end of the hall
+    SFX.tr.set({wind:(1-inK*.75)*(1+lk*.6),wet:.2+inK*.5});
+    if(T.phase==='play'){
+      D.bird-=dt; if(D.bird<=0){ D.bird=2+rnd()*6; if(late<.3&&inK<.5) SFX.tr.bird({gain:.5+rnd()*.5,pan:rnd()*1.6-.8}); }
+      if(inK>.5){ D.tick-=dt; if(D.tick<=0){ D.tick=1; SFX.tr.clock(at3(...hw(-3.07,IN_C),.9)); } }
+      const nearHouse=hd<14; D.chime-=dt; if(D.chime<=0){ D.chime=6+rnd()*9; if(nearHouse&&inK<.5&&late<.5){ const w=hw(-2.9,HD+1.3); SFX.tr.chime(at3(w[0],w[1],1)); } }
+      const inHall=inK>.5&&hp.x>.95&&hp.z>1.05;
+      if(inHall&&!D.hall){ D.hall=1; D.knock=T.t+2.5; }
+      if(D.knock&&T.t>D.knock){ const w=hw(HW-.3,2.45); D.kn=(D.kn||0)+1; SFX.tr.knock(at3(w[0],w[1],1.2),Math.min(3,D.kn)); T.heartKick=.5*D.kn; D.knock=D.kn<3?T.t+3+rnd()*2:0; }
+      if(late>.4){ D.whisper-=dt; if(D.whisper<=0){ D.whisper=4+rnd()*5; SFX.tr.whisper({gain:.6+late,pan:rnd()*1.6-.8}); } }
+      if(T.dreamT>=DREAM_LEN) die('dream');
     }
-    if(T.fall){ T.fall.vy-=9.8*dt; P.y+=T.fall.vy*dt; P.pitch+=(.9-P.pitch)*dt*1.2; if(P.y<-9) die('fall'); }
-    if(!T.fall&&Math.abs(lx)<.7&&lz<-68.4&&!T.dreamOut){ T.dreamOut={t:0}; SFX.tr.exit(); }
-    if(T.dreamOut){ const o=T.dreamOut; o.t+=dt; T.white=clamp(o.t/1.2,0,1);
-      if(o.t>1.3&&!o.done){ o.done=1; leaveDreamWorld(); const s=T.dreamSave; P.x=s.x; P.z=s.z; P.yaw=s.yaw; P.y=EYE; P.pitch=0; T.lsd.stage='after'; }
-      if(o.t>1.3) T.white=Math.max(0,1-(o.t-1.3)/1.6);
-      if(o.t>3) T.dreamOut=null; }
   }
+  const IN_C=HD-.2;
+  function hw(x,z){ const H=T.dreamW.house, c=Math.cos(H.ry), s=Math.sin(H.ry); return [DX+H.x+x*c+z*s,DZ+H.z-x*s+z*c]; }
 
   /* ---------- the building's own sounds ---------- */
   function knockDoor(){
@@ -18527,11 +18996,14 @@ void main(){ vec2 uv=vUv;
     for(let i=T.echo.length-1;i>=0;i--){ const q=T.echo[i]; if(T.t>=q.t){ T.echo.splice(i,1); SFX.tr.step(q.surf,q.loud,{gain:.9,pan:(Math.random()-.5)*.5}); } }
   }
   function soundStep(){
-    const P=T.p, tvd=Math.hypot(P.x-33.3,P.z-20), tvk=T.inDream?0:clamp(1-tvd/10,0,1)*(los(P.x,P.z,33.3,20)?1:.35), numb=lv('numb'), deaf=lv('deaf');
+    const P=T.p, numb=lv('numb'), deaf=lv('deaf'), D=T.dreamW; let tvk, tvPan;
+    if(T.inDream){ const w=D.tvW, d=Math.hypot(P.x-w.x,P.z-w.z); tvk=clamp(1-d/7,0,1)*(D.inside>.5?.7:.2); tvPan=at3(w.x,w.z).pan; }
+    else { const tvd=Math.hypot(P.x-33.3,P.z-20); tvk=clamp(1-tvd/10,0,1)*(los(P.x,P.z,33.3,20)?1:.35)*(T.tv.lvl*.5+.5); tvPan=at3(33.3,20).pan; }
     const pd=T.inDream?0:clamp(1-Math.hypot(P.x-57,P.z-19)/12,0,1);
-    SFX.tr.set({hum:T.inDream?0:T.hum,buzz:T.inDream?0:T.buzz,tv:tvk*(T.tv.lvl*.5+.5),tvPan:at3(33.3,20).pan,water:pd,
-      tinn:Math.max(numb*.7,deaf*.9,T.phase==='wake'?clamp(1-T.wakeT/7,0,1):0,T.phase==='exit'?1:0),
-      muffle:T.phase==='dead'?500:20000*Math.pow(650/20000,Math.max(numb,deaf*1.2)),deaf});
+    const cf=T.phase==='collapse'&&T.col?clamp((T.col.t-1.4)/3.6,0,1):0;
+    const muffle=T.phase==='shot'?250:T.phase==='dead'?500:20000*Math.pow(650/20000,Math.max(numb,deaf*1.2))*Math.pow(380/20000,cf);
+    SFX.tr.set({hum:T.inDream?0:T.hum,buzz:T.inDream?0:T.buzz,tv:tvk,tvPan,water:pd,
+      tinn:Math.max(numb*.7,deaf*.9,T.phase==='wake'&&T.wakeMode==='bed'?clamp(1-T.wakeT/7,0,1):0,cf*.6),muffle,deaf});
   }
 
   /* ---------- the camera and the picture ---------- */
@@ -18541,10 +19013,10 @@ void main(){ vec2 uv=vUv;
     const by=(.5-Math.abs(Math.sin(P.bob)))*P.bobAmp, bx=Math.cos(P.bob)*P.bobAmp*.5;
     const heave=Math.sin(T.t*(1.2+P.exK*2.4))*.012*P.exK;
     if(T.kick) T.kick=Math.max(0,T.kick-dt*4);
-    cam.position.set(P.x+Math.cos(P.yaw)*bx,P.y+by+heave,P.z-Math.sin(P.yaw)*bx);
-    const roll=Math.sin(T.t*.5)*.13*ver+Math.sin(T.t*1.7)*.02*ver-Math.cos(P.bob)*P.bobAmp*.18+(T.dRoll||0)+(T.kick||0)*.02*Math.sin(T.t*60);
+    cam.position.set(P.x+Math.cos(P.yaw)*bx,P.y+(T.inDream?T.gy||0:0)+by+heave,P.z-Math.sin(P.yaw)*bx);
+    const roll=Math.sin(T.t*.5)*.13*ver+Math.sin(T.t*1.7)*.02*ver-Math.cos(P.bob)*P.bobAmp*.18+(T.dRoll||0)+(T.kick||0)*.02*Math.sin(T.t*60)+(T.aimK||0)*(.09+Math.sin(T.t*1.3)*.012);
     cam.rotation.set(P.pitch+Math.sin(T.t*.7)*.03*ver+(T.kick||0)*.05,P.yaw+Math.sin(T.t*.37)*.05*ver,roll,'YXZ');
-    const fov=66+(P.sprinting?5:0)+Math.sin(T.t*.8)*7*ver+rush*6+T.pulse*4+(T.lsd?Math.sin(T.t*.9)*6*T.lsd.lvl:0)-lv('drowse')*4;
+    const fov=66+(P.sprinting?5:0)+Math.sin(T.t*.8)*7*ver+rush*6+T.pulse*4+(T.lsd?Math.sin(T.t*.9)*6*T.lsd.lvl:0)-lv('drowse')*4-(T.aimK||0)*6;
     T.fov+=(fov-T.fov)*Math.min(1,dt*4); if(Math.abs(cam.fov-T.fov)>.05){ cam.fov=T.fov; cam.updateProjectionMatrix(); }
   }
   function postStep(dt){
@@ -18552,11 +19024,11 @@ void main(){ vec2 uv=vUv;
     const dr=lv('drowse'), br=lv('bright'), trip=T.lsd?T.lsd.lvl:0, pz=T.poison?clamp(T.poison.t/T.poison.dur,0,1):0;
     if(T.phase==='play'){ T.introBlur=Math.max(0,T.introBlur-dt*.18); T.introTrail=Math.max(0,T.introTrail-dt*.2); }
     T.pulse=Math.max(0,T.pulse-dt*.7); T.stat=Math.max(0,T.stat-dt*1.8);
-    let lid=T.phase==='wake'?T.lid:1.75;
+    let lid=(T.phase==='wake'||T.phase==='collapse')?T.lid:1;
     const sleepy=Math.max(hev,dr*1.2,pz);
     if(sleepy>.3&&T.phase==='play'){ T.droop-=dt; if(T.droop<=0){ T.droopT=0; T.droop=(dr>.3?2.5:5)+Math.random()*4; } }
-    if(T.droopT!==undefined&&T.droopT>=0){ T.droopT+=dt; const k=T.droopT; lid=Math.min(lid,keyed([[0,1.75],[.6,.12],[1.0+dr*.8,.12],[1.8+dr*.8,1.75]],k)); if(k>1.8+dr*.8) T.droopT=-1; }
-    if(pz>.7) lid=Math.min(lid,lerp(1.75,.3,(pz-.7)/.3));
+    if(T.droopT!==undefined&&T.droopT>=0){ T.droopT+=dt; const k=T.droopT; lid=Math.min(lid,keyed([[0,1],[.6,.14],[1.0+dr*.8,.14],[1.8+dr*.8,1]],k)); if(k>1.8+dr*.8) T.droopT=-1; }
+    if(pz>.7) lid=Math.min(lid,lerp(1,.2,(pz-.7)/.3));
     C.uTime.value=F.uTime.value=T.t;
     C.uTrail.value=Math.min(.9,Math.max(.8*blur,T.introTrail,dr*.5,trip*.45));
     C.uDbl.value=(blur+pz*.8)*7*(.6+.4*Math.sin(T.t*.9));
@@ -18564,18 +19036,18 @@ void main(){ vec2 uv=vUv;
     C.uCA.value=.7+ver*4+rush*2.5+T.pulse*6+trip*3;
     C.uBloom.value=1.05+rush*.2+br*1.3+dr*.5+(T.inDream?.1:0);
     C.uTrip.value=trip; C.uMirror.value=lv('mirror')>.5?1:0;
-    T.pB.u.uTh.value=T.inDream?.92:.5-br*.25;
-    F.uBlur.value=T.introBlur+blur*1.1+hev*(.7+.7*Math.sin(T.t*.6))+T.pulse*3+dr*(1.6+Math.sin(T.t*.5))+pz*2;
-    F.uDesat.value=clamp(.2+numb*.7-rush*.12+pz*.6+dr*.15-br*.2-trip*.3,0,1);
-    F.uVig.value=1.2+hev*1.2+P.exK*.5+T.pulse*1.4+dr*.9+pz*2.5;
-    F.uGrain.value=.075+numb*.03+hal*.03;
+    T.pB.u.uTh.value=T.inDream?.93:.5-br*.25;
+    F.uBlur.value=T.introBlur+blur*1.1+hev*(.7+.7*Math.sin(T.t*.6))+T.pulse*3+dr*(1.6+Math.sin(T.t*.5))+pz*2+(1-lid)*1.6;
+    F.uDesat.value=clamp((T.inDream?-.06:.2)+numb*.7-rush*.12+pz*.6+dr*.15-br*.2-trip*.3,0,1);
+    F.uVig.value=(T.inDream?.8:1.2)+(T.aimK||0)*1.2+hev*1.2+P.exK*.5+T.pulse*1.4+dr*.9+pz*2.5;
+    F.uGrain.value=(T.inDream?.04:.075)+numb*.03+hal*.03;
     F.uLid.value=lid;
     F.uCon.value=1.06+rush*.22-numb*.12;
     F.uRed.value=rush*.14;
     F.uStatic.value=T.stat;
     F.uBright.value=1+rush*.1-numb*.08+br*.35-pz*.2;
-    F.uHaze.value=(T.inDream?.2:.35)+br*.5+dr*.3;
-    F.uBlack.value=T.phase==='wake'&&T.wakeT<1.5?1:T.black; F.uWhite.value=T.white;
+    F.uHaze.value=(T.inDream?.05:.35)+br*.5+dr*.3;
+    F.uBlack.value=T.black; F.uWhite.value=T.white;
     if(T.tvMat){ T.tvMat.uniforms.uT.value=T.t; T.tvMat.uniforms.uK.value=T.tv.lvl*.9+.1; }
     if(T.waterMat) T.waterMat.uniforms.uT.value=T.t;
     T.uBreath.value=trip*.7; T.uTime2.value=T.t;
@@ -18588,10 +19060,10 @@ void main(){ vec2 uv=vUv;
   function frame(now){
     if(!on) return; T.raf=requestAnimationFrame(frame);
     const dt=Math.min(.05,Math.max(.001,(now-T.last)/1000)); T.last=now; T.dt=dt; T.t+=dt;
-    if(T.phase==='wake') wakeStep(dt); else if(T.phase==='play') playStep(dt); else if(T.phase==='exit') exitStep(dt); else if(T.phase==='dead') deadStep(dt);
+    if(T.phase==='wake') wakeStep(dt); else if(T.phase==='play') playStep(dt); else if(T.phase==='collapse') collapseStep(dt); else if(T.phase==='shot') shotStep(dt); else if(T.phase==='dead') deadStep(dt);
     if(!on) return;
     doorsStep(dt); effectsStep(dt); lsdStep(dt); dreamStep(dt); body(dt); lightsStep(dt); ambientStep(dt); soundStep(); figureStep(dt); herStep(dt); camStep(dt); handStep(dt); dustStep(dt);
-    if(T.phase==='play'&&!T.doc&&!T.paused&&!T.invOpen&&!T.inDream){ T.target=pickTarget(); prompt(!!T.target); } else { T.target=null; prompt(false); }
+    if(T.phase==='play'&&!T.doc&&!T.paused&&!T.invOpen){ T.target=pickTarget(); prompt(!!T.target); } else { T.target=null; prompt(false); }
     postStep(dt); render();
     T.pf.acc+=dt; T.pf.n++;
     if(T.pf.acc>2&&!T.noGov){ const avg=T.pf.acc/T.pf.n; T.pf.acc=0; T.pf.n=0;
@@ -18614,12 +19086,12 @@ void main(){ vec2 uv=vUv;
       T.keys[e.code]=true;
       if(e.code==='KeyE'&&!e.repeat) interact();
       if(e.code==='Digit1'&&!e.repeat){ if(T.doc) forceCloseDoc(); openInv(); }
-      if(e.code==='KeyQ'&&!e.repeat&&T.hand&&!T.hand.act) unequip();
+      if(e.code==='KeyQ'&&!e.repeat&&T.hand&&!T.hand.act){ if(T.hand.aimOn) T.hand.aimOn=false; else unequip(); }
       if(e.code==='Escape'&&T.doc) closeDoc(); };
     H.ku=e=>{ if(T) T.keys[e.code]=false; };
     H.mm=e=>{ if(!on||T.phase!=='play'||T.doc||T.paused||T.invOpen||!locked()) return; const s=.0021*(lv('mirror')>.5?-1:1); T.p.yaw-=e.movementX*s; T.p.pitch=clamp(T.p.pitch-e.movementY*.0021,-1.4,1.4); };
-    H.md=e=>{ if(!on||T.touchMode||T.invOpen) return; if(!locked()){ if(T.phase!=='exit') lock(); return; }
-      if(T.doc){ closeDoc(); return; } if(e.button===0) interact(); else if(e.button===2&&T.hand&&!T.hand.act) unequip(); };
+    H.md=e=>{ if(!on||T.touchMode||T.invOpen) return; if(!locked()){ if(T.phase!=='shot') lock(); return; }
+      if(T.doc){ closeDoc(); return; } if(e.button===0) interact(); else if(e.button===2&&T.hand&&!T.hand.act){ if(T.hand.aimOn) T.hand.aimOn=false; else unequip(); } };
     H.plc=()=>{ if(!on||T.touchMode) return; if(locked()){ setPaused(false); T.invUnlock=false; } else if(T.invUnlock){ } else if(T.phase==='play') setPaused(true); };
     H.wheel=e=>{ if(T&&T.doc){ $t('tdPaper').scrollTop+=e.deltaY; } };
     H.blur=()=>{ if(T) T.keys={}; };
@@ -18636,7 +19108,7 @@ void main(){ vec2 uv=vUv;
           if(T.phase==='play'&&!T.paused){ T.p.yaw-=dx*.0058*(lv('mirror')>.5?-1:1); T.p.pitch=clamp(T.p.pitch-dy*.0058,-1.4,1.4); } } } };
     H.te=e=>{ if(!on) return;
       for(const t of e.changedTouches){ if(t.identifier===tc.mid){ tc.mid=undefined; tc.mx=tc.mz=0; tc.sprint=false; }
-        else if(t.identifier===tc.lid){ tc.lid=undefined; if(tc.moved<14&&e.timeStamp-tc.t0<700) interact(); } } };
+        else if(t.identifier===tc.lid){ tc.lid=undefined; if(tc.moved<14&&e.timeStamp-tc.t0<900) interact(); } } };
     addEventListener('keydown',H.kd); addEventListener('keyup',H.ku); addEventListener('mousemove',H.mm); addEventListener('blur',H.blur); addEventListener('resize',H.resize);
     cv.addEventListener('mousedown',H.md); cv.addEventListener('contextmenu',H.ctx); document.addEventListener('pointerlockchange',H.plc); addEventListener('wheel',H.wheel,{passive:true});
     ui.addEventListener('touchstart',H.ts,{passive:false}); ui.addEventListener('touchmove',H.tm,{passive:false}); ui.addEventListener('touchend',H.te); ui.addEventListener('touchcancel',H.te);
@@ -18666,7 +19138,7 @@ void main(){ vec2 uv=vUv;
       ev:{stat:8+Math.random()*8,creak:6,drip:1,slam:25+Math.random()*20,knock:35+Math.random()*30,above:30+Math.random()*40,whisper:50+Math.random()*40,black:45+Math.random()*30},
       uBreath:{value:0},uTime2:{value:0},fogCol:0x16181a,fogD:.052,hemiI:.95,expo:1.22};
     unitGeos();
-    T.prevShadow={type:renderer.shadowMap.type,auto:renderer.shadowMap.autoUpdate};
+    T.prevShadow={type:renderer.shadowMap.type,auto:renderer.shadowMap.autoUpdate}; T.prevExpo=renderer.toneMappingExposure;
     renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate=false;
     Music.stop(); SFX.ambienceStop(); SFX.init(); SFX.tr.start(); SFX.tr.wake();
     document.body.classList.add('truth-on'); document.body.classList.toggle('truth-touch',touch);
@@ -18679,10 +19151,12 @@ void main(){ vec2 uv=vUv;
   function build(){
     T.scene=new THREE.Scene(); T.root=new THREE.Group(); T.scene.add(T.root);
     T.scene.fog=new THREE.FogExp2(T.fogCol,T.fogD); T.scene.background=new THREE.Color(0x060708);
-    T.hemi=new THREE.HemisphereLight(LCc(0x5a6670),LCc(0x16120c),T.hemiI); T.scene.add(T.hemi);
+    T.hemi=new THREE.HemisphereLight(LCc(0x5a6670),LCc(0x16120c),T.hemiI); T.scene.add(T.hemi); T.hemiSky=T.hemi.color.clone(); T.hemiGround=T.hemi.groundColor.clone();
+    { const s=new THREE.DirectionalLight(0xfff1d8,0), sh=s.shadow; sh.mapSize.setScalar(T.touchMode?1024:2048); sh.autoUpdate=false; sh.bias=-.0004; sh.normalBias=.04;
+      Object.assign(sh.camera,{left:-14,right:14,top:14,bottom:-14,near:1,far:130}); sh.camera.updateProjectionMatrix(); T.scene.add(s); T.scene.add(s.target); T.sun=s; }
     layout();
     T.tx={chip:texChipped(),grime:texGrime(),wood:texWood(),sheet:texSheet(),mattress:texMattress(),loose:texLoose(),stains:texStains(),skin:texSkin(),cloud:texCloud(),eye:texEye(),cracks:texCracks()};
-    const bl=texBlood(); T.tx.blood=bl.map; T.tx.bloodN=bl.normalMap; T.tx.bloodR=bl.roughnessMap; T.tx.dreamTile=texDreamTile();
+    const bl=texBlood(); T.tx.blood=bl.map; T.tx.bloodN=bl.normalMap; T.tx.bloodR=bl.roughnessMap;
     const pl=texPlaster(11), tw=texTileWall(12), pp=texPaper(13), li=texLino(14), tf=texTileFloor(15), bo=texBoards(16), ma=texMarble(17), ce=texCeiling(18);
     const pw=texTileWall(19,{low:[120,196,206],high:[226,238,236],clean:true}), pf=texTileFloor(20,{col:[196,226,228],n:12,grout:'#6a8a90',clean:true});
     const padw=texPadded(21), padf=texPadded(22,true), yl=texYellow(23), cp=texCarpet(24,'#8a7a3a',60), kw=texKid(25), kf=texCarpet(26,'#b890a8',25), ww=texWhite(27), wf=texTileFloor(28,{col:[236,234,228],n:6,grout:'#c8c4bc',clean:true});
@@ -18707,8 +19181,7 @@ void main(){ vec2 uv=vUv;
     T.wheel.g=wheelchair(); { const s=T.wheel.spots[0]; T.wheel.g.position.set(s[0],0,s[1]); T.wheel.g.rotation.y=s[2]; }
     buildShell();
     T.sb.flush(T.root);
-    T.her.g=buildHer(0); T.herM=buildHer(2);
-    buildDream();
+    T.her.g=buildHer(0); T.herM=buildHer(2); T.self=buildSelf();
     T.root.traverse(o=>{ if(o.isMesh&&!(o.material&&(o.material.transparent||o.material.isMeshBasicMaterial||o.material.isShaderMaterial))){ o.castShadow=true; o.receiveShadow=true; } });
     const n=260, pos=new Float32Array(n*3);
     for(let i=0;i<n;i++){ const f=T.fix[Math.floor(Math.random()*T.fix.length)]; pos[i*3]=f.x+(Math.random()-.5)*3; pos[i*3+1]=.3+Math.random()*2.6; pos[i*3+2]=f.z+(Math.random()-.5)*3; }
@@ -18733,7 +19206,8 @@ void main(){ vec2 uv=vUv;
     for(const k in T.mats) if(T.mats[k]&&T.mats[k].dispose) T.mats[k].dispose();
     T.texs.forEach(t=>t.dispose());
     [T.rtScene,T.rtB1,T.rtB2,T.acc[0],T.acc[1],T.mirror2&&T.mirror2.rt].forEach(r=>r&&r.dispose()); if(T.rtScene&&T.rtScene.depthTexture) T.rtScene.depthTexture.dispose(); T.fsq.dispose();
-    if(T.flash&&T.flash.shadow.map) T.flash.shadow.map.dispose();
+    if(T.flash&&T.flash.shadow.map) T.flash.shadow.map.dispose(); if(T.sun&&T.sun.shadow.map) T.sun.shadow.map.dispose(); if(T.dreamW) T.dreamW.clouds.dispose();
+    renderer.toneMappingExposure=T.prevExpo;
     renderer.setRenderTarget(null); renderer.shadowMap.type=T.prevShadow.type; renderer.shadowMap.autoUpdate=T.prevShadow.auto;
     document.body.classList.remove('truth-on','truth-touch');
     ['truthEnd','truthDoc','truthPause','truthPrompt','truthInv','truthDream','truthHint'].forEach(id=>$t(id).classList.remove('on'));
@@ -18756,7 +19230,8 @@ void main(){ vec2 uv=vUv;
       look(yaw,pitch){ T.p.yaw=yaw; T.p.pitch=pitch; },spawn:spawnFigure,her:herSpawn,grid:()=>grid,
       take(kind,fx){ const it=T.items.find(i=>i.kind===kind&&!i.taken&&(fx===undefined||i.fx===fx||i.v===fx)); if(it) toInventory(it); return !!it; },
       equip(kind){ const it=T.inv.find(i=>i.kind===kind); if(it) equip(it); },act:handAction,inv:openInv,closeInv,die,lsd:startLSD,dream:enterDream,
-      poison(){ startPoison(4); },open:openPhantom}};
+      poison(){ startPoison(4); },open:openPhantom,collapse:startCollapse,enterDream,wakeUp,place:placeHouse,poseSelf,hgt:(x,z)=>hgt(x,z),DX,DZ,
+      aim(){ const h=T.hand; if(h&&h.it.kind==='gun'){ h.aimOn=true; h.aimK=1; T.aimK=1; } }}};
 })();
 
 /* ---- 60-boot.js ---- */
