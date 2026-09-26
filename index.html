@@ -2135,7 +2135,7 @@ input[type=range]{accent-color:var(--acc);}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.5.2 · BETA</span>
+    <span class="hub-version">VERSION 3.6.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2255,7 +2255,7 @@ input[type=range]{accent-color:var(--acc);}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.5.2</div></div>
+</svg><div class="set-ver">VERSION 3.6.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -2733,6 +2733,10 @@ const SFX=(function(){
     /* Gyro: a wet, heavy glob of waste pumped out of the cannon, with a Geiger crackle */
     gyro(b){ tone(b,{f:140,f1:60,dur:.18,peak:.34}); noise(b,{ft:'lowpass',hz:900,hz2:220,q:2,dur:.2,peak:.22}); tone(b,{type:'sawtooth',f:320,f1:90,dur:.14,peak:.05,cut:900,q:5});
       for(let i=0;i<5;i++) noise(b,{hp:6000,dur:.012,peak:.05,delay:.04+Math.random()*.16}); },
+    /* Mathias: a baguette whipped through the air, a soft crusty thud off the hand */
+    mathias(b){ noise(b,{hz:500,hz2:1700,q:.8,dur:.17,peak:.18,atk:.05}); tone(b,{f:190,f1:120,dur:.07,peak:.14,delay:.02}); noise(b,{hz:2600,q:1.5,dur:.04,peak:.06,delay:.02}); },
+    /* Panne: the can rattled once, then a wide hiss of spray */
+    panne(b){ for(let i=0;i<2;i++) tone(b,{type:'triangle',f:2300+i*300,dur:.025,peak:.05,delay:i*.04}); noise(b,{hp:3200,dur:.34,peak:.2,atk:.03,delay:.05}); noise(b,{hz:6500,q:.7,dur:.3,peak:.1,delay:.06}); },
     def(b){ noise(b,{hz:3000,hz2:1200,q:.8,dur:.05,peak:.3}); tone(b,{type:'sawtooth',f:1000,f1:200,dur:.14,peak:.2,cut:3000,cut2:400,q:6}); }
   };
   /* ---------------- supers ---------------- */
@@ -2791,13 +2795,19 @@ const SFX=(function(){
     /* Elemental Collapse: four elements whining up together, then a sub drop as they fuse */
     gyro(b){ chord(b,[110,164.8,220,329.6],{type:'sawtooth',dur:1,peak:.05,atk:.8,cut:1800,send:.5}); tone(b,{f:180,f1:1800,dur:.9,peak:.06,glide:.85,send:.5});
       noise(b,{hz:600,hz2:4200,q:1.2,dur:.9,peak:.14,atk:.8,send:.4}); tone(b,{f:70,f1:28,dur:1.1,peak:.6,delay:.9}); noise(b,{ft:'lowpass',hz:3000,hz2:120,dur:.8,peak:.4,delay:.9,send:.35}); },
+    /* Kitchen Knives: three blades drawn, one after another */
+    mathias(b){ for(let i=0;i<3;i++){ noise(b,{hz:3800+i*500,hz2:7000,q:2.4,dur:.26,peak:.12,delay:i*.13,atk:.02}); tone(b,{f:2600+i*380,fm:{r:2.76,i:1.1,i2:.02},dur:.6,peak:.05,delay:i*.13,send:.55}); }
+      tone(b,{f:98,f1:60,dur:.4,peak:.3,delay:.4}); },
+    /* Block Party: a needle drop, a bass hit, a horn stab and a scratch */
+    panne(b){ noise(b,{hz:1200,hz2:3200,q:2,dur:.25,peak:.14}); tone(b,{f:62,f1:38,dur:1,peak:.6,delay:.18});
+      chord(b,[233,293.7,349.2],{type:'sawtooth',dur:.5,peak:.06,cut:1800,delay:.2,send:.4}); noise(b,{hz:800,hz2:2600,q:2.4,dur:.18,peak:.12,delay:.55}); },
     def(b){ tone(b,{type:'sawtooth',f:110,f1:55,dur:.6,peak:.22,cut:1400,cut2:180,q:6,send:.35}); tone(b,{type:'triangle',f:440,f1:880,dur:.45,peak:.13,delay:.05,send:.5}); }
   };
   /* evening out the mix: some voices are thin by design and get a lift */
   const ATK_GAIN={demi:2.4,eribun:2,vael:2,krisztian:1.8,luna:1.6,racksdoubled:1.6,crisis:1.8,kizu:.75,star:1.1,yume:.8,levine:1.3,kira:1.6};
   const ULT_GAIN={demi:2.6,emma:2.6,racksdoubled:2,nyx:1.8,reka:1.8,szamoci:1.5,star:1.4,krisztian:1.4,yume:1.3,levine:1.2,kira:1.3};
   /* how each character sounds when hit: a short vowel at their own pitch */
-  const VOICE={vael:180,szamoci:360,nyx:390,eribun:420,luna:340,emma:330,reka:370,krisztian:165,racksdoubled:300,aether:150,demi:400,kizu:190,star:320,wonderkid:205,yume:350,levine:372,kira:158,neptune:385,yoon:150,gyro:118};
+  const VOICE={vael:180,szamoci:360,nyx:390,eribun:420,luna:340,emma:330,reka:370,krisztian:165,racksdoubled:300,aether:150,demi:400,kizu:190,star:320,wonderkid:205,yume:350,levine:372,kira:158,neptune:385,yoon:150,gyro:118,mathias:172,panne:356};
   let dreadOn=null;                    // Kira's drone while the lights are out
   let horrorOn=null;                   // Star's Lost Sanity soundscape
   /* a voice: a sawtooth throat shaped by formant filters (the vowel), with a
@@ -3100,6 +3110,26 @@ const SFX=(function(){
       else if(key==='yoon'){ noise(b,{ft:'lowpass',hz:2600,hz2:140,dur:.55,peak:.42,send:.25}); tone(b,{f:95,f1:32,dur:.5,peak:.45}); noise(b,{hz:4200,q:.6,dur:.08,peak:.16}); }
       else { noise(b,{ft:'lowpass',hz:1000,hz2:200,dur:.18,peak:.26}); tone(b,{f:120,f1:55,dur:.16,peak:.28}); }
     },
+    /* Mathias: the spoon comes out of the drawer, and lands */
+    spoonOn(pos){ if(!on()) return; const a=where(pos,.9); if(!a) return; const b=bus(a);
+      tone(b,{type:'triangle',f:420,f1:300,dur:.08,peak:.2}); noise(b,{hz:1400,q:2.5,dur:.06,peak:.12}); tone(b,{type:'triangle',f:620,f1:480,dur:.07,peak:.12,delay:.09}); noise(b,{hz:1800,q:2.5,dur:.05,peak:.08,delay:.09}); },
+    spoonHit(pos,hit){ if(!on()||!ok('sph',60)) return; const a=where(pos,.9); if(!a) return; const b=bus(a);
+      noise(b,{hz:500,hz2:1600,q:.8,dur:.12,peak:.12,atk:.03});
+      if(hit){ tone(b,{type:'triangle',f:540,f1:250,dur:.14,peak:.34,delay:.08}); tone(b,{f:160,f1:80,dur:.1,peak:.3,delay:.08}); noise(b,{hz:1100,q:3,dur:.06,peak:.14,delay:.08}); } },
+    knifeThrow(pos){ if(!on()||!ok('kt',50)) return; const a=where(pos,.9); if(!a) return; const b=bus(a);
+      noise(b,{hz:2000,hz2:5200,q:1.2,dur:.14,peak:.18,atk:.02}); tone(b,{f:3100,fm:{r:2.76,i:.9,i2:.02},dur:.35,peak:.035,send:.5,delay:.02}); },
+    /* Panne: the board slapping down, rolling, and kicked up again; the Block Party's beat */
+    skateOn(pos){ if(!on()) return; const a=where(pos,.9); if(!a) return; const b=bus(a);
+      tone(b,{f:190,f1:110,dur:.07,peak:.34}); noise(b,{hz:2600,q:1.2,dur:.04,peak:.16}); noise(b,{ft:'lowpass',hz:700,hz2:500,dur:.45,peak:.1,atk:.08,delay:.05}); },
+    skateRoll(pos){ if(!on()||!ok('sr'+(pos?1:0),300)) return; const a=where(pos,.5); if(!a) return; const b=bus(a);
+      noise(b,{ft:'lowpass',hz:520,hz2:620,dur:.44,peak:.08,atk:.06}); tone(b,{f:95,dur:.025,peak:.07,delay:.1}); tone(b,{f:95,dur:.025,peak:.06,delay:.3}); },
+    skateOff(pos){ if(!on()) return; const a=where(pos,.8); if(!a) return; const b=bus(a);
+      tone(b,{f:230,f1:140,dur:.06,peak:.28}); noise(b,{hz:3000,q:1.2,dur:.035,peak:.14}); },
+    partyBeat(pos,n){ if(!on()) return; const a=where(pos,.7); if(!a) return; const b=bus(a);
+      tone(b,{f:125,f1:42,dur:.2,peak:.5}); noise(b,{ft:'lowpass',hz:300,dur:.05,peak:.12});
+      noise(b,{hp:7000,dur:.035,peak:.05,delay:.235});
+      if(n%2===0) noise(b,{hz:1900,q:.8,dur:.12,peak:.16});                                   // a clap on two and four
+      if(n%4===3) noise(b,{hz:900,hz2:2800,q:2.2,dur:.14,peak:.1,delay:.12}); },              // and a scratch
     ult(key,pos){ if(!on()) return; const a=pos?where(pos,.9*(ULT_GAIN[key]||1)):{gain:ULT_GAIN[key]||1}; if(!a) return; (ULT[key]||ULT.def)(bus(a)); },   // a bot's super is heard from where it is
     planeFly(pos){ if(!on()) return; const a=where(pos,.9); if(!a) return; const b=bus(a);
       noise(b,{hz:280,hz2:1100,q:.6,dur:2.4,peak:.2,atk:1.1,send:.3}); tone(b,{type:'sawtooth',f:120,f1:92,dur:2.4,peak:.05,atk:1,cut:600}); },
@@ -6222,7 +6252,13 @@ const CHARACTERS = [
    atkName:'Grenade Launcher',ultName:'Air Strike',spName:"Yeen's Drone",build:buildYoon},
   {key:'gyro',name:'Gyro',rarity:'legendary',accent:0x8dff3a,hp:330,cd:1100,dmg:50,atk:'waste',
    desc:'A war machine built to put an end to war crimes, who became the worst one of all. Every shot is nuclear waste, his arms open into electro blades, and his super is every element at once.',
-   atkName:'Nuclear Waste',ultName:'Elemental Collapse',spName:'Electro Blades',build:buildGyro}
+   atkName:'Nuclear Waste',ultName:'Elemental Collapse',spName:'Electro Blades',build:buildGyro},
+  {key:'mathias',name:'Mathias',rarity:'epic',accent:0xd8b46a,hp:300,cd:1000,dmg:10,atk:'baguette',
+   desc:"An old soul in a young man's body: old money, round glasses and a chef's hands. His baguettes come straight from Italy, and they are sharp. Seven hits and the kitchen knives come out.",
+   atkName:'Sharp Baguette',ultName:'Kitchen Knives',spName:'Wooden Spoon',build:buildMathias},
+  {key:'panne',name:'Panne',rarity:'epic',accent:0x2de0d0,hp:150,cd:650,dmg:20,atk:'spray',
+   desc:"Always an artist, never the friendly kind. She lives for music and graffiti: a wide V of spray paint, a fast board to get out of trouble, and a block party nobody walks out of quickly.",
+   atkName:'Wide Spray',ultName:'Block Party',spName:'Skate',build:buildPanne}
 ];
 /* the Shift ability, where a character has one */
 [['emma','Dash'],['crisis','Welcome to Hell'],['yume','Lock-On'],['levine','Vanish'],['wonderkid','Slide Tackle'],
@@ -6232,9 +6268,9 @@ const CHARACTERS = [
 CHARACTERS.sort((a,b)=>RARITY_ORDER.indexOf(a.rarity)-RARITY_ORDER.indexOf(b.rarity));
 const byKey = k => CHARACTERS.find(c=>c.key===k);
 const RANGE_PREF = {vael:3,szamoci:5.5,nyx:7.5,eribun:4.5,luna:7,emma:2.5,reka:1.8,krisztian:5,racksdoubled:6,
-  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5};
+  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5,mathias:6,panne:3.4};
 /* close-range attacks: how near a bot has to be before it swings */
-const MELEE_REACH = {kick:1.9,punch:1.55};
+const MELEE_REACH = {kick:1.9,punch:1.55,spray:4.3};
 
 /* ---------- life: walking, breathing, blinking ---------- */
 /* Walk cycle: legs swing from the hip, arms counter-swing, the body bobs
@@ -7285,6 +7321,221 @@ function buildGyro(){
   r.arms[0].rotation.x=-.5;
   Object.assign(r.root.userData,{core,hold:0,armX:[-.5,0],gyroBlades:blades,gyroCannon:can});
   contactShadow(r.root,1);
+  return finalizeModel(r.root);
+}
+
+/* ---- 30-chars-mathias-panne.js ---- */
+/* ==========================================================
+   MATHIAS and PANNE
+   ========================================================== */
+/* a baguette standing along +y: long and golden, darker at the baked tips,
+   four pale scores down its back and sharpened to a point at both ends */
+function baguetteProp(len){
+  len=len||.62;
+  const g=new THREE.Group(), N=12, prof=[];
+  for(let i=0;i<=N;i++){ const t=i/N; prof.push([Math.max(.003,.05*Math.pow(Math.sin(Math.PI*t),.5)),(t-.5)*len]); }
+  const geo=lathe(prof,14,26); geo.scale(1,1,.8);
+  const MID=LC(0xe0a656), TIP=LC(0x8a4a1a), TOP=LC(0xb8742e);
+  paintGeo(geo,(v,c)=>{ const e=Math.min(1,Math.abs(v.y)/(len/2)); c.copy(MID).lerp(TIP,Math.pow(e,2.2)); if(v.z>.02) c.lerp(TOP,.35*Math.min(1,(v.z-.02)/.02)); });
+  part(g,geo,cmat(0xffffff,{rim:.85,spec:.25,shin:18}));
+  for(let k=0;k<4;k++){ const y=(k-1.5)*len*.19;
+    const s=part(g,softBox(.03,.075,.012,.005,2),cmat(0xf4dca2,{rim:.6}),0,y,.036); s.rotation.z=.75; }
+  for(let k=0;k<5;k++) part(g,sphere(.005,6,4),cmat(0xfff8ec,{rim:.4}),(Math.random()-.5)*.05,(Math.random()-.5)*len*.7,.038);   // flour
+  return g;
+}
+/* a long wooden spoon along +y: a round handle and a deep bowl at the top */
+function woodSpoonProp(){
+  const g=new THREE.Group(), W=0xc98d52, WD=0x9a6434;
+  const h=part(g,kCyl(.017,.021,.44,10),cmat(W,{rim:.7,spec:.15,shin:14}),0,0,0); h.castShadow=true;
+  part(g,sphere(.022,10,8),cmat(W,{rim:.7}),0,-.22,0);
+  const bowl=part(g,ellipsoid(.075,.1,.034,16,12),cmat(W,{rim:.8,spec:.2,shin:16}),0,.29,0); bowl.castShadow=true;
+  part(g,ellipsoid(.058,.08,.012,14,10),cmat(WD,{rim:.4}),0,.29,.026);                                   // the hollow of the bowl
+  for(let k=0;k<3;k++) part(g,softBox(.004,.1,.004,.001,1),cmat(WD,{rim:.4}),(k-1)*.008,-.05+k*.06,.02);   // grain
+  return g;
+}
+/* a chef's knife along +y: a broad blade with a straight spine, a black grip, three rivets */
+function chefKnifeProp(){
+  const g=new THREE.Group(), sh=new THREE.Shape();
+  sh.moveTo(-.014,0); sh.lineTo(.036,0); sh.quadraticCurveTo(.036,.17,-.014,.29); sh.lineTo(-.014,0);
+  const bg=new THREE.ExtrudeGeometry(sh,{depth:.004,bevelEnabled:true,bevelThickness:.002,bevelSize:.002,bevelSegments:1,curveSegments:8});
+  bg.translate(0,0,-.002);
+  part(g,bg,cmat(0xe4e9f0,{spec:1.5,shin:120,rim:1.2}),0,.03,0);
+  trimLine(g,[V3(.037,.05,0),V3(.034,.16,0),V3(.012,.25,0)],0xffffff,.0025,{mat:{emis:.9,rim:.3}});       // the edge catching the light
+  part(g,softBox(.056,.018,.02,.005,2),cmat(0xb8bec8,{spec:1,shin:80}),.008,.024,0);                     // the bolster
+  part(g,softBox(.032,.12,.024,.01,3),cmat(0x18181c,{rim:.6,spec:.4,shin:40}),0,-.046,0);
+  for(const y of [-.012,-.046,-.08]) part(g,sphere(.0055,8,6),cmat(0xd3d8e0,{spec:1,shin:80}),0,y,.013);
+  return g;
+}
+
+/* --- Mathias: an old soul in a young man's body. Old money and a chef:
+   chestnut hair combed neatly to one side, round tortoiseshell glasses,
+   a white shirt with the sleeves rolled, a wine-red ascot, a cream cable
+   knit thrown over his shoulders, a black bistro apron, navy trousers and
+   brown loafers. A gold watch, a signet ring, and a very sharp baguette --- */
+function buildMathias(){
+  const r=newRig({boy:true}), SK=0xf2d4bc;
+  const SHIRT=0xf8f7f3, KNIT=0xe6d9bc, KNIT2=0xcdbb94, APRON=0x1d1d22, STRAP=0x8a5a32, TROUSER=0x243152, LOAFER=0x6a3a1e, GOLD=0xe3c16f, WINE=0x7a1e2c;
+  buildHead(r,{skin:SK,face:{iris:0x5e7a3c,brow:0x3a2416,lash:0x1c120c,mouth:'smile',drop:.3,tilt:.5,browAng:-.3,blush:0xe8a090,
+    marks:x=>{ x.fillStyle='rgba(90,50,40,.55)'; x.beginPath(); x.ellipse(15,121,.7,.7,0,0,7); x.fill(); }}});      // a small mole by his smile
+  // chestnut hair: short at the back and sides, the top combed across from a side part
+  buildHair(r.head,{boy:true,root:0x2e1b10,tip:0x6e4526,shade:0x1a0e07,shine:0xd8a070,
+    fringe:{n:5,spread:46,len:74,sweep:-32,w:.11,alt:1.5,jag:.3,fan:2,sideDrop:3},
+    sides:false,back:'none',spikes:false,cap:{front:30,front2:36,temple:58,side:82,back2:124,back:146},
+    extras:[
+      (hg,st,add)=>add(headLock(st,{az0:-34,az1:26,el0:16,el1:58,r0:st._vol+.012,r1:st._vol+.036,w:.13,t:.045,lift:.028,n:8,belly:.42,taper:.85,azEase:true,inner:.5})),
+      // a neat short back: locks lying close from the crown to the nape, none hanging at the sides
+      (hg,st,add)=>{ for(let i=0;i<7;i++){ const f=i/6*2-1, az=180-f*72;
+        add(headLock(st,{az0:az,az1:az+f*4,el0:34+Math.abs(f)*16,el1:150-Math.abs(f)*26,r0:st._vol,r1:st._vol+.022,w:.15,t:.045,lift:.012,n:7,belly:.2,taper:.9,inner:.55})); } },
+      // short, tidy sideburns
+      (hg,st,add)=>{ for(const sd of [-1,1]) add(headLock(st,{az0:sd*78,az1:sd*80,el0:62,el1:94,r0:st._vol-.004,r1:st._vol+.008,w:.07,t:.03,lift:.004,n:5,belly:.1,taper:.8,inner:.5})); }
+    ]});
+  // round tortoiseshell glasses
+  const gl=new THREE.Group(); gl.position.set(0,HEAD_C-.035,HEAD_R*.93); r.head.add(gl);
+  const TORT=cmat(0x5a2e16,{spec:1,shin:70,rim:.7});
+  for(const s of [-1,1]){
+    const ring=part(gl,kTorus(.078,.011,8,24),TORT,s*.105,0,-.012); ring.rotation.y=s*.28;
+    const lens=part(gl,kCyl(.074,.074,.004,20),cmat(0xdfeaf2,{opacity:.18,spec:2,shin:140,rim:1.4}),s*.105,0,-.012); lens.rotation.x=Math.PI/2; lens.rotation.z=s*.28; lens.userData.keep=true;
+    const arm=part(gl,softBox(.008,.01,.26,.003,2),TORT,s*.2,.012,-.14); arm.rotation.y=s*.12;
+  }
+  part(gl,kTorus(.03,.008,6,12,Math.PI),TORT,0,.004,.002);
+  legs(r,{skin:SK,pants:{col:TROUSER,len:'long',wide:1.04,hem:darkHex(TROUSER,.85)},shoe:{type:'oxford',col:LOAFER,sole:0x2a1a10}});
+  r.legs.forEach(lp=>part(lp,softBox(.005,.4,.005,.002,2),cmat(darkHex(TROUSER,.7),{rim:.5}),0,-.27,.081));   // pressed creases
+  torso(r,SHIRT);
+  buttonRow(r.body,0xe8e2d4,3,0,.86,.07,.182);
+  // an open collar with a wine-red ascot tucked in
+  for(const s of [-1,1]){ const c=part(r.body,ellipsoid(.056,.017,.036,12,8),cmat(SHIRT,{rim:.8}),s*.052,.978,.105); c.rotation.set(.8,s*.55,s*-.6); }
+  part(r.body,ellipsoid(.05,.034,.03,14,10),cmat(WINE,{rim:.7,spec:.4,shin:40}),0,.95,.15);
+  part(r.body,sweepGeo([V3(0,.94,.162),V3(.004,.9,.18),V3(-.004,.86,.186)],{up:V3(0,0,1),seg:10,rad:6,inner:1,rx:s=>.03-.01*s,ry:.008,tipLen:.01}),cmat(WINE,{rim:.7,spec:.4,shin:40,side:THREE.DoubleSide}));
+  for(let k=0;k<4;k++) part(r.body,sphere(.004,6,4),cmat(0xe9c98a,{rim:.3}),(k%2-.5)*.022,.93-k*.02,.19);
+  // the cream cable knit thrown over his shoulders: flat across his back, the sleeves knotted loosely on his chest
+  const back=[V3(-.2,.95,.07),V3(-.25,.96,-.04),V3(-.16,.92,-.17),V3(0,.9,-.2),V3(.16,.92,-.17),V3(.25,.96,-.04),V3(.2,.95,.07)];
+  part(r.body,sweepGeo(back,{up:V3(0,1,0),seg:36,rad:10,inner:1,rx:.032,ry:.085}),cmat(KNIT,{rim:.9})).castShadow=true;
+  for(let k=0;k<7;k++){ const a=-1.05+k*.35, x=Math.sin(a)*.215, z=-Math.cos(a)*.2;
+    const rb=part(r.body,softBox(.016,.15,.012,.005,2),cmat(KNIT2,{rim:.6}),x,.9,z); rb.rotation.y=a; }                      // the cables down the back
+  for(const s of [-1,1]){
+    const sl=[V3(s*.2,.95,.07),V3(s*.16,.9,.15),V3(s*.07,.83,.19),V3(s*.01,.8,.2)];
+    part(r.body,sweepGeo(sl,{up:V3(0,0,1),seg:14,rad:8,inner:1,rx:.046,ry:.024}),cmat(KNIT,{rim:.9}));
+    const tail=[V3(s*.012,.79,.2),V3(s*.04,.72,.2),V3(s*.05,.64,.19)];
+    part(r.body,sweepGeo(tail,{up:V3(0,0,1),seg:10,rad:8,inner:1,rx:s2=>.04-.006*s2,ry:.022,tipLen:.01}),cmat(KNIT,{rim:.9}));
+    part(r.body,softBox(.07,.03,.03,.012,2),cmat(KNIT2,{rim:.7}),s*.05,.64,.19);                                            // ribbed cuffs
+  }
+  part(r.body,ellipsoid(.05,.04,.03,12,10),cmat(KNIT,{rim:.9}),0,.8,.205);                                                 // the knot
+  // the black bistro apron: waist to knee, a tan leather strap, the ties in a bow at the back
+  const apron=lathe([[.232,.3],[.222,.4],[.204,.52],[.188,.6],[.182,.635]],30,14,-Math.PI*.47,Math.PI*.94);
+  part(r.body,apron,cmat(APRON,{side:THREE.DoubleSide,rim:.9,spec:.15,shin:20})).castShadow=true;
+  part(r.body,lathe([[.234,.31],[.234,.322]],30,2,-Math.PI*.47,Math.PI*.94),cmat(0x2c2c33,{side:THREE.DoubleSide,rim:.6}));
+  belt(r,STRAP,.625,.184);
+  const bw=bow(APRON,1.1,{tails:true}); bw.position.set(0,.625,-.19); bw.rotation.y=Math.PI; r.body.add(bw);
+  const pk=part(r.body,softBox(.1,.08,.012,.008,2),cmat(0x2a2a31,{rim:.6}),-.07,.5,.215); pk.rotation.y=-.3;               // a pocket
+  const pen=part(r.body,kCyl(.008,.008,.07,8),cmat(GOLD,{spec:1.2,shin:80}),-.09,.54,.222); pen.rotation.z=.15;
+  // a folded towel tucked into the strap
+  const tw=part(r.body,softBox(.1,.17,.018,.006,3),cmat(0xf7f7f4,{rim:.7}),.17,.54,.1); tw.rotation.set(0,.9,.06);
+  const ts=part(r.body,softBox(.101,.014,.019,.003,2),cmat(0x3a5a9a,{rim:.6}),.17,.5,.1); ts.rotation.set(0,.9,.06);
+  arms(r,{skin:SK,sleeve:{col:SHIRT,len:'3q',flare:.016,cuffCol:0xeae6dc}});
+  // a gold watch on the left wrist, a signet ring on the right hand
+  const wt=part(r.arms[1],kTorus(.047,.009,8,20),cmat(0x6a3a1e,{rim:.6}),0,-.37,0); wt.rotation.x=Math.PI/2;
+  part(r.arms[1],kCyl(.026,.026,.012,16),cmat(GOLD,{spec:1.3,shin:90}),.05,-.37,0).rotation.z=Math.PI/2;
+  part(r.hands[0],kTorus(.018,.006,6,12),cmat(GOLD,{spec:1.3,shin:90}),.03,-.035,.02).rotation.y=Math.PI/2;
+  // the baguette in his right hand, the spoon and a knife waiting behind it
+  const bag=baguetteProp(.66); bag.scale.setScalar(1.3); bag.position.set(0,-.05,.08); bag.rotation.x=1.05; r.hands[0].add(bag);
+  const spoon=woodSpoonProp(); spoon.scale.setScalar(1.35); spoon.position.set(0,-.04,.05); spoon.rotation.x=1.1; spoon.visible=false; r.hands[0].add(spoon);
+  const knife=chefKnifeProp(); knife.scale.setScalar(1.5); knife.position.set(0,-.045,.04); knife.rotation.x=1.3; knife.visible=false; r.hands[0].add(knife);
+  r.arms[0].rotation.x=-.45;
+  Object.assign(r.root.userData,{baguette:bag,spoon,chefKnife:knife,hold:0,armX:[-.45,0]});
+  contactShadow(r.root,.95);
+  return finalizeModel(r.root);
+}
+
+/* a skateboard along +z: a deck with kicked-up tails, black grip on top, a loud graphic
+   underneath, two trucks and four chunky wheels */
+function skateboardProp(){
+  const g=new THREE.Group(), L=.66, W=.19;
+  const deck=softBox(W,.022,L*.72,.01,4);
+  part(g,deck,cmat(0x1a1a1f,{rim:.6}),0,0,0);
+  for(const s of [-1,1]){
+    const t=part(g,softBox(W,.022,L*.2,.01,3),cmat(0x1a1a1f,{rim:.6}),0,.03,s*L*.43); t.rotation.x=-s*.42;
+    const tb=part(g,softBox(W*1.12,.014,L*.21,.006,2),cmat(0xff3d8b,{rim:.8,emis:.15}),0,.022,s*L*.43); tb.rotation.x=-s*.42;
+  }
+  const under=part(g,softBox(W*1.12,.014,L*.76,.006,2),cmat(0xff3d8b,{rim:.8,emis:.15}),0,-.008,0); under.castShadow=true;   // a pink rim round the black grip, so the board reads from above
+  [[0x2de0d0,-.12],[0xffd23a,0],[0x8a5cff,.12]].forEach(([c,z])=>part(g,softBox(W*.7,.004,.07,.002,1),cmat(c,{rim:.6,emis:.15}),0,-.017,z));
+  for(const s of [-1,1]){
+    part(g,softBox(.13,.03,.04,.008,2),cmat(0xc9ced8,{spec:1,shin:70}),0,-.035,s*L*.3);
+    for(const x of [-1,1]){ const w=part(g,kCyl(.034,.034,.034,14),cmat(0x3ff0d8,{rim:.8,spec:.4,shin:40}),x*.085,-.058,s*L*.3); w.rotation.z=Math.PI/2; }
+  }
+  return g;
+}
+/* a spray can along +y: a coloured body with a white band, a cap and a nozzle */
+function sprayCanProp(col){
+  const g=new THREE.Group();
+  part(g,kCyl(.038,.038,.16,14),cmat(col,{spec:.9,shin:70,rim:.9}),0,0,0);
+  part(g,kCyl(.0385,.0385,.04,14),cmat(0xf4f4f0,{rim:.7}),0,.02,0);
+  part(g,lathe([[.038,.08],[.03,.1],[.016,.11]],14,6),cmat(0xc9ced8,{spec:1.2,shin:80}),0,0,0);
+  part(g,kCyl(.013,.013,.024,10),cmat(0x18181c,{rim:.5}),0,.122,0);
+  part(g,softBox(.012,.01,.012,.003,2),cmat(0xf4f4f0,{rim:.5}),0,.128,.012);
+  for(let k=0;k<3;k++) part(g,sphere(.008+k*.003,6,4),cmat(k%2?0xffd23a:0x2de0d0,{rim:.4}),.03-k*.02,-.05+k*.03,.034);   // drips of paint down the side
+  return g;
+}
+
+/* --- Panne: an artist, and not a friendly one. She lives for music and
+   graffiti. A black bucket hat with paint on it, black hair with teal ends,
+   a paint-spattered oversized tee over a black long sleeve, baggy olive
+   cargos with a wallet chain, skate shoes, big headphones round her neck,
+   a spray can in her hand and a board strapped to her back --- */
+function buildPanne(){
+  const r=newRig({}), SK=0xf6dcc6;
+  const TEE=0xf4f2ec, LONG=0x17171c, CARGO=0x59603f, HAT=0x16161b, TEAL=0x2de0d0, PINK=0xff3d8b, YEL=0xffd23a;
+  buildHead(r,{skin:SK,face:{iris:0x2dc8c0,lash:0x120c14,brow:0x16121a,mouth:'smirk',drop:.38,tilt:1.1,browAng:1.6,blush:null,
+    marks:x=>{ // a smear of pink spray paint across one cheek, and a few freckles
+      const g=x.createLinearGradient(-38,114,-18,122); g.addColorStop(0,'rgba(255,61,139,0)'); g.addColorStop(.5,'rgba(255,61,139,.55)'); g.addColorStop(1,'rgba(255,61,139,0)');
+      x.fillStyle=g; x.beginPath(); x.ellipse(-28,118,11,2.6,-.18,0,7); x.fill();
+      x.fillStyle='rgba(150,80,60,.35)'; [[18,114],[22,116],[26,114],[-8,112],[8,112]].forEach(([a,b])=>{ x.beginPath(); x.ellipse(a,b,.6,.6,0,0,7); x.fill(); }); }}});
+  buildHair(r.head,{root:0x141118,tip:0x1fb8ae,shade:0x09070c,shine:0x6adcd4,rim:.6,
+    fringe:{n:10,spread:62,len:96,w:.086,alt:5,jag:2.2,sweep:6,fan:6},
+    sides:{n:2,drop:.28,el:124,w:.11,az:64},back:'bob',backN:11,backSpread:96});
+  // the bucket hat: a soft crown, a short brim sloping down, tipped back so her eyes show; paint on it
+  const hat=new THREE.Group(); hat.position.set(0,HEAD_C+.02,-.02); hat.rotation.x=-.2; r.head.add(hat);
+  const BR=HEAD_R*1.14;
+  const crown=lathe([[BR,.14],[BR*1.0,.24],[BR*.95,.36],[BR*.82,.46],[BR*.48,.52],[0,.53]],40,14);
+  part(hat,crown,cmat(HAT,{rim:.9,side:THREE.DoubleSide})).castShadow=true;
+  part(hat,lathe([[BR*1.006,.14],[BR*1.012,.19]],40,2),cmat(0x2a2a31,{rim:.7}));
+  const brim=lathe([[BR*1.34,.06],[BR*1.2,.1],[BR*1.06,.13],[BR*.99,.145]],44,8);
+  part(hat,brim,cmat(HAT,{rim:.9,side:THREE.DoubleSide})).castShadow=true;
+  [[TEAL,24,52,.06],[PINK,-38,46,.045],[YEL,150,50,.055],[TEAL,-120,60,.04],[PINK,86,40,.035]].forEach(([c,az,el,s2])=>{
+    const p=sphPt(BR*1.01,az,el); p.y=.16+(.52-.16)*(1-el/90)*.85; const d=part(hat,kCyl(s2,s2,.006,12),cmat(c,{rim:.6,emis:.1}),p.x,p.y,p.z); d.lookAt(p.x*3,p.y,p.z*3); d.rotateX(Math.PI/2);
+    for(let k=0;k<3;k++){ const q=part(hat,sphere(.008,6,4),cmat(c,{rim:.4}),p.x+(((k*53+az*7+999)%11)/11-.5)*.08,p.y+(((k*31+el*3)%7)/7-.5)*.06,p.z); q.position.multiplyScalar(1.005); } });
+  legs(r,{skin:SK,pants:{col:CARGO,len:'long',wide:1.42,hem:darkHex(CARGO,.8)},shoe:{type:'sneaker',col:0x121216,sole:0xf2f0ea,toe:0xf2f0ea,lace:0xf2f0ea,accent:0xf2f0ea}});
+  r.legs.forEach((lp,i)=>{ const s=i?1:-1; part(lp,softBox(.04,.11,.1,.014,3),cmat(darkHex(CARGO,.9),{rim:.7}),s*.1,-.22,.01);         // cargo pockets
+    part(lp,softBox(.042,.012,.102,.004,2),cmat(darkHex(CARGO,.75),{rim:.5}),s*.1,-.17,.01); });
+  torso(r,TEE,{scale:1.1,add:.006});
+  // the tee: oversized, with splashes of spray paint that drip
+  const tz=y=>{ const P=TORSO_GIRL; let i=0; while(i<P.length-2&&P[i+1][1]<y) i++; const t=(y-P[i][1])/(P[i+1][1]-P[i][1]); return ((P[i][0]+(P[i+1][0]-P[i][0])*t)*1.1+.006)*.86; };
+  [[PINK,-.06,.8,1.2],[TEAL,.07,.7,1],[YEL,.08,.88,.8],[0x8a5cff,-.09,.64,.8]].forEach(([c,x0,y0,k])=>{
+    const z0=Math.sqrt(Math.max(0,tz(y0)*tz(y0)-x0*x0*.74))+.004, m=cmat(c,{rim:.4,emis:.12});
+    const d=part(r.body,ellipsoid(.034*k,.026*k,.004,12,6),m,x0,y0,z0); d.lookAt(x0*3,y0,z0*3);
+    for(let i=0;i<4;i++){ const a2=i*1.7+x0*9, rr=.05*k; const q=part(r.body,ellipsoid(.008*k,.007*k,.003,6,4),m,x0+Math.cos(a2)*rr,y0+Math.sin(a2)*rr*.8,z0-.002); q.lookAt(q.position.x*3,q.position.y,q.position.z*3); }
+    const dr=part(r.body,softBox(.009*k,.06*k,.004,.003,2),m,x0+.01,y0-.045*k,z0-.004); dr.lookAt(x0*3,y0-.045*k,z0*3); });
+  part(r.body,lathe([[.18,.53],[.19,.555],[.186,.58]],32,4),cmat(0xe8e6de,{rim:.6}));                     // the hem
+  part(r.body,lathe([[.064,.99],[.076,1.0],[.072,1.02]],24,4),cmat(0xe8e6de,{rim:.6}));                     // the neckline
+  // big headphones resting round her neck, the cups on her collarbones
+  const hp=new THREE.Group(); hp.position.set(0,.915,.05); r.body.add(hp);
+  const band=part(hp,kTorus(.17,.018,8,28,Math.PI),cmat(0x1a1a20,{rim:.8,spec:.5,shin:40})); band.rotation.set(Math.PI/2-.25,0,Math.PI); band.position.set(0,.03,-.04);
+  for(const s of [-1,1]){
+    const cup=part(hp,kCyl(.07,.07,.05,16),cmat(0x1a1a20,{rim:.9,spec:.6,shin:50}),s*.155,-.01,.07); cup.rotation.set(-.5,s*.7,Math.PI/2);
+    const pad=part(hp,kCyl(.054,.054,.014,16),cmat(TEAL,{rim:.7,emis:.3}),s*.178,-.004,.1); pad.rotation.set(-.5,s*.7,Math.PI/2);
+  }
+  // the wallet chain from the belt loop to her back pocket
+  const ch=[]; for(let k=0;k<=10;k++){ const t=k/10; ch.push(V3(.15+.03*t,.56-.12*Math.sin(Math.PI*t),.1-.22*t)); }
+  part(r.body,sweepGeo(ch,{up:V3(0,1,0),seg:20,rad:5,inner:1,rx:.007,ry:.007}),cmat(0xd3d8e0,{spec:1.2,shin:90}));
+  arms(r,{skin:SK,sleeve:{col:LONG,len:'long',flare:.01,cuffCol:0x2a2a31}});
+  r.arms.forEach(ap=>part(ap,lathe([[.066,-.16],[.07,-.12],[.068,-.04],[.062,.03],[.05,.06]],20,10),cmat(TEE,{rim:.8})));   // the tee's short sleeves over the long ones
+  // the spray can in her right hand, the board on her back
+  const can=sprayCanProp(TEAL); can.scale.setScalar(1.5); can.position.set(0,-.06,.05); can.rotation.x=1.35; r.hands[0].add(can);
+  const back=skateboardProp(); back.position.set(0,.8,-.23); back.rotation.set(-.08,Math.PI,.35); back.scale.setScalar(.95); r.body.add(back);
+  for(const s of [-1,1]) part(r.body,sweepGeo([V3(s*.12,.99,.08),V3(s*.16,.9,-.2),V3(s*.1,.66,-.22)],{up:V3(0,0,1),seg:12,rad:5,inner:1,rx:.012,ry:.005}),cmat(0x121216,{rim:.6}));   // straps
+  const board=skateboardProp(); board.visible=false; r.root.add(board);
+  r.arms[0].rotation.x=-.5;
+  Object.assign(r.root.userData,{sprayCan:can,boardBack:back,board,hold:0,armX:[-.5,0]});
+  contactShadow(r.root,.95);
   return finalizeModel(r.root);
 }
 
@@ -10614,7 +10865,9 @@ const HERO_LINES={
   kira:["I have your name in my notebook. Relax. It's only pencil.","Lights out. Five seconds.","Mei, please. Not in front of the guests."],
   neptune:["Wait for it... the ice is still growing.","Twelve seconds. That's all I need.","Is freezing xD"],
   yoon:["Special delivery, incoming!","Yeen! Drop the drone — no, on THEM!","Rockets land in five. Don't be there."],
-  gyro:["Objective: end all war crimes. Status: I am the war crime.","Mercy module not found. Continuing.","Contents radioactive. Please stand closer."]
+  gyro:["Objective: end all war crimes. Status: I am the war crime.","Mercy module not found. Continuing.","Contents radioactive. Please stand closer."],
+  mathias:["Twenty-three, going on seventy. Pass the espresso.","The baguettes come from Milan. Don't ask how they got this sharp.","Seven hits, then the good knives come out."],
+  panne:["Don't lean on that wall. It's still wet.","Headphones on, board under my feet. Try to keep up.","I'm not friendly. I'm an artist. There's a difference."]
 };
 const POKE_LINES=["Hey! That tickles!","Stop poking me~","Yes? I'm right here.","Careful. I bite.","Again? Fine. One more.","Hehe~","Okay okay, let's play already!"];
 const HeroTalk=(function(){
@@ -11190,7 +11443,9 @@ const ACHV_REWARDS = {
   kira:{coins:25,title:'Deadline',pfp:'kira'},
   neptune:{coins:25,title:'Is freezing xD',pfp:'neptune'},
   yoon:{coins:25,title:'Special Deliverist',pfp:'yoon'},
-  gyro:{coins:25,title:'War Crime',pfp:'gyro'}
+  gyro:{coins:25,title:'War Crime',pfp:'gyro'},
+  mathias:{coins:25,title:'Old Soul',pfp:'mathias'},
+  panne:{coins:25,title:'Wet Paint',pfp:'panne'}
 };
 const ACHV_TARGET = 10;
 function grantAchievement(key){
@@ -11992,7 +12247,7 @@ function startGame(ch){
   try{ document.getElementById('hudFace').src=Lobby.portrait(ch.key); }catch(e){}
   document.getElementById('ultLine').innerHTML='SUPER · E — <span id="ultName"></span>';
   document.getElementById('ultName').textContent=ch.ultName;
-  document.getElementById('dashLine').textContent = ch.key==='crisis' ? 'FLY · HOLD SHIFT' :
+  document.getElementById('dashLine').textContent = ch.key==='crisis' ? 'FLY · HOLD SHIFT' : ch.key==='panne' ? 'SKATE · HOLD SHIFT' :
     ch.spName ? ch.spName.toUpperCase()+' · SHIFT' : '';
   document.getElementById('dashLine').classList.remove('cd');
   document.getElementById('resultOverlay').classList.add('hidden');
@@ -12145,7 +12400,7 @@ function onKey(e){
 function onKeyUp(e){
   const k=e.key.toLowerCase();
   keys[k]=false;
-  if(k==='shift') endFlight();
+  if(k==='shift'){ endFlight(); endSkate(); }
 }
 /* --- Crisis passive: Welcome to Hell (hold Shift to fly, up to 10s) --- */
 function startFlight(){ if(gameOn&&!intro&&pUnit&&pUnit.key==='crisis') crisisFly(pUnit); }
@@ -12241,11 +12496,12 @@ function shoot(){
   if(intro||isDungeon()||!pUnit||!pUnit.alive||frozen(pUnit)) return;
   if(pUnit.lock){ kiraStab(pUnit); return; }            // Lights Out: every click is a stab, no cooldown
   const now=performance.now(), cfg=pUnit.cfg;
-  if(pUnit.flying||pUnit.bike||pUnit.slide||vanished(pUnit,now)) return;     // no attacks while flying, riding, sliding or vanished
+  if(pUnit.flying||pUnit.bike||pUnit.slide||pUnit.skate||vanished(pUnit,now)) return;     // no attacks while flying, riding, sliding, skating or vanished
   if(pUnit.demonUntil && now<pUnit.demonUntil){ demonSwing(pUnit,now,aim()); return; }
   if(pUnit.key==='demi'&&spOn(pUnit,now)){ oblivionSlash(pUnit,now); return; }   // Fallen Angel: the Oblivion Sword goes all the way round
   if(pUnit.key==='gyro'&&spOn(pUnit,now)){ gyroSlash(pUnit,now,aim()); return; }  // Electro Blades: left, then right
-  const cd = cfg.cd;
+  if(pUnit.key==='mathias'&&spOn(pUnit,now)){ spoonSwing(pUnit,now,aim()); return; }  // Wooden Spoon: up close, 50 a hit
+  const cd = pUnit.key==='mathias'&&pUnit.knives>0?MATH.KNIFE_GAP:cfg.cd;          // the knives go quickly
   if(now-lastShot < cd) return;
   lastShot=now;
   fire(pUnit, aim(), fd(player.position,mouseW));
@@ -12276,6 +12532,7 @@ function fire(u, dir, dist){
   // Shift forms that replace the attack outright (61-shift.js)
   if(u.key==='luna'&&u.rayUntil&&_n<u.rayUntil){ sugarRay(u,dir,dmg); return; }
   if(u.key==='reka'&&spOn(u,_n)){ rekaLaser(u,dir,50*spDmgK(u,_n)); return; }
+  if(u.key==='mathias'&&u.knives>0){ knifeThrow(u,dir,mult); return; }              // Kitchen Knives: 70 a throw
   SFX.attack(cfg.key,u.isPlayer?null:u.mesh.position);
   switch(cfg.atk){
     case 'boomerang':{
@@ -12456,6 +12713,10 @@ function fire(u, dir, dist){
       const m=wasteShot(); m.position.copy(from).addScaledVector(dir,.55); along(m,dir);
       launch({m,dir:dir.clone(),sp:14,life:.72,owner:u,dmg,type:'straight',venom:GYRO_WASTE,hitR:.66,onHit:t=>wasteSplash(t.mesh.position)},GYRO.TOX,.15);
       break;}
+    /* Mathias: a sharp baguette thrown spinning (64b-mathias-panne.js) */
+    case 'baguette': mathiasThrow(u,dir,dmg); break;
+    /* Panne: a wide V of spray paint */
+    case 'spray': panneSpray(u,dir,dmg); break;
     /* Kira: a pencil thrown point-first — 30 on the hit, then poison (59-kira.js) */
     case 'pencil':{
       u.throwAt=performance.now();
@@ -12534,6 +12795,7 @@ function chargeUlt(base,u){
   u=u||pUnit;
   if(!u||!(base>0)) return;
   if(u.key==='reka'){ u.ult=100; return; }
+  if(u.key==='mathias'){ if(!(u.knives>0)) u.ult=Math.min(100,(u.ult||0)+100/MATH.HITS+1e-6); return; }   // seven hits of any kind
   u.ult=Math.min(100,(u.ult||0)+base*(ULT_MULT[u.key]||1));
 }
 /* Kizu's fans go down after three hits, whatever hits them */
@@ -12718,6 +12980,10 @@ function ultimate(u,dir,target){
   else if(k==='yoon'){ airStrike(strikePoint(u,dir,target),u); say('AIR STRIKE — get clear of the red circle!'); }
   /* Gyro — Elemental Collapse: four elements fuse into one orb; 100, frozen 3s, burning 3s, poisoned 5s, slowed 7s (64-gyro.js) */
   else if(k==='gyro'){ gyroCollapse(u,dir,target); }
+  /* Mathias — Kitchen Knives: six chef's knives, 70 a throw (64b-mathias-panne.js) */
+  else if(k==='mathias'){ mathiasKnives(u); }
+  /* Panne — Block Party: a circle of paint and bass that follows her for 10s; everyone inside slows and takes 15 a second */
+  else if(k==='panne'){ blockParty(u); }
   /* Crisis — Demon Time: transforms for 5s, wide sword sweeps (crisisStep turns him back) */
   else if(k==='crisis'){
     if(u.flying){ u.ult=100; say('Land first'); return; }
@@ -12778,7 +13044,7 @@ function beamStep(u,now,dt){
 const BOT_ULT={vael:{near:6,low:.5},szamoci:{near:7},nyx:{near:8},eribun:{near:4.5},luna:{near:9,los:true},emma:{low:.35},reka:{low:.45},
   krisztian:{near:8},racksdoubled:{near:10},aether:{near:5.5},demi:{near:7,low:.5},kizu:{near:9},star:{near:11},
   wonderkid:{near:6.5},yume:{near:11},levine:{near:13,los:true},kira:{near:14},crisis:{near:4.5},
-  neptune:{near:9},yoon:{near:15,far:6.5},gyro:{near:10,los:true}};                    // (far: Yoon won't call rockets down on someone standing next to him)
+  neptune:{near:9},yoon:{near:15,far:6.5},gyro:{near:10,los:true},mathias:{near:8,los:true},panne:{near:4.2}};                    // (far: Yoon won't call rockets down on someone standing next to him)
 const BOT_ULT_TRICKLE=1.6;            // a bot's super also fills slowly on its own (%/s), so a bad aim doesn't mean never
 function botUlt(u,tg,bd,now){
   const R=BOT_ULT[u.key]; if(!R||u.ult<100) return;
@@ -12919,6 +13185,12 @@ function hud(){
     else if(now<pUnit.flyCd) c+=`<span class="buff-chip">FLIGHT ${((pUnit.flyCd-now)/1000).toFixed(1)}s</span>`;
     if(pUnit.demonUntil&&now<pUnit.demonUntil) c+=`<span class="buff-chip">DEMON ${((pUnit.demonUntil-now)/1000).toFixed(1)}s</span>`;
   }
+  if(pUnit.key==='panne'){
+    if(pUnit.skate) c+=`<span class="buff-chip good">SKATING ${Math.max(0,(pUnit.skate.max-(now-pUnit.skate.t0))/1000).toFixed(1)}s</span>`;
+    else if(now<(pUnit.skateCd||0)) c+=`<span class="buff-chip dim">SKATE ${((pUnit.skateCd-now)/1000).toFixed(1)}s</span>`;
+    if(pUnit.party) c+=`<span class="buff-chip good">BLOCK PARTY ${Math.max(0,(pUnit.party.until-now)/1000).toFixed(1)}s</span>`;
+  }
+  if(pUnit.key==='mathias'&&pUnit.knives>0) c+=`<span class="buff-chip good">KNIVES × ${pUnit.knives}</span>`;
   if(pUnit.homeUntil&&now<pUnit.homeUntil) c+=`<span class="buff-chip">HOMING ${((pUnit.homeUntil-now)/1000).toFixed(1)}s</span>`;
   else if(pUnit.key==='yume'&&now<(pUnit.focusCd||0)) c+=`<span class="buff-chip">LOCK-ON ${((pUnit.focusCd-now)/1000).toFixed(0)}s</span>`;
   if(pUnit.bike) c+=`<span class="buff-chip">RIDING ${Math.max(0,(pUnit.bike.until-now)/1000).toFixed(1)}s</span>`;
@@ -13232,7 +13504,7 @@ function loop(t){
     pp.position.y=.62+LEG_ADD*.8+Math.sin(t/300)*.06;
   }
   animateFlair(player,now,pUnit.bob);
-  animateWalk(player,pUnit,dt,moving && !pUnit.flying && !pUnit.bike);
+  animateWalk(player,pUnit,dt,moving && !pUnit.flying && !pUnit.bike && !pUnit.skate);
   animateAction(player,pUnit,now);
   if(pUnit.bike) riderPose(player,pUnit.bike.lean);
   statusStep(pUnit,now,dt);
@@ -13323,6 +13595,7 @@ function loop(t){
       if(p.grace>0) p.grace-=dt; else gone=hitTest(p);
     } else {
       p.m.position.addScaledVector(p.dir,p.sp*dt);
+      if(p.yaw) p.m.rotation.y+=dt*p.yaw;                  // a baguette spins flat as it flies
       gone=hitTest(p);
       if(p.type==='pierce'&&p.hit&&p.hit.size>=p.maxHit) gone=true;
     }
@@ -13354,7 +13627,7 @@ function loop(t){
   stepJobs(now,dt); updateStrikeMark();
   hud();
   updatePops();
-  KiraFx.step(now,dt); SanityFx.step(now,dt); Blizzard.step(now,dt); updateDecals(now);
+  KiraFx.step(now,dt); SanityFx.step(now,dt); Blizzard.step(now,dt); C10.step(now,dt); updateDecals(now);
   charLightsFor(camera,Blizzard.env(SanityFx.env(KiraFx.env(world.charEnv))));
   shadowTick(); PostFX.render(renderer,scene,camera);
   raf=Frame.req(loop);
@@ -13464,8 +13737,8 @@ function bot(u,dt,now,t){
   const tg=botTarget(u,now), bd=tg?fd(u.mesh.position,tg.mesh.position):Infinity;
   if(tg){ (u.seenPos||(u.seenPos=V3())).copy(tg.mesh.position); u.seenAt=now; }
   // the super: it fills from landed hits and slowly on its own; botUlt picks the moment
-  u.ult=Math.min(100,(u.ult||0)+dt*BOT_ULT_TRICKLE);
-  const demon=!!(u.demonUntil&&now<u.demonUntil), blades=u.key==='gyro'&&spOn(u,now);
+  if(!(u.knives>0)) u.ult=Math.min(100,(u.ult||0)+dt*BOT_ULT_TRICKLE);
+  const demon=!!(u.demonUntil&&now<u.demonUntil), blades=(u.key==='gyro'||u.key==='mathias')&&spOn(u,now);
   if(u.ult>=100&&!u.slam&&!demon) botUlt(u,tg,bd,now);
   botShift(u,tg,bd,now);
   // badly hurt: fall back somewhere quiet and let the health come back (never mid-transformation, never in Hide & Seek)
@@ -13478,7 +13751,7 @@ function bot(u,dt,now,t){
   // face the target and fire when it can; `move`: also close in, back off, or dodge side to side
   const attack=move=>{
     const close=demon||(u.key==='demi'&&spOn(u,now))||blades;        // Demon Time Crisis, Fallen Angel Demi and Gyro's blades close in to swing
-    const pref=close?1.6:(RANGE_PREF[u.key]||5), reach=blades?2.2:close?3.2:MELEE_REACH[u.cfg.atk];
+    const pref=close?1.6:(RANGE_PREF[u.key]||5), reach=blades?(u.key==='mathias'?1.95:2.2):close?3.2:MELEE_REACH[u.cfg.atk];
     const nd2=V3(tg.mesh.position.x-u.mesh.position.x,0,tg.mesh.position.z-u.mesh.position.z).normalize();
     const los=lineOfSight(u.mesh.position,tg.mesh.position);
     let d=null;
@@ -13499,22 +13772,22 @@ function bot(u,dt,now,t){
     facing=true;
     u.shootCd-=dt*1000;
     const clear = isLobber(u) || los;
-    if(u.shootCd<=0&&(reach?bd<reach:bd<pref+3)&&clear&&!u.flying&&!u.dashing&&!vanished(u,now)&&!botHold(u,now,bd)){
+    if(u.shootCd<=0&&(reach?bd<reach:bd<pref+3)&&clear&&!u.flying&&!u.skate&&!u.dashing&&!vanished(u,now)&&!botHold(u,now,bd)){
       if(u.demonUntil&&now<u.demonUntil) demonSwing(u,now,nd2);
       else if(u.key==='demi'&&spOn(u,now)) oblivionSlash(u,now);
-      else if(blades) gyroSlash(u,now,nd2);
+      else if(blades) (u.key==='mathias'?spoonSwing:gyroSlash)(u,now,nd2);
       else {
         // the lower the rank you bring, the looser the bots aim (their hits still do full damage)
         const e=(Math.random()-.5)*DIFF.aim, c=Math.cos(e), s=Math.sin(e);
         fire(u,V3(nd2.x*c+nd2.z*s,0,-nd2.x*s+nd2.z*c),bd*(1+(Math.random()-.5)*DIFF.range));
       }
-      const base=Math.max(320,u.cfg.cd);
+      const base=Math.max(320,botAtkCd(u));
       u.shootCd=base*DIFF.cd+Math.random()*DIFF.cdR;
     }
     return d;
   };
   if(danger){ dir=new THREE.Vector3(-u.mesh.position.x,0,-u.mesh.position.z).normalize(); }
-  else if(u.flying&&tg){ dir=V3(u.mesh.position.x-tg.mesh.position.x,0,u.mesh.position.z-tg.mesh.position.z).normalize(); }   // up in the air: get clear of them
+  else if((u.flying||u.skate)&&tg){ dir=V3(u.mesh.position.x-tg.mesh.position.x,0,u.mesh.position.z-tg.mesh.position.z).normalize(); }   // up in the air: get clear of them
   else if(retreating){
     if(!u.safe||now>(u.safeAt||0)){ u.safe=safeSpot(u); u.safeAt=now+1800+Math.random()*900; }
     const w=V3(u.safe.x-u.mesh.position.x,0,u.safe.z-u.mesh.position.z);
@@ -13548,7 +13821,7 @@ function bot(u,dt,now,t){
   if(u.mesh.userData.halo) u.mesh.userData.halo.rotation.y+=dt*1.6;
   if(u.mesh.userData.partner) u.mesh.userData.partner.position.y=1.02+LEG_ADD+Math.sin(now/300+u.bob)*.06;
   animateFlair(u.mesh,now,u.bob);
-  animateWalk(u.mesh,u,dt,!!dir&&!u.flying);
+  animateWalk(u.mesh,u,dt,!!dir&&!u.flying&&!u.skate);
   animateAction(u.mesh,u,now); statusStep(u,now,dt);
   syncNameTag(u);
   u.seen=seenByYou(u);   // the fade in 55-bush.js shows or hides them
@@ -13791,7 +14064,7 @@ const Touch=(function(){
     wireAim(atk,A,s=>{ if(!gameOn||intro||(pUnit&&pUnit.lock)) return; if(s.drag&&s.dir) aimAt(s); else autoAim(); shoot(); });
     wireAim(ult,U,s=>{ if(!gameOn||intro) return; if(s.drag&&s.dir) aimAt(s); else autoAim(); useUlt(); });
     dsh.addEventListener('pointerdown',e=>{ e.preventDefault(); if(!gameOn||intro) return; autoAim(); keys['shift']=true; special(); });
-    const endD=()=>{ keys['shift']=false; endFlight(); };
+    const endD=()=>{ keys['shift']=false; endFlight(); endSkate(); };
     dsh.addEventListener('pointerup',endD); dsh.addEventListener('pointercancel',endD);
     root.addEventListener('contextmenu',e=>e.preventDefault());
   }
@@ -13809,6 +14082,8 @@ const Touch=(function(){
     const SP=SHIFT[pUnit.key], now=performance.now();                  // the Shift button fills back up as its cooldown runs down
     if(SP){ const busy=spOn(pUnit,now)||pUnit.spArm>0, cd=!busy&&now<(pUnit.spCd||0);
       dsh.style.setProperty('--p',(cd?Math.max(0,1-(pUnit.spCd-now)/SP.cd)*100:100).toFixed(0)+'%'); dsh.classList.toggle('live',busy); dsh.classList.toggle('wait',cd); }
+    else if(pUnit.key==='panne'){ const cd=!pUnit.skate&&now<(pUnit.skateCd||0);                  // Panne's board comes back as fast as the ride was short
+      dsh.style.setProperty('--p',(cd?Math.max(0,1-(pUnit.skateCd-now)/(pUnit.skateCdLen||PANNE.SKATE_MS))*100:100).toFixed(0)+'%'); dsh.classList.toggle('live',!!pUnit.skate); dsh.classList.toggle('wait',cd); }
   }
   let mode='fight';
   function start(ch,m){
@@ -14089,6 +14364,7 @@ function statusStep(u,now,dt){
   if(u.key==='neptune') neptuneStep(u,now,dt);
   knockStep(u,dt); shiftStep(u,now,dt);
   crisisStep(u,now); slamStep(u,dt); beamStep(u,now,dt);
+  if(u.key==='mathias'||u.key==='panne') c10Unit(u,now,dt);
   regenStep(u,now,dt);
   if(u.guard) u.guard.position.copy(u.mesh.position).setY(GUARD_Y);   // a super's shield bubble rides along
   if(u.stunFx&&u.stunFx.visible){
@@ -14175,6 +14451,7 @@ function moveMul(u,now){
   if(u.gfUntil&&now<u.gfUntil) k*=KIRA.GF_SPEED;                 // Kira's Obsession: double speed
   if(u.lockWith&&!u.lock) k*=.55;                                // caught in Kira's dark: legs like lead
   k*=spSpeedK(u,now);                                            // Shift abilities that make you fast (61-shift.js)
+  if(u.skate) k*=PANNE.SKATE_SPEED;                              // Panne on her board
   if(u.slowUntil&&now<u.slowUntil) k*=u.slowK||.3;
   if(u.wade) k*=1-WADE_SLOW*u.wade;
   if(u.key==='wonderkid') k*=1+wonderPhase(u,now)*1.15;
@@ -14249,6 +14526,7 @@ function animateAction(mesh,u,now){
     if(ud.arms&&e>0){ ud.arms.forEach((ap,i)=>{ ap.rotation.x=-1.45*e+ap.rotation.x*(1-e); ap.rotation.z=ud.armZ[i]*(1-e)+(i?-.12:.12)*e; }); }
     ud.guns.forEach(g=>{ g.rotation.x=1.45*e; });
   }
+  if(u.key==='mathias'||u.key==='panne') c10Pose(mesh,u,now);
 }
 /* one blade cut: raised high and back, then down and across the body, then back to ready */
 const GYRO_CUT_MS=320;
@@ -14396,7 +14674,7 @@ function yumeFocus(u){
     ring.rotation.z+=.08; ring.material.opacity=.35+.35*Math.sin(k*40); },30);
 }
 /* Shift does whatever the character's special is */
-function special(){ if(isDungeon()||!pUnit||!pUnit.alive||frozen(pUnit)) return; dash(); startFlight(); yumeFocus(); levineVanish(); kiraObsession(); shiftAbility(); }
+function special(){ if(isDungeon()||!pUnit||!pUnit.alive||frozen(pUnit)) return; dash(); startFlight(); startSkate(); yumeFocus(); levineVanish(); kiraObsession(); shiftAbility(); }
 
 /* ---------- between matches ---------- */
 function resetStatusFx(){
@@ -15358,7 +15636,8 @@ const SHIFT={
   wonderkid:   {name:'Slide Tackle',  ms:0,    cd:15000, col:0xffd257, go:wonderSlide},
   neptune:     {name:'Third Eye',     ms:14000,cd:30000, col:0x6fe0ff, go:neptuneAwaken, step:neptuneAwakenStep, end:neptuneAwakenEnd},
   yoon:        {name:"Yeen's Drone",  ms:0,    cd:18000, col:0xffa040, go:yoonDrone},
-  gyro:        {name:'Electro Blades',ms:6000, cd:30000, col:0x6ad8ff, go:gyroBlades, step:gyroBladesStep, end:gyroBladesEnd}
+  gyro:        {name:'Electro Blades',ms:6000, cd:30000, col:0x6ad8ff, go:gyroBlades, step:gyroBladesStep, end:gyroBladesEnd},
+  mathias:     {name:'Wooden Spoon',  ms:7000, cd:10000, col:0xc98d52, go:spoonOn, end:spoonOff}
 };
 const ARM_MS=8000;
 function spOn(u,now){ return !!(u&&u.spUntil&&(now||performance.now())<u.spUntil); }
@@ -15395,7 +15674,7 @@ const BOT_SP={
   vael:{near:3.4}, szamoci:{range:1}, nyx:{max:14}, eribun:{range:1}, luna:{max:9}, demi:{max:9.5},
   reka:{max:10}, kizu:{range:1}, krisztian:{max:12}, aether:{range:1}, racksdoubled:{max:8}, star:{max:10},
   wonderkid:{max:11}, neptune:{max:12}, yoon:{max:20}, emma:{near:6.5}, crisis:{low:.5,max:9}, yume:{range:1},
-  levine:{low:.55,max:10,ambush:.25}, kira:{max:11}, gyro:{near:5.5}
+  levine:{low:.55,max:10,ambush:.25}, kira:{max:11}, gyro:{near:5.5}, mathias:{near:4.6}, panne:{low:.6,max:9,ambush:.15}
 };
 function botShift(u,tg,bd,now){
   const R=BOT_SP[u.key]; if(!R||!tg||isDungeon()) return;
@@ -15414,6 +15693,7 @@ function botShift(u,tg,bd,now){
     case 'yume': yumeFocus(u); break;
     case 'levine': levineVanish(u); break;
     case 'kira': kiraObsession(u); break;
+    case 'panne': panneSkate(u,1400+Math.random()*2200); break;
     default: useShift(u);
   }
 }
@@ -15432,7 +15712,7 @@ function shiftStep(u,now,dt){
 /* the match is over: switch off whatever is running */
 function shiftReset(){
   units.forEach(u=>{ const S=SHIFT[u.key]; if(u.spLive&&S&&S.end){ u.spLive=false; try{ S.end(u); }catch(e){ console.warn(e); } } u.spUntil=0; u.spArm=0; u.slide=null; });
-  SanityFx.reset(); Blizzard.reset(); clearJobs(); clearDecals(); SCARY.on=false;
+  SanityFx.reset(); Blizzard.reset(); c10Reset(); clearJobs(); clearDecals(); SCARY.on=false;
 }
 
 /* ---------- small shared pieces ---------- */
@@ -16856,6 +17136,374 @@ function gyroIce(o,ms){
   const T0=performance.now();
   addJob({ step(now){ if(!o.alive||!o.mesh||now-T0>=ms||!(o.frozenUntil>now)) return true; m.position.set(o.mesh.position.x,.95,o.mesh.position.z); return false; },
     stop(){ if(scene) shardBurst(m.position.clone(),[0xcff4ff,0xffffff,0x8fd8ff],10,2,600); freeObjAll(m); } });
+}
+
+/* ---- 64b-mathias-panne.js ---- */
+/* ==========================================================
+   MATHIAS IN A MATCH
+   Sharp Baguette: a baguette thrown spinning, 10 a hit, once a second.
+   Kitchen Knives (super, full after 7 hits of any kind): six chef's knives
+     fan out behind him. Every attack throws one, 70 on the hit, until
+     they're gone. The super doesn't fill again while he still has knives.
+   Wooden Spoon (Shift): for 7 seconds he fights up close with a big
+     wooden spoon, 50 a hit. The 10 second cooldown starts when he puts it down.
+   PANNE IN A MATCH
+   Wide Spray: paint that opens out like a V in front of her; everyone
+     inside it takes the hit.
+   Skate (hold Shift): she jumps on her board and rolls away fast. No attacks
+     while she rides, 5 seconds at most. The board recharges for as long as
+     the ride deserves: a full 5 second ride takes 5 seconds, hop off after 3
+     and it's back in 2, after 1 it's back almost at once.
+   Block Party (super): a big circle of paint and bass round her that follows
+     her for 10 seconds. Enemies inside slow down and take 15 a second.
+   ========================================================== */
+const MATH={BAG_SP:12.5,BAG_LIFE:.62,KNIVES:6,KNIFE_DMG:70,KNIFE_GAP:340,KNIFE_SP:18,KNIFE_LIFE:.62,HITS:7,
+  SPOON_DMG:50,SPOON_R:2.05,SPOON_GAP:650,SPOON_STRIKE:150,SPOON_MS:320};
+const PANNE={RANGE:4.4,HALF:.5,SKATE_MS:5000,SKATE_SPEED:1.95,SKATE_Y:.104,PARTY_MS:10000,PARTY_R:3.6,PARTY_DPS:15,PARTY_SLOW:.5,BEAT:470};
+const PAINT_COLS=[0x2de0d0,0xff3d8b,0xffd23a,0x8a5cff,0x5dff7a];
+/* damage buffs that apply to an attack that doesn't go through fire() */
+function buffMult(u,now){ return (u.dmgDouble&&now<u.dmgDouble?2:(now<(u.dmgUntil||0)?1.5:1))*(u.isPlayer?1:DIFF.dmg); }
+/* how long a bot waits between attacks: Mathias throws his knives quickly */
+function botAtkCd(u){ return u.key==='mathias'&&u.knives>0?MATH.KNIFE_GAP+120:u.cfg.cd; }
+
+/* ---------- the paint and crumbs that fly about (shared shapes, shrinking out) ---------- */
+const C10=(function(){
+  const parts=[], mats={}; let geo=null;
+  function matFor(c){ if(!mats[c]){ mats[c]=new THREE.MeshBasicMaterial({color:c,toneMapped:false}); mats[c].userData.shared=true; } return mats[c]; }
+  function blob(pos,vel,col,life,size,grav){
+    if(!scene) return;
+    if(!geo){ geo=new THREE.IcosahedronGeometry(1,0); }
+    const m=new THREE.Mesh(geo,matFor(col)); m.userData.keepGeo=true; m.position.copy(pos); m.scale.setScalar(size*.2); scene.add(m);
+    parts.push({m,v:vel,t:0,life,size,g:grav===undefined?4:grav});
+    if(parts.length>220){ const o=parts.shift(); drop(o.m); }
+  }
+  function step(now,dt){
+    for(let i=parts.length-1;i>=0;i--){
+      const p=parts[i]; p.t+=dt;
+      if(p.t>=p.life||!scene||!p.m.parent){ drop(p.m); parts.splice(i,1); continue; }
+      p.v.y-=p.g*dt; p.m.position.addScaledVector(p.v,dt);
+      if(p.m.position.y<.05){ p.m.position.y=.05; p.v.set(p.v.x*.4,0,p.v.z*.4); }
+      const k=p.t/p.life; p.m.scale.setScalar(p.size*(k<.12?.2+.8*k/.12:1)*(1-k*k));
+      p.m.rotation.x+=dt*6; p.m.rotation.y+=dt*5;
+    }
+  }
+  function reset(){ parts.forEach(p=>drop(p.m)); parts.length=0; }
+  return {blob,step,reset};
+})();
+
+/* ---------- Mathias: Sharp Baguette ---------- */
+let _propRim=null;
+function propRim(){ if(!_propRim){ _propRim=new THREE.MeshBasicMaterial({color:0x0c0f18,side:THREE.BackSide,toneMapped:false}); _propRim.userData.shared=true; } return _propRim; }
+function baguetteShot(){
+  const g=new THREE.Group(), b=baguetteProp(.66);
+  b.rotation.x=Math.PI/2; b.scale.setScalar(1.35); g.add(b);
+  const rim=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,.66*1.35+.08,8),propRim()); rim.rotation.x=Math.PI/2; rim.scale.set(1,1,.82); g.add(rim);
+  return g;
+}
+function knifeShot(){
+  const g=new THREE.Group(), k=chefKnifeProp();
+  k.rotation.x=Math.PI/2; k.scale.setScalar(1.75); k.position.z=-.12; g.add(k);
+  const rim=new THREE.Mesh(new THREE.BoxGeometry(.12,.05,.62),propRim()); rim.position.z=.06; g.add(rim);
+  const glint=new THREE.Mesh(new THREE.SphereGeometry(.035,8,6),glowMat(0xffffff)); glint.position.z=.44; g.add(glint);
+  return g;
+}
+function crumbs(pos){ const p=pos.clone().setY(CHEST_Y); for(let i=0;i<8;i++){ const a=Math.random()*6.28; C10.blob(p,V3(Math.cos(a)*2.2,1.5+Math.random()*2,Math.sin(a)*2.2),[0xe0a656,0xf4dca2,0x8a4a1a][i%3],.5,.035+Math.random()*.02); } }
+function mathiasThrow(u,dir,dmg){
+  const now=performance.now(); u.throwAt=now; u.bagHide=now+360;
+  const m=baguetteShot(); m.position.copy(u.mesh.position).setY(CHEST_Y).addScaledVector(dir,.55); m.lookAt(m.position.clone().add(dir));
+  launch({m,dir:dir.clone(),sp:MATH.BAG_SP,life:MATH.BAG_LIFE,owner:u,dmg,type:'straight',yaw:16,hitR:.64,onHit:t=>crumbs(t.mesh.position)},0xffc36a,.13);
+}
+
+/* ---------- Mathias: Kitchen Knives ---------- */
+function mathiasKnives(u){
+  u.knives=MATH.KNIVES; u.bagHide=0;
+  knifeRing(u);
+  glowBurst(u,0xdfe8ff); shockRing(u.mesh.position,0xdfe8ff,2.2);
+  if(u.isPlayer){ shakeCam(.25); toast('KITCHEN KNIVES — six throws, 70 each'); }
+}
+/* the knives he hasn't thrown yet, circling him at the waist with their points out */
+function knifeRing(u){
+  const ud=u.mesh.userData;
+  if(ud.knifeRing){ drop(ud.knifeRing); disposeModel(ud.knifeRing); ud.knifeRing=null; }
+  if(!(u.knives>0)) return;
+  const g=new THREE.Group();
+  for(let i=0;i<MATH.KNIVES;i++){
+    const a=i/MATH.KNIVES*Math.PI*2, k=chefKnifeProp(), hold=new THREE.Group();
+    hold.position.set(Math.sin(a)*.6,.92,Math.cos(a)*.6); hold.rotation.y=a;
+    k.rotation.x=Math.PI/2; k.scale.setScalar(1.7); hold.add(k); g.add(hold);          // lying flat, so the blades show from above
+  }
+  addOutlines(g);
+  u.mesh.add(g); ud.knifeRing=g;
+}
+function knifeThrow(u,dir,mult){
+  const now=performance.now(); u.throwAt=now; u.lastAtkAt=now;
+  u.knives=Math.max(0,(u.knives||0)-1);
+  const m=knifeShot(); m.position.copy(u.mesh.position).setY(CHEST_Y).addScaledVector(dir,.6); m.lookAt(m.position.clone().add(dir));
+  const d=dir.clone();
+  launch({m,dir:d,sp:MATH.KNIFE_SP,life:MATH.KNIFE_LIFE,owner:u,dmg:MATH.KNIFE_DMG*mult,type:'straight',spin:true,hitR:.66,
+    onHit:t=>{ sparkAt(t.mesh.position.clone().setY(CHEST_Y+.1),0xdfe8ff); if(t.alive) knock(t,d,.35,.12); }},0xdfe8ff,.13);
+  SFX.knifeThrow(u.isPlayer?null:u.mesh.position);
+  if(u.knives<=0&&u.isPlayer) toast('Out of knives: back to the baguettes');
+}
+
+/* ---------- Mathias: Wooden Spoon ---------- */
+function spoonOn(u,now){
+  u.swingAt=0; u.bagHide=0;
+  if(!u.isPlayer) u.shootCd=Math.min(u.shootCd||0,120);                   // a bot swings as soon as it's in reach
+  glowBurst(u,0xc98d52);
+  SFX.spoonOn(u.isPlayer?null:u.mesh.position);
+  if(u.isPlayer) toast('WOODEN SPOON — 50 a hit up close, 7s');
+}
+function spoonOff(u){ if(u.isPlayer) toast('The spoon goes back in the drawer'); }
+function spoonSwing(u,now,dir){
+  if(now-(u.swingAt||0)<MATH.SPOON_GAP) return false;
+  u.swingAt=now; u.lastAtkAt=now; u.spoonAt=now;
+  const d=V3(dir.x,0,dir.z); if(d.lengthSq()<1e-6) d.set(Math.sin(u.mesh.rotation.y),0,Math.cos(u.mesh.rotation.y)); d.normalize();
+  u.mesh.rotation.y=Math.atan2(d.x,d.z);
+  setTimeout(()=>{ if(!gameOn||!u.alive||!u.mesh) return; spoonHit(u,V3(Math.sin(u.mesh.rotation.y),0,Math.cos(u.mesh.rotation.y))); },MATH.SPOON_STRIKE);
+  return true;
+}
+function spoonHit(u,d){
+  const at=u.mesh.position, now=performance.now(), dmg=MATH.SPOON_DMG*buffMult(u,now); let hit=0;
+  units.forEach(e=>{
+    if(!e.alive||e===u||e.flying||lockBlocks(u,e)||vanished(e,now)||isAlly(e,u)) return;
+    const to=V3(e.mesh.position.x-at.x,0,e.mesh.position.z-at.z), dist=to.length();
+    if(dist>MATH.SPOON_R) return;
+    if(dist>.7&&to.divideScalar(dist).dot(d)<.2) return;                        // in front of him
+    hurt(e,dmg,false,u); hit++;
+    const p=e.mesh.position.clone().setY(CHEST_Y+.25);
+    for(let i=0;i<6;i++){ const a=i/6*6.28; C10.blob(p,V3(Math.cos(a)*2.4,1.6,Math.sin(a)*2.4),i%2?0xfff1c4:0xc98d52,.34,.05); }
+    if(e.alive) knock(e,to.lengthSq()>1e-6?to:d,.55,.16);
+    if(u.isPlayer) chargeUlt(8); else if(!e.isPlayer) SFX.hitOther(e.mesh.position);
+  });
+  minions.slice().forEach(mn=>{ if(mn.isFan&&mn.owner!==u&&!isAlly(mn.owner,u)&&fd(at,mn.mesh.position)<MATH.SPOON_R) hitFan(mn); });
+  spoonArc(at,d);
+  SFX.spoonHit(u.isPlayer?null:at,hit>0);
+  if(u.isPlayer){ if(hit) SFX.hitConfirm(); shakeCam(hit?.22:.08); }
+}
+/* the swing: a warm crescent that sweeps across in front of him */
+function spoonArc(pos,d){
+  if(!scene) return;
+  const g=new THREE.Group(); g.position.copy(pos).setY(CHEST_Y+.1); g.rotation.y=Math.atan2(d.x,d.z);
+  const L=Math.PI*.8, R=MATH.SPOON_R;
+  const mk=(r0,r1,col,op)=>{ const m=new THREE.Mesh(new THREE.RingGeometry(r0,r1,32,1,-Math.PI/2-L/2,L),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:op,side:THREE.DoubleSide,depthWrite:false,toneMapped:false}));
+    m.rotation.x=-Math.PI/2; g.add(m); return [m,op]; };
+  const parts=[mk(.7,R,0xc98d52,.28),mk(R-.3,R-.06,0xfff1c4,.9)];
+  scene.add(g);
+  const T0=performance.now();
+  const iv=setInterval(()=>{ const k=Math.min(1,(performance.now()-T0)/220);
+    if(!scene||k>=1){ clearInterval(iv); drop(g); g.traverse(m=>{ if(m.geometry) m.geometry.dispose(); if(m.material) m.material.dispose(); }); return; }
+    g.children.forEach(m=>{ m.rotation.z=.9-1.8*(1-Math.pow(1-k,3)); });
+    parts.forEach(([m,op])=>{ m.material.opacity=op*(1-k*k); }); },16);
+}
+
+/* ---------- Panne: Wide Spray ---------- */
+function panneSpray(u,dir,dmg){
+  const now=performance.now(); u.sprayAt=now;
+  const at=u.mesh.position, d=V3(dir.x,0,dir.z).normalize(); let hit=0;
+  units.forEach(e=>{
+    if(!e.alive||e===u||e.flying||lockBlocks(u,e)||vanished(e,now)||isAlly(e,u)) return;
+    const to=V3(e.mesh.position.x-at.x,0,e.mesh.position.z-at.z), L=to.length();
+    if(L>PANNE.RANGE+.3) return;
+    if(L>.45&&Math.acos(THREE.MathUtils.clamp(to.dot(d)/L,-1,1))>PANNE.HALF+Math.atan2(.35,L)) return;   // inside the V (a little generous for their width)
+    if(!lineOfSight(at,e.mesh.position)) return;
+    hurt(e,dmg,false,u); hit++;
+    decal(e.mesh.position,.55+Math.random()*.3,PAINT_COLS[Math.floor(Math.random()*PAINT_COLS.length)],2600,{op:.8,grow:120});
+    if(u.isPlayer) chargeUlt(8); else if(!e.isPlayer) SFX.hitOther(e.mesh.position);
+  });
+  minions.slice().forEach(mn=>{ if(!mn.isFan||mn.owner===u||isAlly(mn.owner,u)) return;
+    const to=V3(mn.mesh.position.x-at.x,0,mn.mesh.position.z-at.z), L=to.length();
+    if(L<PANNE.RANGE&&(L<.45||to.dot(d)/L>Math.cos(PANNE.HALF))) hitFan(mn); });
+  if(u.isPlayer&&hit) SFX.hitConfirm();
+  sprayFx(u,d);
+}
+/* the spray itself: a fan of mist opening out like a V, paint flying, a tag left on the ground */
+function sprayFx(u,d){
+  if(!scene) return;
+  const cols=[PAINT_COLS[Math.floor(Math.random()*PAINT_COLS.length)]]; cols.push(PAINT_COLS[(PAINT_COLS.indexOf(cols[0])+1+Math.floor(Math.random()*4))%PAINT_COLS.length]);
+  const from=u.mesh.position.clone().setY(CHEST_Y+.05).addScaledVector(d,.45);
+  const fan=new THREE.Mesh(new THREE.CircleGeometry(PANNE.RANGE-.3,24,-Math.PI/2-PANNE.HALF,PANNE.HALF*2),
+    new THREE.MeshBasicMaterial({color:cols[0],transparent:true,opacity:.34,side:THREE.DoubleSide,depthWrite:false,toneMapped:false}));
+  const fanG=new THREE.Group(); fanG.position.copy(from).setY(CHEST_Y-.15); fanG.rotation.y=Math.atan2(d.x,d.z); fan.rotation.x=-Math.PI/2; fanG.add(fan); scene.add(fanG);
+  const T0=performance.now();
+  const iv=setInterval(()=>{ const k=Math.min(1,(performance.now()-T0)/300);
+    if(!scene||k>=1){ clearInterval(iv); drop(fanG); fan.geometry.dispose(); fan.material.dispose(); return; }
+    fan.scale.setScalar(.25+.75*(1-Math.pow(1-k,2))); fan.material.opacity=.34*(1-k); },16);
+  for(let i=0;i<24;i++){
+    const a=Math.atan2(d.x,d.z)+(Math.random()*2-1)*PANNE.HALF, sp=(PANNE.RANGE/.34)*(.55+Math.random()*.5);
+    C10.blob(from,V3(Math.sin(a)*sp,.4+Math.random()*1.2,Math.cos(a)*sp),cols[i%2],.3+Math.random()*.12,.05+Math.random()*.05,6);
+  }
+  if(Math.random()<.6){ const a=Math.atan2(d.x,d.z)+(Math.random()*2-1)*PANNE.HALF*.8, r=1.6+Math.random()*(PANNE.RANGE-1.8);
+    decal(V3(u.mesh.position.x+Math.sin(a)*r,0,u.mesh.position.z+Math.cos(a)*r),.5+Math.random()*.5,cols[1],2200,{op:.7,grow:160}); }
+}
+
+/* ---------- Panne: Skate (hold Shift) ---------- */
+function startSkate(){ if(gameOn&&!intro&&pUnit&&pUnit.key==='panne') panneSkate(pUnit); }
+function panneSkate(u,ms){
+  const now=performance.now();
+  if(u.skate||now<(u.skateCd||0)) return false;
+  if(u.flying||u.bike||u.lock||vanished(u,now)||!u.alive) return false;
+  u.skate={t0:now,max:Math.min(PANNE.SKATE_MS,ms||PANNE.SKATE_MS),rollAt:0};
+  skateShow(u,true);
+  puff(u.mesh.position.clone(),0xd8d2c4);
+  SFX.skateOn(u.isPlayer?null:u.mesh.position);
+  if(u.isPlayer) toast('SKATE — hold Shift · 5s · no attacks while you ride');
+  return true;
+}
+/* a full ride costs the full five seconds; hopping off early brings the board back sooner */
+function skateRecharge(ms){ return PANNE.SKATE_MS*Math.pow(Math.min(1,Math.max(0,ms)/PANNE.SKATE_MS),1.8); }
+function endSkate(u){
+  u=u||pUnit;
+  if(!u||!u.skate) return;
+  const now=performance.now(), used=Math.min(PANNE.SKATE_MS,now-u.skate.t0);
+  u.skate=null; u.skateCdLen=skateRecharge(used); u.skateCd=now+u.skateCdLen;
+  skateShow(u,false);
+  if(u.mesh&&u.alive) SFX.skateOff(u.isPlayer?null:u.mesh.position);
+}
+function skateShow(u,on){
+  const ud=u.mesh&&u.mesh.userData; if(!ud||!ud.board) return;
+  ud.board.visible=on; if(ud.boardBack) ud.boardBack.visible=!on;
+  if(!on) skatePose(ud,false);
+}
+/* feet in a line along the board, turned side on; the upper body twists back to look ahead */
+function skatePose(ud,on,now){
+  const L=ud.legs; if(!L) return;
+  if(!ud.legP0) ud.legP0=L.map(l=>l.position.clone());
+  if(!on){ L.forEach((l,i)=>{ l.position.copy(ud.legP0[i]); l.rotation.y=0; l.rotation.z=ud.legZ?ud.legZ[i]:0; });
+    if(ud.head) ud.head.rotation.y=0; if(ud.body) ud.body.rotation.z=0; return; }
+  L.forEach((l,i)=>{ const s=i?1:-1; l.position.set(0,ud.legP0[i].y,s*.13); l.rotation.set(0,Math.PI/2,-s*.08); });
+  if(ud.body){ ud.body.rotation.y=1.05; ud.body.rotation.x=.08+.04*Math.sin(now/260); ud.body.rotation.z=.05*Math.sin(now/410); ud.body.position.y=ud.baseY||0; }
+  if(ud.head) ud.head.rotation.y=-.85;
+  if(ud.arms){ ud.arms[0].rotation.x=-.2; ud.arms[1].rotation.x=.1; ud.arms[0].rotation.z=ud.armZ[0]-.75; ud.arms[1].rotation.z=ud.armZ[1]+.75; }
+  ud.board.position.set(0,SKATE_BOARD_Y,0); ud.board.rotation.set(0,0,.03*Math.sin(now/410));
+}
+const SKATE_BOARD_Y=-.012;                 // the deck under her soles; the lift (PANNE.SKATE_Y) puts the wheels on the ground
+
+/* ---------- Panne: Block Party ---------- */
+let _partyTex=null, _noteTex=null;
+/* the floor of the circle: a dark wash with spray-painted splats, drips and stars round the rim */
+function partyTex(){
+  if(_partyTex) return _partyTex;
+  const S=512, cv=document.createElement('canvas'); cv.width=cv.height=S; const x=cv.getContext('2d'), C=S/2;
+  const hex=c=>'#'+new THREE.Color(c).getHexString();
+  const g=x.createRadialGradient(C,C,C*.2,C,C,C); g.addColorStop(0,'rgba(20,10,40,.35)'); g.addColorStop(.8,'rgba(30,12,60,.55)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=g; x.beginPath(); x.arc(C,C,C,0,7); x.fill();
+  for(let i=0;i<46;i++){ const a=Math.random()*6.28, r=C*(.62+Math.random()*.33), px=C+Math.cos(a)*r, py=C+Math.sin(a)*r, c=hex(PAINT_COLS[i%PAINT_COLS.length]), s=8+Math.random()*26;
+    const sg=x.createRadialGradient(px,py,0,px,py,s); sg.addColorStop(0,c); sg.addColorStop(.6,c+'cc'); sg.addColorStop(1,c+'00');
+    x.fillStyle=sg; x.beginPath(); x.arc(px,py,s,0,7); x.fill();
+    if(i%3===0){ x.strokeStyle=c; x.lineWidth=3; x.lineCap='round'; x.beginPath(); x.moveTo(px,py); x.lineTo(px-Math.cos(a)*(20+Math.random()*30),py-Math.sin(a)*(20+Math.random()*30)); x.stroke(); } }
+  x.font='bold 64px sans-serif'; x.textAlign='center'; x.textBaseline='middle';
+  [['★',0],['♪',1.3],['★',2.6],['♫',3.9],['★',5.2]].forEach(([t,a])=>{ x.fillStyle=hex(PAINT_COLS[Math.floor(a)%PAINT_COLS.length]); x.fillText(t,C+Math.cos(a)*C*.5,C+Math.sin(a)*C*.5); });
+  _partyTex=new THREE.CanvasTexture(cv); _partyTex.encoding=THREE.sRGBEncoding; _partyTex._cached=true;
+  return _partyTex;
+}
+function noteTex(){
+  if(_noteTex) return _noteTex;
+  const cv=document.createElement('canvas'); cv.width=cv.height=64; const x=cv.getContext('2d');
+  x.font='bold 54px sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.lineWidth=6; x.strokeStyle='#0c0f18'; x.strokeText('♪',32,34); x.fillStyle='#fff'; x.fillText('♪',32,34);
+  _noteTex=new THREE.CanvasTexture(cv); _noteTex._cached=true; return _noteTex;
+}
+function blockParty(u){
+  const now=performance.now();
+  if(u.party) partyEnd(u);
+  const R=PANNE.PARTY_R, g=new THREE.Group(); g.position.y=.06-(u.airY||0);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(R,48),new THREE.MeshBasicMaterial({map:partyTex(),transparent:true,opacity:0,depthWrite:false,toneMapped:false}));
+  floor.rotation.x=-Math.PI/2; floor.renderOrder=2; g.add(floor);
+  const rg=new THREE.RingGeometry(R-.16,R,72), rc=[], pos=rg.attributes.position, c=new THREE.Color();
+  for(let i=0;i<pos.count;i++){ const a=Math.atan2(pos.getY(i),pos.getX(i)); c.setHSL(((a/6.283+1)%1),1,.6); rc.push(c.r,c.g,c.b); }
+  rg.setAttribute('color',new THREE.Float32BufferAttribute(rc,3));
+  const ring=new THREE.Mesh(rg,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false,toneMapped:false}));
+  ring.rotation.x=-Math.PI/2; ring.position.y=.01; ring.renderOrder=3; g.add(ring);
+  const pulse=new THREE.Mesh(new THREE.RingGeometry(R-.08,R,72),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false,toneMapped:false}));
+  pulse.rotation.x=-Math.PI/2; pulse.position.y=.015; pulse.renderOrder=3; g.add(pulse);
+  const notes=[];
+  for(let i=0;i<6;i++){ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:noteTex(),color:PAINT_COLS[i%PAINT_COLS.length],transparent:true,opacity:0,depthWrite:false,toneMapped:false}));
+    s.scale.setScalar(.42); s.userData.t=-1; g.add(s); notes.push(s); }
+  u.mesh.add(g);
+  u.party={until:now+PANNE.PARTY_MS,t0:now,g,floor,ring,pulse,notes,beat:0,n:0};
+  glowBurst(u,0xff3d8b); shockRing(u.mesh.position,0x2de0d0,R);
+  if(u.isPlayer){ shakeCam(.3); toast('BLOCK PARTY — everyone in the circle slows down and takes 15 a second'); }
+}
+function partyEnd(u){
+  const P=u.party; if(!P) return;
+  u.party=null; drop(P.g);
+  P.g.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); });
+}
+function partyStep(u,now,dt){
+  const P=u.party; if(!P) return;
+  if(!u.alive||now>=P.until||!gameOn){ partyEnd(u); return; }
+  const R=PANNE.PARTY_R, t=now-P.t0, left=P.until-now, fade=Math.min(1,t/300)*Math.min(1,left/600);
+  P.g.rotation.y=-u.mesh.rotation.y+now/2400; P.g.scale.setScalar(1/(u.mesh.scale.x||1)); P.g.position.y=.06-(u.airY||0);
+  P.floor.material.opacity=.8*fade; P.ring.material.opacity=.9*fade;
+  const since=now-P.beat;
+  P.pulse.material.opacity=Math.max(0,.7*(1-since/300))*fade; P.pulse.scale.setScalar(1+.06*Math.max(0,1-since/300));
+  if(since>=PANNE.BEAT){
+    P.beat=now; P.n++;
+    SFX.partyBeat(u.isPlayer?null:u.mesh.position,P.n);
+    const s=P.notes[P.n%P.notes.length], a=Math.random()*6.28, r=Math.random()*R*.8; s.position.set(Math.cos(a)*r,.4,Math.sin(a)*r); s.userData.t=0;
+    const from=u.mesh.position.clone().setY(.2);
+    for(let i=0;i<5;i++){ const b=Math.random()*6.28, rr=R*(.3+Math.random()*.65); C10.blob(V3(from.x+Math.cos(b)*rr,.1,from.z+Math.sin(b)*rr),V3(0,1.8+Math.random()*1.4,0),PAINT_COLS[(P.n+i)%PAINT_COLS.length],.5,.05); }
+  }
+  P.notes.forEach(s=>{ if(s.userData.t<0) return; s.userData.t+=dt; const k=s.userData.t/1.1; if(k>=1){ s.userData.t=-1; s.material.opacity=0; return; }
+    s.position.y=.4+k*1.6; s.material.opacity=fade*Math.sin(Math.PI*k); });
+  units.forEach(e=>{
+    if(!e.alive||e===u||e.flying||lockBlocks(u,e)||isAlly(e,u)) return;
+    if(fd(e.mesh.position,u.mesh.position)>R) return;
+    hurt(e,PANNE.PARTY_DPS*dt,false,u,true);
+    if(!e.alive) return;
+    if(e.slowUntil&&now<e.slowUntil&&(e.slowK||1)<PANNE.PARTY_SLOW) e.slowUntil=Math.max(e.slowUntil,now+500);   // a stronger slow already on: just keep it going
+    else slow(e,500,PANNE.PARTY_SLOW);
+  });
+}
+
+/* ---------- every frame, for Mathias and Panne ---------- */
+function c10Unit(u,now,dt){
+  const ud=u.mesh&&u.mesh.userData; if(!ud) return;
+  if(u.key==='mathias'){
+    const spoon=spOn(u,now), knife=!spoon&&u.knives>0;
+    if(ud.spoon) ud.spoon.visible=spoon;
+    if(ud.chefKnife) ud.chefKnife.visible=knife;
+    if(ud.baguette) ud.baguette.visible=!spoon&&!knife&&now>=(u.bagHide||0);
+    if(ud.knifeRing){ ud.knifeRing.rotation.y=now/650; ud.knifeRing.position.y=Math.sin(now/320)*.03; ud.knifeRing.children.forEach((h,i)=>{ h.visible=i<u.knives; }); }
+    if(!(u.knives>0)&&ud.knifeRing){ drop(ud.knifeRing); disposeModel(ud.knifeRing); ud.knifeRing=null; }
+  } else if(u.key==='panne'){
+    if(u.skate){
+      if(!u.alive||now-u.skate.t0>=u.skate.max) endSkate(u);
+      else {
+        u.airY=Math.min(PANNE.SKATE_Y,(u.airY||0)+dt*.8);
+        if(now-u.skate.rollAt>400){ u.skate.rollAt=now; SFX.skateRoll(u.isPlayer?null:u.mesh.position); }
+        if(now-(u.skate.trailAt||0)>70&&(u.walkT!==undefined)){ u.skate.trailAt=now;                     // a short neon trail off the back wheels
+          const f=V3(Math.sin(u.mesh.rotation.y),0,Math.cos(u.mesh.rotation.y)), q=u.mesh.position.clone().addScaledVector(f,-.4).setY(.08);
+          if(!u.skate.last||u.skate.last.distanceToSquared(q)>.004){ C10.blob(q,V3((Math.random()-.5)*.3,.2,(Math.random()-.5)*.3),(u.skate.n=(u.skate.n||0)+1)%2?0x2de0d0:0xff3d8b,.4,.07,0); }
+          u.skate.last=q; }
+        if(u.walkAmt!==undefined) u.walkAmt=0;
+      }
+    } else if(u.airY>0) u.airY=Math.max(0,u.airY-dt*.8);
+    partyStep(u,now,dt);
+  }
+}
+/* action poses for the two of them, laid over the walk cycle (from animateAction) */
+function c10Pose(mesh,u,now){
+  const ud=mesh.userData, A=ud.arms;
+  if(u.key==='mathias'&&A){
+    if(u.spoonAt&&now-u.spoonAt<MATH.SPOON_MS){                                 // the spoon comes up and over, then down hard
+      const q=(now-u.spoonAt)/MATH.SPOON_MS;
+      A[0].rotation.x=q<.4?-2.7*(q/.4):-2.7+2.9*Math.sin(Math.PI/2*Math.min(1,(q-.4)/.35));
+      if(ud.body) ud.body.rotation.x=q>.4?.18*Math.sin(Math.PI*Math.min(1,(q-.4)/.6)):0;
+    } else if(u.throwAt&&now-u.throwAt<300){                                    // a flick of the arm, baguette or knife
+      const q=(now-u.throwAt)/300; A[0].rotation.x=q<.3?.6*(q/.3):.6-2.1*Math.sin(Math.PI*Math.min(1,(q-.3)/.7));
+      if(ud.body) ud.body.rotation.y-=.25*Math.sin(Math.PI*q);
+    }
+  }
+  if(u.key==='panne'&&ud.board){
+    if(u.skate) skatePose(ud,true,now);
+    else if(u.sprayAt&&A){ const t=now-u.sprayAt; const a=t<80?t/80:t<320?1:t<520?1-(t-320)/200:0;
+      if(a>0){ A[0].rotation.x=A[0].rotation.x*(1-a)-1.5*a; A[0].rotation.z=ud.armZ[0]*(1-a)+.1*a; if(ud.sprayCan) ud.sprayCan.rotation.x=1.35+.2*a; } }
+  }
+}
+function c10Reset(){
+  C10.reset();
+  units.forEach(u=>{ if(u.party) partyEnd(u); if(u.skate) u.skate=null; });
 }
 
 /* ---- 65-truth.js ---- */
