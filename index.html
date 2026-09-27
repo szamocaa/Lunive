@@ -2156,7 +2156,7 @@ input[type=range]{accent-color:var(--acc);}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.7.3 · BETA</span>
+    <span class="hub-version">VERSION 3.7.4 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2276,7 +2276,7 @@ input[type=range]{accent-color:var(--acc);}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.7.3</div></div>
+</svg><div class="set-ver">VERSION 3.7.4</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -13437,7 +13437,7 @@ function ultimate(u,dir,target){
     const kid=buildGingerKid();
     kid.position.copy(P).add(new THREE.Vector3(.9,0,.9));
     scene.add(kid);
-    minions.push({mesh:kid,owner:u,until:now+7000,atkCd:0,dmg:12});
+    minions.push({mesh:kid,owner:u,until:now+7000,atkCd:0,dmg:12,speed:3.2});
     say('Ginger kid summoned — 7s');
   }
   else if(k==='racksdoubled'){
@@ -16675,7 +16675,7 @@ function releaseDog(u,now){
   dog.rotation.y=u.mesh.rotation.y;
   dog.traverse(o=>{ if(o.isMesh&&!o.userData.isShadow&&!(o.material&&o.material.transparent)) o.castShadow=true; });
   scene.add(dog);
-  minions.push({mesh:dog,owner:u,until:now+5000,atkCd:200,dmg:10,speed:10.5,isDog:true});
+  minions.push({mesh:dog,owner:u,until:now+5000,atkCd:200,dmg:10,speed:3.6,isDog:true});      // a little slower than you: run and he can't catch you
   puff(dog.position.clone(),0xffb070); SFX.whistle(); setTimeout(()=>{ if(gameOn) SFX.bark(u.isPlayer?null:dog.position); },250);
   if(u.isPlayer) toast("HUNGRY DOG — he hasn't eaten in days");
 }
