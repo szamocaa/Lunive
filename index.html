@@ -2156,7 +2156,7 @@ input[type=range]{accent-color:var(--acc);}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.7.2 · BETA</span>
+    <span class="hub-version">VERSION 3.7.3 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2276,7 +2276,7 @@ input[type=range]{accent-color:var(--acc);}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.7.2</div></div>
+</svg><div class="set-ver">VERSION 3.7.3</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -5850,7 +5850,7 @@ function buildEmma(){
   return finalizeModel(r.root);
 }
 
-/* --- Réka: oversized lilac hoodie, double buns with ribbons, and a small
+/* --- Rake: oversized lilac hoodie, double buns with ribbons, and a small
    floating bruiser who does the punching for her --- */
 function buildPartner(){
   const g=new THREE.Group();
@@ -5996,49 +5996,55 @@ function buildDemi(){
 }
 
 /* ---- 22-chars-c.js ---- */
-/* --- Krisztián: easy-going, olive bomber jacket over a white tee, cargo
-   trousers, chunky trainers, a cap, and a can of something --- */
+/* --- Krystian: Vael's first friend at the new school, and the cool one. A
+   maroon varsity jacket with cream sleeves, striped ribbing and a gold K on
+   the chest, over a white tee and a thin gold chain; dark jeans, white
+   high-tops, a textured crop, and the can of orange soda he always has --- */
 function buildKrisztian(){
   const r=newRig({boy:true}), SK=0xeec3a0;
-  const OLIVE=0x6b7a44, ORANGE=0xe98a3a, TEE=0xf4f1ea, KHAKI=0xb9a57e;
-  buildHead(r,{skin:SK,face:{iris:0x5f9a3f,brow:0x4a3222,lash:0x2a1c14,mouth:'grin',tilt:-.5}});
-  buildHair(r.head,{boy:true,root:0x6b4a32,tip:0x9c7657,shade:0x4a3222,shine:0xb89272,
-    fringe:{n:7,spread:50,len:81,sweep:8,w:.1,alt:3,jag:.8},sides:{n:2,el:106,w:.11},back:'short',spikes:false,napeEl:156,cap:{front:48,front2:52,temple:66}});
-  // the cap
-  const cap=new THREE.Group(); cap.position.set(0,HEAD_C+.0,-.01); cap.rotation.x=-.1;
-  const CR=HEAD_R*1.2, TH=Math.PI*.4, edgeY=CR*Math.cos(TH), edgeR=CR*Math.sin(TH);
-  const dome=kSph(CR,48,24,0,Math.PI*2,0,TH);
-  gradY(dome,0x7d8e52,0x5e6c3a);
-  part(cap,dome,cmat(0xffffff,{rim:1,side:THREE.DoubleSide})).castShadow=true;
-  // seams and the band round the bottom of the crown
-  for(let k=0;k<6;k++){ const a=k/6*Math.PI*2, pts=[]; for(let j=0;j<=10;j++){ const t=j/10*TH; pts.push(V3(Math.sin(a)*Math.sin(t)*CR*1.003,Math.cos(t)*CR*1.003,Math.cos(a)*Math.sin(t)*CR*1.003)); }
-    part(cap,sweepGeo(pts,{up:V3(0,1,0),seg:20,rad:4,inner:1,rx:.004,ry:.004}),cmat(0x55632f,{rim:.6})); }
-  part(cap,lathe([[edgeR*1.0,edgeY-.004],[edgeR*1.02,edgeY+.012],[edgeR*.99,edgeY+.03]],48,4),cmat(0x4f5a30,{rim:.8}));
-  const brim=part(cap,lathe([[0,-.01],[.3,-.008],[.315,.004],[0,.01]],32,6,-Math.PI*.46,Math.PI*.92),cmat(0x55622f,{rim:.9}),0,edgeY+.006,edgeR*.62);
-  brim.rotation.x=.2; brim.scale.set(1.05,1,1.25);
-  part(cap,sphere(.03,12,8),cmat(0x4f5a30),0,CR,0);
-  part(cap,starGeo(.05,.022,.006),cmat(ORANGE,{rim:.6}),0,CR*.8,CR*.58).rotation.x=-.8;
-  r.head.add(cap);
-  legs(r,{skin:SK,pants:{col:KHAKI,len:'long',wide:1.12},shoe:{type:'sneaker',col:0xf4f2ee,sole:0xe0ddd6,toe:0xf4f2ee,lace:0x5a6a3a,accent:0x6b7a44}});
-  r.legs.forEach((lp,i)=>{ const s=i?1:-1; part(lp,softBox(.03,.1,.08,.012,3),cmat(darkHex(KHAKI,.9),{rim:.7}),s*.086,-.2,0); });
-  // a slightly rounder middle under the tee
-  torso(r,TEE,{prof:[[.165,.55],[.18,.62],[.19,.72],[.195,.82],[.198,.9],[.184,.95],[.13,.99],[.074,1.01],[.052,1.025]]});
-  part(r.body,lathe([[.16,.53],[.172,.56],[.17,.6]],32,4),cmat(0x5a4632,{rim:.6}));
-  // bomber jacket, open, orange inside
-  const jk=coatGeo([[.21,.6],[.212,.66],[.215,.78],[.218,.88],[.2,.95],[.14,.99],[.09,1.015]],y=>.6+(1-y)*.35,{depth:.9,segA:56});
-  part(r.body,jk,cmat(OLIVE,{rim:1})).castShadow=true;
-  const jl=coatGeo([[.204,.6],[.206,.66],[.209,.78],[.212,.88],[.194,.95],[.135,.985],[.085,1.01]],y=>.6+(1-y)*.35,{depth:.9,segA:56});
-  jl.index.array.reverse(); jl.computeVertexNormals(); part(r.body,jl,cmat(ORANGE,{rim:.5}));
-  part(r.body,lathe([[.208,.58],[.222,.6],[.22,.64]],40,4,.36,Math.PI*2-.72),cmat(0x4f5a30,{rim:.8}));
-  part(r.body,lathe([[.1,.985],[.12,1.0],[.115,1.03]],32,6,Math.PI*.18,Math.PI*1.64),cmat(0x4f5a30,{rim:.8,side:THREE.DoubleSide}));
-  jk.userData.edges.forEach(e=>trimLine(r.body,e,0xc9ccd0,.006,{mat:{spec:.8,shin:60}}));
-  part(r.body,softBox(.07,.03,.01,.006,2),cmat(ORANGE,{rim:.6}),-.14,.9,.13).rotation.y=-.5;
-  arms(r,{skin:SK,sleeve:{col:OLIVE,len:'long',flare:.0,cuffCol:0x4f5a30}});
-  // the can
+  const MAROON=0x6a1626, CREAM=0xeee0c2, GOLD=0xffc22e, TEE=0xf2efe8, DENIM=0x2a3f60, RIB=0x2a0a12;
+  const gold=()=>cmat(GOLD,{spec:1.6,shin:110,rim:.6});
+  buildHead(r,{skin:SK,face:{iris:0x5f9a3f,brow:0x3a2618,lash:0x24160e,mouth:'grin',tilt:-.5}});
+  buildHair(r.head,{boy:true,root:0x120c08,tip:0x3a2616,shade:0x080504,shine:0x6a4a32,rim:.6,
+    fringe:{n:9,spread:58,len:64,sweep:30,w:.1,alt:8,jag:3.2,fan:10},sides:{n:2,el:92,w:.085},back:'short',spikesN:7,napeEl:146});
+  // dark jeans with a faded knee, white high-tops
+  legs(r,{skin:SK,pants:{col:DENIM,len:'long',wide:1.05,hem:darkHex(DENIM,.8)},shoe:{type:'sneaker',col:0xf4f2ee,sole:0xe6e2da,toe:0xf4f2ee,lace:0xf4f2ee,accent:MAROON}});
+  r.legs.forEach((lp,i)=>{ const s=i?1:-1;
+    part(lp,softBox(.004,.42,.004,.002,2),cmat(0x8a7040,{rim:.3}),s*.078,-.26,.02);                     // the outer seam
+    if(i) for(let k=0;k<3;k++) part(lp,softBox(.058-k*.012,.006,.01,.002,2),cmat(0xe4e0d6,{rim:.4}),.004,-.285-k*.018,.074); });   // one knee torn
+  torso(r,TEE);
+  // a thin gold chain with a small tag
+  trimLine(r.body,[V3(-.075,1.0,.07),V3(-.05,.93,.14),V3(0,.9,.168),V3(.05,.93,.14),V3(.075,1.0,.07)],GOLD,.0045,{mat:{spec:1.6,shin:110}});
+  part(r.body,softBox(.018,.026,.005,.003,2),gold(),0,.882,.172);
+  // the varsity jacket: maroon wool, open, a quilted lining
+  const JP=[[.212,.6],[.214,.66],[.217,.78],[.22,.88],[.204,.95],[.144,.99],[.092,1.015]], gap=y=>.62+(1-y)*.34;
+  const jk=coatGeo(JP,gap,{depth:.9,segA:56});
+  part(r.body,jk,cmat(MAROON,{rim:1,spec:.3,shin:25})).castShadow=true;
+  const jl=coatGeo(JP.map(p=>[p[0]-.006,p[1]]),gap,{depth:.9,segA:56}); jl.index.array.reverse(); jl.computeVertexNormals();
+  part(r.body,jl,cmat(RIB,{rim:.4}));
+  jk.userData.edges.forEach(e=>{ trimLine(r.body,e,CREAM,.008,{mat:{rim:.6}});
+    e.forEach((p,k)=>{ if(k%4===2&&p.y>.64&&p.y<.93) part(r.body,sphere(.011,10,8),gold(),p.x,p.y,p.z+.004); }); });   // snaps down the front
+  // striped rib at the waist and the collar
+  part(r.body,lathe([[.212,.56],[.224,.58],[.222,.64]],40,4,.36,Math.PI*2-.72),cmat(RIB,{rim:.8}));
+  for(const y of [.595,.62]) part(r.body,lathe([[.2245,y],[.2245,y+.009]],40,2,.36,Math.PI*2-.72),cmat(GOLD,{rim:.4}));
+  part(r.body,lathe([[.1,.985],[.122,1.0],[.117,1.035]],32,6,Math.PI*.18,Math.PI*1.64),cmat(RIB,{rim:.8,side:THREE.DoubleSide}));
+  part(r.body,lathe([[.1215,1.012],[.1205,1.02]],32,2,Math.PI*.18,Math.PI*1.64),cmat(GOLD,{side:THREE.DoubleSide}));
+  // the letter: a gold K on a cream felt patch, over his heart
+  const pt=new THREE.Group(); pt.position.set(.112,.845,.188); pt.rotation.y=.54; r.body.add(pt);
+  part(pt,softBox(.086,.1,.008,.012,2),cmat(CREAM,{rim:.5}));
+  const K=cmat(GOLD,{rim:.5,spec:.5}), KO=cmat(MAROON,{rim:.4});
+  part(pt,softBox(.024,.076,.008,.004,2),KO,-.02,0,.005); part(pt,softBox(.016,.066,.009,.003,2),K,-.02,0,.007);
+  for(const s of [-1,1]){ const d=part(pt,softBox(.024,.05,.008,.004,2),KO,.008,s*.019,.005); d.rotation.z=s*-.72;
+    const d2=part(pt,softBox(.016,.042,.009,.003,2),K,.008,s*.019,.007); d2.rotation.z=s*-.72; }
+  // cream leather sleeves with striped cuffs
+  arms(r,{skin:SK,sleeve:{col:CREAM,len:'long',flare:0,cuffCol:RIB}});
+  r.arms.forEach(ap=>{ part(ap,lathe([[.063,-.345],[.066,-.33],[.065,-.3]],22,3),cmat(RIB,{rim:.7}));
+    for(const y of [-.326,-.312]) part(ap,lathe([[.0665,y],[.0665,y+.0055]],22,2),cmat(GOLD,{rim:.4})); });
+  // the soda
   const can=new THREE.Group();
-  part(can,lathe([[.035,-.07],[.04,-.06],[.04,.06],[.034,.075]],20,6),cmat(0xe0b23a,{spec:1,shin:60,rim:.8}),0,0,0);
+  part(can,lathe([[.035,-.07],[.04,-.06],[.04,.06],[.034,.075]],20,6),cmat(0xf07a1e,{spec:1,shin:60,rim:.8}),0,0,0);
   part(can,lathe([[.034,.074],[.034,.08]],20,2),cmat(0xc8ccd2,{spec:1,shin:70}),0,0,0);
-  part(can,lathe([[.041,-.01],[.041,.02]],20,2),cmat(0xb8292f,{rim:.6}),0,0,0);
+  part(can,lathe([[.041,-.012],[.041,.022]],20,2),cmat(0xf4f0e6,{rim:.6}),0,0,0);
   can.position.set(0,-.03,.04); r.hands[1].add(can);
   contactShadow(r.root,.95);
   return finalizeModel(r.root);
@@ -6242,7 +6248,7 @@ function buildCrisisDemon(){
   return addOutlines(g);
 }
 
-/* Krisztián's summon: a small ginger kid in a striped shirt */
+/* Krystian's summon: a small ginger kid in a striped shirt */
 const SUMMON_PROP={headK:.86,legAdd:.16,neck:.01,armK:1.04,legW:1.05,stance:.03};
 function buildGingerKid(){
   const r=newRig({boy:true,prop:SUMMON_PROP});
@@ -6281,28 +6287,28 @@ const CHARACTERS = [
   {key:'vael',name:'Vael',rarity:'starter',accent:0x6fa4ff,hp:350,cd:750,dmg:22,atk:'boomerang',spd:.86,
    desc:'This game is behind his lore, which remains hidden... not for too long...',
    atkName:'Blade Toss',ultName:'Guardian Wall',build:buildVael},
-  {key:'szamoci',name:'Szamoci',rarity:'common',accent:0xff4f6d,hp:400,cd:950,dmg:24,atk:'arc',
+  {key:'szamoci',name:'Strawi',rarity:'common',accent:0xff4f6d,hp:400,cd:950,dmg:24,atk:'arc',
    desc:'Originally, the Creator wanted to be this Character.',
    atkName:'Berry Bomb',ultName:'Berry Storm',build:buildSzamoci},
-  {key:'nyx',name:'Nyx',rarity:'common',accent:0x8a6bff,hp:280,cd:300,dmg:13,atk:'pierce',
+  {key:'nyx',name:'Lana',rarity:'common',accent:0x8a6bff,hp:280,cd:300,dmg:13,atk:'pierce',
    desc:'She is an accident... sadly, I mean she supposted to be a bunny xD.',
    atkName:'Shadow Bolt',ultName:'Shadow Step',build:buildNyx},
-  {key:'eribun',name:'Eribun',rarity:'common',accent:0xff9fc0,hp:300,cd:520,dmg:8,atk:'spread',
+  {key:'eribun',name:'Eri',rarity:'common',accent:0xff9fc0,hp:300,cd:520,dmg:8,atk:'spread',
    desc:'Shes the bunny, shes also an accident... nevermind xD.',
    atkName:'Carrot Spread',ultName:'Carrot Barrage',build:buildEribun},
-  {key:'luna',name:'Luna',rarity:'common',accent:0x7fc8ff,hp:310,cd:700,dmg:18,atk:'homing',
+  {key:'luna',name:'Luna',rarity:'angelic',accent:0x7fc8ff,hp:310,cd:700,dmg:18,atk:'homing',
    desc:'Moon goddess, she doesnt participate in the lore, shes just a side character.',
    atkName:'Moon Orb',ultName:'Lunar Beam',build:buildLuna},
   {key:'emma',name:'Emma',rarity:'epic',accent:0xff5fb8,hp:400,cd:600,dmg:18,atk:'straight',
    desc:'Shes the reason why the game has a lore behind... what a rat...',
    atkName:'Quick Jab',ultName:'Blink Away',build:buildEmma},
-  {key:'reka',name:'Réka',rarity:'epic',accent:0xb15ad6,hp:150,cd:800,dmg:16,atk:'punch',spd:.68,
+  {key:'reka',name:'Rake',rarity:'common',accent:0xb15ad6,hp:150,cd:800,dmg:16,atk:'punch',spd:.68,
    desc:'Another important character in the lore, soon.',
    atkName:'Partner Combo',ultName:'Full Restore',build:buildReka},
-  {key:'krisztian',name:'Krisztián',rarity:'legendary',accent:0xffc22e,hp:550,cd:700,dmg:20,atk:'random',
+  {key:'krisztian',name:'Krystian',rarity:'legendary',accent:0xffc22e,hp:550,cd:700,dmg:20,atk:'random',
    desc:'He was Vaels first friend, when he started a new school, hes a cool guy, i like him.',
    atkName:'Whatever He Finds',ultName:'Summon Ginger Kid',build:buildKrisztian},
-  {key:'racksdoubled',name:'Racksdoubled',rarity:'celestial',accent:0xe0314f,hp:550,cd:0,dmg:7,atk:'katana',
+  {key:'racksdoubled',name:'Racks',rarity:'celestial',accent:0xe0314f,hp:550,cd:0,dmg:7,atk:'katana',
    desc:'The creator. One of the most important characters in the whole lore. My ultimate can instakill btw xD',
    atkName:'Katana Spam',ultName:'Meteor Drop',build:buildRacks},
   {key:'aether',name:'Aether',rarity:'legendary',accent:0xffc83a,hp:340,cd:2000,dmg:40,atk:'aether',
@@ -6323,7 +6329,7 @@ const CHARACTERS = [
   {key:'crisis',name:'Crisis',rarity:'celestial',accent:0xff4a18,hp:320,cd:140,dmg:50,atk:'split',
    desc:'A shadow monster. Burns the ground it walks on, and flies when cornered.',
    atkName:'Splitting Shade',ultName:'Demon Time',build:buildCrisis},
-  {key:'wonderkid',name:'Wonder Kid',rarity:'common',accent:0x3f6fd8,hp:400,cd:950,dmg:60,atk:'kick',spd:.5,
+  {key:'wonderkid',name:'Wonder Kid',rarity:'epic',accent:0x3f6fd8,hp:400,cd:950,dmg:60,atk:'kick',spd:.5,
    desc:'Slow on his feet, until the rhythm kicks in: every 3 seconds he rushes at full speed. His kicks hurt.',
    atkName:'Wonder Kick',ultName:'Showstopper',build:buildWonderKid},
   {key:'yume',name:'Yume',rarity:'celestial',accent:0xff4f9a,hp:320,cd:1500,dmg:30,atk:'dualgun',
@@ -6341,10 +6347,10 @@ const CHARACTERS = [
   {key:'gyro',name:'Gyro',rarity:'legendary',accent:0x8dff3a,hp:330,cd:1100,dmg:50,atk:'waste',
    desc:'A war machine built to put an end to war crimes, who became the worst one of all. Every shot is nuclear waste, his arms open into electro blades, and his super is every element at once.',
    atkName:'Nuclear Waste',ultName:'Elemental Collapse',spName:'Electro Blades',build:buildGyro},
-  {key:'mathias',name:'Mathias',rarity:'epic',accent:0xd8b46a,hp:300,cd:1000,dmg:10,atk:'baguette',
+  {key:'mathias',name:'Mathias',rarity:'common',accent:0xd8b46a,hp:300,cd:1000,dmg:10,atk:'baguette',
    desc:"An old soul in a young man's body: old money, round glasses and a chef's hands. His baguettes come straight from Italy, and they are sharp. Seven hits and the kitchen knives come out.",
    atkName:'Sharp Baguette',ultName:'Kitchen Knives',spName:'Wooden Spoon',build:buildMathias},
-  {key:'panne',name:'Panne',rarity:'epic',accent:0x2de0d0,hp:440,cd:650,dmg:20,atk:'spray',
+  {key:'panne',name:'Panne',rarity:'epic',accent:0x2de0d0,hp:440,cd:400,dmg:20,atk:'spray',
    desc:"Always an artist, never the friendly kind. She lives for music and graffiti: a wide V of spray paint, a fast board to get out of trouble, and a block party nobody walks out of quickly.",
    atkName:'Wide Spray',ultName:'Block Party',spName:'Skate',build:buildPanne},
   {key:'rhyon',name:'Rhyon',rarity:'celestial',accent:0x21e6ff,hp:500,cd:500,dmg:40,atk:'cyberblade',spd:1.1,
@@ -6359,9 +6365,9 @@ const CHARACTERS = [
 CHARACTERS.sort((a,b)=>RARITY_ORDER.indexOf(a.rarity)-RARITY_ORDER.indexOf(b.rarity));
 const byKey = k => CHARACTERS.find(c=>c.key===k);
 const RANGE_PREF = {vael:3,szamoci:5.5,nyx:7.5,eribun:4.5,luna:7,emma:2.5,reka:1.8,krisztian:5,racksdoubled:6,
-  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5,mathias:6,panne:3.4,rhyon:1.8};
+  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5,mathias:6,panne:4.8,rhyon:1.8};
 /* close-range attacks: how near a bot has to be before it swings */
-const MELEE_REACH = {kick:1.9,punch:1.55,spray:4.3,cyberblade:2.3};
+const MELEE_REACH = {kick:1.9,punch:1.55,spray:6.1,cyberblade:2.3};
 
 /* ---------- life: walking, breathing, blinking ---------- */
 /* Walk cycle: legs swing from the hip, arms counter-swing, the body bobs
@@ -7480,15 +7486,17 @@ function buildMathias(){
       // short, tidy sideburns
       (hg,st,add)=>{ for(const sd of [-1,1]) add(headLock(st,{az0:sd*78,az1:sd*80,el0:62,el1:94,r0:st._vol-.004,r1:st._vol+.008,w:.07,t:.03,lift:.004,n:5,belly:.1,taper:.8,inner:.5})); }
     ]});
-  // round tortoiseshell glasses
-  const gl=new THREE.Group(); gl.position.set(0,HEAD_C-.035,HEAD_R*.93); r.head.add(gl);
-  const TORT=cmat(0x5a2e16,{spec:1,shin:70,rim:.7});
+  // round gold wire-rims: thin frames just in front of his eyes, a keyhole bridge, temples back to his ears
+  const gl=new THREE.Group(); gl.position.set(0,HEAD_C-.032,HEAD_R*.985); r.head.add(gl);
+  const WIRE=cmat(0xc9a24a,{spec:1.8,shin:130,rim:.7});
   for(const s of [-1,1]){
-    const ring=part(gl,kTorus(.078,.011,8,24),TORT,s*.105,0,-.012); ring.rotation.y=s*.28;
-    const lens=part(gl,kCyl(.074,.074,.004,20),cmat(0xdfeaf2,{opacity:.18,spec:2,shin:140,rim:1.4}),s*.105,0,-.012); lens.rotation.x=Math.PI/2; lens.rotation.z=s*.28; lens.userData.keep=true;
-    const arm=part(gl,softBox(.008,.01,.26,.003,2),TORT,s*.2,.012,-.14); arm.rotation.y=s*.12;
+    const ring=part(gl,kTorus(.066,.0058,6,30),WIRE,s*.098,0,-.01); ring.rotation.y=s*.2;
+    const lens=part(gl,kCyl(.063,.063,.002,24),cmat(0xe6f0f8,{opacity:.1,spec:2.6,shin:170,rim:1.5}),s*.098,0,-.01); lens.rotation.set(Math.PI/2,s*.2,0,'YXZ'); lens.userData.keep=true;
+    part(gl,sphere(.007,8,6),WIRE,s*.162,.008,-.03);                                                   // the hinges
+    const arm=part(gl,softBox(.0055,.0055,.2,.002,2),WIRE,s*.172,.01,-.13); arm.rotation.y=s*.1;
+    part(gl,sphere(.0065,8,6),cmat(0xeee8dc,{opacity:.6,rim:.5}),s*.022,-.03,-.03);                    // nose pads
   }
-  part(gl,kTorus(.03,.008,6,12,Math.PI),TORT,0,.004,.002);
+  const br=part(gl,kTorus(.024,.0052,6,14,Math.PI),WIRE,0,.012,-.004); br.rotation.z=0;
   legs(r,{skin:SK,pants:{col:TROUSER,len:'long',wide:1.04,hem:darkHex(TROUSER,.85)},shoe:{type:'oxford',col:LOAFER,sole:0x2a1a10}});
   r.legs.forEach(lp=>part(lp,softBox(.005,.4,.005,.002,2),cmat(darkHex(TROUSER,.7),{rim:.5}),0,-.27,.081));   // pressed creases
   torso(r,SHIRT);
@@ -11379,7 +11387,7 @@ function showHub(){
 
 /* ---------- your character talks: a bubble over their head, in their own voice ---------- */
 const HERO_LINES={
-  vael:["You're looking at me like you know something. You don't. Not yet.","Blades up. Let's go before the lore catches up with us.","Krisztián says I think too much. He's probably right."],
+  vael:["You're looking at me like you know something. You don't. Not yet.","Blades up. Let's go before the lore catches up with us.","Krystian says I think too much. He's probably right."],
   szamoci:["The Creator wanted to be me, you know. Can't blame him.","Berries first, questions later~","Sticky jam, sticky situation. Same thing."],
   nyx:["I was supposed to be a bunny. I'm a witch. We don't talk about it.","Nightshade is a gift. Say thank you.","The hat stays on. Always."],
   eribun:["Hi! I'm the actual bunny! ...Also an accident. Never mind!","Carrots are a balanced breakfast. And a weapon.","Hop in! I mean — let's play!"],
@@ -13331,7 +13339,7 @@ function dashStep(u,dt,now){
 /* ---- 52-game-c.js ---- */
 /* ---------- supers ---------- */
 /* how fast each character's super fills per landed hit (1 = normal).
-   Réka's partner fills it with a single hit. */
+   Rake's partner fills it with a single hit. */
 const ULT_MULT={racksdoubled:.375,aether:3.2,star:.85,yume:2.5,wonderkid:1.4,kira:1.25};   // Yume: 5 hits fill it; Kira: 10 pencils
 function chargeUlt(base,u){
   u=u||pUnit;
@@ -14358,7 +14366,7 @@ function bot(u,dt,now,t){
   }
   const zn=strikeZoneAt(u.mesh.position);                // rockets are coming down here: get out
   if(zn){ const a=V3(u.mesh.position.x-zn.x,0,u.mesh.position.z-zn.z); if(a.lengthSq()<1e-4) a.set(Math.random()-.5,0,Math.random()-.5); dir=a.normalize(); }
-  if(now<(u.rootUntil||0)) dir=null;                   // Réka's Full Restore roots her in place
+  if(now<(u.rootUntil||0)) dir=null;                   // Rake's Full Restore roots her in place
   if(u.dashing){ dashStep(u,dt,now); dir=null; }       // Emma mid-dash
   const mov=!!dir;
   if(dir&&!facing){ let da=Math.atan2(dir.x,dir.z)-u.mesh.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); u.mesh.rotation.y+=da*Math.min(1,dt*7); }
@@ -15019,7 +15027,7 @@ function animateAction(mesh,u,now){
   }
   // Demi's Oblivion Sword: the whole upper body whips round once
   if(u.spinAt&&now-u.spinAt<300&&ud.body){ const k=(now-u.spinAt)/300; ud.body.rotation.y+=Math.PI*2*(1-Math.pow(1-k,2.2)); }
-  // Réka's partner kicks back with every laser shot
+  // Rake's partner kicks back with every laser shot
   if(ud.partner&&u.laserAt){ const t=now-u.laserAt; ud.partner.position.z=-.1-(t<160?.12*Math.sin(Math.PI*t/160):0); }
   // Neptune: the throwing arm swings through
   if(ud.iceBall&&u.iceAt&&now-u.iceAt<320&&ud.arms){ const s=Math.sin(Math.PI*(now-u.iceAt)/320); ud.arms[0].rotation.x=-.55-1.3*s; }
@@ -17710,7 +17718,7 @@ function gyroIce(o,ms){
    ========================================================== */
 const MATH={BAG_SP:12.5,BAG_LIFE:.62,KNIVES:6,KNIFE_DMG:70,KNIFE_GAP:340,KNIFE_SP:18,KNIFE_LIFE:.62,HITS:7,
   SPOON_DMG:50,SPOON_R:2.05,SPOON_GAP:650,SPOON_STRIKE:150,SPOON_MS:320};
-const PANNE={RANGE:4.4,HALF:.5,SKATE_MS:5000,SKATE_SPEED:1.95,SKATE_Y:.104,PARTY_MS:10000,PARTY_R:3.6,PARTY_DPS:15,PARTY_SLOW:.5,BEAT:470};
+const PANNE={RANGE:6.2,HALF:.5,SKATE_MS:5000,SKATE_SPEED:1.95,SKATE_Y:.104,PARTY_MS:10000,PARTY_R:3.6,PARTY_DPS:15,PARTY_SLOW:.5,BEAT:470};
 const PAINT_COLS=[0x2de0d0,0xff3d8b,0xffd23a,0x8a5cff,0x5dff7a];
 /* damage buffs that apply to an attack that doesn't go through fire() */
 function buffMult(u,now){ return (u.dmgDouble&&now<u.dmgDouble?2:(now<(u.dmgUntil||0)?1.5:1))*(u.isPlayer?1:DIFF.dmg); }
@@ -19100,7 +19108,7 @@ const Truth=(function(){
     {id:'diary',title:'Diary page',kind:'hand',html:`<p class="dt">day {DAY}?</p>
 <p>they took the calendar off the wall so I count the lights instead. the one above my bed never stays on. I think it is trying to tell me something.</p>
 <p>Nurse says I am getting better. I don't feel better. I feel quiet. Like somebody turned me down.</p>
-<p>Krisztián came today. He stood by the door next to the director and didn't look at me once. His hands smelled like the medicine.</p>
+<p>Krystian came today. He stood by the door next to the director and didn't look at me once. His hands smelled like the medicine.</p>
 <p>Emma says I'm special. She says the blue one will help me sleep. I don't want to sleep. When I sleep the hallway gets longer.</p>
 <p>if someone finds this &mdash; the way out is past the big room with the TV, where the green light is. I tried once. I'll try again tonight.</p>
 <p class="sig">&mdash; V.</p>`},
@@ -19110,7 +19118,7 @@ const Truth=(function(){
 <tr><td>Diagnosis</td><td>&ldquo;Insomnia. Reports seeing things in the dark.&rdquo;</td></tr><tr><td>Treatment</td><td>Compound K series &mdash; see pharmacy ledger (K.)</td></tr></table>
 <p class="nt"><b>12 Nov</b> &mdash; Cooperative. Asks when he can go home.</p>
 <p class="nt"><b>29 Nov</b> &mdash; Refuses to sleep. Says the lights &ldquo;talk&rdquo;. K-4 dose doubled at the Director's request.</p>
-<p class="nt"><b>14 Dec</b> &mdash; Asked for his friend by name (Krisztián). Request denied.</p>
+<p class="nt"><b>14 Dec</b> &mdash; Asked for his friend by name (Krystian). Request denied.</p>
 <p class="nt"><b>02 Jan</b> &mdash; Found in the east hall at 3 a.m. Returned to room. Door to be locked from now on.</p>
 <p class="nt"><b>19 Jan</b> &mdash; Patient</p><div class="torn"></div>`},
     {id:'memo',title:'Memo',kind:'memo',html:`<h3>MEMORANDUM</h3><p class="meta">TO: all night staff<br>FROM: the Director<br>RE: the east wing</p>
@@ -19122,20 +19130,20 @@ const Truth=(function(){
 <h2>QUESTIONS GROW OVER WHITMORE HILL SANATORIUM</h2>
 <div class="cols"><p>Families of former patients gathered outside the gates of Whitmore Hill on Tuesday, demanding answers about a treatment programme the sanatorium has refused to explain.</p>
 <p>Several parents say they were not allowed to visit their children for months at a time. One mother described her son, after his discharge, as &ldquo;quiet &mdash; like someone had turned the volume down.&rdquo;</p>
-<p>The sanatorium's director, Emma, declined to comment. Its co-founder, Réka, has not been seen at the building since the summer.</p>
+<p>The sanatorium's director, Emma, declined to comment. Its co-founder, Rake, has not been seen at the building since the summer.</p>
 <p>Police confirmed that a missing-person report filed in January, concerning a fourteen-year-old boy, remains open.</p>
 <p class="aside">WEATHER &mdash; Fog on the hill through the weekend.</p></div>`},
     {id:'charter',title:'Founding charter',kind:'memo',html:`<h3>WHITMORE HILL SANATORIUM<small>FOUNDING CHARTER</small></h3>
 <p>We, the undersigned, found this house as a place of rest, recovery and renewal for the young and the troubled.</p>
 <p>No patient shall be kept here against the wishes of their family.</p>
 <p class="struck">No treatment shall be given without consent.</p><p class="pen">amended &mdash; see K.</p>
-<div class="signs"><span><i>Emma</i>Director</span><span><i>Réka</i>Co-founder</span></div><p class="meta">Signed on the first of March, 1994.</p>`},
+<div class="signs"><span><i>Emma</i>Director</span><span><i>Rake</i>Co-founder</span></div><p class="meta">Signed on the first of March, 1994.</p>`},
     {id:'reka',title:'Letter',kind:'hand',html:`<p>Emma,</p>
 <p>I signed the papers because I believed in what we were building. I still sign the cheques, God help me.</p>
 <p>But I walked the second floor last night. The children don't talk anymore. They just look up at the lights.</p>
-<p>You told the board Compound K was a sleeping aid. Krisztián told me what it really is. He's frightened, Emma. He's only a boy himself &mdash; you had no right to put him in that pharmacy.</p>
+<p>You told the board Compound K was a sleeping aid. Krystian told me what it really is. He's frightened, Emma. He's only a boy himself &mdash; you had no right to put him in that pharmacy.</p>
 <p>I'm taking my name off this building. And when they ask me what happened here, I won't lie for you.</p>
-<p class="sig">&mdash; Réka</p>`},
+<p class="sig">&mdash; Rake</p>`},
     {id:'ledger',title:'Ledger',kind:'ledger',html:`<h3>COMPOUND K &mdash; BATCH LEDGER<small>prepared by: K.</small></h3>
 <table><tr><th>batch</th><th>colour</th><th>what it does</th></tr>
 <tr><td>K-1</td><td>&mdash;</td><td>nothing. discontinued</td></tr>
@@ -19161,17 +19169,17 @@ const Truth=(function(){
     {id:'court',title:'Newspaper clipping',kind:'clip',html:`<div class="mast">THE HILLSIDE COURIER</div><div class="date">Tuesday, 2 May 2000</div>
 <h2>WHITMORE HILL DIRECTOR CLEARED</h2>
 <div class="cols"><p>All charges against the director of the Whitmore Hill Sanatorium were dropped on Monday, after key records from the pharmacy &ldquo;could not be located&rdquo;. The building will close at the end of the month.</p>
-<p>Co-founder Réka, who testified for the prosecution, left the courthouse without speaking to reporters. A second witness &mdash; a former pharmacy assistant, himself a teenager &mdash; did not appear.</p>
+<p>Co-founder Rake, who testified for the prosecution, left the courthouse without speaking to reporters. A second witness &mdash; a former pharmacy assistant, himself a teenager &mdash; did not appear.</p>
 <p>The case of the missing boy remains unsolved.</p></div>`},
     {id:'visitors',title:'Visitor log',kind:'ledger',html:`<h3>VISITOR LOG<small>front desk</small></h3>
 <table><tr><th>date</th><th>name</th><th>for</th></tr>
 <tr><td>03 Nov 98</td><td>Emma (Dir.)</td><td>with new patient, 108</td></tr>
-<tr><td>04 Nov 98</td><td>Réka</td><td>board meeting</td></tr>
-<tr><td>21 Nov 98</td><td>Krisztián</td><td>pharmacy &mdash; &ldquo;deliveries&rdquo;</td></tr>
+<tr><td>04 Nov 98</td><td>Rake</td><td>board meeting</td></tr>
+<tr><td>21 Nov 98</td><td>Krystian</td><td>pharmacy &mdash; &ldquo;deliveries&rdquo;</td></tr>
 <tr><td>21 Nov 98</td><td>mother of 108</td><td><s>visit</s> REFUSED (Director)</td></tr>
-<tr><td>05 Dec 98</td><td>Krisztián</td><td>pharmacy</td></tr>
+<tr><td>05 Dec 98</td><td>Krystian</td><td>pharmacy</td></tr>
 <tr><td>19 Dec 98</td><td>mother of 108</td><td>REFUSED</td></tr>
-<tr><td>18 Jan 99</td><td>Krisztián</td><td>asked to see 108 &mdash; REFUSED</td></tr>
+<tr><td>18 Jan 99</td><td>Krystian</td><td>asked to see 108 &mdash; REFUSED</td></tr>
 <tr><td>19 Jan 99</td><td></td><td></td></tr></table>
 <p class="pen shaky">he's still in here</p>`}
   ];
