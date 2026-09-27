@@ -2193,7 +2193,7 @@ input[type=range]{accent-color:var(--acc);}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.8.0 · BETA</span>
+    <span class="hub-version">VERSION 3.8.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2313,7 +2313,7 @@ input[type=range]{accent-color:var(--acc);}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.8.0</div></div>
+</svg><div class="set-ver">VERSION 3.8.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -22713,9 +22713,9 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
 
   /* ---------- Salvia divinorum ----------
      A pinch of leaves in a glass pipe. It comes on in seconds: the room tears into strips, something pulls you
-     sideways out of yourself, and for five minutes you are somewhere else, and something else. Five places it
+     sideways out of yourself, and for thirty seconds you are somewhere else, and something else. Five places it
      can take you, built new every time; which one is never up to you. Then it lets go, and you're on the floor. */
-  const SVX=-2600, SVZ=0, SV_LEN=300, SV_STORIES=['cat','fly','eye','mars','giants'];
+  const SVX=-2600, SVZ=0, SV_LEN=30, SV_STORIES=['cat','fly','eye','mars','giants'];
   const SV_CARD={cat:['You are a cat.','The apartment goes on and on. Someone keeps calling your name.'],
     fly:['You are a fly.','Everything is so big. The light is so warm.'],
     eye:['You have three eyes.','One of them has never closed.'],
@@ -22873,15 +22873,15 @@ void main(){ vec3 d=normalize(vD); float y=d.y;
         // the owners turn to you when you aren't looking; later they come closer
         for(const o of owners){ const gp=o.g.position, wx=gp.x+SVX, wz=gp.z+SVZ, d=Math.hypot(wx-P.x,wz-P.z), seen=viewAngle(wx,wz)<.6&&d<14;
           if(!seen) o.g.rotation.y=Math.atan2(lx-gp.x,lz-gp.z);
-          if(k>.3&&!seen&&d>2.5&&Math.random()<dt*.35*k){ const s=Math.min(1.4,d-2); const tx=gp.x+(lx-gp.x)/d*s, tz=gp.z+(lz-gp.z)/d*s, pp={x:tx,z:tz}; svPush(pp,W,.3); gp.set(pp.x,0,pp.z); }
+          if(k>.3&&!seen&&d>2.5&&Math.random()<dt*2.2*k){ const s=Math.min(1.4,d-2); const tx=gp.x+(lx-gp.x)/d*s, tz=gp.z+(lz-gp.z)/d*s, pp={x:tx,z:tz}; svPush(pp,W,.3); gp.set(pp.x,0,pp.z); }
           if(d<1.3&&!o.scare){ o.scare=1; T.stat=1; SFX.tr.sting&&SFX.tr.sting({gain:1}); T.heartKick=1; T.kick=.5; o.lean=.01; }
           if(o.lean>0){ o.lean=Math.min(1,o.lean+dt*1.8); o.g.rotation.x=.9*Math.sin(o.lean*Math.PI*.5); if(o.lean>=1){ o.lean=0; o.scare=0; o.g.rotation.x=0; const r=rooms[Math.floor(R()*rooms.length)]; gp.set(r.cx,0,r.cz); } } }
         // a face, peering round a doorway at your height
-        if(k>.5){ W.faceT=(W.faceT||6)-dt; if(!face.visible&&W.faceT<=0){ W.faceT=12+R()*10; const ang=P.yaw+(R()-.5)*.9, x=lx-Math.sin(ang)*(4+R()*3), z=lz-Math.cos(ang)*(4+R()*3), pp={x,z}; svPush(pp,W,.5);
+        if(k>.5){ W.faceT=(W.faceT||1.5)-dt; if(!face.visible&&W.faceT<=0){ W.faceT=5+R()*4; const ang=P.yaw+(R()-.5)*.9, x=lx-Math.sin(ang)*(4+R()*3), z=lz-Math.cos(ang)*(4+R()*3), pp={x,z}; svPush(pp,W,.5);
             face.position.set(pp.x,.45,pp.z); face.rotation.y=Math.atan2(lx-pp.x,lz-pp.z); face.visible=true; W.faceSeen=0; }
           if(face.visible){ const d=Math.hypot(face.position.x-lx,face.position.z-lz); if(viewAngle(face.position.x+SVX,face.position.z+SVZ)<.35){ W.faceSeen+=dt; if(W.faceSeen>.9||d<1.2){ face.visible=false; T.stat=Math.max(T.stat,.8); SFX.tr.stat(at3(face.position.x+SVX,face.position.z+SVZ,1),.4,1); } } } }
         // pspsps, from somewhere in the flat; knocking, later
-        W.call=(W.call||4)-dt; if(W.call<=0){ W.call=5+R()*7; SFX.tr.whisper({gain:.7+k,pan:R()*1.8-.9}); if(k>.6&&R()<.4) SFX.tr.knock({gain:.8,pan:R()*1.6-.8},k>.8?3:2); }
+        W.call=(W.call||1.5)-dt; if(W.call<=0){ W.call=2.5+R()*3; SFX.tr.whisper({gain:.7+k,pan:R()*1.8-.9}); if(k>.6&&R()<.4) SFX.tr.knock({gain:.8,pan:R()*1.6-.8},k>.8?3:2); }
         if(k>.2&&k<.25&&!W.h1){ W.h1=1; hint('The bowl by the fridge has your name on it.'); }
         if(k>.62&&!W.h2){ W.h2=1; hint('They know you are in here.'); } }});
     W.h=()=>0;
@@ -22943,14 +22943,14 @@ void main(){ vec3 d=normalize(vD); float y=d.y;
           P.vx+=dx/d*pull*dt*6; P.vz+=dz/d*pull*dt*6; F.y+=dy/d*pull*dt*4; F.white=clamp(1-d/8,0,1); if(!W.h3){ W.h3=1; hint('The light. You have to get to the light.'); } }
         T.gy=F.y; lamp.intensity=1.7+(k>.8?(k-.8)*14:0);
         // the swatter: it comes up, hangs over you, and comes down
-        const S=W.sw||(W.sw={t:0,next:18+R()*10,phase:'rest'}); S.t+=dt;
+        const S=W.sw||(W.sw={t:0,next:5+R()*3,phase:'rest'}); S.t+=dt;
         if(S.phase==='rest'&&S.t>S.next&&k<.8){ S.phase='up'; S.t=0; S.tx=lx; S.tz=lz; S.ty=F.y; SFX.tr.herBreath&&SFX.tr.herBreath({gain:.9}); }
         if(S.phase==='up'){ const a=ease(clamp(S.t/1.4,0,1)); hand.position.set(lerp(6,S.tx,a),lerp(TY+8,S.ty+9,a),lerp(-TZ,S.tz+7.5,a)); hand.rotation.x=lerp(0,-.35,a); if(S.t>1.6){ S.phase='down'; S.t=0; } }
         if(S.phase==='down'){ const a=clamp(S.t/.22,0,1); hand.position.y=lerp(S.ty+9,S.ty+.2,a*a); hand.rotation.x=lerp(-.35,0,a);
           if(a>=1){ S.phase='hold'; S.t=0; SFX.tr.slam&&SFX.tr.slam({gain:1.2}); const d=Math.hypot(lx-S.tx,lz-S.tz,F.y-S.ty);
             if(d<2.6){ T.kick=1; T.stat=1; T.pulse=1; T.heartKick=1; F.vy=-6; P.vx+=(R()-.5)*12; P.vz+=(R()-.5)*12; hint('Missed. Barely.'); } else { T.kick=.4; } } }
         if(S.phase==='hold'&&S.t>.8){ S.phase='back'; S.t=0; }
-        if(S.phase==='back'){ const a=ease(clamp(S.t/1.4,0,1)); hand.position.set(lerp(S.tx,6,a),lerp(S.ty+.2,TY+8,a),lerp(S.tz+7.5,-TZ,a)); if(S.t>1.4){ S.phase='rest'; S.t=0; S.next=Math.max(7,16-k*10)+R()*8; } }
+        if(S.phase==='back'){ const a=ease(clamp(S.t/1.4,0,1)); hand.position.set(lerp(S.tx,6,a),lerp(S.ty+.2,TY+8,a),lerp(S.tz+7.5,-TZ,a)); if(S.t>1.4){ S.phase='rest'; S.t=0; S.next=Math.max(2.5,6-k*4)+R()*2.5; } }
         if(k>.4&&!W.h2){ W.h2=1; hint('He hasn\'t moved. Only his hand.'); }
         if(F.white) T.white=Math.max(T.white,F.white*.9); }});
     W.h=()=>0;
@@ -23001,7 +23001,7 @@ void main(){ vec3 d=normalize(vD); float y=d.y;
         const E=W.lids||(W.lids=[{t:1},{t:2.4},{t:3.3}]);
         E.forEach((e,i)=>{ e.t-=dt; if(e.t<=0){ e.t=(i===2?5:2.5)+Math.random()*4; e.b=0; } if(e.b!==undefined){ e.b+=dt; if(e.b>.28) e.b=undefined; }
           const lid=e.b!==undefined?Math.sin(e.b/.28*Math.PI):0, el=document.getElementById('svE'+i); if(el) el.setAttribute('ry',String((i===2?100:150)*(1-lid*.97)*(i===2?1+k*.4:1))); });
-        W.hum=(W.hum||8)-dt; if(W.hum<=0){ W.hum=7+R()*8; SFX.tr.whisper({gain:.6+k*.8,pan:R()*1.6-.8}); }
+        W.hum=(W.hum||3)-dt; if(W.hum<=0){ W.hum=3+R()*4; SFX.tr.whisper({gain:.6+k*.8,pan:R()*1.6-.8}); }
         if(k>.15&&!W.h1){ W.h1=1; hint('They move when you look away.'); }
         if(k>.55&&!W.h2){ W.h2=1; hint('Something in the sky has opened.'); } }});
     svOverlay('eye');
@@ -23026,7 +23026,7 @@ void main(){ vec3 d=normalize(vD); float y=d.y;
     svM(rv,GEO.cyl,wht,.7,1.9,.4,.06,1.6,.06); const head=new THREE.Group(); head.position.set(.7,2.75,.4); rv.add(head); svM(head,GEO.box,wht,0,0,0,.5,.3,.3); svM(head,GEO.cyl,dk,0,0,.2,.08,.12,.08,Math.PI/2,0,0);
     const led=svM(head,GEO.sph,svBasic(W,'led',{color:0xff2a1a}),.2,.12,.16,.03,.03,.03); svSolid(W,rx-1.6,rz-1.3,rx+1.6,rz+1.3);
     // the suit, face down, and the prints that lead to it
-    const sa=R()*6.28, sx0=Math.cos(sa)*70, sz0=Math.sin(sa)*70, suit=new THREE.Group(); suit.position.set(sx0,h(sx0,sz0)+.2,sz0); suit.rotation.y=R()*6; W.g.add(suit);
+    const sa=R()*6.28, sx0=Math.cos(sa)*24, sz0=Math.sin(sa)*24, suit=new THREE.Group(); suit.position.set(sx0,h(sx0,sz0)+.2,sz0); suit.rotation.y=R()*6; W.g.add(suit);
     const sm=svMat(W,'suit',{color:0xe8e4dc,roughness:.8});
     svM(suit,GEO.box,sm,0,0,0,.6,.35,.9); svM(suit,GEO.sph,sm,0,.05,.65,.3,.3,.3); svM(suit,GEO.sph,svMat(W,'visor',{color:0xd8a030,roughness:.1,metalness:.9}),0,-.02,.82,.2,.18,.08);
     for(const s of [-1,1]){ svM(suit,GEO.cyl,sm,s*.2,0,-.8,.13,.8,.13,Math.PI/2,0,0); svM(suit,GEO.cyl,sm,s*.45,0,.2,.1,.7,.1,Math.PI/2,0,s*.3); }
@@ -23051,7 +23051,7 @@ void main(){ vec3 d=normalize(vD); float y=d.y;
         const pa=T.t*.02; phobos.position.set(sky.x+Math.cos(pa)*260,sky.y+120+Math.sin(pa)*40,sky.z+Math.sin(pa)*260); earth.position.set(sky.x-200,sky.y+30,sky.z+160);
         // the storm comes in
         const st=clamp((k-.62)/.3,0,1); T.scene.fog.density=W.env.fogD+st*.05; W.sky.material.uniforms.uK.value=st*.85; SFX.tr.set({wind:.5+st*1.6});
-        W.radio=(W.radio||20)-dt; if(W.radio<=0){ W.radio=22+R()*16; SFX.tr.stat(null,1.4,.8); setTimeout(()=>{ if(T&&T.inSalvia) SFX.tr.whisper({gain:.9,pan:0}); },500); if(!W.h1){ W.h1=1; hint('A radio, somewhere. Someone asking if anyone is still here.'); } }
+        W.radio=(W.radio||6)-dt; if(W.radio<=0){ W.radio=8+R()*5; SFX.tr.stat(null,1.4,.8); setTimeout(()=>{ if(T&&T.inSalvia) SFX.tr.whisper({gain:.9,pan:0}); },500); if(!W.h1){ W.h1=1; hint('A radio, somewhere. Someone asking if anyone is still here.'); } }
         if(k>.9&&!W.stand){ W.stand=1; const f=svFigure(W,1,1.05); const fx=lx-Math.sin(P.yaw)*6, fz=lz-Math.cos(P.yaw)*6; f.position.set(fx,h(fx,fz),fz); f.rotation.y=P.yaw; W.g.add(f); }
         if(k>.1&&!W.h2){ W.h2=1; hint('The rover is watching you.'); } }});
   }
@@ -23085,15 +23085,15 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
           const wp=wind.geometry.attributes.position, wa=wp.array; for(let i=0;i<wa.length;i+=3){ wa[i]+=dt*90; wa[i+1]+=dt*9; if(wa[i]>60) wa[i]-=120; if(wa[i+1]>36) wa[i+1]-=72; } wp.needsUpdate=true; wind.position.set(lx,0,lz);
           const dp=dia.geometry.attributes.position, da=dp.array; for(let i=1;i<da.length;i+=3){ da[i]-=dt*14; if(da[i]<-24) da[i]+=48; } dp.needsUpdate=true; dia.position.set(lx,1.6,lz);
           spot.position.set(lx*.2,-120+Math.min(60,e*.4),lz*.2); spot.material.uniforms.uT.value=T.t;
-          W.boom=(W.boom||6)-dt; if(W.boom<=0){ W.boom=5+R()*9; SFX.tr.thud&&SFX.tr.thud(.6); T.white=Math.max(T.white,.25); T.kick=.3; }
-          if(e>4&&!W.h1){ W.h1=1; hint('Neptune. The wind here is faster than sound.'); } if(e>40&&!W.h2){ W.h2=1; hint('It is raining. It is raining diamonds.'); }
-          if(e>70&&!W.h3){ W.h3=1; hint('Something dark, far below. It is turning.'); }
-          if(e>=135&&!W.tr){ W.tr=e; } if(W.tr){ T.sv.tear=clamp((e-W.tr)/2,0,1); if(e-W.tr>2.2) svToSaturn(W,R); }
+          W.boom=(W.boom||2.5)-dt; if(W.boom<=0){ W.boom=2.5+R()*3; SFX.tr.thud&&SFX.tr.thud(.6); T.white=Math.max(T.white,.25); T.kick=.3; }
+          if(e>2&&!W.h1){ W.h1=1; hint('Neptune. The wind here is faster than sound.'); } if(e>6&&!W.h2){ W.h2=1; hint('It is raining. It is raining diamonds.'); }
+          if(e>9.5&&!W.h3){ W.h3=1; hint('Something dark, far below. It is turning.'); }
+          if(e>=12.5&&!W.tr){ W.tr=e; } if(W.tr){ T.sv.tear=clamp((e-W.tr)/1.6,0,1); if(e-W.tr>1.8) svToSaturn(W,R); }
         } else { const h=W.h; T.gy=h(lx,lz)-.12;
           W.shapes.forEach(s=>{ s.a+=s.v*dt; s.m.position.set(lx+Math.cos(s.a)*s.r,-7+(k>.85?(k-.85)*24:0),lz+Math.sin(s.a)*s.r); s.m.rotation.y=-s.a; });
           W.rings.position.set(lx,120,lz-40); W.titan.position.set(lx+140,90,lz-200);
-          W.flash=(W.flash||4)-dt; if(W.flash<=0){ W.flash=3+R()*7; T.hemi.groundColor.copy(LCc(0xfff8e0)); setTimeout(()=>{ if(T&&T.hemi&&W.saturn) T.hemi.groundColor.copy(LCc(0x6a4a20)); },120); setTimeout(()=>{ if(T&&T.inSalvia) SFX.tr.thud&&SFX.tr.thud(.7); },700); }
-          if(!W.h4&&e>W.satT+4){ W.h4=1; hint('Saturn. There is no ground here. You are standing on it anyway.'); }
+          W.flash=(W.flash||2)-dt; if(W.flash<=0){ W.flash=2+R()*3; T.hemi.groundColor.copy(LCc(0xfff8e0)); setTimeout(()=>{ if(T&&T.hemi&&W.saturn) T.hemi.groundColor.copy(LCc(0x6a4a20)); },120); setTimeout(()=>{ if(T&&T.inSalvia) SFX.tr.thud&&SFX.tr.thud(.7); },700); }
+          if(!W.h4&&e>W.satT+1.5){ W.h4=1; hint('Saturn. There is no ground here. You are standing on it anyway.'); }
           if(!W.h5&&k>.7){ W.h5=1; hint('Something enormous is moving under the clouds.'); }
           T.hemi.intensity=W.env2.hemiI*(k>.8?1-(k-.8)*3:1); } }});
   }
@@ -23136,7 +23136,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     if(W.body){ S.body=W.body(); T.cam.add(S.body); }
     SFX.tr.set({bld:0,hum:0,buzz:0,tv:0,water:0,wind:W.loop==='mars'?.6:W.loop==='eye'?.3:0,wet:.35,trip:.12,muffle:20000}); SFX.tr.svLoop&&SFX.tr.svLoop(W.loop);
     if(W.loop==='fly') svOverlay('fly');
-    svCard(SV_CARD[S.story]); setTimeout(()=>svCard(null),7000);
+    svCard(SV_CARD[S.story]); setTimeout(()=>svCard(null),4000);
     S.phase='in'; S.t=0; T.black=1; T.phase='play';
   }
   function svLeave(){
@@ -23153,7 +23153,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     const S=T.sv, P=T.p, sv=S.save; svLeave(); T.sv=null;
     Object.assign(P,{x:sv.x,z:sv.z,yaw:sv.yaw,vx:0,vz:0,y:EYE});
     wakeUp('floor'); giveFx('blur',30); giveFx('heavy',25);
-    setTimeout(()=>{ if(T&&T.phase!=='dead') hint('You were gone for five minutes. It felt like years.'); },9500);
+    setTimeout(()=>{ if(T&&T.phase!=='dead') hint('You were gone for thirty seconds. It felt like years.'); },9500);
   }
   function salviaStep(dt){
     const S=T.sv; if(!S) return;
@@ -23166,9 +23166,9 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
       if(W.step) W.step(dt,k,S.t);
       if(S.body&&W.bodyStep) W.bodyStep(S.body,P.speed>.3);
       // every so often it pulls at you again
-      S.jolt=(S.jolt===undefined?30:S.jolt)-dt; if(S.jolt<=0){ S.jolt=35+Math.random()*30; S.jt=.8; SFX.tr.stat(null,.5,.6); T.kick=Math.max(T.kick||0,.5); }
+      S.jolt=(S.jolt===undefined?8:S.jolt)-dt; if(S.jolt<=0){ S.jolt=7+Math.random()*5; S.jt=.8; SFX.tr.stat(null,.5,.6); T.kick=Math.max(T.kick||0,.5); }
       if(S.jt>0){ S.jt-=dt; } const jolt=S.jt>0?Math.sin(clamp(S.jt/.8,0,1)*Math.PI)*.55:0;
-      if(!W.tr) S.tear=Math.max(jolt,clamp((S.t-(SV_LEN-4))/3,0,1));
+      if(!W.tr) S.tear=Math.max(jolt,clamp((S.t-(SV_LEN-2.5))/2,0,1));
       if(S.t>=SV_LEN){ S.phase='back'; S.pt=0; }
       T.drugFov=(T.drugFov||0)+(W.fov||0);
     }
