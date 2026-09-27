@@ -2156,7 +2156,7 @@ input[type=range]{accent-color:var(--acc);}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.7.1 · BETA</span>
+    <span class="hub-version">VERSION 3.7.2 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2276,7 +2276,7 @@ input[type=range]{accent-color:var(--acc);}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.7.1</div></div>
+</svg><div class="set-ver">VERSION 3.7.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3089,6 +3089,14 @@ const SFX=(function(){
       /* the light swelling too bright: a thin ringing and the building's hum rising with it */
       surge(){ if(!ready()) return; const b=tbIn({gain:.7});
         tone(b,{f:3900,f1:4300,dur:2.6,peak:.022,atk:1.1}); noise(b,{hz:900,hz2:5200,hzT:1.3,q:.6,dur:2.3,peak:.05,atk:1.2}); tone(b,{type:'sawtooth',f:52,f1:61,dur:2.4,peak:.028,cut:280,atk:1}); },
+      /* pills shaken in a plastic bottle */
+      rattle(){ if(!ready()) return; const b=tbIn({gain:.8}); for(let i=0;i<10;i++) noise(b,{hz:3000+Math.random()*2600,q:5,dur:.018,peak:.09,delay:i*.03+Math.random()*.02}); tone(b,{type:'triangle',f:900,dur:.02,peak:.02,delay:.05}); },
+      /* a tablet pushed out through the foil */
+      pop(){ if(!ready()) return; const b=tbIn({gain:.8}); noise(b,{hz:2800,q:1.5,dur:.05,peak:.2}); noise(b,{hp:5200,dur:.12,peak:.05,delay:.03}); tone(b,{type:'triangle',f:1500,f1:900,dur:.03,peak:.03}); },
+      /* the low drone that comes with the man in the hat */
+      hat(at){ if(!ready()) return; const b=tb(at); tone(b,{type:'sawtooth',f:41,f1:37,dur:3.4,peak:.06,cut:220,atk:1,send:.6}); tone(b,{f:61.7,dur:3,peak:.035,atk:1.2,send:.5}); noise(b,{ft:'lowpass',hz:300,dur:2.8,peak:.05,atk:1,send:.6}); },
+      /* a drag on a cigarette: the paper crackling, the breath in */
+      drag(){ if(!ready()) return; const b=tbIn({gain:.7}); for(let i=0;i<12;i++) noise(b,{hz:4000+Math.random()*3000,q:4,dur:.012,peak:.05,delay:.1+Math.random()*.7}); noise(b,{hz:1200,hz2:1600,q:.8,dur:.9,peak:.05,atk:.4}); },
       /* a sharp sniff */
       sniff(){ if(!ready()) return; const b=tbIn({gain:.9}); noise(b,{ft:'bandpass',hz:2600,q:1.2,dur:.45,peak:.35,atk:.08}); noise(b,{ft:'bandpass',hz:3400,q:1.4,dur:.25,peak:.2,atk:.05,delay:.5}); },
       /* a long breath out, slower each time */
@@ -19790,7 +19798,7 @@ const Truth=(function(){
   function itemName(it){
     if(it.kind==='needle') return 'Syringe ('+NEEDLES[it.fx].name+')';
     if(it.kind==='doc') return it.doc.title;
-    if(it.kind==='drug') return DRUGS[it.d].name;
+    if(it.kind==='drug') return DRUGS[it.d].name+(DRUGS[it.d].n>1?' ('+it.n+' left)':'');
     return {flashlight:'Flashlight',vial:'Unlabeled vial',blotter:'LSD blotter',gun:'Revolver',bullet:'Bullet',tape:'VHS tape',key:'Small key'}[it.kind]||'Something';
   }
   function addNeedle(x,y,z,fx,tray){
@@ -21465,7 +21473,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     P.side=-(P.side||1); SFX.tr.step(surf,loud,{gain:1,pan:P.side*.12});
     if((lv('halluc')>.3||lv('drowse')>.3)&&Math.random()<.75) T.echo.push({t:T.t+.3+Math.random()*.14,surf,loud:loud*.5});
   }
-  function speedMul(){ return drugSpeed()*(1-.42*lv('heavy'))*(1-.38*lv('drowse'))*(1+.3*lv('rush'))*(T.poison?1-.5*clamp(T.poison.t/T.poison.dur,0,1):1); }
+  function speedMul(){ return drugSpeed()*(1-.42*lv('heavy'))*(1-.38*lv('drowse'))*(1+.3*lv('rush'))*(1+.75*lv('coke'))*(T.poison?1-.5*clamp(T.poison.t/T.poison.dur,0,1):1); }
   function playStep(dt){
     const P=T.p, k=T.keys, busy=T.paused||!!T.doc||T.invOpen;
     let fx=0, fz=0;
@@ -21557,7 +21565,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     $t('truthDream').classList.remove('on'); T.dreamShown=0;
     if(T.inDream) leaveDreamWorld();
     drugReset(); T.fx={}; T.poison=null; T.lsd=null; T.inv=[]; T.flashOn=false; T.echo=[]; T.blackout=0; T.aimK=0; T.gy=0; T.col=null;
-    for(const it of T.items){ it.taken=false; it.obj.visible=true; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; }
+    for(const it of T.items){ it.taken=false; it.obj.visible=true; if(it.n0!==undefined) it.n=it.n0; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; }
     T.bulletBack=0; herHide(false); closePhantom(true); T.fadeOut=null; if(T.fig){ T.root.remove(T.fig.m); T.fig=null; }
     T.deaths++; T.dRoll=0; T.black=0; T.white=0; T.pulse=0; T.stat=0;
     const P=T.p; Object.assign(P,{x:3.3,z:7.6,y:.98,yaw:Math.PI+.35,pitch:1.42,vx:0,vz:0,stam:1,exh:0,exK:0});
@@ -21636,7 +21644,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     for(const k in T.fx){ const e=T.fx[k]; if(e.delay>0){ e.delay-=dt; continue; }
       const was=e.lvl>.5; e.t-=dt; const tgt=e.t>0?1:0; e.lvl+=(tgt-e.lvl)*(1-Math.exp(-dt*(tgt?.45:.09)));
       if(k==='mirror'&&was!==(e.lvl>.5)){ T.stat=.8; SFX.tr.stat({gain:1},.4,1); }
-      if(e.t<=0&&e.lvl<.01){ delete T.fx[k]; if(k==='rush') giveFx('heavy',30); if(k==='mdma'){ giveFx('heavy',28); giveFx('numb',35); hint('Everything is grey now.'); } } }
+      if(e.t<=0&&e.lvl<.01){ delete T.fx[k]; if(k==='rush') giveFx('heavy',30); if(k==='coke') hint('It’s gone. You want more.'); if(k==='mdma'){ giveFx('heavy',28); giveFx('numb',35); hint('Everything is grey now.'); } } }
     // poison: no way to stop it
     if(T.poison&&T.phase==='play'){ const pz=T.poison; pz.t+=dt; const k=pz.t/pz.dur;
       if(k>.35&&!pz.c1){ pz.c1=1; SFX.tr.cough(); } if(k>.6&&!pz.c2){ pz.c2=1; SFX.tr.cough(); T.heartKick=.9; }
@@ -21654,56 +21662,395 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
   function blurAway(){ if(T.fadeOut) return; T.fadeOut={t:0}; SFX.tr.whisper({gain:1.2,pan:0}); }
 
   /* ---------- what else is lying around the wards ----------
-     Seven things you can take, each doing something different to what you see, hear and can do,
-     and each with its own way of going wrong. Nothing about them is good for you. */
+     Seven things you can take, and each one is what it really is, held in your own hands: a strip of pink
+     allergy pills you press out one at a time, a pocket mirror with lines of powder and a rolled-up note,
+     a bag of crystals and a key to scoop it with, a pressed pill, a pharmacy bottle, and syringes that go
+     into the crook of your arm above a belt pulled tight. Each does something different to what you see,
+     hear and can do, and each has its own way of going wrong. Nothing about them is good for you. */
   const DRUGS={
-    rx:      {name:'Prescription pills',use:'eat',   verb:'click to swallow them',col:0xd8761a,
+    rx:      {name:'Prescription pills',use:'bottle',verb:'click to swallow them',col:0xd8761a,n:1,
               desc:'An orange pharmacy bottle. The label says 108 — Compound K-2. Someone has scratched out the dose.',thought:'You take more than it says. Everything goes slow and soft.'},
-    benadryl:{name:'Benadryl',          use:'eat',   verb:'click to swallow them',col:0xf07aa8,
-              desc:'A whole strip of pink allergy tablets. Far too many.',thought:'Something is standing in the corner of your eye.'},
-    mdma:    {name:'MDMA',              use:'eat',   verb:'click to swallow it',  col:0x6ab8ff,
-              desc:'A small pressed pill with a smiley face stamped on it.',thought:'Everything is warm. Everything is going to be fine.'},
-    ketamine:{name:'Ketamine',          use:'snort', verb:'click to sniff it',    col:0xe8ecf0,
-              desc:'A little bag of white crystals. It smells like a hospital.',thought:'Your body is very far away.'},
-    cocaine: {name:'Cocaine',           use:'snort', verb:'click to sniff it',    col:0xf4f4f4,
-              desc:'A folded paper wrap of white powder.',thought:'Your heart is going much too fast.'},
-    heroin:  {name:'Heroin',            use:'inject',verb:'click to inject',      col:0x6a3a1a,
-              desc:'A syringe of something brown. The needle has been used before.',thought:'Warm. So warm. Don’t close your eyes.'},
-    krokodil:{name:'Krokodil',          use:'inject',verb:'click to inject',      col:0xc8862a,
+    benadryl:{name:'Benadryl',          use:'pills', verb:'click to take a pill', col:0xf07aa8,n:12,
+              desc:'A strip of twelve pink Benadryl allergy tablets. The box says take one, or two.',thought:''},
+    mdma:    {name:'MDMA',              use:'pill',  verb:'click to swallow it',  col:0x5aa8ff,n:1,
+              desc:'A blue pressed pill with a smiley face stamped into it.',thought:'Everything is warm. Everything is going to be fine.'},
+    ketamine:{name:'Ketamine',          use:'bump',  verb:'click to take a bump off the key',col:0xe8ecf0,n:1,
+              desc:'A little bag of white crystals, and a key to scoop them with. It smells like a hospital.',thought:'Your body is very far away.'},
+    cocaine: {name:'Cocaine',           use:'line',  verb:'click to snort a line',col:0xf4f4f4,n:2,
+              desc:'A pocket mirror with two lines of white powder on it, and a rolled-up banknote.',thought:'Everything is fast. You are fast.'},
+    heroin:  {name:'Heroin',            use:'inject',verb:'click to inject',      col:0x6a3a1a,n:1,
+              desc:'A syringe of something brown, a burnt spoon and a belt. The needle has been used before.',thought:'Warm. So warm. Don’t close your eyes.'},
+    krokodil:{name:'Krokodil',          use:'inject',verb:'click to inject',      col:0xc8862a,n:1,
               desc:'A dirty syringe of something cloudy and orange. It smells like petrol.',thought:'It burns. It won’t stop burning.'}
   };
-  function drugMesh(d){
-    const D=DRUGS[d];
-    if(D.use==='inject'){ const s=syringe(D.col); return s; }
-    const g=new THREE.Group(), M=(o)=>stdMat(o);
-    if(d==='rx'){ const b=new THREE.Mesh(GEO.cyl,M({color:0xd8761a,roughness:.3,emissive:LCc(0x3a1400)})); b.scale.set(.022,.07,.022); b.position.y=.035; g.add(b);
-      const c=new THREE.Mesh(GEO.cyl,M({color:0xf2f0ea,roughness:.5})); c.scale.set(.024,.018,.024); c.position.y=.079; g.add(c);
-      const l=new THREE.Mesh(GEO.cyl,M({color:0xf4f0e4,roughness:.9})); l.scale.set(.0225,.036,.0225); l.position.y=.034; g.add(l); }
-    else if(d==='benadryl'){ const f=new THREE.Mesh(GEO.box,M({color:0xc8ccd2,roughness:.25,metalness:.6})); f.scale.set(.08,.003,.036); f.position.y=.0015; g.add(f);
-      for(let i=0;i<8;i++){ const p=new THREE.Mesh(GEO.sph,M({color:0xf07aa8,roughness:.4})); p.scale.set(.0065,.004,.0065); p.position.set(-.03+(i%4)*.02,.004,i<4?-.009:.009); g.add(p); } }
-    else if(d==='mdma'){ const bag=new THREE.Mesh(GEO.box,M({color:0xdfe8ee,roughness:.12,transparent:true,opacity:.7})); bag.scale.set(.036,.003,.046); bag.position.y=.002; g.add(bag);
-      const p=new THREE.Mesh(GEO.cyl,M({color:0x6ab8ff,roughness:.6})); p.scale.set(.008,.004,.008); p.position.y=.004; g.add(p); }
-    else if(d==='ketamine'){ const bag=new THREE.Mesh(GEO.box,M({color:0xdfe8ee,roughness:.12,transparent:true,opacity:.72})); bag.scale.set(.032,.004,.042); bag.position.y=.002; g.add(bag);
-      const in2=new THREE.Mesh(GEO.box,M({color:0xf4f6f8,roughness:.8})); in2.scale.set(.022,.003,.022); in2.position.set(0,.002,-.006); g.add(in2); }
-    else { const w=new THREE.Mesh(GEO.box,M({color:0xf4f0e8,roughness:.95})); w.scale.set(.04,.005,.03); w.position.y=.0025; g.add(w);
-      const f=new THREE.Mesh(GEO.box,M({color:0xe4ded2,roughness:.95})); f.scale.set(.04,.002,.012); f.position.set(0,.006,-.006); f.rotation.x=.3; g.add(f); }
+  const DICON={
+    rx:'<rect x="10" y="11" width="12" height="17" rx="2"/><rect x="9" y="5" width="14" height="6" rx="1.5"/><path class="liq" d="M12 16h8v7h-8z"/>',
+    benadryl:'<rect x="4" y="8" width="24" height="16" rx="2"/><ellipse class="liq" cx="10" cy="13" rx="2.6" ry="1.6"/><ellipse class="liq" cx="16" cy="13" rx="2.6" ry="1.6"/><ellipse class="liq" cx="22" cy="13" rx="2.6" ry="1.6"/><ellipse class="liq" cx="10" cy="19" rx="2.6" ry="1.6"/><ellipse cx="16" cy="19" rx="2.6" ry="1.6"/><ellipse cx="22" cy="19" rx="2.6" ry="1.6"/>',
+    mdma:'<circle class="liq" cx="16" cy="16" r="9.5"/><circle cx="16" cy="16" r="9.5"/><circle cx="12.8" cy="14" r=".9"/><circle cx="19.2" cy="14" r=".9"/><path d="M11.5 18q4.5 4.5 9 0"/>',
+    ketamine:'<path d="M6 7h13v19H6z"/><path d="M6 10.5h13"/><path class="liq" d="M8 18h9v6H8z"/><circle cx="23.5" cy="10" r="3.2"/><path d="M23.5 13.2V27M23.5 22h2.5M23.5 25h2"/>',
+    cocaine:'<rect x="3" y="9" width="26" height="16" rx="2"/><path class="liq" d="M7 14.2h11v1.8H7zM7 19.2h11v1.8H7z"/><path d="M20.5 21.5l6.5-9" stroke-width="3"/>',
+    heroin:'<path d="M24 5l3 3M22.5 6.5l3 3M8.5 19.5l-4 4M11.5 17l10-10 3 3-10 10z"/><rect class="liq" x="13.4" y="11.2" width="5.4" height="3.6" transform="rotate(-45 16.1 13)"/><ellipse cx="18" cy="24.5" rx="5" ry="3"/><path d="M13 24.5H3"/>',
+    krokodil:'<path d="M24 5l3 3M22.5 6.5l3 3M8.5 19.5l-4 4M11.5 17l10-10 3 3-10 10z"/><rect class="liq" x="13.4" y="11.2" width="5.4" height="3.6" transform="rotate(-45 16.1 13)"/><path class="liq" d="M5 25q1.5 2.5 0 4q-1.5-1.5 0-4z"/>'
+  };
+
+  /* ---- the kit: materials, textures and small parts ---- */
+  const _d1=new THREE.Vector3(), _d2=new THREE.Vector3(), _d3=new THREE.Vector3(), _d4=new THREE.Vector3(), _dq=new THREE.Quaternion(), ZUP=new THREE.Vector3(0,0,1);
+  const DM=(k,o)=>{ const c=T.d13m||(T.d13m={}); return c[k]||(c[k]=stdMat(o)); };
+  const DB=(k,o)=>{ const c=T.d13m||(T.d13m={}); if(!c[k]){ c[k]=new THREE.MeshBasicMaterial(o); T.mats['_d13'+k]=c[k]; } return c[k]; };
+  function dTex(k,w,h,draw){ const c=T.d13t||(T.d13t={}); if(c[k]) return c[k]; const cv=C(w,h), x=cv.getContext('2d'); draw(x,w,h); return c[k]=mkTex(cv,{clamp:true}); }
+  const SKIN=0xa8765c, ROT=0x4c5840;
+  const skinMat=()=>DM('skin',{color:SKIN,roughness:.62});
+  function mk(par,geo,mat,x,y,z,sx,sy,sz,rx,ry,rz){ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.scale.set(sx,sy,sz); if(rx||ry||rz) m.rotation.set(rx||0,ry||0,rz||0); par.add(m); return m; }
+  /* a cylinder from a to b */
+  function barD(par,a,b,r,mat,r2){ const d=_d4.subVectors(b,a), L=d.length(), m=new THREE.Mesh(GEO.cyl,mat); m.position.copy(a).addScaledVector(d,.5); m.quaternion.setFromUnitVectors(YUP,d.normalize()); m.scale.set(r,L,r2||r); par.add(m); return m; }
+  /* a camera-space point, in the frame of something the camera is holding */
+  function camLocal(obj,x,y,z,out){ T.cam.updateMatrixWorld(true); out.set(x,y,z); T.cam.localToWorld(out); return obj.worldToLocal(out); }
+
+  /* your hand, open and palm up with the fingers pointing away from you; the forearm and the gown's sleeve run back toward you */
+  function handFlat(curl){
+    const g=new THREE.Group(), s=skinMat(); curl=curl===undefined?.35:curl;
+    mk(g,GEO.box,s,0,0,0,.074,.02,.078);
+    [[-.027,.034],[-.009,.041],[.009,.039],[.027,.03]].forEach(([x,L])=>{
+      const f=new THREE.Group(); f.position.set(x,.002,-.037); g.add(f);
+      mk(f,GEO.cyl,s,0,0,-L*.3,.0086,L*.6,.0082,Math.PI/2,0,0);
+      const t=new THREE.Group(); t.position.set(0,0,-L*.6); t.rotation.x=curl; f.add(t);
+      mk(t,GEO.cyl,s,0,0,-L*.2,.0079,L*.4,.0075,Math.PI/2,0,0); mk(t,GEO.sph,s,0,0,-L*.4,.0078,.0074,.0078); });
+    const th=new THREE.Group(); th.position.set(.036,.003,.012); th.rotation.set(-.15,-.8,0); g.add(th);
+    mk(th,GEO.cyl,s,0,0,-.019,.0098,.038,.0094,Math.PI/2,0,0); mk(th,GEO.sph,s,0,0,-.038,.0094,.009,.0094);
+    const arm=new THREE.Group(); arm.position.set(0,-.004,.036); arm.rotation.x=.32; g.add(arm);
+    mk(arm,GEO.cyl,s,0,0,.08,.027,.16,.022,Math.PI/2,0,0);
+    mk(arm,GEO.cyl,DM('sleeve',{color:0x5f7384,roughness:.92}),0,0,.2,.036,.11,.031,Math.PI/2,0,0);
     return g;
   }
-  function addDrug(x,y,z,d){ const g=drugMesh(d); if(DRUGS[d].use==='inject'){ g.scale.setScalar(1.35); g.rotation.set(0,Math.random()*6.28,Math.PI/2,'YXZ'); g.position.set(x,y+.016,z); }
-    else { g.scale.setScalar(2.1); g.rotation.y=Math.random()*6.28; g.position.set(x,y,z); }
-    T.root.add(g); return addItem('drug',{d,obj:g,x,y:y+.02,z,r:.18}); }
+  /* your hand closed round something standing up through it (a bottle, a syringe's barrel) */
+  function handFist(r){
+    const g=new THREE.Group(), s=skinMat(); r=r||.022;
+    mk(g,GEO.box,s,r+.011,0,-.004,.022,.074,.06);                                          // the back of the hand
+    for(let i=0;i<4;i++){ const y=.027-i*.018;
+      mk(g,GEO.box,s,.006,y,-r-.009,r*2+.024,.016,.017);                                   // fingers round the far side
+      mk(g,GEO.box,s,-r-.007,y,-r*.3,.015,.015,r*1.3); }                                  // and their tips
+    const th=mk(g,GEO.box,s,.004,.024,r+.009,r*1.9,.016,.017); th.rotation.z=-.25;           // the thumb across the near side
+    const arm=new THREE.Group(); arm.position.set(r+.012,-.03,.004); arm.rotation.set(-.55,0,.45); g.add(arm);
+    mk(arm,GEO.cyl,s,0,-.08,0,.026,.16,.023);
+    mk(arm,GEO.cyl,DM('sleeve',{color:0x5f7384,roughness:.92}),0,-.19,0,.035,.1,.031);
+    return g;
+  }
+
+  /* --- the things themselves --- */
+  function blisterCard(n){ // twelve pink tablets under clear bubbles on a printed foil card; the ones already taken are pressed out
+    const g=new THREE.Group(), U={dome:[],pill:[],tear:[],home:[]};
+    mk(g,GEO.box,DM('foil',{color:0x8e949c,roughness:.35,metalness:.45}),0,0,0,.104,.0025,.056);
+    const top=new THREE.Mesh(new THREE.PlaneGeometry(.104,.056),DM('blisterPrint',{map:dTex('blister',512,276,(x,W,H)=>{
+      x.fillStyle='#8d939c'; x.fillRect(0,0,W,H);
+      for(let i=-4;i<14;i++){ x.fillStyle=i%2?'rgba(240,122,168,.10)':'rgba(120,140,190,.07)'; x.fillRect(i*48,0,24,H); }
+      x.fillStyle='#c83a74'; x.fillRect(0,0,112,H);
+      x.save(); x.translate(56,H/2); x.rotate(-Math.PI/2); x.fillStyle='#fff'; x.textAlign='center'; x.font='italic 800 44px Arial,Helvetica,sans-serif'; x.fillText('Benadryl',0,4);
+      x.font='700 17px Arial,Helvetica,sans-serif'; x.fillText('ALLERGY · 25 mg',0,34); x.restore();
+      x.strokeStyle='rgba(120,128,140,.55)'; x.lineWidth=2;
+      for(let c=0;c<6;c++) for(let r=0;r<2;r++){ x.beginPath(); x.ellipse(160+c*70,86+r*104,30,20,0,0,7); x.stroke(); }
+      x.fillStyle='rgba(90,96,110,.6)'; x.font='600 11px Arial,sans-serif'; x.fillText('diphenhydramine HCl 25 mg · do not exceed the stated dose',128,H-10); }),roughness:.4,metalness:.1}));
+    top.rotation.x=-Math.PI/2; top.position.y=.00135; g.add(top);
+    const domeM=DM('dome',{color:0xc8d4e0,roughness:.05,transparent:true,opacity:.3,depthWrite:false}), pillM=DM('benaPill',{color:0xe0508e,roughness:.45,emissive:0x1a020a}), tearM=DM('tear',{color:0x7c828c,roughness:.8,metalness:.3});
+    for(let i=0;i<12;i++){ const c=i%6, r=Math.floor(i/6), x=-.022+c*.0133, z=r?.0105:-.0105;
+      const d=mk(g,GEO.sph,domeM,x,.0014,z,.0062,.0045,.0046); const p=mk(g,GEO.sph,pillM,x,.0021,z,.0061,.0032,.0042);
+      const t=mk(g,GEO.box,tearM,x,.00145,z,.0085,.0006,.0062); t.visible=false;
+      U.dome.push(d); U.pill.push(p); U.tear.push(t); U.home.push(p.position.clone());
+      if(i<12-n){ d.scale.y*=.18; p.visible=false; t.visible=true; } }
+    g.userData=U; return g;
+  }
+  function benadrylBox(){ const m=DM('benaBox',{map:dTex('benaBox',256,128,(x,W,H)=>{ x.fillStyle='#cfd0d6'; x.fillRect(0,0,W,H);
+      x.fillStyle='#c83a74'; x.beginPath(); x.moveTo(0,H*.62); x.lineTo(W,H*.3); x.lineTo(W,H); x.lineTo(0,H); x.fill();
+      x.fillStyle='#c83a74'; x.font='italic 800 40px Arial,Helvetica,sans-serif'; x.fillText('Benadryl',14,48);
+      x.fillStyle='#fff'; x.font='700 15px Arial,sans-serif'; x.fillText('ALLERGY RELIEF',14,H-34); x.fillText('24 TABLETS · 25 mg',14,H-14); }),roughness:.55});
+    const g=new THREE.Group(); mk(g,GEO.box,m,0,0,0,.095,.032,.056); return g; }
+  function mirrorKit(lines){ // a pocket mirror with lines of powder, a rolled-up note and an old card
+    const g=new THREE.Group(), U={};
+    mk(g,GEO.box,DM('mirFrame',{color:0x1c1c22,roughness:.4,metalness:.5}),0,0,0,.108,.005,.078);
+    mk(g,GEO.box,DM('mirGlass',{color:0x55616c,roughness:.06,metalness:.6,emissive:0x080b0e}),0,.0028,0,.098,.0015,.068);
+    const pw=DM('powder',{color:0xf6f6f4,roughness:.95,emissive:0x2a2a2a});
+    U.line=[mk(g,GEO.box,pw,-.004,.0045,-.013,.058,.0028,.0052),mk(g,GEO.box,pw,-.004,.0045,.011,.058,.0028,.0052)];
+    U.line.forEach((l,i)=>{ if(i<2-lines) l.visible=false; });
+    mk(g,GEO.sph,pw,.03,.004,-.028,.008,.002,.006);                                         // what's left of the pile
+    mk(g,GEO.box,DM('card',{color:0x9c988e,roughness:.6}),-.036,.0045,.03,.042,.0012,.026).rotation.y=.4;
+    const bill=new THREE.Group(); g.add(bill);
+    mk(bill,GEO.cyl,DM('bill',{map:dTex('bill',128,64,(x,W,H)=>{ x.fillStyle='#7f8e72'; x.fillRect(0,0,W,H); x.fillStyle='#56684e';
+      for(let i=0;i<9;i++) x.fillRect(0,i*7+2,W,2); x.fillStyle='#50664a'; x.font='700 22px Arial,sans-serif'; x.fillText('20',8,40); x.fillText('20',86,40); }),roughness:.8}),0,0,0,.0055,.07,.0055);
+    bill.position.set(.02,.009,.03); bill.rotation.set(Math.PI/2,0,1.05); U.bill=bill; U.billP=bill.position.clone(); U.billQ=bill.quaternion.clone();
+    g.userData=U; return g;
+  }
+  function baggie(w,d,pw){ const g=new THREE.Group();
+    mk(g,GEO.box,DM('bag',{color:0x8c98a2,roughness:.12,transparent:true,opacity:.3,depthWrite:false}),0,.004,0,w,.008,d);
+    mk(g,GEO.box,DM('zip',{color:0x3a68d8,roughness:.5}),0,.0045,-d/2+.004,w,.004,.003);
+    if(pw) mk(g,GEO.box,DM('crystal',{color:0xc4c8cc,roughness:.35,metalness:.1,emissive:0x0c0d0e}),0,.0035,.004,w*.76,.005,d*.62);
+    return g; }
+  function keyMesh(){ const g=new THREE.Group(), m=DM('keyM',{color:0x8a9096,roughness:.25,metalness:.85,emissive:0x0c0d0e});
+    mk(g,GEO.tor,m,0,0,0,.011,.011,.02); mk(g,GEO.box,m,0,0,-.028,.0045,.0022,.036);
+    for(let i=0;i<3;i++) mk(g,GEO.box,m,.003,0,-.02-i*.009,.004,.0022,.004);
+    const heap=mk(g,GEO.sph,DM('crystal',{color:0xc4c8cc,roughness:.35,metalness:.1,emissive:0x0c0d0e}),0,.003,-.043,.0045,.0028,.005); heap.visible=false;
+    g.userData={heap}; return g; }
+  function smileyPill(){ const geo=new THREE.CylinderGeometry(1,1,1,22), side=DM('mdmaSide',{color:0x3a86e0,roughness:.7}),
+      top=DM('mdmaTop',{map:dTex('mdma',128,128,(x,W,H)=>{ x.fillStyle='#3a86e0'; x.fillRect(0,0,W,H); x.strokeStyle='#1f4f98'; x.lineWidth=6; x.beginPath(); x.arc(64,64,52,0,7); x.stroke();
+        x.fillStyle='#1f4f98'; x.beginPath(); x.arc(46,50,7,0,7); x.fill(); x.beginPath(); x.arc(82,50,7,0,7); x.fill(); x.lineWidth=7; x.beginPath(); x.arc(64,66,26,.25,Math.PI-.25); x.stroke(); }),roughness:.7});
+    const m=new THREE.Mesh(geo,[side,top,side]); m.scale.set(.0118,.0058,.0118); return m; }
+  function rxBottle(){ const g=new THREE.Group();
+    mk(g,GEO.cyl,DM('rxBody',{color:0xc0600e,roughness:.3,transparent:true,opacity:.9,emissive:0x1a0800}),0,0,0,.021,.07,.021);
+    mk(g,GEO.cyl,DM('rxLabel',{map:dTex('rxLabel',256,96,(x,W,H)=>{ x.fillStyle='#cfc8b6'; x.fillRect(0,0,W,H); x.fillStyle='#222'; x.font='800 18px Arial,sans-serif'; x.fillText('Rx 108',10,24);
+      x.font='700 14px Arial,sans-serif'; x.fillText('COMPOUND K-2',10,46); x.font='12px Arial,sans-serif'; x.fillText('TAKE 1 TABLET AT NIGHT',10,66);
+      x.strokeStyle='#111'; x.lineWidth=3; for(let i=0;i<7;i++){ x.beginPath(); x.moveTo(8+i*9,70); x.lineTo(30+i*11,58); x.stroke(); } x.fillText('PATIENT: ——',10,88); }),roughness:.85}),0,-.002,0,.0213,.036,.0213);
+    const cap=mk(g,GEO.cyl,DM('rxCap',{color:0xcfccc4,roughness:.5}),0,.043,0,.0235,.017,.0235);
+    for(let i=0;i<3;i++) mk(g,GEO.sph,DM('rxPill',{color:0xf4f2ea,roughness:.5}),(i-1)*.008,-.028,(i%2)*.006-.003,.006,.0035,.006);
+    g.userData={cap,capP:cap.position.clone()}; return g; }
+  function spoonMesh(){ const g=new THREE.Group(), m=DM('spoon',{color:0xb8bcc2,roughness:.3,metalness:.8});
+    mk(g,GEO.sph,m,0,0,0,.019,.0055,.024); mk(g,GEO.sph,DM('burnt',{color:0x1c1612,roughness:.9}),0,-.0035,0,.014,.0028,.018);
+    mk(g,GEO.box,m,0,.002,.052,.0065,.0025,.06).rotation.x=-.12; return g; }
+  function lighterMesh(col){ const g=new THREE.Group(); mk(g,GEO.box,DM('lighter'+col,{color:col,roughness:.3,transparent:true,opacity:.9}),0,.022,0,.02,.044,.011);
+    mk(g,GEO.box,DM('lighterTop',{color:0xc8ccd0,roughness:.3,metalness:.8}),0,.049,0,.02,.009,.011); return g; }
+  function beltMesh(){ const g=new THREE.Group(); mk(g,GEO.box,DM('leather',{color:0x3a2416,roughness:.8}),0,.0015,0,.018,.003,.26);
+    mk(g,GEO.box,DM('buckle',{color:0xb8bcc2,roughness:.3,metalness:.8}),0,.003,-.13,.026,.004,.022); return g; }
+
+  /* on the floor: what's left lying there, so you know what it is before you pick it up */
+  function drugKit(d){
+    const g=new THREE.Group();
+    if(d==='benadryl'){ const b=benadrylBox(); b.position.set(-.04,.016,-.01); b.rotation.y=.35; g.add(b); const c=blisterCard(12); c.position.set(.045,.0015,.02); c.rotation.y=-.25; g.add(c); }
+    else if(d==='cocaine'){ g.add(mirrorKit(2)); g.children[0].position.y=.0025; }
+    else if(d==='ketamine'){ const b=baggie(.05,.06,true); g.add(b); const k=keyMesh(); k.position.set(.045,.002,.01); k.rotation.y=-.7; g.add(k); }
+    else if(d==='mdma'){ const b=baggie(.036,.044,false); g.add(b); for(let i=0;i<2;i++){ const p=smileyPill(); p.position.set(.04+i*.024,.003,.012-i*.018); g.add(p); } }
+    else if(d==='rx'){ const b=rxBottle(); b.rotation.z=Math.PI/2; b.position.y=.021; g.add(b); for(let i=0;i<3;i++) mk(g,GEO.sph,DM('rxPill',{color:0xf4f2ea,roughness:.5}),-.05-i*.013,.003,.01*(i-1),.006,.0035,.006); }
+    else { const s=syringe(DRUGS[d].col); s.scale.setScalar(.6); s.rotation.set(0,.4,Math.PI/2,'YXZ'); s.position.set(0,.008,-.01); g.add(s);
+      if(d==='heroin'){ const sp=spoonMesh(); sp.position.set(.06,.006,.03); sp.rotation.y=.6; g.add(sp); const l=lighterMesh(0x2a6ad8); l.position.set(-.05,0,.05); g.add(l); const b=beltMesh(); b.position.set(.0,0,.07); b.rotation.y=1.3; g.add(b); }
+      else { mk(g,GEO.cyl,DM('amber',{color:0x5a3010,roughness:.15,transparent:true,opacity:.8}),.06,.022,.03,.013,.044,.013); mk(g,GEO.cyl,DM('capK',{color:0x111111,roughness:.6}),.06,.048,.03,.009,.008,.009);
+        const l=lighterMesh(0xd83a2a); l.position.set(-.05,0,.05); l.rotation.z=Math.PI/2; l.position.y=.006; g.add(l); } }
+    return g;
+  }
+  function addDrug(x,y,z,d){ const g=drugKit(d); g.scale.setScalar(3); g.rotation.y=Math.random()*6.28; g.position.set(x,y,z);
+    T.root.add(g); return addItem('drug',{d,obj:g,x,y:y+.03,z,r:.3,n:DRUGS[d].n,n0:DRUGS[d].n}); }
+
+  /* ---- in your hand ---- */
+  function drugVM(it){
+    const d=it.d, D=DRUGS[d], vm=new THREE.Group(), U=vm.userData;
+    if(D.use==='inject'){
+      // the syringe in your right fist, your thumb on the plunger; your left arm comes up, a belt pulled tight above the elbow
+      const syr=new THREE.Group(), s=syringe(D.col); syr.add(s); vm.add(syr);
+      const f=handFist(.0115); f.position.y=.012; s.add(f); f.children.forEach(c=>{ if(c.geometry===GEO.box) c.scale.z*=.8; });
+      mk(s.userData.plunger,GEO.cyl,skinMat(),0,.064,0,.011,.012,.01);
+      if(d==='krokodil'){ s.traverse(o=>{ if(o.material&&o.material.transparent&&o.material.opacity<.5) o.material.color.set(LCc(0xb8a07a)); }); }
+      const arm=new THREE.Group(); vm.add(arm); arm.visible=false;
+      const E=new THREE.Vector3(-.1,-.1,-.24), W=new THREE.Vector3(.06,-.16,-.52), UA=new THREE.Vector3(-.2,-.085,-.04);
+      barD(arm,E,W,.024,skinMat(),.021); barD(arm,UA,E,.029,skinMat(),.026); mk(arm,GEO.sph,skinMat(),E.x,E.y,E.z,.027,.025,.027);
+      mk(arm,GEO.sph,skinMat(),W.x,W.y-.004,W.z-.02,.03,.026,.036);                        // the fist, pumped closed
+      const vein=DM('vein',{color:0x6a7fb0,roughness:.6}), S=new THREE.Vector3().lerpVectors(E,W,.1).add(_d1.set(0,.023,0));
+      barD(arm,S,_d2.lerpVectors(E,W,.8).add(_d1.set(.004,.02,0)),.0024,vein);
+      const B=new THREE.Vector3().lerpVectors(E,UA,.42); barD(arm,_d2.copy(B).addScaledVector(_d3.subVectors(UA,E).normalize(),-.012),_d4.copy(B).addScaledVector(_d3,.012),.032,DM('leather',{color:0x3a2416,roughness:.8}),.029);
+      mk(arm,GEO.box,DM('buckle',{color:0xb8bcc2,roughness:.3,metalness:.8}),B.x,B.y+.03,B.z,.02,.006,.016);
+      const dot=mk(arm,GEO.sph,DB('blood',{color:0x7a0a0a}),S.x,S.y+.0015,S.z,.0028,.0012,.0028); dot.visible=false;
+      const nd=new THREE.Vector3(-.84,-.5,-.22).normalize();
+      Object.assign(U,{syr,s,arm,dot,site:S,nd,qInj:new THREE.Quaternion().setFromUnitVectors(YUP,nd.clone().negate())});
+      return vm;
+    }
+    if(D.use==='bottle'){ const f=handFist(.021); vm.add(f); const b=rxBottle(); vm.add(b); U.bottle=b; U.rest={p:[.13,-.13,-.3],r:[0,-.2,.08]}; return vm; }
+    const h=handFlat(D.use==='line'?.45:.3); vm.add(h); U.hand=h; U.rest={p:[.11,-.165,-.3],r:[.55,.28,0]};
+    if(D.use==='pills'){ const c=blisterCard(it.n); c.position.set(-.004,.012,-.024); h.add(c); U.card=c; U.rest={p:[.085,-.15,-.27],r:[.75,.3,0]}; }
+    else if(D.use==='line'){ const m=mirrorKit(it.n); m.position.set(0,.013,-.024); h.add(m); U.mir=m; U.rest={p:[.1,-.165,-.3],r:[.5,.22,0]}; }
+    else if(D.use==='bump'){ const b=baggie(.046,.056,true); b.position.set(-.006,.011,-.028); h.add(b); const k=keyMesh(); k.position.set(.028,.016,.0); k.rotation.set(0,-.5,0); h.add(k); U.key=k; U.keyP=k.position.clone(); U.keyR=k.rotation.clone(); }
+    else if(D.use==='pill'){ const p=smileyPill(); p.position.set(0,.014,-.012); h.add(p); U.pill=p; U.pillP=p.position.clone(); const b=baggie(.03,.036,false); b.position.set(.03,.01,.02); b.rotation.y=.5; h.add(b); }
+    return vm;
+  }
+  function drugHand(h,dt){
+    const vm=h.vm, P=T.p, D=DRUGS[h.it.d], U=vm.userData;
+    const sway=Math.sin(T.t*1.3)*.006, bob=Math.sin(P.bob)*P.bobAmp*.25;
+    h.t=Math.min(1,h.t+dt*3); const up=ease(h.t);
+    if(D.use==='inject'){ injectHand(h,dt,sway,bob,up); return; }
+    const R=U.rest, rp=_d1.set(R.p[0]+sway,lerp(R.p[1]-.14,R.p[1],up)+bob,R.p[2]);
+    if(!h.act){ vm.position.copy(rp); vm.rotation.set(R.r[0],R.r[1],R.r[2]); return; }
+    const e=(h.act.t=T.freezeAct!==undefined?T.freezeAct:h.act.t+dt), it=h.it;
+    const pose=(k,x,y,z,rx,ry,rz)=>{ vm.position.set(lerp(rp.x,x,k),lerp(rp.y,y,k),lerp(rp.z,z,k)); vm.rotation.set(lerp(R.r[0],rx,k),lerp(R.r[1],ry,k),lerp(R.r[2],rz,k)); };
+    let done=false;
+    if(D.use==='pills'){ // press one out through the foil, and swallow it
+      if(h.act.i===undefined) h.act.i=12-it.n;
+      const i=h.act.i, c=U.card.userData, k=ease(clamp(e/.3,0,1))*(1-ease(clamp((e-.95)/.35,0,1)));
+      pose(k,.02,-.088,-.2,.95,.06,0);
+      if(e>.22&&!h.act.pop){ h.act.pop=1; SFX.tr.pop&&SFX.tr.pop(); c.dome[i].scale.y*=.18; c.tear[i].visible=true; }
+      if(e>.3&&e<.9){ const s=ease(clamp((e-.3)/.5,0,1)); camLocal(U.card,0,-.05,-.1,_d3); c.pill[i].position.lerpVectors(c.home[i],_d3,s); c.pill[i].rotation.z=s*2.2; }
+      if(e>.86&&!h.act.gulp){ h.act.gulp=1; c.pill[i].visible=false; SFX.tr.gulp(); it.n--; takeDrug('benadryl'); }
+      done=e>1.3;
+    } else if(D.use==='line'){ // the mirror comes up under your nose; the note runs down the line and the powder goes
+      if(h.act.i===undefined) h.act.i=2-it.n;
+      const m=U.mir.userData, L=m.line[h.act.i], k=ease(clamp(e/.45,0,1))*(1-ease(clamp((e-1.45)/.4,0,1)));
+      pose(k,.0,-.105,-.175,1.05,0,0); T.lookDown=.22*k;
+      const b=m.bill, lift=ease(clamp((e-.4)/.25,0,1))*(1-ease(clamp((e-1.4)/.25,0,1))), s=clamp((e-.65)/.7,0,1);
+      if(lift>0){ const lp=_d2.set(lerp(-.033,.025,s),.0075,L.position.z); camLocal(U.mir,.045,-.01,-.06,_d3); const dir=_d4.subVectors(_d3,lp).normalize();
+        const cp=_d3.copy(lp).addScaledVector(dir,.035); b.position.lerpVectors(m.billP,cp,lift); _dq.setFromUnitVectors(YUP,dir); b.quaternion.copy(m.billQ).slerp(_dq,lift); }
+      else { b.position.copy(m.billP); b.quaternion.copy(m.billQ); }
+      if(e>.65&&!h.act.sn){ h.act.sn=1; SFX.tr.sniff(); }
+      if(e>.65&&e<1.4){ L.scale.x=.058*(1-s); L.position.x=-.004+.029*s; }
+      if(e>1.36&&!h.act.hit){ h.act.hit=1; L.visible=false; it.n--; T.kick=.5; takeDrug('cocaine'); }
+      done=e>1.9;
+    } else if(D.use==='bump'){ // the key into the bag, a little heap on its tip, up to your nose
+      const kk=U.key, heap=kk.userData.heap, k=ease(clamp((e-.55)/.4,0,1))*(1-ease(clamp((e-1.35)/.4,0,1)));
+      pose(k,.02,-.125,-.24,.85,0,0); T.lookDown=.2*k;
+      const dip=ease(clamp(e/.35,0,1))*(1-ease(clamp((e-.45)/.2,0,1))), rise=ease(clamp((e-.55)/.4,0,1))*(1-ease(clamp((e-1.3)/.3,0,1)));
+      kk.position.set(lerp(U.keyP.x,-.004,dip),lerp(U.keyP.y,.026,dip),lerp(U.keyP.z,-.002,dip)); kk.rotation.set(-dip*.45,lerp(U.keyR.y,0,Math.max(dip,rise)),0);
+      if(rise>0){ const nose=camLocal(U.hand,0,-.03,-.045,_d3), dir=_d4.subVectors(nose,_d2.set(0,.03,.03)).normalize();
+        kk.position.lerp(_d2.copy(nose).addScaledVector(dir,-.047),rise); _dq.setFromUnitVectors(_d1.set(0,0,-1),dir); kk.quaternion.slerp(_dq,rise); }
+      if(e>.4&&!h.act.scoop){ h.act.scoop=1; heap.visible=true; SFX.tr.paper(.15); }
+      if(e>.98&&!h.act.sn){ h.act.sn=1; SFX.tr.sniff(); }
+      if(e>1.08&&!h.act.hit){ h.act.hit=1; heap.visible=false; it.n--; takeDrug('ketamine'); }
+      done=e>1.8;
+    } else if(D.use==='pill'){ // off your palm and into your mouth
+      const k=ease(clamp(e/.3,0,1))*(1-ease(clamp((e-.9)/.35,0,1))); pose(k,.03,-.13,-.23,.8,.1,0);
+      if(e>.25&&e<.85){ const s=ease(clamp((e-.25)/.5,0,1)); camLocal(U.hand,0,-.05,-.1,_d3); U.pill.position.lerpVectors(U.pillP,_d3,s); U.pill.rotation.x=s*3; }
+      if(e>.8&&!h.act.hit){ h.act.hit=1; U.pill.visible=false; SFX.tr.gulp(); it.n--; takeDrug('mdma'); }
+      done=e>1.3;
+    } else if(D.use==='bottle'){ // the cap off, the bottle tipped back, a mouthful of pills
+      const b=U.bottle, cap=b.userData.cap, k=ease(clamp((e-.25)/.5,0,1))*(1-ease(clamp((e-1.5)/.4,0,1)));
+      const pop=ease(clamp(e/.25,0,1)); cap.position.set(b.userData.capP.x+pop*.05,b.userData.capP.y+pop*.03-Math.max(0,e-.25)*.4,b.userData.capP.z); cap.visible=e<.7;
+      if(e>.05&&!h.act.cap){ h.act.cap=1; SFX.tr.click&&SFX.tr.click(); }
+      vm.position.set(lerp(rp.x,.02,k),lerp(rp.y,-.06,k),lerp(rp.z,-.2,k)); vm.rotation.set(lerp(R.r[0],1.9,k),lerp(R.r[1],0,k),lerp(R.r[2],.3,k));
+      if(e>.62&&!h.act.rat){ h.act.rat=1; SFX.tr.rattle&&SFX.tr.rattle(); }
+      if(e>1.05&&!h.act.hit){ h.act.hit=1; SFX.tr.gulp(); it.n--; takeDrug('rx'); }
+      done=e>1.95;
+    }
+    if(done){ T.lookDown=0; if(it.n<=0){ consume(it); unequip(true); } else h.act=null; }
+  }
+  function injectHand(h,dt,sway,bob,up){
+    const U=h.vm.userData, S=U.syr, it=h.it, restP=_d1.set(lerp(.26,.16,up)+sway,lerp(-.32,-.14,up)+bob,-.34);
+    if(!h.act){ S.position.copy(restP); S.quaternion.copy(VM_REST); U.arm.visible=false; return; }
+    const e=(h.act.t=T.freezeAct!==undefined?T.freezeAct:h.act.t+dt), a=ease(clamp(e/.55,0,1)), ins=ease(clamp((e-.55)/.2,0,1)), push=ease(clamp((e-.8)/.55,0,1)), out=ease(clamp((e-1.45)/.25,0,1)), gone=ease(clamp((e-1.62)/.35,0,1));
+    U.arm.visible=true; U.arm.position.y=lerp(-.22,0,a)-gone*.28; T.lookDown=.16*a*(1-gone);
+    const tip=_d2.copy(U.site).addScaledVector(U.nd,lerp(-.06,.013,ins)-out*.07); tip.y+=U.arm.position.y;
+    const org=_d3.copy(tip).addScaledVector(U.nd,-.083);
+    S.position.lerpVectors(restP,org,a*(1-gone)); S.position.y-=gone*.2; S.quaternion.copy(VM_REST).slerp(U.qInj,a*(1-gone));
+    const pl=U.s.userData.plunger, l=U.s.userData.liq; pl.position.y=lerp(.06,.014,push); l.scale.y=lerp(.052,.004,push); l.position.y=lerp(-.006,-.029,push);
+    if(e>.66&&!h.act.hit){ h.act.hit=1; SFX.tr.inject(); T.pulse=1; T.heartKick=.8; }
+    if(e>1.5) U.dot.visible=true;
+    if(e>2.02){ T.lookDown=0; consume(it); unequip(true); takeDrug(it.d); }
+  }
 
   /* taking it */
+  const NUM=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve'];
   function takeDrug(d){
-    const D=DRUGS[d]; T.used=(T.used||0)+1; T.pulse=Math.max(T.pulse,.6); T.heartKick=.7; hint(D.thought);
+    const D=DRUGS[d]; T.used=(T.used||0)+1; T.pulse=Math.max(T.pulse,.6); T.heartKick=.7;
     const had=k=>!!T.fx[k]&&T.fx[k].t>0;
+    if(d==='benadryl'){ const B=T.bena||(T.bena={n:0,dose:0,since:0,said:0,hat:null,bugs:[],cigT:24,crit:0});
+      B.n++; B.since=0; giveFx('heavy',9); giveFx('blur',7);
+      if(B.n>=4) giveFx('delir',24+(B.n-4)*16);
+      hint(B.n===1?'One pill. The box says one, or two.':B.n===2?'Two. That’s what the box says.':B.n===12?'Twelve. That was all of them.':B.n>=10?NUM[B.n]+'. You don’t remember taking the last one.':NUM[B.n]+'.');
+      return; }
+    hint(D.thought);
     if(d==='rx'){ if(had('heroin')) startOD(); giveFx('heavy',60); giveFx('blur',45); giveFx('numb',55); giveFx('rxd',60); }
-    else if(d==='benadryl'){ giveFx('delir',110); giveFx('blur',50); }
     else if(d==='mdma'){ giveFx('mdma',70); }
     else if(d==='ketamine'){ giveFx('khole',55); giveFx('numb',55); giveFx('deaf',45); }
-    else if(d==='cocaine'){ giveFx('rush',32); giveFx('coke',32); }
+    else if(d==='cocaine'){ giveFx('rush',26); giveFx('coke',30); }
     else if(d==='heroin'){ if(had('heroin')||had('rxd')) startOD(); giveFx('heroin',75); giveFx('numb',75); }
     else if(d==='krokodil'){ if(!T.krok){ T.krok={t:0,pain:3}; SFX.tr.groan&&SFX.tr.groan(); } }
+  }
+
+  /* ---- Benadryl, far too much of it: the dose climbs for a while after the last pill, and stays ----
+     a few: sleepy and heavy. Four or more: a mouth like paper, a racing heart, people at the edge of your eye.
+     Six: things crawling. Eight or more: the man in the hat, who stands and watches, and a cigarette in your
+     hand that isn't there. Eleven: your heart can't keep time any more. */
+  function hatManMesh(){
+    const g=new THREE.Group(), m=T.mats._shadowFig||(T.mats._shadowFig=shadowFigMat()), k=DB('hatK',{color:0x020203});
+    const b=new THREE.Mesh(crowdGeo(false),m); b.scale.set(1.06,1.25,1.06); g.add(b);
+    mk(g,GEO.cone,k,0,.8,0,.37,1.56,.29);                                                 // the long coat, down to the floor
+    mk(g,GEO.sph,m,0,2.02,0,.12,.15,.13);
+    mk(g,GEO.cyl,k,0,2.14,0,.34,.014,.34); mk(g,GEO.cyl,k,0,2.23,0,.15,.17,.15);            // the hat
+    const e=new THREE.Mesh(new THREE.PlaneGeometry(.1,.026),DB('hatEyes',{map:texShadowEyes(),color:LCc(0xff4030).multiplyScalar(1.3),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}));
+    e.position.set(0,2.03,.128); g.add(e); g.userData.eyes=e; g.visible=false; T.scene.add(g); return g;
+  }
+  const BUG_SVG="url(\"data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke="#140f0c" stroke-width="2.2" stroke-linecap="round"><path d="M16 17L6 9M15 20L3 18M16 23L5 29M18 25l-6 10M24 17l10-8M25 20l12-2M24 23l11 6M22 25l6 10"/><ellipse cx="20" cy="24" rx="6" ry="7.5" fill="#120d0a" stroke="rgba(210,196,170,.45)" stroke-width="1"/><circle cx="20" cy="14.5" r="4.2" fill="#120d0a" stroke="rgba(210,196,170,.45)" stroke-width="1"/><ellipse cx="18.4" cy="21.5" rx="1.6" ry="2.4" fill="rgba(230,220,200,.35)" stroke="none"/></svg>')+"\")";
+  function d13css(){ if(document.getElementById('d13css')) return; const st=document.createElement('style'); st.id='d13css'; st.textContent=`
+#truthBugs{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:3;}
+#truthBugs i{position:absolute;left:0;top:0;display:block;will-change:transform;}
+#truthBugs i b{display:block;width:100%;height:100%;background:${BUG_SVG} center/contain no-repeat;animation:tbLeg .12s steps(2) infinite;opacity:.92;}
+@keyframes tbLeg{0%{transform:scaleX(1);}100%{transform:scaleX(-1);}}
+#truthSpeed{position:absolute;inset:-25%;pointer-events:none;opacity:0;z-index:2;mix-blend-mode:screen;
+  background:repeating-conic-gradient(from 0deg,rgba(255,255,255,0) 0deg 2.6deg,rgba(255,255,255,.55) 2.6deg 3.1deg,rgba(255,255,255,0) 3.1deg 6.4deg);
+  -webkit-mask:radial-gradient(circle,transparent 30%,#000 62%);mask:radial-gradient(circle,transparent 30%,#000 62%);}`; document.head.appendChild(st); }
+  function d13el(id){ let el=document.getElementById(id); if(!el){ d13css(); el=document.createElement('div'); el.id=id; $t('truthUI').appendChild(el); } return el; }
+  function bugsStep(dt,want){
+    const B=T.bena, el=d13el('truthBugs'), W=el.clientWidth||innerWidth, H=el.clientHeight||innerHeight;
+    while(B.bugs.length<want){ const s=20+Math.random()*22, e=document.createElement('i'); e.style.width=e.style.height=s+'px'; e.innerHTML='<b></b>'; el.appendChild(e);
+      const side=Math.floor(Math.random()*4); B.bugs.push({e,s,x:side===1?W+20:side===3?-20:Math.random()*W,y:side===0?-20:side===2?H+20:Math.random()*H,a:Math.random()*6.28,v:50+Math.random()*110,turn:0,stop:0}); }
+    while(B.bugs.length>want){ const b=B.bugs.pop(); b.e.remove(); }
+    for(const b of B.bugs){
+      if(b.stop>0){ b.stop-=dt; } else { if(Math.random()<dt*.5) b.stop=.3+Math.random()*1.2;
+        b.turn+=(Math.random()-.5)*dt*9; b.turn*=.9; b.a+=b.turn*dt*4;
+        const cx=b.x-W/2, cy=b.y-H/2, inner=Math.abs(cx)<W*.22&&Math.abs(cy)<H*.2, outer=Math.abs(cx)>W*.4||Math.abs(cy)>H*.38;   // the edges of your eye, but not lost in the dark rim
+        if(inner||outer){ const aw=Math.atan2(cy,cx)+(outer?Math.PI:0); b.a+=((aw-b.a+Math.PI*3)%(Math.PI*2)-Math.PI)*dt*2.4; }
+        b.x+=Math.cos(b.a)*b.v*dt; b.y+=Math.sin(b.a)*b.v*dt;
+        if(b.x<-40||b.x>W+40||b.y<-40||b.y>H+40){ b.a+=Math.PI; b.x=clamp(b.x,-30,W+30); b.y=clamp(b.y,-30,H+30); } }
+      b.e.style.transform=`translate(${b.x.toFixed(1)}px,${b.y.toFixed(1)}px) rotate(${(b.a+Math.PI/2).toFixed(2)}rad)`;
+      b.e.firstChild.style.animationPlayState=b.stop>0?'paused':'running'; }
+  }
+  /* a cigarette between your fingers. You never had one */
+  function ghostCig(){
+    const g=new THREE.Group(), h=handFlat(.55); h.rotation.set(0,0,.2); g.add(h);
+    const cig=new THREE.Group(); cig.position.set(-.004,.014,-.05); cig.rotation.set(0,.9,0); h.add(cig);
+    mk(cig,GEO.cyl,DM('cigP',{color:0xbdb9b0,roughness:.8}),0,0,0,.0045,.058,.0045,0,0,Math.PI/2);
+    mk(cig,GEO.cyl,DM('cigF',{color:0xc8884a,roughness:.8}),.036,0,0,.0046,.018,.0046,0,0,Math.PI/2);
+    const tip=mk(cig,GEO.cyl,DB('cigTip',{color:LCc(0xd8501a)}),-.03,0,0,.0044,.004,.0044,0,0,Math.PI/2);
+    const ash=mk(cig,GEO.cyl,DM('ash',{color:0x6a6a6a,roughness:1}),-.0335,0,0,.0043,.004,.0043,0,0,Math.PI/2);
+    g.userData={tip,ash,t:0}; T.cam.add(g); return g;
+  }
+  function benaStep(dt,play){
+    const B=T.bena; if(!B) return; const P=T.p;
+    B.since+=dt; if(B.since>100&&B.n>0){ B.n=Math.max(0,B.n-dt/14); }                                // it wears off, very slowly
+    B.dose+=(B.n-B.dose)*Math.min(1,dt/6);                                                              // and it creeps up on you
+    const q=B.dose;
+    if(play&&q>3.6&&B.said<1){ B.said=1; hint('Your mouth is completely dry.'); }
+    if(play&&q>5.6&&B.said<2){ B.said=2; hint('Something is crawling at the edge of your eye.'); }
+    if(play&&q>3.5&&Math.random()<dt*(q-3)*.12) T.heartKick=Math.max(T.heartKick||0,.55);
+    if(play&&q>6&&Math.random()<dt*.14) SFX.tr.whisper({gain:.7+Math.random()*.6,pan:Math.random()*1.8-.9});      // someone talking to you, from the next room
+    bugsStep(dt,play&&!T.inTape?Math.round(clamp((q-5.4)*3.2,0,15)):0);
+    // the man in the hat
+    const hm=B.hat||(q>7.2?(B.hat={g:T.hatMesh||(T.hatMesh=hatManMesh()),on:false,t:0,next:5,seen:0,n:0,mode:'far'}):null);
+    if(hm){
+      if(!hm.on){ hm.next-=dt;
+        if(play&&!T.inDream&&!T.inTape&&q>7.2&&hm.next<=0){ let spot=null, mode=hm.n<2?'far':['far','behind','corner'][Math.floor(Math.random()*3)];
+          if(mode==='far') spot=lookSpot(P.yaw,6.5,14,true);
+          if(mode==='behind'){ const d=1.35+Math.random()*.4, x=P.x+Math.sin(P.yaw)*d, z=P.z+Math.cos(P.yaw)*d; if(!solidP(x,z)&&los(P.x,P.z,x,z)) spot={x,z}; }
+          if(mode==='corner'){ for(let i=0;i<12&&!spot;i++){ const a=P.yaw+(Math.random()<.5?1:-1)*(.7+Math.random()*.35), d=3.5+Math.random()*4, x=P.x-Math.sin(a)*d, z=P.z-Math.cos(a)*d; if(!solidP(x,z)&&los(P.x,P.z,x,z)) spot={x,z}; } }
+          if(spot){ Object.assign(hm,{on:true,t:0,seen:0,mode}); hm.g.position.set(spot.x,0,spot.z); hm.g.visible=true; if(mode!=='behind') SFX.tr.hat&&SFX.tr.hat(at3(spot.x,spot.z,.9)); }
+          else hm.next=1.5; } }
+      else { hm.t+=dt; const gp=hm.g.position; hm.g.rotation.y=Math.atan2(P.x-gp.x,P.z-gp.z);
+        const d=Math.hypot(gp.x-P.x,gp.z-P.z), ang=viewAngle(gp.x,gp.z), sees=ang<.55&&los(P.x,P.z,gp.x,gp.z);
+        hm.g.userData.eyes.visible=d<7;
+        let gone=0;
+        if(hm.mode==='behind'){ if(sees&&!hm.jump){ hm.jump=hm.t; T.stat=1; SFX.tr.sting&&SFX.tr.sting({gain:1}); T.heartKick=1; T.pulse=1; T.kick=.6; } if(hm.jump&&hm.t-hm.jump>.5) gone=1; else if(hm.t>9) gone=1; }
+        else { if(sees){ hm.seen+=dt; T.heartKick=Math.max(T.heartKick||0,.4); } if(hm.seen>2.4||d<3.6||hm.t>13||(hm.mode==='corner'&&ang<.3)) gone=hm.seen>.2||d<3.6?2:1; }
+        if(!play||q<6.6) gone=gone||1;
+        if(gone){ hm.on=false; hm.jump=0; hm.g.visible=false; hm.n++; hm.next=7+Math.random()*9;
+          if(gone===2){ T.stat=Math.max(T.stat,.7); SFX.tr.stat(at3(gp.x,gp.z,1.1),.45,1); stutterNear(gp.x,gp.z); }
+          if(hm.n===1&&play) setTimeout(()=>{ if(T&&T.bena) hint('He was wearing a hat.'); },1400); } } }
+    // the cigarette you're holding
+    if(B.cig){ const c=B.cig, u=c.userData; u.t+=dt; const t=u.t, rise=ease(clamp(t/.5,0,1)), drag=Math.sin(clamp((t-1.6)/1.4,0,1)*Math.PI);
+      c.position.set(.12-drag*.1,lerp(-.34,-.17,rise)+drag*.09,-.3+drag*.12); c.rotation.set(.5+drag*.5,.2,drag*.4);
+      u.tip.material.color.copy(LCc(0xd8501a)).multiplyScalar(1+drag*1.1);
+      if(t>1.7&&!u.dr){ u.dr=1; SFX.tr.drag&&SFX.tr.drag(); }
+      if(t>4.2||T.hand||!play){ T.cam.remove(c); c.traverse(o=>{ if(o.geometry&&!GEOSET.has(o.geometry)) o.geometry.dispose(); }); B.cig=null; if(play&&!T.hand){ T.stat=Math.max(T.stat,.55); hint('There’s nothing in your hand. There never was.'); } } }
+    else if(play&&q>7.5&&!T.hand&&!T.invOpen&&!T.doc){ B.cigT-=dt; if(B.cigT<=0){ B.cigT=26+Math.random()*16; B.cig=ghostCig(); hint('You’re holding a cigarette.'); } }
+    // eleven or twelve: the heart gives out
+    if(play&&B.n>=10.5){ B.crit+=dt;
+      if(Math.random()<dt*2.2) T.heartKick=1;
+      if(B.crit>7&&B.said<3){ B.said=3; hint('Your heart is skipping beats.'); }
+      if(B.crit>24){ T.kick=1; T.stat=Math.max(T.stat,.4+Math.random()*.5); T.pulse=1; if(B.said<4){ B.said=4; hint('You can’t stop shaking.'); } }
+      if(B.crit>28){ B.n=0; B.crit=0; die('benadryl'); } }
+  }
+  function drug13Step(dt,play){
+    benaStep(dt,play);
+    // cocaine: everything fast — you, the lights, the whole building; the edges of your eye streak
+    const ck=lv('coke'); T.tFast=1+.9*ck;
+    const sp=ck>.02?d13el('truthSpeed'):document.getElementById('truthSpeed');
+    if(sp){ sp.style.opacity=(ck*.5*(.75+.25*Math.random())).toFixed(3); if(ck>.02) sp.style.transform='rotate('+(Math.random()*6).toFixed(2)+'deg) scale('+(1+Math.random()*.04).toFixed(3)+')'; }
+    // krokodil: your hands rot with the rest of you
+    const k=T.krok?Math.min(1,T.krok.t/40):0; if(k!==T.skinK){ T.skinK=k; skinMat().color.copy(LCc(SKIN)).lerp(LCc(ROT),k*.9); }
+  }
+  function drug13Reset(){
+    const B=T.bena; if(B){ if(B.hat){ B.hat.g.visible=false; B.hat.on=false; } B.bugs.forEach(b=>b.e.remove()); B.bugs.length=0; if(B.cig){ T.cam.remove(B.cig); B.cig=null; } }
+    T.bena=null; T.tFast=1; T.lookDown=0;
+    const sp=document.getElementById('truthSpeed'); if(sp) sp.style.opacity=0;
+    if(T.skinK){ T.skinK=0; skinMat().color.copy(LCc(SKIN)); }
   }
   function startOD(){ if(T.od) return; T.od={t:0,br:1.5}; }
   function drugSpeed(){ const k=T.krok?Math.min(1,T.krok.t/40):0; return (1-.5*lv('khole'))*(1-.3*lv('heroin'))*(1+.12*lv('mdma'))*(1-.35*k); }
@@ -21716,6 +22063,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     e.position.set(0,1.645,.115); g.add(e); g.visible=false; T.scene.add(g); return {g,on:false,t:0}; }
   function drugStep(dt){
     const P=T.p, play=T.phase==='play';
+    drug13Step(dt,play);
     // benadryl: figures in the corner of your eye, and voices
     const dl=lv('delir');
     if(!T.delir) T.delir={figs:[],next:4};
@@ -21747,7 +22095,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     const md=lv('mdma'); if(md>.3&&!T.padOn){ T.padOn=1; SFX.tr.pad&&SFX.tr.pad(true); } else if(md<.2&&T.padOn){ T.padOn=0; SFX.tr.pad&&SFX.tr.pad(false); }
     // cocaine: the heart, and the feeling someone's right behind you
     const ck=lv('coke'); if(ck>.4&&play){ if(Math.random()<dt*.9) T.heartKick=Math.max(T.heartKick||0,.6); if(Math.random()<dt*.12) SFX.tr.whisper({gain:.6,pan:Math.random()<.5?-.9:.9}); }
-    T.drugFov=ck*7+md*2-lv('khole')*6;
+    T.drugFov=ck*11+md*2-lv('khole')*6;
   }
   function drugPost(C,F){
     const md=lv('mdma'), kh=lv('khole'), hr=lv('heroin'), dl=lv('delir'), ck=lv('coke'), kr=T.krok?Math.min(1,T.krok.t/40):0;
@@ -21767,6 +22115,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
   }
   function drugCam(dt){
     const cam=T.cam, P=T.p, kh=lv('khole'), md=lv('mdma'), ck=lv('coke');
+    if(T.lookDown) cam.rotation.x-=T.lookDown;                                            // looking down at your arm, or the mirror
     if(md>.05) cam.rotation.z+=Math.sin(T.t*38)*.0018*md;                                   // teeth clenched
     if(ck>.05){ cam.rotation.x+=(Math.random()-.5)*.004*ck; cam.rotation.y+=(Math.random()-.5)*.004*ck; }
     if(T.nodK>0) cam.rotation.x-=T.nodK*.35;
@@ -21779,7 +22128,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     else if(T.oobWas){ cam.layers.disable(2); if(T.hand) T.hand.vm.visible=true; }
     T.oobWas=ob>.02;
   }
-  function drugReset(){ T.od=null; T.krok=null; T.nod=undefined; T.nodK=0; T.redK=0; T.drugFov=0;
+  function drugReset(){ drug13Reset(); T.od=null; T.krok=null; T.nod=undefined; T.nodK=0; T.redK=0; T.drugFov=0;
     if(T.delir) T.delir.figs.forEach(f=>{ f.on=false; f.g.visible=false; });
     if(T.padOn){ T.padOn=0; SFX.tr.pad&&SFX.tr.pad(false); } if(T.oobWas){ T.cam.layers.disable(2); T.oobWas=false; } }
 
@@ -21813,7 +22162,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
   };
   const hasBullet=()=>T.inv.some(i=>i.kind==='bullet');
   function iconFor(it){ const col=it.kind==='needle'?'#'+NEEDLES[it.fx].col.toString(16).padStart(6,'0'):it.kind==='vial'?'#9aa890':it.kind==='blotter'?'#ff7ab8':it.kind==='drug'?'#'+DRUGS[it.d].col.toString(16).padStart(6,'0'):'none';
-    return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" style="--liq:${col}">${ICON[it.kind]}</svg>`; }
+    return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" style="--liq:${col}">${it.kind==='drug'?DICON[it.d]:ICON[it.kind]}</svg>`; }
   function hint(txt){ const h=$t('truthHint'); h.textContent=txt; h.classList.add('on'); clearTimeout(T.hintTo); T.hintTo=setTimeout(()=>h.classList.remove('on'),3800); }
   function toInventory(it){
     it.taken=true; it.obj.visible=false; T.inv.push(it);
@@ -21853,7 +22202,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     else if(it.kind==='gun') vm=gunMesh();
     else if(it.kind==='needle') vm=syringe(NEEDLES[it.fx].col);
     else if(it.kind==='vial') vm=vialMesh();
-    else if(it.kind==='drug') vm=drugMesh(it.d);
+    else if(it.kind==='drug') vm=drugVM(it);
     else { vm=new THREE.Mesh(new THREE.PlaneGeometry(.04,.04),T.mats.blot); }
     T.cam.add(vm); T.hand={it,vm,t:0,act:null}; SFX.tr.glass(it.kind==='needle'||it.kind==='vial'?1:.3);
   }
@@ -21874,6 +22223,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
   }
   function handStep(dt){
     const h=T.hand; if(!h) return; const vm=h.vm, P=T.p, k=h.it.kind;
+    if(k==='drug'){ drugHand(h,dt); return; }
     const sway=Math.sin(T.t*1.3)*.006, bob=Math.sin(P.bob)*P.bobAmp*.25;
     h.t=Math.min(1,h.t+dt*3); const up=ease(h.t);
     if(k==='gun'){ // held out in front of you; or up, against the side of your head, shaking
@@ -22261,7 +22611,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     if(T.phase==='wake') wakeStep(dt); else if(T.phase==='play') playStep(dt); else if(T.phase==='collapse') collapseStep(dt); else if(T.phase==='shot') shotStep(dt); else if(T.phase==='dead') deadStep(dt);
     else if(T.phase==='suck') suckStep(dt); else if(T.phase==='cut') cutStep(dt); else if(T.phase==='scare') scareStep(dt); else if(T.phase==='erase') eraseStep(dt); else if(T.phase==='garden') gardenStep(dt); else if(T.phase==='never') neverStep(dt);
     if(!on) return;
-    doorsStep(dt); effectsStep(dt); drugStep(dt); lsdStep(dt); dreamStep(dt); tapeStep(dt); body(dt); lightsStep(dt); ambientStep(dt); soundStep(); figureStep(dt); herStep(dt); camStep(dt); handStep(dt); dustStep(dt);
+    doorsStep(dt); effectsStep(dt); drugStep(dt); lsdStep(dt); dreamStep(dt); tapeStep(dt); body(dt); lightsStep(dt*(T.tFast||1)); ambientStep(dt*(T.tFast||1)); soundStep(); figureStep(dt); herStep(dt); camStep(dt); handStep(dt); dustStep(dt);
     if(T.phase==='play'&&!T.doc&&!T.paused&&!T.invOpen&&!T.choice){ T.target=pickTarget(); prompt(!!T.target); } else { T.target=null; prompt(false); }
     postStep(dt); render();
     T.pf.acc+=dt; T.pf.n++;
@@ -22288,7 +22638,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
       if(e.code==='KeyQ'&&!e.repeat&&T.hand&&!T.hand.act){ if(T.choice) toggleAim(); else if(T.hand.aimOn) T.hand.aimOn=false; else unequip(); }
       if(e.code==='Escape'&&T.doc) closeDoc(); };
     H.ku=e=>{ if(T) T.keys[e.code]=false; };
-    H.mm=e=>{ if(!on||T.phase!=='play'||T.doc||T.paused||T.invOpen||!locked()) return; const s=.0021*(lv('mirror')>.5?-1:1); T.p.yaw-=e.movementX*s; T.p.pitch=clamp(T.p.pitch-e.movementY*.0021,-1.4,1.4); if(T.lookLim) T.p.yaw=clamp(T.p.yaw,T.lookC-T.lookLim,T.lookC+T.lookLim); };
+    H.mm=e=>{ if(!on||T.phase!=='play'||T.doc||T.paused||T.invOpen||!locked()) return; const s=.0021*(lv('mirror')>.5?-1:1)*(1+.45*lv('coke')); T.p.yaw-=e.movementX*s; T.p.pitch=clamp(T.p.pitch-e.movementY*.0021,-1.4,1.4); if(T.lookLim) T.p.yaw=clamp(T.p.yaw,T.lookC-T.lookLim,T.lookC+T.lookLim); };
     H.md=e=>{ if(!on||T.touchMode||T.invOpen) return; if(!locked()){ if(T.phase!=='shot'&&T.phase!=='never') lock(); return; }
       if(T.doc){ closeDoc(); return; } if(e.button===0) interact(); else if(e.button===2&&T.hand&&!T.hand.act){ if(T.choice) toggleAim(); else if(T.hand.aimOn) T.hand.aimOn=false; else unequip(); } };
     H.plc=()=>{ if(!on||T.touchMode) return; if(locked()){ setPaused(false); T.invUnlock=false; } else if(T.invUnlock){ } else if(T.phase==='play') setPaused(true); };
@@ -22433,7 +22783,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
       hq(){ T.noGov=true; T.rs=1; sizeTargets(); },
       look(yaw,pitch){ T.p.yaw=yaw; T.p.pitch=pitch; },spawn:spawnFigure,her:herSpawn,grid:()=>grid,
       take(kind,fx){ const it=T.items.find(i=>i.kind===kind&&!i.taken&&(fx===undefined||i.fx===fx||i.v===fx||i.d===fx)); if(it) toInventory(it); return !!it; },dreset(){ drugReset(); T.fx={}; },
-      equip(kind){ const it=T.inv.find(i=>i.kind===kind); if(it) equip(it); },act:handAction,inv:openInv,closeInv,die,lsd:startLSD,dream:enterDream,
+      equip(kind,d){ const it=T.inv.find(i=>i.kind===kind&&(d===undefined||i.d===d)); if(it) equip(it); },act:handAction,inv:openInv,closeInv,die,lsd:startLSD,dream:enterDream,
       poison(){ startPoison(4); },open:openPhantom,collapse:startCollapse,enterDream,wakeUp,place:placeHouse,poseSelf,hgt:(x,z)=>hgt(x,z),DX,DZ,
       aim(){ const h=T.hand; if(h&&h.it.kind==='gun'){ h.aimOn=true; h.aimK=1; T.aimK=1; } },
       tape:insertTape,goScene,cutTo,scare:startScare,fireChoice,toggleAim,garden:startGarden,openSafe}};
