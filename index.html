@@ -2193,7 +2193,7 @@ input[type=range]{accent-color:var(--acc);}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.8.1 · BETA</span>
+    <span class="hub-version">VERSION 3.8.2 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2313,7 +2313,7 @@ input[type=range]{accent-color:var(--acc);}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.8.1</div></div>
+</svg><div class="set-ver">VERSION 3.8.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -2580,6 +2580,7 @@ const State = {
   freeCrates: 0,           // crates from the Trophy Road, opened before any coins are spent
   stats: {},               // what the mode achievements count: knockouts, rounds, endings
   missionsDone: [],        // the mode achievements already paid out
+  truthSalvia: false,      // The Truth: the salvia, once found, is yours in every run
   infCoins: false          // the admin code: coins without end
 };
 const STATE_DEFAULTS=JSON.stringify(State);   // how a brand-new player starts (Reset game goes back to it)
@@ -21754,8 +21755,8 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     $t('truthDream').classList.remove('on'); T.dreamShown=0;
     if(T.inDream) leaveDreamWorld();
     salviaReset();
-    drugReset(); T.fx={}; T.poison=null; T.lsd=null; T.inv=[]; T.flashOn=false; T.echo=[]; T.blackout=0; T.aimK=0; T.gy=0; T.col=null;
-    for(const it of T.items){ it.taken=false; it.obj.visible=true; if(it.n0!==undefined) it.n=it.n0; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; }
+    drugReset(); T.fx={}; T.poison=null; T.lsd=null; T.inv=T.inv.filter(isSalvia); T.invSel=0; T.flashOn=false; T.echo=[]; T.blackout=0; T.aimK=0; T.gy=0; T.col=null;
+    for(const it of T.items){ if(T.inv.includes(it)) continue; it.taken=false; it.obj.visible=true; if(it.n0!==undefined) it.n=it.n0; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; }
     T.bulletBack=0; herHide(false); closePhantom(true); T.fadeOut=null; if(T.fig){ T.root.remove(T.fig.m); T.fig=null; }
     T.deaths++; T.dRoll=0; T.black=0; T.white=0; T.pulse=0; T.stat=0;
     const P=T.p; Object.assign(P,{x:3.3,z:7.6,y:.98,yaw:Math.PI+.35,pitch:1.42,vx:0,vz:0,stam:1,exh:0,exK:0});
@@ -21873,7 +21874,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     krokodil:{name:'Krokodil',          use:'inject',verb:'click to inject',      col:0xc8862a,n:1,
               desc:'A dirty syringe of something cloudy and orange. It smells like petrol.',thought:'It burns. It won’t stop burning.'},
     salvia:  {name:'Salvia divinorum',  use:'smoke', verb:'click to light it and breathe in',col:0x4a7a3a,n:1,
-              desc:'A little bag of dried, dark-green leaves, a small glass pipe and a lighter. The bag says Salvia divinorum, 20x.',thought:''}
+              desc:'A little bag of dried, dark-green leaves, a small glass pipe and a lighter. The bag says Salvia divinorum, 20x. However much you smoke, there is always a little left.',thought:''}
   };
   const DICON={
     rx:'<rect x="10" y="11" width="12" height="17" rx="2"/><rect x="9" y="5" width="14" height="6" rx="1.5"/><path class="liq" d="M12 16h8v7h-8z"/>',
@@ -22105,7 +22106,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
       if(e>.55&&!h.act.fl){ h.act.fl=1; SFX.tr.click&&SFX.tr.click(); }
       if(e>.7&&!h.act.dr){ h.act.dr=1; SFX.tr.drag&&SFX.tr.drag(); }
       const glow=clamp((e-.7)/.9,0,1)*(1-clamp((e-2.1)/.6,0,1)); U.pipe.userData.ember.material.emissive.copy(LCc(0xff5a18)).multiplyScalar(glow*1.6);
-      if(e>2.4){ it.n--; consume(it); unequip(true); T.lookDown=0; SFX.tr.exhale&&SFX.tr.exhale(); takeDrug('salvia'); return; }
+      if(e>2.4){ unequip(true); T.lookDown=0; SFX.tr.exhale&&SFX.tr.exhale(); takeDrug('salvia'); return; }
       done=false;
     } else if(D.use==='pill'){ // off your palm and into your mouth
       const k=ease(clamp(e/.3,0,1))*(1-ease(clamp((e-.9)/.35,0,1))); pose(k,.03,-.13,-.23,.8,.1,0);
@@ -22376,8 +22377,10 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
   function iconFor(it){ const col=it.kind==='needle'?'#'+NEEDLES[it.fx].col.toString(16).padStart(6,'0'):it.kind==='vial'?'#9aa890':it.kind==='blotter'?'#ff7ab8':it.kind==='drug'?'#'+DRUGS[it.d].col.toString(16).padStart(6,'0'):'none';
     return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" style="--liq:${col}">${it.kind==='drug'?DICON[it.d]:ICON[it.kind]}</svg>`; }
   function hint(txt){ const h=$t('truthHint'); h.textContent=txt; h.classList.add('on'); clearTimeout(T.hintTo); T.hintTo=setTimeout(()=>h.classList.remove('on'),3800); }
+  const isSalvia=it=>it&&it.kind==='drug'&&it.d==='salvia';
   function toInventory(it){
     it.taken=true; it.obj.visible=false; T.inv.push(it);
+    if(isSalvia(it)&&!State.truthSalvia){ State.truthSalvia=true; saveState(); }
     if(it.final){ startChoice(it); return; } if(it.kind==='tape'){ T.hinted=1; hint('There is a television in this room.'); }
     if(!T.hinted){ T.hinted=1; hint(T.touchMode?'tap the bag to see what you carry':'1 — what you carry'); }
   }
@@ -23378,6 +23381,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     document.getElementById('game-screen').classList.remove('sanity','kira-dark');
     ['truthEnd','truthDoc','truthPause','truthInv','truthDream','truthHint','truthLines','truthChoice','truthCap','truthNew'].forEach(id=>$t(id).classList.remove('on')); $t('truthOsd').classList.remove('on','rew');
     build(); setupPost(); resize(); bind();
+    if(State.truthSalvia){ const sv=T.items.find(isSalvia); if(sv){ sv.taken=true; sv.obj.visible=false; T.inv.push(sv); } }
     T.raf=Frame.req(frame);
     if(!touch) lock();
   }
