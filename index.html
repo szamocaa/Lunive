@@ -2112,6 +2112,115 @@ input[type=range]{accent-color:var(--acc);}
   .pet-abil{gap:3px;margin:4px 0 2px;} .pet-abil .pa{padding:3px 8px;} .pet-abil .pa span{font-size:10px;line-height:1.25;} .pet-abil .pa b{font-size:9px;margin-bottom:1px;}
   .stash-mode{bottom:66px;} .stash-mode button{padding:5px 10px;font-size:10px;}
 }
+
+/* =====================================================================
+   LOBBY v4 — no character card; an aurora and sparkles drifting up
+   behind the menus; glossy, colour-coded buttons that shine when you
+   point at them, icons that hop now and then, and a PLAY that breathes.
+   ===================================================================== */
+#hub .hero-tag{display:none !important;}
+#hub .lb-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+#hub .lb-aura{position:absolute;left:-15%;right:-15%;top:-38%;height:72%;opacity:.5;mix-blend-mode:screen;filter:blur(30px);
+  background:radial-gradient(38% 48% at 22% 55%,rgba(140,118,255,.6),transparent 70%),radial-gradient(34% 44% at 72% 42%,rgba(255,118,196,.5),transparent 70%),radial-gradient(30% 40% at 50% 62%,rgba(90,200,255,.42),transparent 72%);
+  animation:lbAura 16s ease-in-out infinite alternate;will-change:transform;}
+@keyframes lbAura{0%{transform:translate3d(-5%,0,0) scale(1);}50%{transform:translate3d(3%,5%,0) scale(1.1);}100%{transform:translate3d(6%,-3%,0) scale(1.03);}}
+#hub .lb-floor{position:absolute;left:0;right:0;bottom:0;height:36%;background:linear-gradient(180deg,transparent,rgba(12,8,30,.4));}
+#hub .lb-sp{position:absolute;bottom:-12px;width:7px;height:7px;border-radius:50%;opacity:0;
+  background:radial-gradient(circle,#fff 0 28%,rgba(255,255,255,0) 70%);box-shadow:0 0 12px 3px rgba(255,214,246,.55);
+  animation:lbRise var(--d,11s) linear infinite;animation-delay:var(--w,0s);will-change:transform,opacity;}
+#hub .lb-sp:nth-child(3n){box-shadow:0 0 12px 3px rgba(170,220,255,.6);} #hub .lb-sp:nth-child(4n){box-shadow:0 0 12px 3px rgba(255,236,170,.6);}
+@keyframes lbRise{0%{transform:translate3d(0,0,0) scale(calc(var(--z,1)*.6));opacity:0;}12%{opacity:.85;}75%{opacity:.6;}100%{transform:translate3d(var(--x,20px),-95vh,0) scale(var(--z,1));opacity:0;}}
+
+/* the brand floats */
+#hub .brand{animation:brandFloat 6s ease-in-out infinite;}
+@keyframes brandFloat{50%{transform:translateY(-4px) rotate(-.6deg);}}
+
+/* ---------- the menu ---------- */
+#hub .ci:nth-child(1){--k:0;} #hub .ci:nth-child(2){--k:1;} #hub .ci:nth-child(3){--k:2;} #hub .ci:nth-child(4){--k:3;} #hub .ci:nth-child(5){--k:4;} #hub .ci:nth-child(6){--k:5;}
+#hub .ci{--ci-bg:linear-gradient(100deg,color-mix(in srgb,var(--ci,#8fa0ff) 22%,rgba(16,18,34,.93)) 0%,rgba(16,18,34,.88) 52%,rgba(12,14,28,.8) 100%);
+  --ci-shine:linear-gradient(112deg,transparent 38%,rgba(255,255,255,.16) 50%,transparent 62%);
+  border-radius:16px;border:1px solid rgba(255,255,255,.1);
+  background:var(--ci-shine) 170% 0/260% 100% no-repeat,var(--ci-bg);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 3px 0 0 color-mix(in srgb,var(--ci,#fff) 70%,transparent),0 10px 26px -10px rgba(0,0,0,.55);
+  transition:transform .35s cubic-bezier(.2,.9,.25,1.35),border-color .2s,box-shadow .25s,background-position .75s ease;}
+#hub .ci:hover,#hub .ci.on,#hub .ci:focus-visible{background:var(--ci-shine) -70% 0/260% 100% no-repeat,
+  linear-gradient(100deg,color-mix(in srgb,var(--ci,#8fa0ff) 34%,rgba(18,20,38,.94)) 0%,rgba(18,20,38,.9) 58%,rgba(14,16,30,.84) 100%);
+  border-color:color-mix(in srgb,var(--ci,#fff) 70%,transparent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 3px 0 0 var(--ci,#fff),0 0 0 1px color-mix(in srgb,var(--ci,#fff) 30%,transparent),0 14px 32px -10px color-mix(in srgb,var(--ci,#fff) 60%,transparent);}
+#hub .ci::before,#hub .ci.on::before,#hub .ci:focus-visible::before{display:none;}
+#hub .ci-n{display:flex;align-items:center;justify-content:center;gap:0;padding:0;font-size:0;line-height:0;border-radius:12px;border:1px solid rgba(255,255,255,.3);
+  background:linear-gradient(150deg,color-mix(in srgb,var(--ci,#8fa0ff) 80%,#fff) 0%,var(--ci,#8fa0ff) 42%,color-mix(in srgb,var(--ci,#8fa0ff) 52%,#1a1030) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.2),0 6px 16px -5px color-mix(in srgb,var(--ci,#fff) 70%,transparent);
+  transition:transform .4s cubic-bezier(.2,.9,.25,1.6),box-shadow .25s;}
+#hub .ci.on .ci-n,#hub .ci:focus-visible .ci-n,#hub .ci:hover .ci-n{transform:scale(1.1) rotate(-7deg);
+  background:linear-gradient(150deg,color-mix(in srgb,var(--ci,#8fa0ff) 70%,#fff) 0%,var(--ci,#8fa0ff) 45%,color-mix(in srgb,var(--ci,#8fa0ff) 60%,#1a1030) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.2),0 0 20px color-mix(in srgb,var(--ci,#fff) 75%,transparent);}
+#hub .ci-ic,#hub .ci.on .ci-ic,#hub .ci:focus-visible .ci-ic{display:block;flex:none;margin:0;stroke:#fff;stroke-width:2.1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));}
+#hub .ci-ic{animation:ciHop 8s ease-in-out infinite;animation-delay:calc(2.4s + var(--k,0)*.45s);}
+@keyframes ciHop{0%,84%,100%{transform:none;}88%{transform:translateY(-3px) rotate(-10deg) scale(1.15);}92%{transform:translateY(0) rotate(5deg);}96%{transform:rotate(-2deg);}}
+#hub .ci b{letter-spacing:.09em;text-shadow:0 2px 10px rgba(0,0,0,.45);}
+#hub .ci em{border-radius:999px;border:0;padding:3px 9px;background:rgba(255,255,255,.14);}
+#hub .ci em.hot{background:linear-gradient(135deg,#ff6b88,#ff2e5a);box-shadow:0 0 14px rgba(255,50,90,.5);}
+#hub.enter .ci{animation:ciIn .6s cubic-bezier(.2,.9,.25,1.15) backwards;animation-delay:calc(.1s + var(--k,0)*.055s);}
+@keyframes ciIn{from{opacity:0;transform:translateX(48px) scale(.96);}}
+@media (min-width:861px){
+  #hub .ci,#hub .ci.on,#hub .ci:focus-visible{width:276px;}
+  #hub .ci:hover,#hub .ci.on,#hub .ci:focus-visible{transform:translateX(-8px);}
+  #hub .ci-n{width:42px;height:42px;} #hub .ci-ic{width:21px;height:21px;}
+}
+
+/* ---------- the chips along the top ---------- */
+#hub .res .chip{border-radius:999px;border:1px solid rgba(255,255,255,.13);background:linear-gradient(180deg,rgba(34,38,64,.92),rgba(14,16,30,.88));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 20px -8px rgba(0,0,0,.55);transition:transform .25s cubic-bezier(.2,.9,.3,1.6),border-color .2s,box-shadow .2s;}
+#hub .res .chip:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 24px -8px rgba(0,0,0,.6),0 0 16px rgba(190,170,255,.25);}
+#hub .res .chip.gear{border-radius:50%;}
+#hub .res .chip.gear svg{transition:transform .5s cubic-bezier(.2,.9,.3,1.4);} #hub .res .chip.gear:hover svg{transform:rotate(75deg);}
+#hub .res .coin-ic{animation:coinFlip 6s ease-in-out infinite;} #hub .res .tro-ic{animation:coinFlip 6s ease-in-out 3s infinite;}
+@keyframes coinFlip{0%,82%,100%{transform:none;}88%{transform:rotateY(180deg) scale(1.15);}94%{transform:rotateY(360deg);}}
+#hub .me,#hub .road-chip{border-radius:16px;}
+#hub .me-av{border-radius:12px;box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 70%,transparent),0 0 16px color-mix(in srgb,var(--acc) 40%,transparent);}
+
+/* ---------- the news card: bottom left now, with a glow running round its edge ---------- */
+@media (min-width:861px){ #hub .news{top:auto;bottom:66px;left:24px;width:300px;} }
+#hub .news{border:0;border-radius:16px;overflow:hidden;isolation:isolate;background:transparent;box-shadow:0 12px 30px -10px rgba(255,40,80,.45);}
+#hub .news::before{content:'';position:absolute;inset:-80%;z-index:-2;border-radius:0;background:conic-gradient(from 0deg,#ff2a55,#ffb13d 12%,#ff2a55 24%,rgba(255,42,85,0) 34%,rgba(255,42,85,0) 60%,#8a3dff 74%,#ff2a55 88%);
+  animation:newsSpin 5s linear infinite;}
+#hub .news::after{content:'';position:absolute;inset:1.5px;left:1.5px;width:auto;top:1.5px;bottom:1.5px;z-index:-1;border-radius:14.5px;transform:none;animation:none;
+  background:linear-gradient(135deg,rgba(46,10,26,.97),rgba(16,8,20,.96));}
+@keyframes newsSpin{to{transform:rotate(1turn);}}
+#hub .news:hover{transform:translateY(-2px);box-shadow:0 16px 36px -10px rgba(255,40,80,.6);}
+
+/* ---------- the game mode and PLAY ---------- */
+#hub .map-slab{border-radius:16px;border:1px solid rgba(255,255,255,.13);
+  background:linear-gradient(100deg,color-mix(in srgb,var(--b,#6fa4ff) 30%,rgba(16,18,34,.93)),rgba(14,16,30,.88) 62%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 10px 26px -10px rgba(0,0,0,.55);transition:transform .3s cubic-bezier(.2,.9,.3,1.5),border-color .2s,box-shadow .2s;}
+#hub .map-slab:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.32);background:linear-gradient(100deg,color-mix(in srgb,var(--b,#6fa4ff) 42%,rgba(18,20,38,.94)),rgba(16,18,32,.9) 62%);}
+#hub .ms-ic{border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 16px -4px rgba(0,0,0,.55);}
+#hub .ms-go{border-radius:999px;}
+#hub .play-slab{border-radius:20px;border:2px solid rgba(255,251,226,.92);
+  background:radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.55),transparent 45%),linear-gradient(160deg,#fff4b0 0%,#ffd84a 32%,#ffb52e 72%,#ff9526 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -5px 0 rgba(170,80,0,.28),0 0 0 5px rgba(255,196,60,.16),0 16px 40px -10px rgba(255,150,30,.65);
+  animation:playBreath 2.8s ease-in-out infinite;transition:transform .25s cubic-bezier(.2,.9,.3,1.6),filter .2s;}
+#hub .play-slab:hover{transform:translateY(-3px) scale(1.015);filter:brightness(1.06) saturate(1.05);
+  background:radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.6),transparent 45%),linear-gradient(160deg,#fff7c4 0%,#ffe066 32%,#ffbf3a 72%,#ff9f30 100%);}
+#hub .play-slab:active{transform:translateY(1px) scale(.985);}
+@keyframes playBreath{0%,100%{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -5px 0 rgba(170,80,0,.28),0 0 0 5px rgba(255,196,60,.16),0 16px 40px -10px rgba(255,150,30,.65);}
+  50%{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -5px 0 rgba(170,80,0,.28),0 0 0 11px rgba(255,196,60,.06),0 18px 52px -8px rgba(255,150,30,.85);}}
+#hub .play-slab b{letter-spacing:.08em;text-shadow:0 2px 0 rgba(255,255,255,.5);}
+#hub .ps-arrow{animation:psNudge 1.3s ease-in-out infinite;}
+@keyframes psNudge{50%{translate:7px -50%;}}
+#hub .play-glow{opacity:.36;filter:blur(18px);animation:glowPulse 2.8s ease-in-out infinite;}
+@keyframes glowPulse{50%{opacity:.55;}}
+#hub .foot-link{border-radius:999px;}
+
+/* phones: the entrance slides up instead, and a narrow screen keeps the icons a little smaller */
+@media (max-width:860px){ @keyframes ciIn{from{opacity:0;transform:translateY(14px) scale(.96);}} #hub .ci{box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 3px 0 0 color-mix(in srgb,var(--ci,#fff) 70%,transparent),0 6px 16px -8px rgba(0,0,0,.55);} }
+@media (min-width:861px) and (max-height:760px){ #hub .ci-n{width:38px;height:38px;} #hub .ci-ic{width:19px;height:19px;} }
+@media (min-width:861px) and (max-height:640px){ #hub .ci-n{width:30px;height:30px;} #hub .ci-ic{width:16px;height:16px;} #hub .news{bottom:58px;} #hub .map-slab{height:54px;} #hub .cmd{top:68px;} }
+@media (max-width:1000px) and (max-height:500px){ #hub .ci-n{width:23px;height:23px;border-radius:7px;} #hub .ci-ic{width:13px;height:13px;} }
+body.lite-ui #hub .lb-aura,body.lite-ui #hub .lb-sp,body.lite-ui #hub .ci-ic,body.lite-ui #hub .news::before,body.lite-ui #hub .play-slab,body.lite-ui #hub .brand,body.lite-ui #hub .ps-arrow,body.lite-ui #hub .res .coin-ic{animation:none !important;}
+body.lite-ui #hub .lb-sp{display:none;}
+@media (prefers-reduced-motion:reduce){ #hub .lb-aura,#hub .lb-sp,#hub .ci-ic,#hub .news::before,#hub .play-slab,#hub .brand,#hub .ps-arrow,#hub .res .coin-ic,#hub.enter .ci{animation:none !important;} }
 </style>
 </head>
 <body>
@@ -2163,6 +2272,7 @@ input[type=range]{accent-color:var(--acc);}
      slabs on the right (after Persona 3 Reload), the character you take in
      stands on the left in full colour. -->
 <div id="hub" class="screen hidden">
+  <div class="lb-fx" aria-hidden="true"><div class="lb-aura"></div><div class="lb-floor"></div><i class="lb-sp" style="left:17.8%;--d:14.5s;--w:-10.2s;--x:1px;--z:1.27"></i><i class="lb-sp" style="left:97.0%;--d:12.8s;--w:-15.4s;--x:-37px;--z:1.00"></i><i class="lb-sp" style="left:24.7%;--d:9.0s;--w:-5.9s;--x:14px;--z:0.94"></i><i class="lb-sp" style="left:15.9%;--d:15.0s;--w:-14.7s;--x:28px;--z:0.63"></i><i class="lb-sp" style="left:97.8%;--d:14.9s;--w:-14.0s;--x:18px;--z:0.95"></i><i class="lb-sp" style="left:93.8%;--d:13.3s;--w:-11.1s;--x:23px;--z:1.36"></i><i class="lb-sp" style="left:37.4%;--d:10.2s;--w:-13.1s;--x:-45px;--z:1.25"></i><i class="lb-sp" style="left:3.9%;--d:10.3s;--w:-11.7s;--x:-9px;--z:0.99"></i><i class="lb-sp" style="left:19.9%;--d:9.3s;--w:-13.9s;--x:-30px;--z:0.66"></i><i class="lb-sp" style="left:20.9%;--d:14.4s;--w:-12.8s;--x:24px;--z:1.20"></i><i class="lb-sp" style="left:75.2%;--d:13.6s;--w:-11.7s;--x:-45px;--z:1.05"></i><i class="lb-sp" style="left:55.7%;--d:12.1s;--w:-5.5s;--x:-42px;--z:1.31"></i><i class="lb-sp" style="left:41.3%;--d:11.9s;--w:-7.2s;--x:-11px;--z:0.85"></i><i class="lb-sp" style="left:48.5%;--d:11.1s;--w:-13.3s;--x:-40px;--z:1.17"></i><i class="lb-sp" style="left:97.3%;--d:13.0s;--w:-7.9s;--x:10px;--z:1.08"></i><i class="lb-sp" style="left:52.1%;--d:13.6s;--w:-5.1s;--x:19px;--z:0.69"></i><i class="lb-sp" style="left:66.3%;--d:14.0s;--w:-13.3s;--x:-18px;--z:0.88"></i><i class="lb-sp" style="left:59.3%;--d:11.5s;--w:-1.7s;--x:-52px;--z:1.34"></i></div>
   <div class="deco" aria-hidden="true">
     <i class="tri t1"></i><i class="tri t2"></i><i class="tri t3"></i>
     <span class="vert">LUNIVE&ensp;/&ensp;NIGHT&ensp;COMMAND&ensp;/&ensp;2.9</span>
@@ -2235,23 +2345,15 @@ input[type=range]{accent-color:var(--acc);}
     <svg class="cmd-line" id="cmdLine" aria-hidden="true"><line x1="0" y1="0" x2="0" y2="0"/></svg>
     <i class="cmd-cursor" id="cmdCursor" aria-hidden="true"></i>
     <nav class="cmd-list" id="cmdList">
-      <button class="ci" data-go="chars" data-desc="Pick who you take into the fight"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c.7-4.4 4-7 8-7s7.3 2.6 8 7"/></svg>01</i><b>CHARACTERS</b><em id="badgeChars"></em><small id="subChars">ROSTER</small></button>
-      <button class="ci" data-go="pets" data-desc="Your pets, and what they do in a fight"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M12 13.2c-2.9 0-5.4 2.7-5.4 4.8 0 1.5 1.2 2.3 2.6 2.3 1.1 0 1.9-.6 2.8-.6s1.7.6 2.8.6c1.4 0 2.6-.8 2.6-2.3 0-2.1-2.5-4.8-5.4-4.8z"/><ellipse cx="5.6" cy="11" rx="1.7" ry="2.2"/><ellipse cx="9.2" cy="6.9" rx="1.8" ry="2.4"/><ellipse cx="14.8" cy="6.9" rx="1.8" ry="2.4"/><ellipse cx="18.4" cy="11" rx="1.7" ry="2.2"/></svg>02</i><b>PETS</b><em class="hot" id="badgePets"></em><small id="subPets">Open a pet box</small></button>
-      <button class="ci" data-go="stash" data-desc="Open crates and pet boxes, redeem codes"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M3 10h18v10H3zM3 10l2.5-5h13L21 10M10 13h4v3h-4z"/></svg>03</i><b>STASH</b><em class="hot" id="badgeStash"></em><small id="subStash">CRATES AND CODES</small></button>
-      <button class="ci" data-go="shop" data-desc="Bundles, Beast characters and deals"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M4 9h16l-1.4 11H5.4zM8.5 9V7a3.5 3.5 0 0 1 7 0v2"/></svg>04</i><b>SHOP</b><em class="hot" id="badgeShop"></em><small id="subShop">NEW DEALS SOON</small></button>
-      <button class="ci" data-go="achv" data-desc="Characters, knockouts, rounds and endings"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4a3 3 0 0 0 4 4M16 6h4a3 3 0 0 1-4 4M12 13v4M8 21h8M9 17h6"/></svg>05</i><b>ACHIEVEMENTS</b><small id="subAchv">0 / 17 DONE</small></button>
-      <button class="ci" data-go="music" data-desc="Every lobby track is free"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M9 18V6l11-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>06</i><b>MUSIC</b><small id="subMusic">TRACK 1</small></button>
+      <button class="ci" data-go="chars" data-desc="Pick who you take into the fight"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c.7-4.4 4-7 8-7s7.3 2.6 8 7"/></svg></i><b>CHARACTERS</b><em id="badgeChars"></em><small id="subChars">ROSTER</small></button>
+      <button class="ci" data-go="pets" data-desc="Your pets, and what they do in a fight"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M12 13.2c-2.9 0-5.4 2.7-5.4 4.8 0 1.5 1.2 2.3 2.6 2.3 1.1 0 1.9-.6 2.8-.6s1.7.6 2.8.6c1.4 0 2.6-.8 2.6-2.3 0-2.1-2.5-4.8-5.4-4.8z"/><ellipse cx="5.6" cy="11" rx="1.7" ry="2.2"/><ellipse cx="9.2" cy="6.9" rx="1.8" ry="2.4"/><ellipse cx="14.8" cy="6.9" rx="1.8" ry="2.4"/><ellipse cx="18.4" cy="11" rx="1.7" ry="2.2"/></svg></i><b>PETS</b><em class="hot" id="badgePets"></em><small id="subPets">Open a pet box</small></button>
+      <button class="ci" data-go="stash" data-desc="Open crates and pet boxes, redeem codes"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M3 10h18v10H3zM3 10l2.5-5h13L21 10M10 13h4v3h-4z"/></svg></i><b>STASH</b><em class="hot" id="badgeStash"></em><small id="subStash">CRATES AND CODES</small></button>
+      <button class="ci" data-go="shop" data-desc="Bundles, Beast characters and deals"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M4 9h16l-1.4 11H5.4zM8.5 9V7a3.5 3.5 0 0 1 7 0v2"/></svg></i><b>SHOP</b><em class="hot" id="badgeShop"></em><small id="subShop">NEW DEALS SOON</small></button>
+      <button class="ci" data-go="achv" data-desc="Characters, knockouts, rounds and endings"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4a3 3 0 0 0 4 4M16 6h4a3 3 0 0 1-4 4M12 13v4M8 21h8M9 17h6"/></svg></i><b>ACHIEVEMENTS</b><small id="subAchv">0 / 17 DONE</small></button>
+      <button class="ci" data-go="music" data-desc="Every lobby track is free"><i class="ci-n"><svg class="ci-ic" viewBox="0 0 24 24"><path d="M9 18V6l11-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg></i><b>MUSIC</b><small id="subMusic">TRACK 1</small></button>
     </nav>
   </section>
 
-  <section class="hero-tag" id="heroPlate">
-    <div class="ht-top"><span class="rarity-tag" id="hplRarity"></span><span id="hplRank"></span><span class="ht-wins" id="hplWins"></span></div>
-    <div class="ht-name" id="hplName" data-t="VAEL">VAEL</div>
-    <div class="ht-bar"><i id="hplBar"></i></div>
-    <div class="ht-meters" id="hplMeters"></div>
-    <div class="ht-stats"><span class="ab"><i>HP</i><b id="hplHp">350</b></span><span class="ab"><i>ATTACK</i><b id="hplAtk">Blade Toss</b></span><span class="ab ult"><i>SUPER · E</i><b id="hplUlt">Guardian Wall</b></span><span class="ab sp" id="hplSpWrap"><i>SHIFT</i><b id="hplSp"></b></span></div>
-    <button class="ht-change rx" data-go="chars">CHANGE</button>
-  </section>
 
   <section class="launch">
     <button class="map-slab rx" data-go="maps" id="mapPick" title="Choose a game mode">
@@ -2269,7 +2371,7 @@ input[type=range]{accent-color:var(--acc);}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.9.0 · BETA</span>
+    <span class="hub-version">VERSION 3.9.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2412,7 +2514,7 @@ input[type=range]{accent-color:var(--acc);}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.9.0</div></div>
+</svg><div class="set-ver">VERSION 3.9.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -10835,6 +10937,7 @@ const Lobby=(function(){
   const inkTo={acc:new THREE.Color(),mid:new THREE.Color(),ink:new THREE.Color(),paper:new THREE.Color()};
   let inkHex=null;
   function setAccent(hex){
+    magicCol=hex; if(magic) magic.material.color.set(hex).lerp(new THREE.Color(0xffffff),.08).multiplyScalar(1.25);
     if(!look||hex===inkHex) return;
     const U=look.mat.uniforms, a=new THREE.Color(hex), hsl={}; a.getHSL(hsl);
     inkTo.acc.setHSL(hsl.h,Math.min(1,hsl.s*1.05+.1),Math.min(.66,Math.max(.5,hsl.l)));
@@ -10898,7 +11001,44 @@ const Lobby=(function(){
     // a soft pool of stage light on top
     const pool=new THREE.Mesh(new THREE.CircleGeometry(.9,24),new THREE.MeshBasicMaterial({map:glowTex(),color:0xffe6f6,transparent:true,opacity:.2,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending}));
     pool.rotation.x=-Math.PI/2; pool.position.y=.356; g.add(pool); glowPool=pool;
+    // a slow magic circle on top, tinted with your character's colour
+    magic=new THREE.Mesh(new THREE.PlaneGeometry(1.86,1.86),new THREE.MeshBasicMaterial({map:circleTex(),color:magicCol,transparent:true,opacity:.5,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending}));
+    magic.rotation.x=-Math.PI/2; magic.position.y=.359; magic.renderOrder=2; g.add(magic);
+    // a ring of light running round the rim
+    const rg=new THREE.RingGeometry(1.0,1.12,96,1), ruv=rg.attributes.uv, rp=rg.attributes.position;
+    for(let i=0;i<ruv.count;i++){ const a=Math.atan2(rp.getY(i),rp.getX(i)); ruv.setXY(i,(a/(Math.PI*2)+.5)*3,Math.hypot(rp.getX(i),rp.getY(i))>1.06?1:0); }
+    magicRim=new THREE.Mesh(rg,new THREE.MeshBasicMaterial({map:dashTex(),color:0xffffff,transparent:true,opacity:.55,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide}));
+    magicRim.rotation.x=-Math.PI/2; magicRim.position.y=.08; g.add(magicRim);
+    // sparkles that circle your character
+    orbit=[];
+    [[.95,.75,.9,0xffffff,.16],[1.08,1.35,-.7,0xffc6ec,.13],[.88,1.85,.55,0xc9e8ff,.11],[1.15,.45,-.45,0xfff1c4,.12]].forEach(([r,y,sp,c,sz],i)=>{
+      const m=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:c,transparent:true,opacity:.9,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending}));
+      m.scale.setScalar(sz); m.userData={r,y,sp,a:i*1.7}; g.add(m); orbit.push(m); });
     return g;
+  }
+  let magic=null, magicRim=null, orbit=null, magicCol=0xb9a8ff;
+  function circleTex(){
+    const S=512, cv=document.createElement('canvas'); cv.width=cv.height=S; const x=cv.getContext('2d'), c=S/2;
+    x.strokeStyle='#fff'; x.fillStyle='#fff'; x.lineCap='round'; x.lineJoin='round';
+    const ring=(r,w,al)=>{ x.globalAlpha=al; x.lineWidth=w; x.beginPath(); x.arc(c,c,r,0,Math.PI*2); x.stroke(); };
+    ring(244,7,.95); ring(228,2,.55); ring(172,4,.85); ring(160,1.5,.5); ring(88,3,.75); ring(56,1.5,.5);
+    x.globalAlpha=.85;
+    for(let i=0;i<40;i++){ const a=i/40*Math.PI*2; x.save(); x.translate(c+Math.cos(a)*200,c+Math.sin(a)*200); x.rotate(a+Math.PI/2); x.lineWidth=2.6; x.beginPath();
+      const k=i%5; if(k===0){ x.moveTo(-6,-8); x.lineTo(0,8); x.lineTo(6,-8); } else if(k===1){ x.arc(0,0,6,0,Math.PI*2); } else if(k===2){ x.moveTo(-7,0); x.lineTo(7,0); x.moveTo(0,-8); x.lineTo(0,8); }
+      else if(k===3){ x.moveTo(-6,6); x.lineTo(0,-8); x.lineTo(6,6); x.closePath(); } else { x.moveTo(0,-9); x.lineTo(0,9); x.moveTo(-5,-4); x.lineTo(5,-4); }
+      x.stroke(); x.restore(); }
+    // two squares make an eight-point star, and dots where they cross the inner ring
+    x.globalAlpha=.8; x.lineWidth=3.5; x.beginPath();
+    for(let k=0;k<2;k++) for(let i=0;i<=4;i++){ const a=i/4*Math.PI*2+k*Math.PI/4, px=c+Math.cos(a)*160, py=c+Math.sin(a)*160; if(i) x.lineTo(px,py); else x.moveTo(px,py); }
+    x.stroke();
+    for(let i=0;i<8;i++){ const a=i/8*Math.PI*2+Math.PI/8; x.beginPath(); x.arc(c+Math.cos(a)*88,c+Math.sin(a)*88,7,0,Math.PI*2); x.fill(); }
+    const g=x.createRadialGradient(c,c,0,c,c,60); g.addColorStop(0,'rgba(255,255,255,.55)'); g.addColorStop(1,'rgba(255,255,255,0)'); x.globalAlpha=1; x.fillStyle=g; x.beginPath(); x.arc(c,c,60,0,Math.PI*2); x.fill();
+    const t=new THREE.CanvasTexture(cv); t.encoding=THREE.sRGBEncoding; t.anisotropy=4; return t;
+  }
+  function dashTex(){
+    const cv=document.createElement('canvas'); cv.width=512; cv.height=8; const x=cv.getContext('2d');
+    for(let i=0;i<24;i++){ const g=x.createLinearGradient(i*21.33,0,i*21.33+14,0); g.addColorStop(0,'rgba(255,255,255,0)'); g.addColorStop(.5,'rgba(255,255,255,1)'); g.addColorStop(1,'rgba(255,255,255,0)'); x.fillStyle=g; x.fillRect(i*21.33,0,14,8); }
+    const t=new THREE.CanvasTexture(cv); t.encoding=THREE.sRGBEncoding; t.wrapS=THREE.RepeatWrapping; return t;
   }
   /* ---------- the floating island ---------- */
   function makeIsland(id){
@@ -11257,6 +11397,10 @@ const Lobby=(function(){
     pedestal.position.y=(island?island.position.y:0)+.1;
     if(pedestal.userData.ring) pedestal.userData.ring.material.color.setHSL((t*.05)%1,.75,.82);
     if(glowPool) glowPool.material.opacity=.16+Math.sin(t*1.6)*.05;
+    if(magic){ magic.rotation.z-=dt*.22; magic.material.opacity=.62+Math.sin(t*1.4)*.14+ready*.25; }
+    if(magicRim){ magicRim.material.map.offset.x-=dt*.05; magicRim.material.opacity=.38+Math.sin(t*2.1)*.12; }
+    if(orbit) orbit.forEach(o=>{ const u=o.userData; u.a+=dt*u.sp; o.position.set(Math.cos(u.a)*u.r,.35+u.y+Math.sin(t*1.3+u.a)*.12,Math.sin(u.a)*u.r); o.material.opacity=.55+.4*Math.sin(t*3+u.a*2);
+      o.visible=!chest||!chest.visible; });
     // a pet alone on the pedestal (the Pets screen, a pet box): she turns to the pointer, hops when tapped
     if(stage){
       if(hero) hero.visible=false;
@@ -12077,11 +12221,7 @@ function refreshHub(){
     (M.id==='exec'?'3v3':'Solo')+' · <b>Beta</b>'+(diffFor(State.selectedChar)?' · <b style="color:#ff9bb8">'+BOT_DIFF[diffFor(State.selectedChar)].name+' MATCHES</b>':'')+' · Enter to play';
   // the character you take in
   const hc=byKey(State.selectedChar), hr=RARITY[hc.rarity];
-  const nm=$el('hplName');
-  if(nm.textContent!==hc.name){ nm.dataset.t=hc.name; nm.classList.remove('swap'); void nm.offsetWidth; nm.classList.add('swap'); }
-  setText('hplName',hc.name); setText('heroStamp',hc.name);
-  const mEl=$el('hplMeters'); if(mEl.dataset.k!==hc.key){ mEl.dataset.k=hc.key; mEl.innerHTML=statMeters(hc); }
-  setText('hplSp',hc.spName||''); $el('hplSpWrap').style.display=hc.spName?'':'none';
+  setText('heroStamp',hc.name);
   $el('hub').dataset.rarity=hc.rarity;
   // the ticker along the bottom
   const tick=['LUNIVE','NIGHT COMMAND','PLAYING AS '+hc.name.toUpperCase(),hr.name+' CLASS',M.name.toUpperCase(),
@@ -12092,14 +12232,6 @@ function refreshHub(){
   nc.classList.toggle('owned',kOwn);
   setText('newsSub',kOwn?'Now playable — full control.':'In the Shop now. From the future.');
   const np=$el('newsPic'); if(!np.getAttribute('src')){ try{ np.src=Lobby.portrait('rhyon'); }catch(e){} }
-  const ht=$el('hplRarity'); ht.textContent=hr.name; ht.style.background=hr.color; ht.style.color=rarityInk(hc.rarity);
-  ht.style.boxShadow=hc.rarity==='celestial'?'inset 0 0 0 1px rgba(255,255,255,.5)':'none';
-  setText('hplHp',hc.hp); setText('hplAtk',hc.atkName); setText('hplUlt',hc.ultName);
-  // their rank, and the way to the next one
-  const ht0=charTrophies(hc.key), hp0=rankProgress(ht0);
-  $el('hplRank').innerHTML=rankBadge(hc.key);
-  $el('hplWins').innerHTML=TROPHY_SVG+ht0+(hp0.next?' / '+hp0.next:' · MAX');
-  $el('hplBar').style.width=(hp0.k*100).toFixed(1)+'%';
   applyAccent(hc.key);
   // the command column
   setText('badgeChars',State.unlocked.length+'/'+CHARACTERS.length);
