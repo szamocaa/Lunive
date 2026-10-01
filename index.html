@@ -633,7 +633,7 @@ body.exec-mode #alivePill{display:none;}
 @keyframes ftFlash{0%,100%{filter:brightness(1) drop-shadow(0 0 0 transparent);}50%{filter:brightness(1.45) drop-shadow(0 0 6px rgba(255,255,255,.55));}}
 #achvPop{position:fixed;left:50%;top:18px;transform:translate(-50%,-140%);z-index:9999;min-width:min(420px,88vw);max-width:92vw;padding:12px 18px 13px;border-radius:14px;text-align:center;pointer-events:none;
   background:rgba(12,14,24,.92);border:1px solid rgba(255,214,107,.7);box-shadow:0 12px 34px rgba(0,0,0,.45),0 0 26px rgba(255,214,107,.25);transition:transform .45s cubic-bezier(.2,1.4,.4,1);font-family:var(--ui);color:#f4f2ee;}
-#achvPop.on{transform:translate(-50%,0);}
+#achvPop.on{transform:translate(-50%,0);pointer-events:auto;cursor:pointer;}
 #achvPop i{display:block;font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.24em;color:#ffd66b;}
 #achvPop b{display:block;margin-top:4px;font-size:15px;font-weight:700;}
 #achvPop span{display:block;margin-top:3px;font-size:12.5px;color:rgba(244,242,238,.8);}
@@ -2363,7 +2363,7 @@ body.lite-ui #hub .lb-sp{display:none;}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.10.0 · BETA</span>
+    <span class="hub-version">VERSION 3.10.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2506,7 +2506,7 @@ body.lite-ui #hub .lb-sp{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.10.0</div></div>
+</svg><div class="set-ver">VERSION 3.10.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -6067,7 +6067,8 @@ function buildNyx(){
   const orb=new THREE.Group();
   part(orb,crescentGeo(.07,.018),cmat(GOLD,{spec:.8,shin:50,emis:.2}),0,0,0);
   const o2=glowOrb(0x5fe4ff,.045); orb.add(o2);
-  const st=staff(1.84,0x5b4636,orb); st.position.set(0,-.02,.04); st.rotation.x=.06; r.hands[1].add(st);
+  const st=staff(1.84,0x5b4636,orb); st.position.set(.045,.1,.04); st.rotation.set(.06,0,-.66); r.hands[1].add(st);
+  r.arms[1].rotation.z=.6; r.root.userData.armZ[1]=.6;
   r.root.userData.hold=1;
   contactShadow(r.root,.9);
   return finalizeModel(r.root);
@@ -6106,7 +6107,8 @@ function buildLuna(){
   const top=new THREE.Group();
   const cr=part(top,crescentGeo(.075,.022),cmat(GOLD,{spec:.8,shin:50,emis:.25}),0,0,0);
   top.add(glowOrb(0xcfe6ff,.045));
-  const st=staff(1.9,0xdcd6f0,top); st.position.set(0,-.02,.04); st.rotation.x=.05; r.hands[1].add(st);
+  const st=staff(1.9,0xdcd6f0,top); st.position.set(.045,.12,.04); st.rotation.set(.05,0,-.66); r.hands[1].add(st);
+  r.arms[1].rotation.z=.6; r.root.userData.armZ[1]=.6;
   r.root.userData.hold=1;
   contactShadow(r.root,.9);
   return finalizeModel(r.root);
@@ -6651,8 +6653,8 @@ const CHARACTERS = [
   {key:'rhyon',name:'Rhyon',rarity:'celestial',accent:0x21e6ff,hp:500,cd:500,dmg:40,atk:'cyberblade',spd:1.1,
    desc:"A cyberpunk beast who came back from the future. His cyber blade never cools down, his Override rewrites the whole world, and once he takes Full Control a fight ends in slow motion.",
    atkName:'Cyber Blade',ultName:'Full Control',spName:'System Override',build:buildRhyon},
-  {key:'millie',name:'Millie',rarity:'epic',accent:0xe0284a,hp:430,cd:700,dmg:60,atk:'scythe',spd:1,
-   desc:"The princess of hell. Half human, half demon, dressed for a ball, with a scythe taller than she is. Her swings cut from far away, her waltz throws everyone back, and when she's had enough the whole map turns into the hell she grew up in.",
+  {key:'millie',name:'Millie',rarity:'epic',accent:0xe0284a,hp:310,cd:700,dmg:60,atk:'scythe',spd:1,
+   desc:"The princess of hell. Half human, half demon, dressed for a ball, with a scythe taller than she is. Every swing cuts a wide half-moon in front of her, her waltz throws everyone back, and when she's had enough the whole map turns into the hell she grew up in.",
    atkName:'Crimson Scythe',ultName:'Welcome to Hell',spName:"Reaper's Waltz",build:buildMillie}
 ];
 /* the Shift ability, where a character has one */
@@ -6663,9 +6665,9 @@ const CHARACTERS = [
 CHARACTERS.sort((a,b)=>RARITY_ORDER.indexOf(a.rarity)-RARITY_ORDER.indexOf(b.rarity));
 const byKey = k => CHARACTERS.find(c=>c.key===k);
 const RANGE_PREF = {vael:3,szamoci:5.5,nyx:7.5,eribun:4.5,luna:7,emma:2.5,reka:1.8,krisztian:5,racksdoubled:6,
-  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5,mathias:6,panne:4.8,rhyon:1.8,millie:6.8};
+  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5,mathias:6,panne:4.8,rhyon:1.8,millie:3.6};
 /* close-range attacks: how near a bot has to be before it swings */
-const MELEE_REACH = {kick:1.9,punch:1.55,spray:6.1,cyberblade:2.3};
+const MELEE_REACH = {kick:1.9,punch:1.55,spray:6.1,cyberblade:2.3,scythe:4.7};
 
 /* ---------- life: walking, breathing, blinking ---------- */
 /* Walk cycle: legs swing from the hip, arms counter-swing, the body bobs
@@ -7784,17 +7786,24 @@ function buildMathias(){
       // short, tidy sideburns
       (hg,st,add)=>{ for(const sd of [-1,1]) add(headLock(st,{az0:sd*78,az1:sd*80,el0:62,el1:94,r0:st._vol-.004,r1:st._vol+.008,w:.07,t:.03,lift:.004,n:5,belly:.1,taper:.8,inner:.5})); }
     ]});
-  // round gold wire-rims: thin frames just in front of his eyes, a keyhole bridge, temples back to his ears
-  const gl=new THREE.Group(); gl.position.set(0,HEAD_C-.032,HEAD_R*.985); r.head.add(gl);
-  const WIRE=cmat(0xc9a24a,{spec:1.8,shin:130,rim:.7});
+  // proper glasses: wide soft-cornered frames in dark tortoiseshell, clear lenses with a glint, temples back to his ears
+  const gl=new THREE.Group(); gl.position.set(0,HEAD_C-.03,HEAD_R*.985); r.head.add(gl);
+  const rr=(w,h,c,path)=>{ const p=path?new THREE.Path():new THREE.Shape(), x=w/2, y=h/2;
+    p.moveTo(-x+c,-y); p.lineTo(x-c,-y); p.quadraticCurveTo(x,-y,x,-y+c); p.lineTo(x,y-c); p.quadraticCurveTo(x,y,x-c,y);
+    p.lineTo(-x+c,y); p.quadraticCurveTo(-x,y,-x,y-c); p.lineTo(-x,-y+c); p.quadraticCurveTo(-x,-y,-x+c,-y); return p; };
+  const FRAME=cmat(0x2a1a14,{spec:1.4,shin:110,rim:.8}), LW=.17, LH=.122;
   for(const s of [-1,1]){
-    const ring=part(gl,kTorus(.066,.0058,6,30),WIRE,s*.098,0,-.01); ring.rotation.y=s*.2;
-    const lens=part(gl,kCyl(.063,.063,.002,24),cmat(0xe6f0f8,{opacity:.1,spec:2.6,shin:170,rim:1.5}),s*.098,0,-.01); lens.rotation.set(Math.PI/2,s*.2,0,'YXZ'); lens.userData.keep=true;
-    part(gl,sphere(.007,8,6),WIRE,s*.162,.008,-.03);                                                   // the hinges
-    const arm=part(gl,softBox(.0055,.0055,.2,.002,2),WIRE,s*.172,.01,-.13); arm.rotation.y=s*.1;
-    part(gl,sphere(.0065,8,6),cmat(0xeee8dc,{opacity:.6,rim:.5}),s*.022,-.03,-.03);                    // nose pads
+    const side=new THREE.Group(); side.position.set(s*.108,0,-.012); side.rotation.y=s*.22; gl.add(side);
+    const sh=rr(LW+.03,LH+.028,.05); sh.holes.push(rr(LW,LH,.038,true));
+    const fg=new THREE.ExtrudeGeometry(sh,{depth:.014,bevelEnabled:true,bevelThickness:.003,bevelSize:.003,bevelSegments:1,curveSegments:8}); fg.translate(0,0,-.007);
+    const fr=part(side,fg,FRAME); fr.userData.keep=true;
+    const lens=part(side,new THREE.ShapeGeometry(rr(LW,LH,.038)),cmat(0xdcecf8,{opacity:.14,spec:2.6,shin:170,rim:1.2,side:THREE.DoubleSide}),0,0,-.004); lens.userData.keep=true;
+    const glint=part(side,softBox(.06,.008,.002,.003,1),glowMat(0xffffff,{transparent:true,opacity:.55}),-s*.035,.03,.004); glint.rotation.z=s*.6; glint.userData.keep=true;
+    const hinge=part(side,softBox(.02,.026,.02,.005,1),FRAME,s*(LW/2+.012),.022,-.012); hinge.userData.keep=true;
+    const arm=part(gl,softBox(.011,.013,.24,.004,2),FRAME,s*.212,.024,-.15); arm.rotation.y=s*.1;
   }
-  const br=part(gl,kTorus(.024,.0052,6,14,Math.PI),WIRE,0,.012,-.004); br.rotation.z=0;
+  const br=part(gl,softBox(.05,.014,.014,.005,2),FRAME,0,.022,.002); br.userData.keep=true;            // the bridge
+  for(const s of [-1,1]) part(gl,sphere(.008,8,6),cmat(0xeee8dc,{opacity:.6,rim:.5}),s*.024,-.032,-.03);   // nose pads
   legs(r,{skin:SK,pants:{col:TROUSER,len:'long',wide:1.04,hem:darkHex(TROUSER,.85)},shoe:{type:'oxford',col:LOAFER,sole:0x2a1a10}});
   r.legs.forEach(lp=>part(lp,softBox(.005,.4,.005,.002,2),cmat(darkHex(TROUSER,.7),{rim:.5}),0,-.27,.081));   // pressed creases
   torso(r,SHIRT);
@@ -7927,7 +7936,8 @@ function buildPanne(){
   r.arms.forEach(ap=>part(ap,lathe([[.066,-.16],[.07,-.12],[.068,-.04],[.062,.03],[.05,.06]],20,10),cmat(TEE,{rim:.8})));   // the tee's short sleeves over the long ones
   // the spray can in her right hand, the board on her back
   const can=sprayCanProp(TEAL); can.scale.setScalar(1.5); can.position.set(0,-.06,.05); can.rotation.x=1.35; r.hands[0].add(can);
-  const back=skateboardProp(); back.position.set(0,.8,-.23); back.rotation.set(-.08,Math.PI,.35); back.scale.setScalar(.95); r.body.add(back);
+  const back=new THREE.Group(); back.position.set(0,.76,-.26); back.rotation.set(-.1,0,.5); r.body.add(back);
+  const bb=skateboardProp(); bb.rotation.x=Math.PI/2; bb.scale.setScalar(.95); back.add(bb);
   for(const s of [-1,1]) part(r.body,sweepGeo([V3(s*.12,.99,.08),V3(s*.16,.9,-.2),V3(s*.1,.66,-.22)],{up:V3(0,0,1),seg:12,rad:5,inner:1,rx:.012,ry:.005}),cmat(0x121216,{rim:.6}));   // straps
   const board=skateboardProp(); board.visible=false; r.root.add(board);
   r.arms[0].rotation.x=-.5;
@@ -13460,13 +13470,29 @@ function achvPop(head,txt,reward,title){ achvQ.push([head,txt,reward,title]); if
 function achvNext(){
   const q=achvQ[0]; if(!q) return; const [head,txt,reward,title]=q;
   let el=document.getElementById('achvPop');
-  if(!el){ el=document.createElement('div'); el.id='achvPop'; document.body.appendChild(el); }
+  if(!el){ el=document.createElement('div'); el.id='achvPop'; document.body.appendChild(el); el.addEventListener('click',()=>achvDone(achvSeq)); }
   el.innerHTML='<i>'+head+'</i><b></b><span></span>'; el.querySelector('b').textContent=txt; const sp=el.querySelector('span'); sp.textContent=reward;
   if(title){ const t=document.createElement('em'); t.textContent=title; paintTitle(t,title); sp.textContent='New title · '; sp.appendChild(t); }
-  el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+  el.style.display=''; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
   try{ SFX.win&&SFX.win(); }catch(e){}
-  setTimeout(()=>{ el.classList.remove('on'); setTimeout(()=>{ achvQ.shift(); achvNext(); },500); },3200);
+  const seq=++achvSeq; achvHideAt=Date.now()+3200;
+  clearTimeout(achvT); achvT=setTimeout(()=>achvDone(seq),3200);
 }
+/* the popup's time is up (or it was tapped): slide it away, then hide it outright so
+   nothing can leave it hanging on screen, and show the next one */
+let achvSeq=0, achvT=0, achvHideAt=0;
+function achvDone(seq,now){
+  if(seq!==achvSeq||!achvHideAt) return;
+  achvHideAt=0; clearTimeout(achvT);
+  const el=document.getElementById('achvPop');
+  if(el){ el.classList.remove('on'); if(now) el.style.display='none'; else setTimeout(()=>{ if(!achvHideAt) el.style.display='none'; },520); }
+  setTimeout(()=>{ achvQ.shift(); achvNext(); },now?60:500);
+}
+/* timers sleep while the game is in the background (the Support link opens a new tab):
+   coming back, a popup that should be gone goes at once */
+function achvWake(){ if(achvHideAt&&Date.now()>=achvHideAt) achvDone(achvSeq,true); }
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) achvWake(); });
+window.addEventListener('focus',achvWake); window.addEventListener('pageshow',achvWake);
 function checkMissions(){
   if(!Array.isArray(State.missionsDone)) State.missionsDone=[];
   const st=State.stats||{};
@@ -14880,7 +14906,7 @@ function dashStep(u,dt,now){
 /* ---------- supers ---------- */
 /* how fast each character's super fills per landed hit (1 = normal).
    Rake's partner fills it with a single hit. */
-const ULT_MULT={racksdoubled:.375,aether:3.2,star:.85,yume:2.5,wonderkid:1.4,kira:1.25};   // Yume: 5 hits fill it; Kira: 10 pencils
+const ULT_MULT={racksdoubled:.375,aether:3.2,star:.85,yume:2.5,wonderkid:1.4,kira:1.25,millie:100/48};   // Millie: 6 hits   // Yume: 5 hits fill it; Kira: 10 pencils
 function chargeUlt(base,u){
   u=u||pUnit;
   if(!u||!(base>0)) return;
@@ -15342,7 +15368,7 @@ function hurt(u,dmg,instant,src,dot){
     dmg=Math.round(dmg);
     u.hp=Math.max(0,u.hp-dmg);
     popDamage(u,dmg,src);
-    if(src&&src!==u&&!src.isPlayer&&src.alive&&!src.lock&&dmg>0) chargeUlt(8,src);   // a bot's landed hits fill its super (yours are counted where you land them)
+    if(src&&src!==u&&!src.isPlayer&&src.alive&&!src.lock&&dmg>0&&!NO_ULT) chargeUlt(8,src);   // a bot's landed hits fill its super (yours are counted where you land them)
     if(u.isPlayer) SFX.hurt(u.key);
   } else {
     // burning, the storm and beams tick a little every frame: show the sum twice a second
@@ -15649,7 +15675,8 @@ function loop(t){
       else mn.mesh.position.y=Math.abs(Math.sin(t/(mn.isFan?70:90)))*(mn.isFan?.12:.08);
       mn.atkCd-=dt*1000;
       if(bd<reach&&mn.atkCd<=0){
-        hurt(tg,mn.dmg||5,false,mn.owner);
+        NO_ULT=!!mn.isImp; hurt(tg,mn.dmg||5,false,mn.owner); NO_ULT=false;
+        if((mn.isDog||mn.isGf)&&mn.owner&&mn.owner.isPlayer&&now-(mn.ultAt||0)>900){ mn.ultAt=now; chargeUlt(8); }
         // Mei stabs whenever the mood takes her: anywhere from a flurry to a pause; the dog never lets go (30 a second)
         mn.atkCd=mn.isImp?MIL.IMP_GAP:mn.isGf?140+Math.random()*560:mn.isDog?1000/3:mn.isFan?700:600;
         if(mn.isGf) meiStab(mn,tg);
@@ -16629,7 +16656,8 @@ function animateAction(mesh,u,now){
   // Millie: the scythe sweeps across with each swing; in the waltz she spins with it held out
   if(ud.scythe&&ud.arms){
     if(spOn(u,now)){ if(ud.body) ud.body.rotation.y=(now/1000*15)%(Math.PI*2); ud.arms[0].rotation.x=-1.45; ud.arms[0].rotation.z=ud.armZ[0]-1; ud.arms[1].rotation.x=-1.2; ud.arms[1].rotation.z=ud.armZ[1]+.9; }
-    else if(u.reapAt&&now-u.reapAt<360){ const k=(now-u.reapAt)/360, s=Math.sin(Math.PI*k); ud.arms[0].rotation.x=-.3-1.5*s; ud.arms[0].rotation.z=ud.armZ[0]-.7*s+1.3*k*s; if(ud.body) ud.body.rotation.y=(.7-1.4*k)*s; }
+    else if(u.reapAt&&now-u.reapAt<320){ const k=(now-u.reapAt)/320, s=Math.sin(Math.PI*k), e=1-Math.pow(1-Math.min(1,k*1.5),3), sd=u.reapSide||1;
+      ud.arms[0].rotation.x=-.12-1.35*s; ud.arms[0].rotation.z=ud.armZ[0]+.3*s; if(ud.body) ud.body.rotation.y=sd*(-.95+1.9*e)*Math.min(1,s*2.2); }
   }
   // Kira: a flick of the wrist for the pencil, a short hard thrust for the knife
   if(ud.pencil&&ud.arms){
@@ -17967,10 +17995,11 @@ function vaelOrbitStep(u,now){
     b.getWorldPosition(W);
     units.forEach(e=>{
       if(!e.alive||e===u||e.flying||lockBlocks(u,e)||fd(W,e.mesh.position)>.78) return;
+      if(!o.ultAt) o.ultAt=new Map();
       let h=o.hits.get(e); if(!h){ h=[0,0,0]; o.hits.set(e,h); }
       if(now-h[i]<550) return;                                   // each blade bites the same enemy at most every 0.55s
       h[i]=now; hurt(e,20,false,u); sparkAt(W,0x9fd0ff);
-      if(u.isPlayer){ SFX.hitConfirm(); chargeUlt(3); } else SFX.hitOther(e.mesh.position);
+      if(u.isPlayer){ SFX.hitConfirm(); if(now-(o.ultAt.get(e)||0)>650){ o.ultAt.set(e,now); chargeUlt(8); } } else SFX.hitOther(e.mesh.position);
     });
     minions.slice().forEach(mn=>{ if(!mn.isFan||mn.owner===u||isAlly(mn.owner,u)||fd(W,mn.mesh.position)>.72) return; const k='vb'+i; if(now-(mn[k]||0)<550) return; mn[k]=now; hitFan(mn); });
   });
@@ -18142,7 +18171,7 @@ function oblivionSlash(u,now){
   minions.slice().forEach(mn=>{ if(mn.isFan&&mn.owner!==u&&!isAlly(mn.owner,u)&&fd(u.mesh.position,mn.mesh.position)<OBLIVION.R) hitFan(mn); });
   slashRing360(u.mesh.position);
   SFX.oblivion(u.isPlayer?null:u.mesh.position);
-  if(u.isPlayer){ if(hit){ SFX.hitConfirm(); chargeUlt(4*hit); } shakeCam(hit?.3:.14); }
+  if(u.isPlayer){ if(hit){ SFX.hitConfirm(); chargeUlt(8*hit); } shakeCam(hit?.3:.14); }
 }
 /* a full circle of dark fire cut round her, and a bright arc sweeping it */
 function slashRing360(pos){
@@ -18782,6 +18811,7 @@ function frozen(u,now){ return !!(u&&u.frozenUntil&&(now||performance.now())<u.f
    each job steps once a frame and says when it's done; the end of a round
    or a match clears them */
 let jobs=[];
+let NO_ULT=false;                 // set while damage must not fill anyone's super (Millie's followers)
 function addJob(j){ jobs.push(j); return j; }
 function stepJobs(now,dt){
   for(let i=jobs.length-1;i>=0;i--){ const j=jobs[i]; let done=false;
@@ -18888,7 +18918,7 @@ function yoonDrone(u,now){
     units.forEach(o=>{ if(!o.alive||o===u||o.flying||lockBlocks(u,o)) return;
       const d=V3(o.mesh.position.x-c.x,0,o.mesh.position.z-c.z), L=d.length(); if(L>3.4) return;
       if(L<1e-3) d.copy(dirT.lengthSq()?dirT:V3(0,0,1)).setY(0);
-      knock(o,d,13,.7); ignite(o,u); });
+      knock(o,d,13,.7); ignite(o,u); if(u.isPlayer) chargeUlt(8); });
     minions.slice().forEach(mn=>{ if(mn.isFan&&mn.owner!==u&&!isAlly(mn.owner,u)&&fd(c,mn.mesh.position)<3.4) hitFan(mn); });
   };
   addJob({
@@ -19078,7 +19108,7 @@ function gyroCut(u,d,side){
   minions.slice().forEach(mn=>{ if(mn.isFan&&mn.owner!==u&&!isAlly(mn.owner,u)&&fd(at,mn.mesh.position)<GYRO_BLADE.R) hitFan(mn); });
   bladeArc(at,d,side);
   SFX.bladeSlash(u.isPlayer?null:at);
-  if(u.isPlayer){ if(hit){ SFX.hitConfirm(); chargeUlt(6*hit); } shakeCam(hit?.26:.1); }
+  if(u.isPlayer){ if(hit){ SFX.hitConfirm(); chargeUlt(8*hit); } shakeCam(hit?.26:.1); }
 }
 /* the cut itself: a crescent of electric light that wipes across in front of him
    (solid colours, not additive, so it shows on snow and sand as well) */
@@ -20024,7 +20054,7 @@ function ryReset(){ RyUlt.reset(); CyberFx.reset(); }
      wherever they are, and claw at the closest one in reach: 10 every
      1.3s, up close, for 6 seconds.
    ========================================================== */
-const MIL={RANGE:8.6,SPD:17,SPIN_R:2.7,SPIN_GAP:450,SPIN_DMG:30,SPIN_PUSH:2.4,HELL_MS:6000,IMP_PER:2,IMP_MAX:18,IMP_DMG:10,IMP_GAP:1300,IMP_RANGE:7.5};
+const MIL={REACH:5,RANGE:8.6,SPD:17,SPIN_R:2.7,SPIN_GAP:450,SPIN_DMG:30,SPIN_PUSH:2.4,HELL_MS:6000,IMP_PER:2,IMP_MAX:18,IMP_DMG:10,IMP_GAP:1300,IMP_RANGE:7.5};
 
 /* ---------- the model ---------- */
 function millieScytheProp(){
@@ -20098,9 +20128,11 @@ function buildMillie(){
   part(r.body,sweepGeo(tp,{up:V3(1,0,0),seg:24,rad:8,inner:1,rx:t=>.024-.012*t,ry:t=>.024-.012*t,capStart:true}),cmat(0x1a1218,{rim:.9,spec:.4}));
   const spade=part(r.body,new THREE.ConeGeometry(.06,.11,4),cmat(CRIM,{rim:.9,spec:.5})); spade.position.set(.25,.6,-.57); spade.scale.z=.35; spade.rotation.z=-.3;
   // the scythe in her right hand, blade out away from her
-  const sc=millieScytheProp(); sc.position.set(0,-.04,.02); sc.rotation.set(0,Math.PI,-.08); r.hands[0].add(sc);
-  r.arms[0].rotation.x=-.25;
-  Object.assign(r.root.userData,{scythe:sc,hold:0,armX:[-.25,0]});
+  const sc=millieScytheProp(); sc.rotation.y=Math.PI;
+  const grip=new THREE.Group(); grip.position.set(-.05,-.03,.02); grip.rotation.z=.9; grip.add(sc); r.hands[0].add(grip);
+  r.arms[0].rotation.set(-.12,0,-.8);
+  Object.assign(r.root.userData,{scythe:grip,hold:0,armX:[-.12,0]});
+  r.root.userData.armZ[0]=-.8;
   contactShadow(r.root,.95);
   return finalizeModel(r.root);
 }
@@ -20153,18 +20185,48 @@ function crackMesh(x,z,size){
 }
 
 /* ---------- the attack: a red crescent that flies far and cuts through everyone ---------- */
-function reapCrescent(){
-  const g=new THREE.Group(), A=Math.PI*.8;
-  const outer=new THREE.Mesh(new THREE.TorusGeometry(.72,.075,6,26,A),new THREE.MeshBasicMaterial({color:0xff2a44,transparent:true,opacity:.92,toneMapped:false,depthWrite:false}));
-  const core=new THREE.Mesh(new THREE.TorusGeometry(.72,.028,6,26,A),new THREE.MeshBasicMaterial({color:0xffe0e8,toneMapped:false}));
-  [outer,core].forEach(m=>{ m.rotation.set(Math.PI/2,0,Math.PI/2-A/2); g.add(m); });
-  return g;
+/* the slash: one sweep of the scythe across the whole half-circle in front of her,
+   far out to the tip of the blade. Everyone in it takes the hit */
+const REAP_VS=`varying vec2 vP; void main(){ vP=position.xy; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`;
+const REAP_FS=`uniform float uS; uniform float uA; uniform float uR0; uniform float uR1; uniform vec3 uC; varying vec2 vP;
+void main(){
+  float t=atan(vP.y,vP.x)/3.14159265;                     // 0 where the sweep starts, 1 where it ends
+  if(t<0.0||t>uS) discard;
+  float lead=smoothstep(uS-.6,uS,t);                       // brightest at the blade, a fading wake behind it
+  float rn=clamp((length(vP)-uR0)/(uR1-uR0),0.0,1.0);
+  float edge=smoothstep(.62,.95,rn)*(1.0-smoothstep(.965,1.0,rn));
+  float wake=smoothstep(.25,.95,rn)*.22;
+  vec3 col=mix(uC*.8,vec3(1.0,.6,.66),edge*lead*.55);
+  gl_FragColor=vec4(col,clamp((edge*.95+wake)*(.25+.75*lead)*uA,0.0,.92)); }`;
+function reapSweep(u,d,side){
+  if(!scene) return;
+  const g=new THREE.Group(); g.position.copy(u.mesh.position).setY(.5); g.rotation.y=Math.atan2(d.x,d.z)+Math.PI;
+  const mat=new THREE.ShaderMaterial({vertexShader:REAP_VS,fragmentShader:REAP_FS,transparent:true,depthWrite:false,side:THREE.DoubleSide,
+    uniforms:{uS:{value:0},uA:{value:1},uR0:{value:.45},uR1:{value:MIL.REACH},uC:{value:new THREE.Color(0xff1a3a)}}});
+  const m=new THREE.Mesh(new THREE.RingGeometry(.45,MIL.REACH,64,3,0,Math.PI),mat); m.rotation.x=-Math.PI/2; m.scale.x=side; m.renderOrder=3;
+  g.add(m); scene.add(g);
+  const T0=performance.now(), SW=150, FADE=260;
+  addJob({step(now){ const t=now-T0; g.position.x=u.mesh.position.x; g.position.z=u.mesh.position.z;
+      mat.uniforms.uS.value=Math.min(1,t/SW); mat.uniforms.uA.value=t<SW?1:Math.max(0,1-(t-SW)/FADE); return t>=SW+FADE; },
+    stop(){ freeObj(g); }});
 }
 function millieReap(u,dir,dmg){
-  u.reapAt=performance.now();
-  const from=u.mesh.position.clone().setY(CHEST_Y).addScaledVector(dir,.4);
-  const m=reapCrescent(); m.position.copy(from); m.lookAt(from.clone().add(dir));
-  launch({m,dir:dir.clone(),sp:MIL.SPD,life:MIL.RANGE/MIL.SPD,owner:u,dmg,type:'pierce',hit:new Set(),maxHit:9,hitR:1.05},0xff2a44,.22);
+  const now=performance.now(); u.reapAt=now; u.reapSide=u.reapSide===1?-1:1; u.lastAtkAt=now;
+  const d=V3(dir.x,0,dir.z).normalize(); u.mesh.rotation.y=Math.atan2(d.x,d.z);
+  const at=u.mesh.position; let hit=0;
+  units.forEach(e=>{
+    if(!e.alive||e===u||e.flying||lockBlocks(u,e)||vanished(e,now)||isAlly(e,u)) return;
+    const to=V3(e.mesh.position.x-at.x,0,e.mesh.position.z-at.z), dist=to.length();
+    if(dist>MIL.REACH+.3) return;
+    if(dist>.7&&to.divideScalar(dist).dot(d)<-.05) return;               // only the half in front of her: 180 degrees
+    hurt(e,dmg,false,u); hit++;
+    sparkAt(e.mesh.position.clone().setY(CHEST_Y+.15),0xff2a44);
+    if(u.isPlayer) chargeUlt(8); else if(!e.isPlayer) SFX.hitOther(e.mesh.position);   // every enemy cut is a hit
+  });
+  minions.slice().forEach(mn=>{ if(!mn.isFan||mn.owner===u||isAlly(mn.owner,u)) return;
+    const to=V3(mn.mesh.position.x-at.x,0,mn.mesh.position.z-at.z), L=to.length(); if(L<MIL.REACH&&(L<.7||to.dot(d)/L>-.05)) hitFan(mn); });
+  reapSweep(u,d,u.reapSide);
+  if(u.isPlayer){ if(hit) SFX.hitConfirm(); shakeCam(hit?.2:.06); }
 }
 
 /* ---------- Shift: Reaper's Waltz ---------- */
@@ -20187,7 +20249,7 @@ function millieWaltzStep(u,now,dt){
     u.spinHit.set(o,now);
     hurt(o,MIL.SPIN_DMG,false,u);
     knock(o,V3(o.mesh.position.x-u.mesh.position.x,0,o.mesh.position.z-u.mesh.position.z),MIL.SPIN_PUSH,.22);
-    if(u.isPlayer){ chargeUlt(4); SFX.hitConfirm(); } else if(!o.isPlayer) SFX.hitOther(o.mesh.position);
+    if(u.isPlayer){ chargeUlt(8); SFX.hitConfirm(); } else if(!o.isPlayer) SFX.hitOther(o.mesh.position);
   });
   if(now-(u.spinSfxAt||0)>520){ u.spinSfxAt=now; SFX.millieSpin&&SFX.millieSpin(u.isPlayer?null:u.mesh.position,true); }
 }
