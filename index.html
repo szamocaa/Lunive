@@ -2895,7 +2895,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.18.0 · BETA</span>
+    <span class="hub-version">VERSION 3.18.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3058,7 +3058,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.18.0</div></div>
+</svg><div class="set-ver">VERSION 3.18.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3957,13 +3957,6 @@ const SFX=(function(){
         noise(b,{hz:3800,q:3,dur:.03,peak:.12,delay:.05}); tone(b,{type:'triangle',f:5200,f1:4800,dur:.04,peak:.03,delay:.42}); tone(b,{type:'triangle',f:4600,dur:.03,peak:.02,delay:.55}); },
       rack(){ if(!ready()) return; const b=tbIn({gain:.9}); noise(b,{hz:2400,q:2,dur:.05,peak:.14}); tone(b,{type:'square',f:700,dur:.02,peak:.04}); noise(b,{hz:3200,q:2.5,dur:.04,peak:.16,delay:.12}); tone(b,{type:'square',f:1100,dur:.015,peak:.05,delay:.12}); },
       ricochet(at){ if(!ready()) return; const b=tb(at); noise(b,{hz:2600,q:2,dur:.06,peak:.18}); tone(b,{f:2600+Math.random()*1200,f1:900,dur:.25,peak:.025,delay:.01,send:.4}); },
-      /* the hollow ones: a groan from somewhere in the chest, a shriek when they hear you, bare feet, a hit */
-      hGroan(at){ if(!ready()) return; const b=tb(at); tone(b,{type:'sawtooth',f:68+Math.random()*12,f1:52,dur:1.8,peak:.07,cut:420,q:3,atk:.3,vib:{r:4.5,d:5},send:.6}); noise(b,{ft:'bandpass',hz:380,q:2.5,dur:1.6,peak:.06,atk:.4,send:.5}); },
-      hShriek(at){ if(!ready()) return; const b=tb(Object.assign({},at,{gain:(at&&at.gain!==undefined?at.gain:1)*1.3+.35}));
-        tone(b,{type:'sawtooth',f:420,f1:980,dur:1.1,peak:.09,cut:3200,q:5,atk:.04,vib:{r:23,d:40},send:.7}); tone(b,{type:'sawtooth',f:433,f1:1010,dur:1.0,peak:.06,cut:2600,q:4,atk:.05,send:.7});
-        noise(b,{hz:1400,hz2:3600,hzT:.8,q:1.4,dur:1.2,peak:.22,atk:.03,send:.6}); tone(b,{f:60,f1:40,dur:.6,peak:.25}); },
-      hStep(at){ if(!ready()) return; const b=tb(at); noise(b,{ft:'lowpass',hz:700,hz2:200,dur:.09,peak:.3}); tone(b,{f:85,f1:55,dur:.08,peak:.2}); noise(b,{hz:2600,q:2,dur:.02,peak:.04,delay:.02}); },
-      hHit(at){ if(!ready()) return; const b=tb(at); noise(b,{ft:'lowpass',hz:1200,hz2:200,dur:.18,peak:.5}); tone(b,{f:110,f1:50,dur:.2,peak:.35}); tone(b,{type:'sawtooth',f:180,f1:120,dur:.4,peak:.04,cut:600,delay:.05,send:.4}); },
       gun(){ if(!ready()) return; const b=tb({gain:1.6});
         noise(b,{ft:'lowpass',hz:6000,hz2:400,dur:.35,peak:.9,atk:.001,send:1.2}); tone(b,{f:90,f1:30,dur:.5,peak:.9,atk:.001}); noise(b,{hz:1500,q:.5,dur:1.8,peak:.12,delay:.05,send:1.6});
         const bi=tbIn({gain:1}); tone(bi,{f:5200,dur:3.5,peak:.03,atk:.05,delay:.1}); },
@@ -22083,7 +22076,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=4, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.18.0';
+const NET_VER=4, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.18.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -26479,7 +26472,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     salviaReset();
     drugReset(); T.fx={}; T.poison=null; T.lsd=null; T.inv=T.inv.filter(isSalvia); T.invSel=0; T.flashOn=false; T.echo=[]; T.blackout=0; T.aimK=0; T.gy=0; T.col=null;
     for(const it of T.items){ if(T.inv.includes(it)) continue; it.taken=false; it.obj.visible=true; if(it.n0!==undefined) it.n=it.n0; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; }
-    hollowsReset(); pistolReset();
+    pistolReset();
     T.bulletBack=0; herHide(false); closePhantom(true); T.fadeOut=null; if(T.fig){ T.root.remove(T.fig.m); T.fig=null; }
     T.deaths++; T.dRoll=0; T.black=0; T.white=0; T.pulse=0; T.stat=0;
     const P=T.p; Object.assign(P,{x:3.3,z:7.6,y:.98,yaw:Math.PI+.35,pitch:1.42,vx:0,vz:0,stam:1,exh:0,exK:0});
@@ -28402,17 +28395,14 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     h.kick=1; h.flashT=.05; SFX.tr.pistol&&SFX.tr.pistol(); T.flashP.color.setHex(0xffb060); T.flashP.intensity=7;
     T.heartKick=Math.max(T.heartKick||0,.25); T.p.pitch=clamp(T.p.pitch+.012,-1.4,1.4); T.shots=(T.shots||0)+1;
     if(T.inDream||T.inTape||T.inSalvia) return;
-    hollowHear(T.p.x,T.p.z,15);
     const cam=T.cam; cam.updateMatrixWorld(); cam.getWorldDirection(_pd); _po.copy(cam.position);
     const w=rayWall(_po,_pd,40); let bt=w?w.t:40, best=null;
-    for(const Hh of T.hol||[]){ const t=hollowRay(Hh,_po,_pd); if(t!==null&&t<bt){ bt=t; best={k:'hol',H:Hh}; } }
     if(T.her.on){ const g=T.her.g.position, t=rayCyl(_po,_pd,g.x,g.z,.32,0,2.15); if(t!==null&&t<bt){ bt=t; best={k:'her'}; } }
     if(T.fig){ const F=T.fig, hh=F.m.geometry.parameters.height, t=rayCyl(_po,_pd,F.x,F.z,.36,0,hh); if(t!==null&&t<bt){ bt=t; best={k:'fig'}; } }
     if(netTruthShot) netTruthShot(_po,_pd,bt,b2=>{ bt=b2; best={k:'mate'}; });
     const hx=_po.x+_pd.x*bt, hy=_po.y+_pd.y*bt, hz=_po.z+_pd.z*bt;
     if(!best){ if(w){ bulletHole(w); puff(hx,hy,hz,0xb8b0a0); SFX.tr.ricochet&&SFX.tr.ricochet(at3(hx,hz,.8)); } return; }
-    if(best.k==='hol') hollowShot(best.H,hx,hy,hz);
-    else if(best.k==='her'){ puff(hx,hy,hz,0x202020,1.6); herVanish(true); T.stat=Math.max(T.stat,.9); }
+    if(best.k==='her'){ puff(hx,hy,hz,0x202020,1.6); herVanish(true); T.stat=Math.max(T.stat,.9); }
     else if(best.k==='fig'){ const F=T.fig; puff(hx,hy,hz,0x101010,1.4); T.root.remove(F.m); F.m.geometry.dispose(); T.fig=null; SFX.tr.stat(at3(F.x,F.z,1.2),.45,1); T.stat=.85; stutterNear(F.x,F.z); }
   }
   function pistolStep(dt){
@@ -28425,213 +28415,12 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   let netTruthShot=null;
   /* things far down the halls: the fog has them anyway, so they aren't drawn (the big merged meshes always are) */
   function cullInit(){
-    const box=new THREE.Box3(), sp=new THREE.Sphere(), skip=new Set([T.her.g,T.herM,T.wheel&&T.wheel.g].concat((T.hol||[]).map(h=>h.g)));
+    const box=new THREE.Box3(), sp=new THREE.Sphere(), skip=new Set([T.her.g,T.herM,T.wheel&&T.wheel.g]);
     T.cull=[]; for(const o of T.root.children){ if(skip.has(o)||o.isPoints) continue; box.setFromObject(o); if(box.isEmpty()) continue; box.getBoundingSphere(sp); if(sp.radius>4) continue;
       const ms=[]; o.traverse(m=>{ if(m.isMesh){ m.userData.lm=m.layers.mask; ms.push(m); } }); if(ms.length) T.cull.push({x:sp.center.x,z:sp.center.z,r:sp.radius,ms,on:true}); }
     T.cullAt=-9; }
   function cullStep(){ if(!T.cull||T.inDream||T.inSalvia||T.inTape||T.t-T.cullAt<.25) return; T.cullAt=T.t; const P=T.p;
     for(const c of T.cull){ const want=Math.hypot(c.x-P.x,c.z-P.z)-c.r<34; if(want!==c.on){ c.on=want; for(const m of c.ms) m.layers.mask=want?m.userData.lm:0; } } }
-  /* ==========================================================
-     THE HOLLOW ONES — the K-0 children. They came back from Therapy 3 tall and thin and
-     quiet, their eyes bandaged, their mouths sewn. They stand where they were left, facing the wall,
-     until they hear you. Three bullets put one on the floor for a while. Nothing here stays down.
-     ========================================================== */
-  const HOL_SPOTS=[
-    {x:93.4,z:12.62,ry:Math.PI},                       // the cold store, facing the wall
-    {x:80.8,z:24.92,ry:Math.PI,sit:.74},               // the dormitory, on the edge of a bed
-    {x:95.6,z:17.6,ry:2.16},                           // Therapy 3, in the corner
-    {x:100.4,z:8.1,ry:Math.PI},                        // the library, between the shelves
-    {x:75,z:35.6,ry:0,sit:.47},                        // the assembly hall, in the audience
-    {x:86,z:38.2,ry:0,sit:.47},
-    {x:97,z:38.1,ry:Math.PI/2},                        // between the boilers
-    {x:48.35,z:37.45,ry:.78},                          // the morgue, in the corner
-    {x:68.5,z:40,ry:Math.PI,patrol:[[68.5,40],[68.5,5.5]]}   // the annex hall, walking
-  ];
-  function hollowMats(){
-    if(MATS.hSkin) return;
-    Object.assign(MATS,{hSkin:{tex:'skin',color:0x6c6a62,rough:.58},hBand:{tex:'sheet',color:0x8a8270,rough:.95},hBlood:{color:0x2a0604,rough:.3},
-      hNail:{color:0x1e1a16,rough:.5},hDark:{color:0x050303,rough:1},hTag:{color:0xd8d4c8,rough:.6}});
-  }
-  /* the gown, shared: long, torn at the hem, stained */
-  function hollowGown(){
-    if(T.hGown) return T.hGown;
-    const prof=[[.05,-.66],[.2,-.62],[.215,-.3],[.19,-.04],[.2,.2],[.205,.42],[.17,.58],[.1,.65],[.05,.67]].map(([r,y])=>new THREE.Vector2(r,y));
-    const g=new THREE.LatheGeometry(prof,26), p=g.attributes.position, c=new Float32Array(p.count*3), cc=new THREE.Color(), rnd=mulberry32(31);
-    const tears=Array.from({length:26},()=>rnd()), base=LCc(0x666a60), dirt=LCc(0x3a3628), blood=LCc(0x4a120c);
-    for(let i=0;i<p.count;i++){ const x=p.getX(i), y=p.getY(i), z=p.getZ(i), a=Math.atan2(z,x), ai=Math.floor((a+Math.PI)/(Math.PI*2)*26)%26;
-      let k=1+.05*Math.sin(a*5+y*3)*(1-(y+.66)/1.4);
-      if(y<-.6) p.setY(i,y-tears[ai]*.16+.02);
-      p.setX(i,x*k); p.setZ(i,z*k*.78);
-      const low=clamp((-.2-y)/.5,0,1), st=Math.max(0,Math.sin(a*3+1.2)*Math.sin(y*7+.4));
-      cc.copy(base).lerp(dirt,low*.75+rnd()*.08); if(st>.6&&y>-.3&&y<.4) cc.lerp(blood,(st-.6)*1.8); if(low>.6&&Math.sin(a*7)>.5) cc.lerp(blood,.35);
-      c[i*3]=cc.r; c[i*3+1]=cc.g; c[i*3+2]=cc.b; }
-    g.setAttribute('color',new THREE.BufferAttribute(c,3)); g.computeVertexNormals();
-    T.hGownMat=new THREE.MeshStandardMaterial({map:T.tx.sheet,vertexColors:true,roughness:.95,side:THREE.DoubleSide}); T.mats._hGown=T.hGownMat;
-    return T.hGown=g;
-  }
-  function buildHollow(spot,seed){
-    hollowMats();
-    const r=mulberry32(seed), PI=Math.PI, root=new THREE.Group(), grp=(par,x,y,z)=>{ const g=new THREE.Group(); g.position.set(x,y,z); par.add(g); return g; };
-    const hips=grp(root,0,1.0,0);
-    { const b=new Batch(); b.box('hSkin',0,0,0,.24,.12,.15); b.flush(hips); }
-    const th=[], sn=[];
-    for(const s of [-1,1]){ const t=grp(hips,s*.1,-.02,0); const b=new Batch(); b.cyl('hSkin',0,-.25,0,.05,.5); b.sph('hSkin',0,-.5,0,.046); b.flush(t);
-      const n=grp(t,0,-.5,0), b2=new Batch(); b2.cyl('hSkin',0,-.23,0,.038,.46); b2.sph('hSkin',0,-.465,0,.034); b2.box('hSkin',0,-.475,.055,.07,.035,.19);
-      for(let k=0;k<4;k++) b2.sph('hSkin',(k-1.5)*.016,-.482,.152,.012); b2.cyl('hNail',0,-.36,-.03,.008,.08,.4); b2.flush(n); th.push(t); sn.push(n); }
-    const torso=grp(hips,0,.02,0);
-    const gown=new THREE.Mesh(hollowGown(),T.hGownMat); gown.scale.set(1+(r()-.5)*.08,1,1); torso.add(gown);
-    { const b=new Batch(); for(let i=0;i<7;i++) b.sph('hSkin',0,.08+i*.075,-.158+i*.004,.026,undefined,.02);
-      for(const s of [-1,1]) b.bar('hSkin',[s*.02,.62,.08],[s*.17,.6,.02],.013);
-      b.box('hTag',.0,.3,.165,.06,.04,.004); b.flush(torso); }
-    const neck=grp(torso,0,.64,.03), head=grp(neck,0,.2,0);
-    { const b=new Batch(); b.cyl('hSkin',0,.09,0,.042,.2); for(const s of [-1,1]) b.bar('hSkin',[s*.025,.02,.02],[s*.02,.17,.035],.009); b.flush(neck); }
-    { const b=new Batch();
-      b.add('hSkin',GEO.sph,0,.07,0,.098,.135,.112); b.add('hSkin',GEO.sph,0,-.025,.035,.068,.06,.07);
-      b.add('hSkin',GEO.sph,-.06,.0,.06,.025,.03,.025); b.add('hSkin',GEO.sph,.06,.0,.06,.025,.03,.025);
-      b.add('hBand',GEO.cyl,0,.1,0,.106,.062,.118); b.add('hBand',GEO.cyl,.01,.13,-.01,.104,.03,.116,0,0,.12);
-      b.add('hBand',GEO.box,-.07,.06,-.1,.03,.12,.01,.3,0,.4);
-      b.add('hBlood',GEO.sph,-.036,.1,.114,.024,.019,.008); b.add('hBlood',GEO.sph,.034,.096,.114,.02,.022,.008); b.add('hBlood',GEO.box,-.034,.06,.112,.006,.05,.006);
-      for(let i=0;i<6;i++) b.add('hNail',GEO.box,-.03+i*.012,-.012,.093,.0028,.026,.004,0,0,(r()-.5)*.3);
-      b.flush(head); }
-    const mouth=new THREE.Mesh(GEO.sph,mat('hDark')); mouth.position.set(0,-.012,.088); mouth.scale.set(.034,.004,.016); head.add(mouth);
-    const sh=[], el=[];
-    for(const s of [-1,1]){ const a=grp(torso,s*.19,.56,0); a.rotation.z=s*.08;
-      { const b=new Batch(); b.sph('hSkin',0,0,0,.05); b.cyl('hSkin',0,-.21,0,.034,.42); b.flush(a); }
-      const e=grp(a,0,-.42,0), b=new Batch(); b.sph('hSkin',0,0,0,.037); b.cyl('hSkin',0,-.21,0,.029,.42); b.sph('hSkin',0,-.42,0,.03);
-      b.box('hSkin',0,-.47,0,.06,.09,.024);
-      for(let f=0;f<4;f++){ const fx=-.022+f*.0147, L=.15+(f===1||f===2?.03:0); b.bar('hSkin',[fx,-.51,0],[fx*1.15,-.51-L,.025],.0065); b.add('hNail',GEO.box,fx*1.15,-.515-L,.026,.008,.016,.006); }
-      b.bar('hSkin',[.03*-s,-.49,.01],[.045*-s,-.57,.03],.007);
-      if(s<0) b.box('hTag',0,-.38,.032,.03,.018,.004);
-      b.flush(e); sh.push(a); el.push(e); }
-    root.position.set(spot.x,0,spot.z); root.rotation.y=spot.ry; root.scale.setScalar(.98+r()*.08);
-    root.traverse(o=>{ if(o.isMesh){ o.castShadow=true; } });
-    T.root.add(root);
-    return {g:root,hips,torso,neck,head,mouth,th,sn,sh,el,spot,seed};
-  }
-  function hollowsInit(){
-    T.hol=HOL_SPOTS.map((s,i)=>buildHollow(s,101+i*7));
-    T.hol.forEach(hollowHome);
-    T.flow={d:null,at:-9,cx:-1,cz:-1};
-  }
-  function hollowHome(Hh){ const s=Hh.spot;
-    Object.assign(Hh,{x:s.x,z:s.z,ry:s.ry,state:s.patrol?'patrol':s.sit?'sit':'idle',hp:3,t:0,ph:Math.random()*6,stag:0,lost:0,wp:1,seen:0,groan:4+Math.random()*12,step:0,mouthK:0,down:0,sitK:s.sit?1:0,lieK:0,stuck:0,phase:0,lx:s.x,lz:s.z,armK:0});
-    Hh.g.position.set(s.x,0,s.z); Hh.g.rotation.set(0,s.ry,0); Hh.g.visible=true; }
-  function hollowsReset(){ if(T.hol) T.hol.forEach(hollowHome); T.grab=null; }
-  /* noise: a shot, running feet. Anything awake enough to hear it comes */
-  function hollowHear(x,z,R){ if(!T.hol) return; for(const Hh of T.hol){ if(Hh.state==='down'||Hh.state==='rise'||Hh.state==='hunt'||Hh.state==='alert') continue; const d=Math.hypot(Hh.x-x,Hh.z-z); if(d<R*.45||(d<R&&los(Hh.x,Hh.z,x,z))) hollowAlert(Hh); } }
-  function hollowAlert(Hh){ if(Hh.state==='hunt'||Hh.state==='alert') return; Hh.wasSit=Hh.state==='sit'; Hh.state='alert'; Hh.t=0; Hh.lost=0;
-    SFX.tr.hShriek&&SFX.tr.hShriek(at3(Hh.x,Hh.z,1.2)); T.heartKick=Math.max(T.heartKick||0,.9); stutterNear(Hh.x,Hh.z); }
-  /* the way to you, from every cell: a flood across the floor plan */
-  function hollowFlow(){
-    const F=T.flow, P=T.p, cx=Math.floor(P.x), cz=Math.floor(P.z);
-    if(F.d&&F.cx===cx&&F.cz===cz&&T.t-F.at<1.2) return F.d;
-    F.cx=cx; F.cz=cz; F.at=T.t;
-    const n=GW*GD, d=F.d&&F.d.length===n?F.d:new Int16Array(n); d.fill(-1);
-    const free=(x,z)=>{ if(x<0||z<0||x>=GW||z>=GD) return false; const k=grid[z][x]; if(k==='#'||k==='W') return false; if(!T.plug.open&&x===24&&z===29) return false; return true; };
-    if(!free(cx,cz)) return F.d=d;
-    const q=new Int32Array(n); let h=0, t=0; q[t++]=cz*GW+cx; d[cz*GW+cx]=0;
-    while(h<t){ const c=q[h++], x=c%GW, z=(c-x)/GW, dv=d[c]+1;
-      if(x>0&&d[c-1]<0&&free(x-1,z)){ d[c-1]=dv; q[t++]=c-1; } if(x<GW-1&&d[c+1]<0&&free(x+1,z)){ d[c+1]=dv; q[t++]=c+1; }
-      if(z>0&&d[c-GW]<0&&free(x,z-1)){ d[c-GW]=dv; q[t++]=c-GW; } if(z<GD-1&&d[c+GW]<0&&free(x,z+1)){ d[c+GW]=dv; q[t++]=c+GW; } }
-    return F.d=d; }
-  function hollowMove(Hh,tx,tz,sp,dt){
-    const dx=tx-Hh.x, dz=tz-Hh.z, L=Math.hypot(dx,dz); if(L<.02) return 0;
-    const st=Math.min(L,sp*dt), q={x:Hh.x+dx/L*st,z:Hh.z+dz/L*st};
-    for(let it=0;it<2;it++){ const cx=Math.floor(q.x), cz=Math.floor(q.z);
-      for(let z=cz-1;z<=cz+1;z++) for(let x=cx-1;x<=cx+1;x++) if(solidAt(x,z)||cellAt(x,z)==='W') pushBox(q,x,z,x+1,z+1);
-      if(!T.plug.open) pushBox(q,24,29,25,30);
-      if(Hh.phase<=0) for(const b of T.boxes) if(q.x>b.x0-.6&&q.x<b.x1+.6&&q.z>b.z0-.6&&q.z<b.z1+.6) pushBox(q,b.x0,b.z0,b.x1,b.z1);
-      for(const d of T.doors) if(Math.abs(q.x-d.hx)<1.4&&Math.abs(q.z-d.hz)<1.4) pushDoor(q,d); }
-    const moved=Math.hypot(q.x-Hh.x,q.z-Hh.z); Hh.x=q.x; Hh.z=q.z;
-    const want=Math.atan2(dx,dz); let dy=want-Hh.ry; dy=Math.atan2(Math.sin(dy),Math.cos(dy)); Hh.ry+=dy*Math.min(1,dt*7);
-    return moved; }
-  /* where to go next: straight at you if it can see you, otherwise downhill on the flood */
-  function hollowNext(Hh){
-    const P=T.p; if(los(Hh.x,Hh.z,P.x,P.z)) return {x:P.x,z:P.z,see:true};
-    const d=hollowFlow(), cx=Math.floor(Hh.x), cz=Math.floor(Hh.z); let best=null, bv=d[cz*GW+cx]; if(bv<0) bv=1e9;
-    for(const [ox,oz] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]){ const x=cx+ox, z=cz+oz; if(x<0||z<0||x>=GW||z>=GD) continue; const v=d[z*GW+x]; if(v<0) continue;
-      if(ox&&oz&&(d[cz*GW+x]<0||d[z*GW+cx]<0)) continue; const vv=v+(ox&&oz?.4:0); if(vv<bv){ bv=vv; best={x:x+.5,z:z+.5}; } }
-    return best?Object.assign(best,{see:false}):{x:P.x,z:P.z,see:false}; }
-  function hollowRay(Hh,o,d){ if(Hh.state==='down'||!Hh.g.visible) return null; const sit=Hh.sitK>.5;
-    return rayCyl(o,d,Hh.x,Hh.z,.3,sit?.3:.05,sit?1.6:2.1); }
-  function hollowShot(Hh,x,y,z){
-    puff(x,y,z,0x3a0a06,1.3); SFX.tr.hHit&&SFX.tr.hHit(at3(Hh.x,Hh.z,1.1));
-    if(Hh.state==='down'||Hh.state==='rise') return;
-    Hh.hp--; Hh.stag=.42;
-    if(Hh.hp<=0){ Hh.state='down'; Hh.t=0; Hh.down=40+Math.random()*12; SFX.tr.thud&&setTimeout(()=>{ if(T) SFX.tr.thud(.6); },380); T.shotDown=(T.shotDown||0)+1; return; }
-    if(Hh.state!=='hunt') hollowAlert(Hh); }
-  /* caught */
-  function hollowGrab(Hh){ if(T.grab||T.phase!=='play') return; T.grab={H:Hh,t:0}; Hh.state='grab'; Hh.t=0;
-    if(T.doc) forceCloseDoc(); if(T.invOpen) closeInv(true); SFX.tr.hShriek&&SFX.tr.hShriek({gain:1.6,pan:0}); T.stat=1; T.heartKick=1; T.kick=1; }
-  function hollowStep(dt){
-    if(!T.hol) return;
-    const P=T.p, away=T.inDream||T.inTape||T.inSalvia, live=T.phase==='play'&&!away&&!T.paused&&!T.doc&&!T.invOpen;
-    if(T.grab){ const G=T.grab, Hh=G.H; G.t+=dt; T.keys={}; P.vx=P.vz=0;
-      const want=Math.atan2(-(Hh.x-P.x),-(Hh.z-P.z)); let dy=want-P.yaw; dy=Math.atan2(Math.sin(dy),Math.cos(dy)); P.yaw+=dy*Math.min(1,dt*10); P.pitch+=(.12-P.pitch)*Math.min(1,dt*8);
-      const dd=Math.hypot(P.x-Hh.x,P.z-Hh.z); if(dd>.55) hollowMove(Hh,P.x,P.z,3,dt);
-      Hh.mouthK=Math.min(1,Hh.mouthK+dt*5); hollowPose(Hh,dt,0,'grab');
-      if(G.t>.75){ T.grab=null; die('hollow'); }
-      return; }
-    let near=99;
-    for(const Hh of T.hol){
-      const d=Math.hypot(Hh.x-P.x,Hh.z-P.z), seeN=d<24&&los(Hh.x,Hh.z,P.x,P.z); Hh.g.visible=!away&&(d<7||seeN); if(!Hh.g.visible&&Hh.state!=='hunt'&&Hh.state!=='patrol') continue;
-      if(!live){ hollowPose(Hh,dt,0); continue; }
-      Hh.t+=dt; if(Hh.stag>0) Hh.stag-=dt; if(Hh.phase>0) Hh.phase-=dt;
-      let speed=0;
-      const see=d<16&&seeN;
-      if(Hh.state==='idle'||Hh.state==='sit'||Hh.state==='patrol'){
-        const loud=P.sprinting?11:0;
-        if((see&&(d<7.5||(d<loud)))||d<2.6) hollowAlert(Hh);
-        else if(Hh.state==='patrol'){ const w=Hh.spot.patrol[Hh.wp], dd=Math.hypot(w[0]-Hh.x,w[1]-Hh.z); if(dd<.5) Hh.wp=(Hh.wp+1)%Hh.spot.patrol.length; speed=hollowMove(Hh,w[0],w[1],1.05,dt)/dt; }
-      }
-      if(Hh.state==='alert'){ const want=Math.atan2(P.x-Hh.x,P.z-Hh.z); let dy=want-Hh.ry; dy=Math.atan2(Math.sin(dy),Math.cos(dy)); Hh.ry+=dy*Math.min(1,dt*6); Hh.mouthK=Math.min(1,Hh.mouthK+dt*4);
-        if(Hh.t>(Hh.wasSit?1.3:.8)){ Hh.state='hunt'; Hh.t=0; Hh.sitK=0; } }
-      else if(Hh.state==='hunt'){
-        Hh.mouthK=Math.max(.15,Hh.mouthK-dt*.8);
-        if(see) Hh.lost=0; else Hh.lost+=dt;
-        if(Hh.stag<=0){ const n=hollowNext(Hh), sp=2.55+(Hh.seed%5)*.05; const m=hollowMove(Hh,n.x,n.z,sp,dt); speed=m/dt;
-          if(m<sp*dt*.25){ Hh.stuck+=dt; if(Hh.stuck>.8){ Hh.phase=1.5; Hh.stuck=0; } } else Hh.stuck=0; }
-        if(d<.78&&Math.abs(P.y-EYE)<.5) hollowGrab(Hh);
-        if(Hh.lost>11&&d>14&&!inView(Hh.x,1.2,Hh.z,1.2)) hollowHome(Hh);
-      }
-      else if(Hh.state==='down'){ Hh.down-=dt; if(Hh.down<=0&&!(d<3)){ Hh.state='rise'; Hh.t=0; SFX.tr.hGroan&&SFX.tr.hGroan(at3(Hh.x,Hh.z,1.2)); } }
-      else if(Hh.state==='rise'){ if(Hh.t>1.6){ Hh.hp=3; Hh.state=d<14?'hunt':'idle'; if(Hh.state==='hunt') SFX.tr.hShriek&&SFX.tr.hShriek(at3(Hh.x,Hh.z,1)); Hh.t=0; Hh.lost=0; } }
-      // sounds: a groan now and then; bare feet when they come
-      Hh.groan-=dt; if(Hh.groan<=0&&d<18&&Hh.state!=='down'){ Hh.groan=(Hh.state==='hunt'?3:9)+Math.random()*9; SFX.tr.hGroan&&SFX.tr.hGroan(at3(Hh.x,Hh.z,Hh.state==='hunt'?1:.7)); }
-      if(speed>.3){ Hh.step+=speed*dt; if(Hh.step>.62){ Hh.step=0; if(d<20) SFX.tr.hStep&&SFX.tr.hStep(at3(Hh.x,Hh.z,1)); } }
-      if(Hh.state==='hunt'&&d<10){ near=Math.min(near,d); }
-      hollowPose(Hh,dt,speed);
-    }
-    if(near<10){ T.heartKick=Math.max(T.heartKick||0,.5+(10-near)*.05); if(near<5&&Math.random()<dt*2) T.flashDip=Math.max(T.flashDip||0,.12); }
-  }
-  /* the body: walking, reaching, sitting, falling down and getting up again */
-  function hollowPose(Hh,dt,speed,mode){
-    const g=Hh.g, PI=Math.PI, st=Hh.state, k=Math.min(1,dt*8);
-    g.position.set(Hh.x,0,Hh.z); g.rotation.y=Hh.ry;
-    const lieT=st==='down'?1:st==='rise'?1-clamp(Hh.t/1.6,0,1):0; Hh.lieK+=(lieT-Hh.lieK)*Math.min(1,dt*(st==='down'?3.2:2.2));
-    const sitT=(st==='sit'||(st==='alert'&&Hh.wasSit&&Hh.t<.9))?1:0; Hh.sitK+=(sitT-Hh.sitK)*Math.min(1,dt*3);
-    const hunt=st==='hunt'||st==='grab'||(st==='alert'&&Hh.t>.4); Hh.armK+=((hunt?1:0)-Hh.armK)*Math.min(1,dt*4);
-    if(speed>.05) Hh.ph+=dt*speed*3.1;
-    const wk=Math.min(1,speed/1.2), sw=Math.sin(Hh.ph)*wk, sit=Hh.sitK, seat=Hh.spot.sit||.47;
-    const thA=-Math.acos(clamp((seat-.5)/.5,-1,1));
-    for(let i=0;i<2;i++){ const s=i?-1:1, ph=sw*s;
-      Hh.th[i].rotation.x=lerp(ph*.55,thA,sit); Hh.sn[i].rotation.x=lerp(Math.max(0,Math.sin(Hh.ph+(i?PI:0)+1.2))*.85*wk+.05,-thA+.02,sit); }
-    Hh.hips.position.y=lerp(1.0+Math.abs(Math.cos(Hh.ph))*.03*wk,seat+.04,sit);
-    const tw=Math.sin(T.t*13+Hh.seed)*Math.max(0,Math.sin(T.t*.7+Hh.seed))*.06;
-    Hh.torso.rotation.x=lerp(lerp(.12,.36,Hh.armK)+(st==='idle'?.05:0),.05,sit)-(Hh.stag>0?Math.sin(Hh.stag/.42*PI)*.35:0);
-    Hh.torso.rotation.y=Math.sin(Hh.ph*.5)*.08*wk;
-    Hh.neck.rotation.x=lerp(.25,.5,1-Hh.armK)+(st==='idle'||st==='sit'?.25:0)-Hh.mouthK*.3;
-    Hh.head.rotation.z=tw+(st==='idle'?.25:0); Hh.head.rotation.y=Math.sin(T.t*.31+Hh.seed)*.15*(1-Hh.armK);
-    for(let i=0;i<2;i++){ const s=i?1:-1;
-      const reach=-1.25+Math.sin(Hh.ph+(i?PI:0))*.12*wk+(mode==='grab'?-.3:0);
-      Hh.sh[i].rotation.x=lerp(lerp(-sw*s*.35+.04,reach,Hh.armK),-.35,sit*(1-Hh.armK));
-      Hh.sh[i].rotation.z=s*lerp(.08,.16,Hh.armK);
-      Hh.el[i].rotation.x=lerp(-.08,-.3,Hh.armK)+(sit?-.5*sit:0); }
-    Hh.mouth.scale.y=.004+Hh.mouthK*.03+(Hh.mouthK>.5?Math.random()*.006:0);
-    if(st!=='alert'&&st!=='grab') Hh.mouthK=Math.max(0,Hh.mouthK-dt*.5);
-    g.rotation.x=-Hh.lieK*1.5; g.position.y=Hh.lieK*.06;
-  }
-
   /* ---------- her, better: the long nightdress, the hands, the hair over her face ---------- */
   function buildHer2(layer){
     const g=new THREE.Group(), PI=Math.PI;
@@ -28921,7 +28710,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     if(T.phase==='wake') wakeStep(dt); else if(T.phase==='play') playStep(dt); else if(T.phase==='collapse') collapseStep(dt); else if(T.phase==='shot') shotStep(dt); else if(T.phase==='dead') deadStep(dt);
     else if(T.phase==='suck') suckStep(dt); else if(T.phase==='cut') cutStep(dt); else if(T.phase==='scare') scareStep(dt); else if(T.phase==='erase') eraseStep(dt); else if(T.phase==='garden') gardenStep(dt); else if(T.phase==='never') neverStep(dt);
     if(!on) return;
-    doorsStep(dt); effectsStep(dt); drugStep(dt); salviaStep(dt); lsdStep(dt); dreamStep(dt); tapeStep(dt); body(dt); lightsStep(dt*(T.tFast||1)); ambientStep(dt*(T.tFast||1)); soundStep(); figureStep(dt); herStep(dt); hollowStep(dt); pistolStep(dt); cullStep(); camStep(dt); handStep(dt); dustStep(dt);
+    doorsStep(dt); effectsStep(dt); drugStep(dt); salviaStep(dt); lsdStep(dt); dreamStep(dt); tapeStep(dt); body(dt); lightsStep(dt*(T.tFast||1)); ambientStep(dt*(T.tFast||1)); soundStep(); figureStep(dt); herStep(dt); pistolStep(dt); cullStep(); camStep(dt); handStep(dt); dustStep(dt);
     if(T.phase==='play'&&!T.doc&&!T.paused&&!T.invOpen&&!T.choice){ T.target=pickTarget(); prompt(!!T.target); } else { T.target=null; prompt(false); }
     postStep(dt); render();
     T.pf.acc+=dt; T.pf.n++;
@@ -29037,7 +28826,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     T.mats.exitSide=stdMat({color:0x1a1a18,roughness:.6});
     T.mats.exitFace=new THREE.MeshBasicMaterial({map:texSign('EXIT',{bg:'#0c3a1a',fg:'#7dffae',edge:'#062010',clean:true,w:256,h:72}),color:LCc(0xb0ffc8),toneMapped:false});
     T.sb=new Batch();
-    decorate(); decorate3(); hollowsInit();
+    decorate(); decorate3();
     T.wheel.g=wheelchair(); { const s=T.wheel.spots[0]; T.wheel.g.position.set(s[0],0,s[1]); T.wheel.g.rotation.y=s[2]; }
     buildShell();
     T.sb.flush(T.root); T.annexB.flush(T.root);
@@ -29097,7 +28886,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
       look(yaw,pitch){ T.p.yaw=yaw; T.p.pitch=pitch; },spawn:spawnFigure,her:herSpawn,grid:()=>grid,
       take(kind,fx){ const it=T.items.find(i=>i.kind===kind&&!i.taken&&(fx===undefined||i.fx===fx||i.v===fx||i.d===fx)); if(it) toInventory(it); return !!it; },dreset(){ drugReset(); T.fx={}; },
       equip(kind,d){ const it=T.inv.find(i=>i.kind===kind&&(d===undefined||i.d===d)); if(it) equip(it); },salvia(st,ch){ startSalvia(); if(st&&T.sv){ T.sv.story=st; T.sv.chain[0]=st; } if(ch&&T.sv) T.sv.chain=[st||T.sv.story].concat(ch); },svNext:()=>{ if(T.sv){ T.sv.t=SV_LEN; } },
-      pistol(){ const it=T.items.find(i=>i.kind==='pistol'&&!i.taken); if(it){ toInventory(it); equip(it); } return !!it; },fire:pistolFire,hollows:()=>T.hol,flow:hollowFlow,act:handAction,inv:openInv,closeInv,die,lsd:startLSD,dream:enterDream,
+      pistol(){ const it=T.items.find(i=>i.kind==='pistol'&&!i.taken); if(it){ toInventory(it); equip(it); } return !!it; },fire:pistolFire,act:handAction,inv:openInv,closeInv,die,lsd:startLSD,dream:enterDream,
       poison(){ startPoison(4); },open:openPhantom,collapse:startCollapse,enterDream,wakeUp,place:placeHouse,poseSelf,hgt:(x,z)=>hgt(x,z),DX,DZ,
       aim(){ const h=T.hand; if(h&&h.it.kind==='gun'){ h.aimOn=true; h.aimK=1; T.aimK=1; } },
       tape:insertTape,goScene,cutTo,scare:startScare,fireChoice,toggleAim,garden:startGarden,openSafe}};
