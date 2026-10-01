@@ -2841,7 +2841,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <button class="news rx" id="newsCard" title="New character">
     <span class="nw-pic"><img id="newsPic" src="" alt=""></span>
-    <span class="nw-t"><i class="nw-tag">NEW · BEAST</i><b id="newsName">MILLIE</b><span id="newsSub">The princess of hell.</span></span>
+    <span class="nw-t"><i class="nw-tag">NEW · MYTHICAL</i><b id="newsName">LAURENT</b><span id="newsSub">The local plug.</span></span>
   </button>
 
   <button class="art-dock rx" id="artDock" title="Artifacts">
@@ -2895,7 +2895,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.16.1 · BETA</span>
+    <span class="hub-version">VERSION 3.17.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3058,7 +3058,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.16.1</div></div>
+</svg><div class="set-ver">VERSION 3.17.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3677,6 +3677,8 @@ const SFX=(function(){
     panne(b){ for(let i=0;i<2;i++) tone(b,{type:'triangle',f:2300+i*300,dur:.025,peak:.05,delay:i*.04}); noise(b,{hp:3200,dur:.34,peak:.2,atk:.03,delay:.05}); noise(b,{hz:6500,q:.7,dur:.3,peak:.1,delay:.06}); },
     /* Millie: the scythe whistling round, a ring of steel */
     millie(b){ noise(b,{hz:700,hz2:2600,q:1.1,dur:.22,peak:.18,atk:.03}); tone(b,{f:1760,fm:{r:2.4,i:1.2,i2:.02},dur:.4,peak:.04,send:.5}); tone(b,{f:180,f1:90,dur:.12,peak:.1}); },
+    /* Laurent: a soft powdery puff out of the hand */
+    laurent(b){ noise(b,{ft:'lowpass',hz:1800,hz2:600,dur:.28,peak:.2,atk:.02}); noise(b,{hp:5200,dur:.22,peak:.07,atk:.04,delay:.03}); tone(b,{f:220,f1:150,dur:.06,peak:.06}); },
     /* Rhyon: an electric blade whipping through the air */
     rhyon(b){ noise(b,{hz:2600,hz2:6400,q:1.2,dur:.15,peak:.2,atk:.02}); tone(b,{type:'sawtooth',f:900,f1:240,dur:.11,peak:.06,cut:3200,q:3}); tone(b,{f:3520,fm:{r:1.5,i:1.1,i2:.02},dur:.18,peak:.03,send:.4}); },
     def(b){ noise(b,{hz:3000,hz2:1200,q:.8,dur:.05,peak:.3}); tone(b,{type:'sawtooth',f:1000,f1:200,dur:.14,peak:.2,cut:3000,cut2:400,q:6}); }
@@ -3747,6 +3749,9 @@ const SFX=(function(){
     millie(b){ tone(b,{f:52,f1:28,dur:1.6,peak:.6}); noise(b,{ft:'lowpass',hz:320,dur:1.5,peak:.35,am:{r:9,d:.6}});
       tone(b,{f:110,fm:{r:2.76,i:1.4,i2:.02},dur:2,peak:.08,send:.7,delay:.2});
       chord(b,[146.8,155.6,220,233.1],{type:'sawtooth',dur:2,peak:.035,atk:.35,cut:900,drive:true,send:.6,delay:.3}); },
+    /* House Call: a warm chord swelling up, and a shimmer */
+    laurent(b){ chord(b,[261.6,329.6,392,523.3],{type:'triangle',dur:1.6,peak:.07,atk:.3,send:.6,strum:.06});
+      tone(b,{f:1046,fm:{r:2,i:.8,i2:.01},dur:1.4,peak:.04,send:.7,delay:.2}); noise(b,{hz:6000,q:.6,dur:1.2,peak:.03,atk:.4,send:.6}); tone(b,{f:80,f1:120,dur:.6,peak:.18}); },
     /* Full Control: a sub drop through a burst of static and a dark, detuned chord */
     rhyon(b){ tone(b,{f:62,f1:28,dur:1.4,peak:.6}); for(let i=0;i<6;i++) noise(b,{hz:500+i*700,q:3,dur:.06,peak:.1,delay:i*.07});
       chord(b,[110,116.5,164.8],{type:'sawtooth',dur:1.5,peak:.05,atk:.2,cut:900,drive:true,send:.5}); },
@@ -3756,7 +3761,7 @@ const SFX=(function(){
   const ATK_GAIN={demi:2.4,eribun:2,vael:2,krisztian:1.8,luna:1.6,racksdoubled:1.6,crisis:1.8,kizu:.75,star:1.1,yume:.8,levine:1.3,kira:1.6};
   const ULT_GAIN={demi:2.6,emma:2.6,racksdoubled:2,nyx:1.8,reka:1.8,szamoci:1.5,star:1.4,krisztian:1.4,yume:1.3,levine:1.2,kira:1.3};
   /* how each character sounds when hit: a short vowel at their own pitch */
-  const VOICE={vael:180,szamoci:360,nyx:390,eribun:420,luna:340,emma:330,reka:370,krisztian:165,racksdoubled:300,aether:150,demi:400,kizu:190,star:320,wonderkid:205,yume:350,levine:372,kira:158,neptune:385,yoon:150,gyro:118,mathias:172,panne:356,rhyon:128,millie:372};
+  const VOICE={vael:180,szamoci:360,nyx:390,eribun:420,luna:340,emma:330,reka:370,krisztian:165,racksdoubled:300,aether:150,demi:400,kizu:190,star:320,wonderkid:205,yume:350,levine:372,kira:158,neptune:385,yoon:150,gyro:118,mathias:172,panne:356,rhyon:128,millie:372,laurent:162};
   let dreadOn=null;                    // Kira's drone while the lights are out
   let horrorOn=null;                   // Star's Lost Sanity soundscape
   /* a voice: a sawtooth throat shaped by formant filters (the vowel), with a
@@ -4334,6 +4339,13 @@ const SFX=(function(){
     artBox(){ if(!on()) return; const b=bus(null); noise(b,{hz:900,hz2:300,q:1.4,dur:.35,peak:.22,atk:.01}); tone(b,{f:180,f1:90,dur:.25,peak:.3});
       for(let i=0;i<4;i++) tone(b,{f:880*Math.pow(1.26,i),dur:.5,peak:.05,send:.6,delay:.62+i*.06}); },
     artLevel(){ if(!on()) return; const b=bus(null); [0,.06,.12].forEach((d,i)=>tone(b,{type:'triangle',f:1046*Math.pow(1.335,i),dur:.35,peak:.07,send:.5,delay:d})); noise(b,{hp:4000,dur:.2,peak:.05,delay:.05}); },
+    /* Laurent: Overload kicking in, the one shot, the heal */
+    laurentOverload(pos){ if(!on()) return; const a=where(pos,.9); if(!a) return; const b=bus(a);
+      tone(b,{type:'sawtooth',f:110,f1:440,dur:.5,peak:.08,cut:1400,cut2:4000}); noise(b,{hz:900,hz2:4200,q:1.4,dur:.5,peak:.12,atk:.05}); tone(b,{f:55,dur:.4,peak:.3}); },
+    laurentShot(pos){ if(!on()||!ok('lshot',60)) return; const a=where(pos,1); if(!a) return; const b=bus(a);
+      noise(b,{hp:900,dur:.07,peak:.55}); noise(b,{ft:'lowpass',hz:1400,hz2:200,dur:.5,peak:.35,send:.5}); tone(b,{f:90,f1:40,dur:.25,peak:.6}); tone(b,{f:2400,f1:600,dur:.08,peak:.12,delay:.01}); },
+    laurentHeal(pos){ if(!on()||!ok('lheal',300)) return; const a=where(pos,.7); if(!a) return; const b=bus(a);
+      tone(b,{f:880+Math.random()*220,f1:1320,dur:.35,peak:.04,send:.6}); tone(b,{f:1760,dur:.25,peak:.02,send:.7,delay:.06}); },
     /* the pets */
     meow(pos){ if(!on()||!ok('meow',300)) return; const a=where(pos,pos?.9:1); if(!a) return; const b=bus(a);
       voice(b,{f0:620+Math.random()*80,curve:[[0,.85],[.25,1.25],[.7,1.05],[1,.7]],dur:.42,forms:[[950,5,1],[2100,7,.5],[3300,8,.2]],peak:.16,breath:.25}); },
@@ -7256,7 +7268,7 @@ const CHARACTERS = [
   {key:'racksdoubled',name:'Racks',rarity:'celestial',accent:0xe0314f,hp:550,cd:0,dmg:7,atk:'katana',atkRef:70/3,   // a katana is 3 at 10 ATK
    desc:'The creator. One of the most important characters in the whole lore. My ultimate can instakill btw xD',
    atkName:'Katana Spam',ultName:'Meteor Drop',build:buildRacks},
-  {key:'aether',name:'Aether',rarity:'legendary',accent:0xffc83a,hp:340,cd:2000,dmg:40,atk:'aether',
+  {key:'aether',name:'Aether',rarity:'epic',accent:0xffc83a,hp:340,cd:2000,dmg:40,atk:'aether',
    desc:'A slow, heavy geomancer. Hits like a landslide — if you can land it.',
    atkName:'Stone Lob',ultName:'Lumine',build:buildAether},
   {key:'demi',name:'Demi',rarity:'angelic',accent:0x5fd6ff,hp:200,cd:420,dmg:16,atk:'star',spd:1.75,
@@ -7265,7 +7277,7 @@ const CHARACTERS = [
   {key:'levine',name:'Levine',rarity:'celestial',accent:0x4fc3ff,hp:320,cd:1000,dmg:30,atk:'soulslash',
    desc:'The mysterious one. Nobody knows where she came from. Her spirit blade drinks every hit, and she is gone before you see her.',
    atkName:'Soul Slash',ultName:'Requiem',build:buildLevine},
-  {key:'kizu',name:'Kizu',rarity:'legendary',accent:0x3fa9ff,hp:230,cd:300,dmg:10,atk:'mic',
+  {key:'kizu',name:'Kizu',rarity:'epic',accent:0x3fa9ff,hp:230,cd:300,dmg:10,atk:'mic',
    desc:'A musician in all black with long blue hair. Brings the whole crowd with him.',
    atkName:'Mic Drop',ultName:'Moshpit',build:buildKizu},
   {key:'star',name:'Star',rarity:'celestial',accent:0xe0284a,hp:650,cd:1400,dmg:40,atk:'arrow',
@@ -7295,7 +7307,7 @@ const CHARACTERS = [
   {key:'mathias',name:'Mathias',rarity:'common',accent:0xd8b46a,hp:300,cd:1000,dmg:10,atk:'baguette',
    desc:"An old soul in a young man's body: old money and a chef's hands. His baguettes come straight from Italy, and they are sharp. Seven hits and the kitchen knives come out.",
    atkName:'Sharp Baguette',ultName:'Kitchen Knives',spName:'Wooden Spoon',build:buildMathias},
-  {key:'panne',name:'Panne',rarity:'epic',accent:0x2de0d0,hp:440,cd:400,dmg:20,atk:'spray',
+  {key:'panne',name:'Panne',rarity:'legendary',accent:0x2de0d0,hp:440,cd:400,dmg:20,atk:'spray',
    desc:"Always an artist, never the friendly kind. She lives for music and graffiti: a wide V of spray paint, a fast board to get out of trouble, and a block party nobody walks out of quickly.",
    atkName:'Wide Spray',ultName:'Block Party',spName:'Skate',build:buildPanne},
   {key:'rhyon',name:'Rhyon',rarity:'celestial',accent:0x21e6ff,hp:500,cd:500,dmg:40,atk:'cyberblade',spd:1.1,
@@ -7303,7 +7315,10 @@ const CHARACTERS = [
    atkName:'Cyber Blade',ultName:'Full Control',spName:'System Override',build:buildRhyon},
   {key:'millie',name:'Millie',rarity:'celestial',accent:0xe0284a,hp:310,cd:700,dmg:60,atk:'scythe',spd:1,
    desc:"The princess of hell. Half human, half demon, dressed for a ball, with a scythe taller than she is. Every swing cuts a wide half-moon in front of her, her waltz throws everyone back, and when she's had enough the whole map turns into the hell she grew up in.",
-   atkName:'Crimson Scythe',ultName:'Welcome to Hell',spName:"Reaper's Waltz",build:buildMillie}
+   atkName:'Crimson Scythe',ultName:'Welcome to Hell',spName:"Reaper's Waltz",build:buildMillie},
+  {key:'laurent',name:'Laurent',rarity:'epic',accent:0xf2f2f2,hp:360,cd:550,dmg:16,atk:'powder',spd:1.05,
+   desc:"The local plug. Everybody knows him and everybody owes him. A handful of white powder slows down whoever it lands on, Overload doubles his speed and loads a pistol with one bullet that takes half your health, and when things go wrong he makes a house call: everyone around him gets patched up.",
+   atkName:'Sprinkle',ultName:'House Call',spName:'Overload',build:buildLaurent}
 ];
 /* the Shift ability, where a character has one */
 [['emma','Dash'],['crisis','Welcome to Hell'],['yume','Lock-On'],['levine','Vanish'],['wonderkid','Slide Tackle'],
@@ -7313,9 +7328,9 @@ const CHARACTERS = [
 CHARACTERS.sort((a,b)=>RARITY_ORDER.indexOf(a.rarity)-RARITY_ORDER.indexOf(b.rarity));
 const byKey = k => CHARACTERS.find(c=>c.key===k);
 const RANGE_PREF = {vael:3,szamoci:5.5,nyx:7.5,eribun:4.5,luna:7,emma:2.5,reka:1.8,krisztian:5,racksdoubled:6,
-  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5,mathias:6,panne:4.8,rhyon:1.8,millie:3.6};
+  aether:5.5,demi:8,kizu:6,crisis:6.5,star:7.5,wonderkid:1.4,yume:7,levine:6.5,kira:6,neptune:7,yoon:8,gyro:6.5,mathias:6,panne:4.8,rhyon:1.8,millie:3.6,laurent:3.6};
 /* close-range attacks: how near a bot has to be before it swings */
-const MELEE_REACH = {kick:1.9,punch:1.55,spray:6.1,cyberblade:2.3,scythe:4.7};
+const MELEE_REACH = {kick:1.9,punch:1.55,spray:6.1,cyberblade:2.3,scythe:4.7,powder:4.5};
 
 /* ---------- life: walking, breathing, blinking ---------- */
 /* Walk cycle: legs swing from the hip, arms counter-swing, the body bobs
@@ -13565,13 +13580,13 @@ function refreshHub(){
   $el('hub').dataset.rarity=hc.rarity;
   // the ticker along the bottom
   const tick=['LUNIVE','NIGHT COMMAND','PLAYING AS '+hc.name.toUpperCase(),hr.name+' CLASS',M.name.toUpperCase(),
-    State.unlocked.includes('rhyon')?'RHYON HAS FULL CONTROL':'A NEW BEAST CAME BACK FROM THE FUTURE',coinText()+' COINS','WINS '+Object.values(State.winsByChar||{}).reduce((s,n)=>s+(n||0),0)].join('  ✦  ')+'  ✦  ';
+    State.unlocked.includes('laurent')?'LAURENT GOT YOU':'THE LOCAL PLUG IS IN TOWN',coinText()+' COINS','WINS '+Object.values(State.winsByChar||{}).reduce((s,n)=>s+(n||0),0)].join('  ✦  ')+'  ✦  ';
   const tr0=$el('tickerRun'); if(tr0.dataset.t!==tick){ tr0.dataset.t=tick; tr0.innerHTML='<span>'+tick+'</span><span>'+tick+'</span>'; }
   // the new secret: a teaser until he's yours
-  const kOwn=State.unlocked.includes('millie'), nc=$el('newsCard');
+  const kOwn=State.unlocked.includes('laurent'), nc=$el('newsCard');
   nc.classList.toggle('owned',kOwn);
-  setText('newsSub',kOwn?'Yours now. Welcome to hell.':'The princess of hell. In the Stash and the Shop.');
-  const np=$el('newsPic'); if(!np.getAttribute('src')){ try{ np.src=Lobby.portrait('millie'); }catch(e){} }
+  setText('newsSub',kOwn?'Yours now. You know where to find him.':'The local plug. In the Stash and the Shop.');
+  const np=$el('newsPic'); if(!np.getAttribute('src')){ try{ np.src=Lobby.portrait('laurent'); }catch(e){} }
   applyAccent(hc.key);
   // the command column
   setText('badgeChars',State.unlocked.length+'/'+CHARACTERS.length);
@@ -13675,7 +13690,8 @@ const HERO_LINES={
   mathias:["Twenty-three, going on seventy. Pass the espresso.","The baguettes come from Milan. Don't ask how they got this sharp.","Seven hits, then the good knives come out."],
   panne:["Don't lean on that wall. It's still wet.","Headphones on, board under my feet. Try to keep up.","I'm not friendly. I'm an artist. There's a difference."],
   rhyon:["I came back from 2099. Trust me, it doesn't get better.","System override in three... two...","Your firmware is outdated."],
-  millie:["Curtsy first. Then I'll cut you.","Daddy says I'm too soft for hell. Watch me.","Heaven let me in once. I didn't stay.","My followers are hungry. Don't make them wait."]
+  millie:["Curtsy first. Then I'll cut you.","Daddy says I'm too soft for hell. Watch me.","Heaven let me in once. I didn't stay.","My followers are hungry. Don't make them wait."],
+  laurent:["You know where to find me.","First one's free. The second one costs you.","Relax, I got you.","I don't do refunds.","Everybody owes me something."]
 };
 const POKE_LINES=["Hey! That tickles!","Stop poking me~","Yes? I'm right here.","Careful. I bite.","Again? Fine. One more.","Hehe~","Okay okay, let's play already!"];
 const HeroTalk=(function(){
@@ -13821,7 +13837,7 @@ document.getElementById('mailBtn').addEventListener('click',openMail);
 /* the news card: the Shop while the new secret is still for sale, the roster on him once he's yours */
 document.getElementById('newsCard').addEventListener('click',()=>{
   SFX.open();
-  show('chars'); openChars(); const i=CHARACTERS.findIndex(c=>c.key==='millie'); if(i>=0) setChar(i);
+  show('chars'); openChars(); const i=CHARACTERS.findIndex(c=>c.key==='laurent'); if(i>=0) setChar(i);
 });
 /* motes drifting up through the lobby */
 (function(){ const box=document.getElementById('hubMotes'); if(!box) return; let h='';
@@ -14537,7 +14553,8 @@ const ACHV_REWARDS = {
   mathias:{coins:100,title:'Old Soul',pfp:'mathias'},
   panne:{coins:100,title:'The Favorite',pfp:'panne'},
   rhyon:{coins:100,title:'Overclocked',pfp:'rhyon'},
-  millie:{coins:100,title:'Welcomed in Heaven',pfp:'millie'}
+  millie:{coins:100,title:'Welcomed in Heaven',pfp:'millie'},
+  laurent:{coins:100,title:'The Plug',pfp:'laurent'}
 };
 const ACHV_TARGET = 10;
 function grantAchievement(key){
@@ -15798,6 +15815,7 @@ function fire(u, dir, dist){
   if(u.key==='mathias'&&u.knives>0){ knifeThrow(u,dir,mult); return; }              // Kitchen Knives: 70 a throw
   if(u.key==='rhyon'&&spOn(u,_n)){ mechVolley(u,dir,mult); return; }                  // System Override: both cannons, ten bolts
   if(u.key==='millie'&&spOn(u,_n)) return;                                              // mid-waltz the scythe is busy
+  if(u.key==='laurent'&&u.pistolShots>0&&spOn(u,_n)){ laurentPistol(u,dir,mult); return; }   // Overload: the one bullet (64e-laurent.js)
   SFX.attack(cfg.key,u.isPlayer?null:u.mesh.position);
   switch(cfg.atk){
     case 'boomerang':{
@@ -15982,6 +16000,8 @@ function fire(u, dir, dist){
     case 'cyberblade': cyberSlash(u,dir,dmg); break;
     /* Millie: a red crescent off the scythe, far and through everyone (64d-millie.js) */
     case 'scythe': millieReap(u,dir,dmg); break;
+    /* Laurent: a handful of white powder in a short cone, slowing whoever it lands on (64e-laurent.js) */
+    case 'powder': laurentPowder(u,dir,dmg); break;
     /* Mathias: a sharp baguette thrown spinning (64b-mathias-panne.js) */
     case 'baguette': mathiasThrow(u,dir,dmg); break;
     /* Panne: a wide V of spray paint */
@@ -16258,6 +16278,8 @@ function ultimate(u,dir,target){
   else if(k==='rhyon'){ if(!rhyonUlt(u,dir,target)) return; }
   /* Millie — Welcome to Hell: the map turns to hell, her followers crawl up next to every enemy (64d-millie.js) */
   else if(k==='millie'){ MillieHell.start(u); }
+  /* Laurent — House Call: five seconds of healing for him and his team around him (64e-laurent.js) */
+  else if(k==='laurent'){ laurentUlt(u); }
   /* Crisis — Demon Time: transforms for 5s, wide sword sweeps (crisisStep turns him back) */
   else if(k==='crisis'){
     if(u.flying){ u.ult=100; say('Land first'); return; }
@@ -16318,7 +16340,7 @@ function beamStep(u,now,dt){
 const BOT_ULT={vael:{near:6,low:.5},szamoci:{near:7},nyx:{near:8},eribun:{near:4.5},luna:{near:9,los:true},emma:{low:.35},reka:{low:.45},
   krisztian:{near:8},racksdoubled:{near:10},aether:{near:5.5},demi:{near:7,low:.5},kizu:{near:9},star:{near:11},
   wonderkid:{near:6.5},yume:{near:11},levine:{near:13,los:true},kira:{near:14},crisis:{near:4.5},
-  neptune:{near:9},yoon:{near:15,far:6.5},gyro:{near:10,los:true},mathias:{near:8,los:true},panne:{near:4.2},rhyon:{near:11,los:true},millie:{near:16}};                    // (far: Yoon won't call rockets down on someone standing next to him)
+  neptune:{near:9},yoon:{near:15,far:6.5},gyro:{near:10,los:true},mathias:{near:8,los:true},panne:{near:4.2},rhyon:{near:11,los:true},millie:{near:16},laurent:{low:.55}};                    // (far: Yoon won't call rockets down on someone standing next to him)
 const BOT_ULT_TRICKLE=1.6;            // a bot's super also fills slowly on its own (%/s), so a bad aim doesn't mean never
 function botUlt(u,tg,bd,now){
   const R=BOT_ULT[u.key]; if(!R||u.ult<100) return;
@@ -17536,6 +17558,7 @@ function statusStep(u,now,dt){
   vanishStep(u,now);
   poisonStep(u,now,dt); burnStep(u,now,dt); kiraStep(u,now,dt);
   if(u.key==='neptune') neptuneStep(u,now,dt);
+  if(u.key==='laurent') laurentStep(u,now,dt);
   knockStep(u,dt); shiftStep(u,now,dt);
   crisisStep(u,now); slamStep(u,dt); beamStep(u,now,dt);
   if(u.key==='mathias'||u.key==='panne') c10Unit(u,now,dt);
@@ -17730,6 +17753,13 @@ function animateAction(mesh,u,now){
     const e=a*a*(3-2*a);
     if(ud.arms&&e>0){ ud.arms.forEach((ap,i)=>{ ap.rotation.x=-1.45*e+ap.rotation.x*(1-e); ap.rotation.z=ud.armZ[i]*(1-e)+(i?-.12:.12)*e; }); }
     ud.guns.forEach(g=>{ g.rotation.x=1.45*e; });
+  }
+  if(u.key==='laurent'&&ud.arms){
+    const A=ud.arms;
+    if(u.sprinkleAt&&now-u.sprinkleAt<300){ const q=(now-u.sprinkleAt)/300; A[0].rotation.x=q<.3?.7*(q/.3):.7-2.2*Math.sin(Math.PI*Math.min(1,(q-.3)/.7)); if(ud.body) ud.body.rotation.y-=.2*Math.sin(Math.PI*q); }
+    const aim=u.gunAt&&now-u.gunAt<380?1:(u.pistolShots>0&&spOn(u,now)?.75:0);
+    if(aim>0){ A[1].rotation.x=-1.4*aim+A[1].rotation.x*(1-aim); A[1].rotation.z=ud.armZ[1]*(1-aim)-.08*aim;
+      if(u.gunAt&&now-u.gunAt<140) A[1].rotation.x-=.35*Math.sin(Math.PI*(now-u.gunAt)/140); }
   }
   if(u.key==='mathias'||u.key==='panne') c10Pose(mesh,u,now);
   if(u.key==='rhyon') ryPose(mesh,u,now);
@@ -18846,7 +18876,8 @@ const SHIFT={
   gyro:        {name:'Electro Blades',ms:6000, cd:30000, col:0x6ad8ff, go:gyroBlades, step:gyroBladesStep, end:gyroBladesEnd},
   mathias:     {name:'Wooden Spoon',  ms:7000, cd:10000, col:0xc98d52, go:spoonOn, end:spoonOff},
   rhyon:       {name:'System Override',ms:10000,cd:20000, col:RY_CYAN, go:rhyonOverride, step:rhyonOverrideStep, end:rhyonOverrideEnd},
-  millie:      {name:"Reaper's Waltz",ms:5000, cd:12000, col:0xff2a44, go:millieWaltz, step:millieWaltzStep, end:millieWaltzEnd}
+  millie:      {name:"Reaper's Waltz",ms:5000, cd:12000, col:0xff2a44, go:millieWaltz, step:millieWaltzStep, end:millieWaltzEnd},
+  laurent:     {name:'Overload',      ms:5000, cd:10000, col:0xffffff, speed:2, go:laurentOverload, step:laurentOverloadStep, end:laurentOverloadEnd}
 };
 const ARM_MS=8000;
 function spOn(u,now){ return !!(u&&u.spUntil&&(now||performance.now())<u.spUntil); }
@@ -18883,7 +18914,7 @@ const BOT_SP={
   vael:{near:3.4}, szamoci:{range:1}, nyx:{max:14}, eribun:{range:1}, luna:{max:9}, demi:{max:9.5},
   reka:{max:10}, kizu:{range:1}, krisztian:{max:12}, aether:{range:1}, racksdoubled:{max:8}, star:{max:10},
   wonderkid:{max:11}, neptune:{max:12}, yoon:{max:20}, emma:{near:6.5}, crisis:{low:.5,max:9}, yume:{range:1},
-  levine:{low:.55,max:10,ambush:.25}, kira:{max:11}, gyro:{near:5.5}, mathias:{near:4.6}, panne:{low:.6,max:9,ambush:.15}, rhyon:{near:9}, millie:{near:3.2}
+  levine:{low:.55,max:10,ambush:.25}, kira:{max:11}, gyro:{near:5.5}, mathias:{near:4.6}, panne:{low:.6,max:9,ambush:.15}, rhyon:{near:9}, millie:{near:3.2}, laurent:{max:8}
 };
 function botShift(u,tg,bd,now){
   const R=BOT_SP[u.key]; if(!R||!tg||isDungeon()) return;
@@ -22035,7 +22066,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=3, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.16.1';
+const NET_VER=4, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.17.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -22871,6 +22902,7 @@ function netApplyFx(e){
       case 'knock': knock(u,{x:e[2],z:e[3]},e[4],e[5]); break;
       case 'poison': applyPoison(u,by(e[3]),e[2]); break;
       case 'burn': ignite(u,by(e[3]),e[2]); break;
+      case 'hl': heal(u,e[2]); break;
     }
   }catch(err){ console.warn(err); }
   finally{ NET.inFx=false; NET.pre=null; }
@@ -23016,6 +23048,215 @@ function netMateUI(){
   const ps=document.querySelector('#onPanel .op-pst');                 // the panel's line too, at once
   if(ps&&P){ ps.dataset.st=st; const txt=PST_TXT[st]||PST_TXT.lobby; if(ps.textContent!==txt) ps.textContent=txt; }
   netReadyUI();
+}
+
+/* ---- 64e-laurent.js ---- */
+/* ==========================================================
+   LAURENT — the local plug. Everybody knows him, everybody owes him.
+   A white snapback worn backwards, a black puffer over a white tee,
+   a gold chain, a crossbody bag, grey joggers and clean white kicks,
+   and a little bag of white powder in his hand.
+   Attack: SPRINKLE — a handful of white powder thrown in a short cone:
+     16 to everyone it reaches, and they're slowed for 0.2s.
+   Shift: OVERLOAD — 5s at double speed, with a pistol that has one
+     bullet: whoever it hits loses half their health (10s cooldown).
+   Super: HOUSE CALL — for 5 seconds he looks after everyone around
+     him, his team and himself: 6% of their health back every half
+     second (60% in all).
+   ========================================================== */
+const LAUR={RANGE:4.6,HALF:.5,SLOW_MS:200,SLOW_K:.45,OVER_MS:5000,OVER_CD:10000,BULLET_SP:30,HEAL_MS:5000,HEAL_GAP:500,HEAL_K:.06,HEAL_R:5,
+  WHITE:0xf6f7fa,GOLD:0xffc94a,MINT:0x7dffc4};
+
+/* ---------- the model ---------- */
+/* the little bag: a clear zip bag, white inside */
+function laurentBagProp(){
+  const g=new THREE.Group();
+  part(g,softBox(.07,.085,.018,.008,3),cmat(LAUR.WHITE,{rim:.6}),0,-.006,0);                          // the powder
+  const bag=part(g,softBox(.084,.11,.03,.01,3),new THREE.MeshPhongMaterial({color:0xe8f4ff,transparent:true,opacity:.35,shininess:90,specular:0xffffff,depthWrite:false}),0,0,0);
+  bag.renderOrder=2;
+  part(g,softBox(.088,.01,.034,.003,2),cmat(0x2f7dd8,{rim:.5}),0,.05,0);                               // the blue zip
+  return g;
+}
+function buildLaurent(){
+  const r=newRig({boy:true}), SK=0xdcac80;
+  const PUFF=0x141518, PUFF2=0x24262c, TEE=0xf4f2ee, JOG=0x8e9098, CAP=0xf3f2ee, GOLD=LAUR.GOLD;
+  const gold=()=>cmat(GOLD,{spec:1.6,shin:110,rim:.6});
+  buildHead(r,{skin:SK,face:{iris:0x4a2e1a,brow:0x1a120c,lash:0x140c08,mouth:'smirk',tilt:-.9,drop:.18,browAng:.4}});
+  buildHair(r.head,{boy:true,root:0x0e0b0a,tip:0x2a1e16,shade:0x060404,shine:0x5a4636,rim:.5,
+    fringe:{n:7,spread:48,len:40,sweep:-12,w:.09,alt:5,jag:1.2},sides:{n:1,el:70,w:.05},back:'short',spikesN:0,napeEl:140,vol:1.06});
+  // the snapback, worn backwards: a round crown, the brim over the nape, the strap and its gap at the front
+  const cap=new THREE.Group(); cap.position.set(0,HEAD_C+.04,-.03); cap.rotation.x=-.34; r.head.add(cap);
+  const BR=HEAD_R*1.13;
+  const crown=lathe([[BR,.16],[BR*1.0,.25],[BR*.94,.35],[BR*.78,.45],[BR*.46,.52],[0,.53]],40,14);
+  gradY(crown,CAP,0xd8d6d0);
+  part(cap,crown,cmat(0xffffff,{rim:.9,side:THREE.DoubleSide})).castShadow=true;
+  for(let k=0;k<6;k++){ const a=k/6*Math.PI*2; const s=[]; for(let j=0;j<=8;j++){ const t=j/8, rr=BR*(1-.55*t*t)*1.004; s.push(V3(Math.sin(a)*rr,.18+t*.34,Math.cos(a)*rr)); }
+    trimLine(cap,s,0xc8c6c0,.003); }                                                                         // the panel seams
+  part(cap,sphere(.03,12,8),cmat(CAP,{rim:.6}),0,.53,0);                                                     // the button on top
+  const brim=part(cap,lathe([[0,-.008],[.25,-.006],[.27,.004],[0,.01]],40,6,-Math.PI*.5,Math.PI),cmat(CAP,{rim:.8,spec:.3}),0,.18,-BR*.5);
+  brim.rotation.set(-.16,Math.PI,0); brim.scale.set(1.1,1,.92);
+  part(cap,softBox(.08,.03,.012,.006,2),cmat(0x1a1b20,{rim:.4}),0,.21,BR*.98);                              // the strap at the front
+  part(cap,softBox(.05,.05,.006,.006,2),cmat(GOLD,{spec:1,shin:70,rim:.5}),0,.34,-BR*.88).rotation.x=.4;   // a gold logo on the back (now the front)
+  // a small gold stud in each ear
+  for(const s of [-1,1]) part(r.head,sphere(.012,8,6),gold(),s*HEAD_R*.98,HEAD_C-.04,.0);
+  // grey joggers with a white side stripe, gathered at the ankle; white sneakers with a black flash
+  legs(r,{skin:SK,pants:{col:JOG,len:'long',wide:1.16,hem:darkHex(JOG,.75)},shoe:{type:'sneaker',col:0xf6f5f2,sole:0xe8e6e0,toe:0xf6f5f2,lace:0xf6f5f2,accent:0x16171c}});
+  r.legs.forEach((lp,i)=>{ const s=i?1:-1; part(lp,softBox(.006,.44,.006,.002,2),cmat(0xf2f2f2,{rim:.4}),s*.084,-.25,.012); });
+  torso(r,TEE);
+  // the gold chain, heavy, with a round pendant
+  const ch=[]; for(let k=0;k<=18;k++){ const a=-1.15+k/18*2.3; ch.push(V3(Math.sin(a)*.12,.86+Math.cos(a)*.13-.02,.07+Math.cos(a)*.1)); }
+  part(r.body,sweepGeo(ch,{up:V3(0,1,0),seg:36,rad:6,inner:1,rx:.009,ry:.009}),gold());
+  part(r.body,kCyl(.03,.03,.008,18),gold(),0,.84,.178).rotation.x=Math.PI/2-.2;
+  part(r.body,kCyl(.018,.018,.01,14),cmat(LAUR.WHITE,{emis:.25,rim:.4}),0,.84,.183).rotation.x=Math.PI/2-.2;
+  // the puffer: open at the front, quilted in fat rings, a high collar
+  const JP=[[.236,.58],[.244,.64],[.25,.74],[.252,.84],[.236,.93],[.17,.99],[.11,1.02]], gap=y=>.5+(1-y)*.3;
+  const jk=coatGeo(JP,gap,{depth:.92,segA:56});
+  part(r.body,jk,cmat(PUFF,{rim:1.1,spec:.9,shin:60})).castShadow=true;
+  const jl=coatGeo(JP.map(p=>[p[0]-.008,p[1]]),gap,{depth:.92,segA:56}); jl.index.array.reverse(); jl.computeVertexNormals();
+  part(r.body,jl,cmat(0x2a2c34,{rim:.4}));
+  for(const y of [.63,.7,.77,.84,.9]) part(r.body,lathe([[.247,y-.012],[.256,y],[.247,y+.012]],48,4,.42,Math.PI*2-.84),cmat(PUFF2,{rim:1,spec:1,shin:70}));   // the quilting
+  part(r.body,lathe([[.12,.98],[.15,1.0],[.152,1.06],[.13,1.08]],36,6,Math.PI*.2,Math.PI*1.6),cmat(PUFF,{rim:1,spec:.8,shin:60,side:THREE.DoubleSide})).castShadow=true;   // the collar
+  jk.userData.edges.forEach(e=>trimLine(r.body,e,0x3a3c44,.006,{mat:{spec:.8,shin:60}}));                   // the zips
+  // the crossbody bag: a strap from the right shoulder across to the left hip, the pouch over his chest
+  part(r.body,sweepGeo([V3(.14,1.0,.1),V3(.06,.88,.2),V3(-.06,.74,.215),V3(-.17,.62,.17)],{up:V3(0,0,1),seg:16,rad:5,inner:1,rx:.016,ry:.005}),cmat(0x1e1f24,{rim:.6}));
+  const bag=new THREE.Group(); bag.position.set(-.05,.76,.215); bag.rotation.set(-.08,0,.55); r.body.add(bag);
+  part(bag,softBox(.17,.09,.06,.025,4),cmat(0x1a1b20,{rim:.8,spec:.4,shin:30}));
+  part(bag,softBox(.15,.008,.062,.003,2),cmat(0xe8e8ea,{rim:.5}),0,.025,0);                                 // a white zip
+  part(bag,softBox(.03,.02,.008,.004,2),gold(),.06,.025,.032);
+  arms(r,{skin:SK,sleeve:{col:PUFF,len:'long',flare:.012,cuffCol:0x2a2c34}});
+  r.arms.forEach(ap=>{ for(const y of [-.08,-.16,-.24]) part(ap,lathe([[.072,y-.012],[.08,y],[.072,y+.012]],22,4),cmat(PUFF2,{rim:1,spec:1,shin:70})); });
+  // a gold watch on the left wrist
+  part(r.arms[1],lathe([[.054,-.33],[.058,-.32],[.056,-.3]],20,3),gold());
+  // the bag of powder in his right hand; the pistol (hidden until Overload) in his left
+  const pb=laurentBagProp(); pb.position.set(0,-.05,.05); pb.rotation.set(.3,0,.2); r.hands[0].add(pb);
+  const gun=pistol(LAUR.GOLD); gun.position.set(0,-.05,.04); gun.rotation.x=-Math.PI/2+.25; gun.scale.setScalar(1.25); gun.visible=false; r.hands[1].add(gun);
+  Object.assign(r.root.userData,{powderBag:pb,pistol:gun});
+  contactShadow(r.root,.95);
+  return finalizeModel(r.root);
+}
+
+/* ---------- Sprinkle: a handful of powder in a short cone ---------- */
+function laurentPowder(u,dir,dmg){
+  const now=performance.now(); u.sprinkleAt=now;
+  const at=u.mesh.position, d=V3(dir.x,0,dir.z).normalize(); let hit=0;
+  units.forEach(e=>{
+    if(!e.alive||e===u||e.flying||lockBlocks(u,e)||vanished(e,now)||isAlly(e,u)) return;
+    const to=V3(e.mesh.position.x-at.x,0,e.mesh.position.z-at.z), L=to.length();
+    if(L>LAUR.RANGE+.3) return;
+    if(L>.45&&Math.acos(THREE.MathUtils.clamp(to.dot(d)/L,-1,1))>LAUR.HALF+Math.atan2(.35,L)) return;
+    if(!lineOfSight(at,e.mesh.position)) return;
+    hurt(e,dmg,false,u); hit++;
+    if(e.alive) slow(e,LAUR.SLOW_MS,LAUR.SLOW_K);
+    if(u.isPlayer) chargeUlt(8); else if(!e.isPlayer) SFX.hitOther(e.mesh.position);
+  });
+  minions.slice().forEach(mn=>{ if(!mn.isFan||mn.owner===u||isAlly(mn.owner,u)) return;
+    const to=V3(mn.mesh.position.x-at.x,0,mn.mesh.position.z-at.z), L=to.length();
+    if(L<LAUR.RANGE&&(L<.45||to.dot(d)/L>Math.cos(LAUR.HALF))) hitFan(mn); });
+  if(u.isPlayer&&hit) SFX.hitConfirm();
+  laurentPowderFx(u,d);
+}
+/* the throw: a white cloud opening in a cone, and grains drifting down */
+function laurentPowderFx(u,d){
+  if(!scene) return;
+  const from=u.mesh.position.clone().setY(CHEST_Y).addScaledVector(d,.4), T0=performance.now();
+  const fan=new THREE.Mesh(new THREE.CircleGeometry(LAUR.RANGE-.2,22,-Math.PI/2-LAUR.HALF,LAUR.HALF*2),
+    new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.3,side:THREE.DoubleSide,depthWrite:false,toneMapped:false}));
+  const fanG=new THREE.Group(); fanG.position.copy(from).setY(CHEST_Y-.2); fanG.rotation.y=Math.atan2(d.x,d.z); fan.rotation.x=-Math.PI/2; fanG.add(fan); scene.add(fanG);
+  // little puffs flying out across the cone
+  const puffs=[], N=GFX.potato?6:12;
+  for(let i=0;i<N;i++){
+    const a=(Math.random()*2-1)*LAUR.HALF, dd=d.clone().applyAxisAngle(V3(0,1,0),a), sp=6+Math.random()*5;
+    const m=new THREE.Mesh(new THREE.SphereGeometry(.08+Math.random()*.08,8,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.85,depthWrite:false,toneMapped:false}));
+    m.position.copy(from); scene.add(m); puffs.push({m,v:dd.multiplyScalar(sp),g:-.6-Math.random()});
+  }
+  const iv=setInterval(()=>{ const k=Math.min(1,(performance.now()-T0)/420);
+    if(!scene||k>=1){ clearInterval(iv); drop(fanG); fan.geometry.dispose(); fan.material.dispose(); puffs.forEach(p=>{ drop(p.m); p.m.geometry.dispose(); p.m.material.dispose(); }); return; }
+    fan.scale.setScalar(.25+.75*(1-Math.pow(1-k,2))); fan.material.opacity=.3*(1-k);
+    puffs.forEach(p=>{ p.m.position.addScaledVector(p.v,.016); p.v.multiplyScalar(.9); p.m.position.y+=p.g*.016; p.m.scale.setScalar(1+k*2.2); p.m.material.opacity=.85*(1-k); });
+  },16);
+  if(Math.random()<.6) decal(u.mesh.position.clone().addScaledVector(d,1.6+Math.random()*2),.4+Math.random()*.4,0xffffff,1800,{op:.55,grow:90});
+}
+
+/* ---------- Overload: double speed, and a pistol with one bullet ---------- */
+function laurentOverload(u){
+  u.pistolShots=1;
+  const ud=u.mesh&&u.mesh.userData; if(ud&&ud.pistol) ud.pistol.visible=true;
+  popAt(u,'OVERLOAD','ult');
+  SFX.laurentOverload&&SFX.laurentOverload(u.isPlayer?null:u.mesh.position);
+  if(u.isPlayer) toast('OVERLOAD — double speed, and one bullet: it takes half their health');
+  shockRing(u.mesh.position,0xffffff,2.2);
+}
+function laurentOverloadStep(u,now,dt){
+  // a trail of white dust off his heels
+  if(!scene||now-(u.dustAt||0)<90) return; u.dustAt=now;
+  if(GFX.potato&&Math.random()<.5) return;
+  const p=u.mesh.position.clone(); p.y=.15;
+  const m=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.6,depthWrite:false,toneMapped:false}));
+  m.position.copy(p); scene.add(m); const t0=now;
+  const iv=setInterval(()=>{ const k=(performance.now()-t0)/500; if(!scene||k>=1){ clearInterval(iv); drop(m); m.geometry.dispose(); m.material.dispose(); return; }
+    m.scale.setScalar(1+k*2); m.material.opacity=.6*(1-k); m.position.y+=.004; },16);
+}
+function laurentOverloadEnd(u){
+  u.pistolShots=0;
+  const ud=u.mesh&&u.mesh.userData; if(ud&&ud.pistol) ud.pistol.visible=false;
+}
+/* the one bullet: fast and straight; whoever it meets loses half their health */
+function laurentPistol(u,dir,mult){
+  u.pistolShots=0; u.gunAt=performance.now();
+  const ud=u.mesh.userData;
+  const from=u.mesh.position.clone().setY(CHEST_Y+.05).addScaledVector(dir,.7);
+  const g=cyl(.045,.045,.34,8); g.rotateX(Math.PI/2);
+  const m=shotMesh(g,LAUR.GOLD,{hot:false}); m.position.copy(from); m.lookAt(from.clone().add(dir));
+  launch({m,dir:dir.clone(),sp:LAUR.BULLET_SP,life:.6,owner:u,dmg:0,type:'straight',hitR:.62,charge:25,onHit:t=>{
+      // half of their health — worked out so that the attacker's ATK doesn't change it
+      const want=t.maxHp*.5, k=artScale(t,u)||1;
+      hurt(t,want/k,false,u);
+      popAt(t,'-50%','ult'); shockRing(t.mesh.position,LAUR.GOLD,1.4);
+      if(u.isPlayer) shakeCam(.22);
+    }},LAUR.GOLD,.14);
+  SFX.laurentShot&&SFX.laurentShot(u.isPlayer?null:u.mesh.position);
+  // the muzzle flash
+  const fl=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),glowMat(0xffe7a0,{transparent:true,opacity:.95}));
+  fl.position.copy(from); scene.add(fl); const t0=performance.now();
+  const iv=setInterval(()=>{ const k=(performance.now()-t0)/120; if(!scene||k>=1){ clearInterval(iv); drop(fl); fl.geometry.dispose(); fl.material.dispose(); return; } fl.scale.setScalar(1+k*1.5); fl.material.opacity=.95*(1-k); },16);
+  if(ud.pistol) setTimeout(()=>{ if(!spOn(u)) ud.pistol.visible=false; },350);
+}
+
+/* ---------- House Call: 5 seconds of looking after everyone around him ---------- */
+function laurentUlt(u){
+  const now=performance.now();
+  u.laurUlt={until:now+LAUR.HEAL_MS,next:now};
+  if(!u.healAura&&scene){
+    const g=new THREE.Group();
+    const ring=new THREE.Mesh(new THREE.RingGeometry(LAUR.HEAL_R-.22,LAUR.HEAL_R,64),new THREE.MeshBasicMaterial({color:0x2dffa8,transparent:true,opacity:.75,depthWrite:false,side:THREE.DoubleSide,toneMapped:false}));
+    ring.rotation.x=-Math.PI/2; ring.position.y=.05; g.add(ring);
+    const disc=new THREE.Mesh(new THREE.CircleGeometry(LAUR.HEAL_R,48),new THREE.MeshBasicMaterial({color:0x7dffc4,transparent:true,opacity:.16,depthWrite:false,toneMapped:false}));
+    disc.rotation.x=-Math.PI/2; disc.position.y=.04; g.add(disc);
+    g.userData={ring,disc}; u.healAura=g;
+  }
+  if(u.healAura){ u.healAura.visible=true; if(u.healAura.parent!==u.mesh) u.mesh.add(u.healAura); u.healAura.position.set(0,-(u.mesh.position.y||0),0); u.healAura.scale.setScalar(1/(u.mesh.scale.x||1)); }
+  shockRing(u.mesh.position,LAUR.MINT,LAUR.HEAL_R);
+}
+function laurentStep(u,now,dt){
+  const ud=u.mesh&&u.mesh.userData;
+  if(ud&&ud.pistol&&ud.pistol.visible&&!spOn(u,now)&&!(u.gunAt&&now-u.gunAt<350)) ud.pistol.visible=false;
+  const L=u.laurUlt; if(!L) return;
+  if(now>=L.until||!u.alive){ u.laurUlt=null; if(u.healAura) u.healAura.visible=false; return; }
+  const A=u.healAura;
+  if(A){ A.position.y=-(u.mesh.position.y||0); const pl=.5+.5*Math.sin(now/180);
+    A.userData.ring.material.opacity=.55+.3*pl; A.userData.disc.material.opacity=.1+.08*pl; A.userData.ring.rotation.z=now/900; }
+  if(now<L.next) return;
+  L.next=now+LAUR.HEAL_GAP;
+  // a copy of someone else's Laurent only shows it: the heal is his own game's to give
+  if(u.puppet) return;
+  units.forEach(t=>{
+    if(!t.alive||(t!==u&&!isAlly(t,u))||fd(t.mesh.position,u.mesh.position)>LAUR.HEAL_R||t.hp>=t.maxHp) return;
+    const amt=Math.max(1,Math.round(t.maxHp*LAUR.HEAL_K));
+    if(NET.match&&t.puppet) netFx(['hl',t.nid,amt]);            // a teammate in another game: their game heals them
+    else heal(t,amt);
+    if(scene&&!(GFX.potato&&t!==u)) shardBurst(t.mesh.position.clone().setY(1.1),[LAUR.MINT,0xffffff],4,.8,500);
+  });
+  if(u.isPlayer||Math.random()<.4) SFX.laurentHeal&&SFX.laurentHeal(u.isPlayer?null:u.mesh.position);
 }
 
 /* ---- 65-truth.js ---- */
