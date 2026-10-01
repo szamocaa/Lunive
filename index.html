@@ -2749,6 +2749,16 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 .op-party .op-pst[data-st=ready]::before{content:'✓ ';}
 .op-party .op-pst[data-st=chars]{color:#ffd27a;}
 
+/* ---- round 36: versions in the online panel ---- */
+.op-upd{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:linear-gradient(90deg,rgba(255,196,60,.22),rgba(255,196,60,.06));border:1px solid rgba(255,214,120,.45);}
+.op-upd span{flex:1;min-width:0;font:500 10.5px var(--ui);color:#ffe9b8;line-height:1.35;}
+.op-upd b{display:block;font:700 10px var(--ui);letter-spacing:.18em;color:#ffd36a;}
+.op-reload{all:unset;box-sizing:border-box;cursor:pointer;padding:6px 10px;border-radius:9px;font:700 10px var(--ui);letter-spacing:.14em;color:#2a1a00;background:linear-gradient(180deg,#ffe08a,#ffb93a);flex-shrink:0;}
+.op-oldh{font:700 9px var(--ui);letter-spacing:.2em;color:var(--dim);margin:8px 2px 2px;}
+.op-old{padding:6px 9px;border-radius:10px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.12);opacity:.8;}
+.op-old b{display:block;font:700 12px var(--ui);color:#dfe3f2;}
+.op-old small{font:500 10.5px var(--ui);color:#ffb38a;}
+
 </style>
 </head>
 <body>
@@ -2885,7 +2895,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.16.0 · BETA</span>
+    <span class="hub-version">VERSION 3.16.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3048,7 +3058,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.16.0</div></div>
+</svg><div class="set-ver">VERSION 3.16.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -22025,9 +22035,9 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=2, NET_P='lunive/v'+NET_VER+'/';
+const NET_VER=3, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.16.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
-  return m?[decodeURIComponent(m[1])]:['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
+  return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
 /* ---------- a small MQTT 3.1.1 client over a WebSocket (QoS 0, retained messages, a last will) ---------- */
 const Mq=(function(){
@@ -22088,7 +22098,7 @@ const Mq=(function(){
 /* this device, for good: a player who comes back replaces their old card instead of showing twice */
 const NET_DEV=(()=>{ const mk=()=>'d'+Math.random().toString(36).slice(2,12);
   try{ let d=localStorage.getItem('lunive:dev'); if(!d){ d=mk(); localStorage.setItem('lunive:dev',d); } return d; }catch(e){ return mk(); } })();
-const NET={on:false,st:'off',id:'',mq:null,away:false,twins:new Map(),bi:0,retryT:0,beatT:0,beatAt:0,lastInfo:'',
+const NET={on:false,st:'off',id:'',mq:null,twins:new Map(),seq:0,seenI:new Map(),others:new Map(),newer:false,bi:0,retryT:0,beatT:0,beatAt:0,lastInfo:'',
   peers:new Map(),party:null,pending:null,queue:null,match:null,
   ctx:null,inFx:false,pre:null,inDie:false,replaying:false};
 function netAvatar(key){
@@ -22107,55 +22117,113 @@ function netInfo(){
     tr:totalTrophies(),ch:State.selectedChar,cr:charRank(State.selectedChar),
     cc:CHARACTERS.filter(c=>State.unlocked.includes(c.key)).length,ct:CHARACTERS.length,pc:petsOwned().length,pt:PETS.length,
     ar:eq.map(a=>[a.slot,a.rar,a.set,a.lvl]),as:[st.hp,Math.round(st.atk),st.cr,st.cd],sb:sets,
-    w:Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0),cd:State.teamCode,s:netStatus(),v:NET_VER,dv:NET_DEV,t:Date.now()};
+    w:Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0),cd:State.teamCode,s:netStatus(),v:NET_VER,gv:LUNIVE_VER,dv:NET_DEV,t:Date.now()};
 }
 function netEnable(on){
   State.online=!!on; saveState();
   if(on) netConnect(); else netDisconnect();
   netPaint();
 }
+/* ---------- both relays at once ----------
+   The game is connected to every public relay at the same time: all it sends
+   goes out on each one, and all that comes in is taken once (every message
+   carries its own id). So two players can never end up on different relays
+   and miss each other, and when one relay is down the other carries on. */
+function netMux(){
+  const X={links:[],subs:new Set(),closed:false};
+  const will={topic:NET_P+'p/'+NET.id,payload:'',retain:true};       // the relay takes your card down if the connection just dies
+  function open(L){
+    if(X.closed) return;
+    const C=Mq.create(L.url,'lun_'+NET.id,{keepAlive:60,will});
+    L.C=C; L.up=false;
+    const guard=setTimeout(()=>{ if(!C.ready) C.close(); },9000);      // no answer: try again a little later
+    C.onstate=(s,was)=>{
+      if(L.C!==C) return;
+      if(s==='ready'){
+        clearTimeout(guard); L.up=true; L.fails=0;
+        X.subs.forEach(t=>C.sub(t));
+        netLinkUp();
+      } else if(s==='closed'||s==='refused'){
+        clearTimeout(guard); L.up=false; L.C=null;
+        if(X.closed) return;
+        L.fails=(L.fails||0)+(was?0:1);
+        clearTimeout(L.t); L.t=setTimeout(()=>open(L),was?1500:Math.min(30000,2500*Math.pow(1.6,L.fails)));
+        netLinkDown();
+      }
+    };
+    C.onmessage=netOnMsg;
+    C.connect();
+  }
+  X.links=NET_BROKERS.map(url=>({url,C:null,up:false,fails:0,t:0}));
+  X.links.forEach(open);
+  Object.defineProperty(X,'ready',{get(){ return X.links.some(L=>L.up&&L.C&&L.C.ready); }});
+  Object.defineProperty(X,'upCount',{get(){ return X.links.filter(L=>L.up&&L.C&&L.C.ready).length; }});
+  X.sub=t=>{ X.subs.add(t); X.links.forEach(L=>{ if(L.C) L.C.sub(t); }); };
+  X.unsub=t=>{ X.subs.delete(t); X.links.forEach(L=>{ if(L.C) L.C.unsub(t); }); };
+  X.pub=(t,msg,retain)=>{
+    // a message (not a card): give it an id, so the copy from the other relay is dropped
+    if(!retain&&msg&&msg[0]==='{') msg='{"_i":"'+NET.id+'.'+(++NET.seq).toString(36)+'"'+(msg.length>2?',':'')+msg.slice(1);
+    let ok=false; X.links.forEach(L=>{ if(L.up&&L.C&&L.C.pub(t,msg,retain)) ok=true; }); return ok;
+  };
+  /* a link that's down: try it again now (coming back to the page) */
+  X.kick=()=>{ X.links.forEach(L=>{ if(!L.C&&!X.closed){ clearTimeout(L.t); open(L); } }); };
+  /* goodbye: a clean MQTT goodbye (no will needed, the card was taken down already) */
+  X.close=()=>{ X.closed=true; X.links.forEach(L=>{ clearTimeout(L.t); if(L.C){ const C=L.C; L.C=null; L.up=false; C.close(); } }); };
+  /* leaving the page: just drop the sockets; if the takedown didn't make it, the relay's will does it */
+  X.drop=()=>{ X.closed=true; X.links.forEach(L=>{ clearTimeout(L.t); if(L.C&&L.C.ws){ try{ L.C.ws.close(); }catch(e){} } L.up=false; }); };
+  return X;
+}
+function netLinkUp(){
+  const was=NET.st==='online';
+  NET.st='online';
+  NET.beatAt=0; netBeat(true);                        // your card on this relay too
+  if(!was){
+    netPaint();
+    if(NET.playWhenOnline){ const md=NET.playWhenOnline; NET.playWhenOnline=null; NET_TIMEOUT(()=>netPlay(md),600); }
+  }
+}
+function netLinkDown(){
+  if(!NET.mq||NET.mq.ready) return;                  // the other relay still works: nothing changes for you
+  if(!State.online){ NET.st='off'; return; }
+  NET.st='offline'; NET.peers.clear(); netPaint();
+}
 function netConnect(){
   if(NET.mq||!State.online) return;
-  clearTimeout(NET.retryT);
   if(!NET.id) NET.id='p'+Math.random().toString(36).slice(2,11);
   if(!/^\d{7}$/.test(State.teamCode||'')){ State.teamCode=String(1000000+Math.floor(Math.random()*9000000)); saveState(); }
   NET.on=true; NET.st='connecting'; netPaint();
-  const url=NET_BROKERS[NET.bi%NET_BROKERS.length];
-  const C=Mq.create(url,'lun_'+NET.id,{keepAlive:30,will:{topic:NET_P+'p/'+NET.id,payload:'',retain:true}});
-  NET.mq=C;
-  const guard=setTimeout(()=>{ if(!C.ready) C.close(); },9000);         // no answer: try the next relay
-  C.onstate=(s,was)=>{
-    if(s==='ready'){
-      clearTimeout(guard); NET.st='online';
-      C.sub(NET_P+'p/+'); C.sub(NET_P+'u/'+NET.id); C.sub(NET_P+'c/'+State.teamCode);
-      NET.beatAt=0; netBeat(true); netPaint();
-      if(NET.playWhenOnline){ const md=NET.playWhenOnline; NET.playWhenOnline=null; NET_TIMEOUT(()=>netPlay(md),600); }
-      if(NET.match) C.sub(NET.match.topic);
-    } else if(s==='closed'||s==='refused'){
-      clearTimeout(guard);
-      if(NET.mq!==C) return;
-      NET.mq=null; if(!was) NET.bi++;
-      if(!State.online){ NET.st='off'; return; }
-      NET.st='offline'; NET.peers.clear(); netPaint();
-      NET.retryT=setTimeout(netConnect,was?1500:3500);
-    }
-  };
-  C.onmessage=netOnMsg;
-  C.connect();
+  const X=NET.mq=netMux();
+  X.sub('lunive/+/p/+');                             // everyone's card, on every version (an old one is shown as "needs to reload")
+  X.sub(NET_P+'u/'+NET.id); X.sub(NET_P+'c/'+State.teamCode);
+  if(NET.match) X.sub(NET.match.topic);
   clearInterval(NET.beatT); NET.beatT=setInterval(()=>{ netBeat(true); netPrune(); netPst(true); },10000);
 }
 function netDisconnect(){
-  clearTimeout(NET.retryT); clearInterval(NET.beatT);
+  clearInterval(NET.beatT);
   if(NET.queue) netQueueStop();
   if(NET.party) netLeaveParty(true);
-  const C=NET.mq; NET.mq=null;
-  if(C){ try{ C.pub(NET_P+'p/'+NET.id,'',true); }catch(e){} setTimeout(()=>C.close(),60); }
-  NET.on=false; NET.st='off'; NET.peers.clear();
+  const X=NET.mq; NET.mq=null;
+  if(X){ try{ X.pub(NET_P+'p/'+NET.id,'',true); }catch(e){} setTimeout(()=>X.close(),80); }
+  NET.on=false; NET.st='off'; NET.peers.clear(); NET.others.clear(); NET.newer=false;
 }
+/* someone on another version: an older one can't see you (they need to reload), a newer one means you do */
+function netOtherVer(v,id,msg,retained){
+  if(!msg){ if(NET.others.delete(id)) netPaintSoon(); return; }
+  let p; try{ p=JSON.parse(msg); }catch(e){ return; }
+  if(!p||(retained&&Math.abs(Date.now()-(p.t||0))>150000)) return;
+  if(p.dv&&p.dv===NET_DEV) return;                   // your own other tab, still on the old one
+  const nv=+String(v).slice(1)||0;
+  NET.others.set(id,{n:p.n||'Player',v:nv,seen:performance.now()});
+  if(nv>NET_VER) NET.newer=true;
+  netPaintSoon();
+}
+/* "3.16.1" against "3.16.0" */
+function netVerCmp(a,b){ const A=String(a||'0').split('.').map(Number), B=String(b||'0').split('.').map(Number);
+  for(let i=0;i<3;i++){ const d=(A[i]||0)-(B[i]||0); if(d) return d>0?1:-1; } return 0; }
+
 /* say who you are: on a timer, and whenever something on your card changes */
 function netBeat(force){
   if(!NET.mq||!NET.mq.ready) return;
-  if(NET.away&&!(NET.match||NET.queue||NET.party)) return;          // the page is hidden: your card stays down
   const now=performance.now();
   const info=netInfo(), key=JSON.stringify(Object.assign({},info,{t:0}));
   if(!force&&key===NET.lastInfo) return;
@@ -22166,8 +22234,14 @@ function netBeat(force){
 /* someone who hasn't said anything for a while has left */
 function netPrune(){
   const now=performance.now(); let ch=false;
-  NET.peers.forEach((p,id)=>{ if(now-p.seen>36000){ NET.peers.delete(id); ch=true; } });
-  if(NET.party&&!NET.peers.has(NET.party.mate)&&now-(NET.party.at||0)>40000){ netSay((NET.party.info&&NET.party.info.n||'Your teammate')+' went offline',true); NET.party=null; ch=true; netBeat(true); }
+  // a page in the background may only beat once a minute: a card goes after a minute and a half of silence
+  // (leaving the page takes it down at once, and the relay does it if the connection just dies)
+  NET.peers.forEach((p,id)=>{ if(now-p.seen>95000){ NET.peers.delete(id); ch=true; } });
+  NET.others.forEach((o,id)=>{ if(now-o.seen>95000){ NET.others.delete(id); ch=true; } });
+  NET.seenI.forEach((t,k)=>{ if(now-t>30000) NET.seenI.delete(k); });
+  const nw=[...NET.others.values()].some(o=>o.v>NET_VER)||[...NET.peers.values()].some(p=>p.gv&&netVerCmp(p.gv,LUNIVE_VER)>0);
+  if(nw!==NET.newer){ NET.newer=nw; ch=true; }
+  if(NET.party&&!NET.peers.has(NET.party.mate)&&now-(NET.party.at||0)>100000){ netSay((NET.party.info&&NET.party.info.n||'Your teammate')+' went offline',true); NET.party=null; ch=true; netBeat(true); }
   if(ch) netPaint();
 }
 function netSend(to,m){ if(!NET.mq) return false; m.f=NET.id; return NET.mq.pub(NET_P+'u/'+to,JSON.stringify(m)); }
@@ -22179,21 +22253,27 @@ function netTwin(id){
   const x={t:setTimeout(()=>{ T.delete(id); if(NET.mq&&NET.mq.ready) NET.mq.pub(NET_P+'p/'+id,'',true); },4500),live:0};
   T.set(id,x); netSend(id,{k:'ping'});
 }
-function netOnMsg(topic,msg){
-  if(topic.startsWith(NET_P+'p/')){
-    const id=topic.slice(NET_P.length+2);
+function netOnMsg(topic,msg,retained){
+  const pm=/^lunive\/(v\d+)\/p\/(.+)$/.exec(topic);
+  if(pm){
+    const id=pm[2];
+    if(pm[1]!=='v'+NET_VER){ netOtherVer(pm[1],id,msg,retained); return; }
     if(id===NET.id){ if(!msg&&NET.st==='online') netBeat(true); return; }      // your card was taken down but you're here: up again
     if(!msg){ if(NET.peers.delete(id)) netPaintSoon(); return; }
     let p; try{ p=JSON.parse(msg); }catch(e){ return; }
-    if(!p||p.v!==NET_VER||Math.abs(Date.now()-(p.t||0))>150000) return;      // an old card nobody took down
+    if(!p||p.v!==NET_VER) return;
+    // a card the relay kept is checked for age; one that comes live is always taken (so a computer whose clock is off still shows up)
+    if(retained&&Math.abs(Date.now()-(p.t||0))>150000) return;
     if(p.dv&&p.dv===NET_DEV){ netTwin(id); return; }                           // one of this device's own: a tab still open, or one left behind
     if(p.dv) for(const [oid,o] of NET.peers) if(oid!==id&&o.dv===p.dv){ if((o.t||0)>(p.t||0)) return; NET.peers.delete(oid); }   // the same player twice: the newer card wins
     p.seen=performance.now(); NET.peers.set(id,p);
+    if(p.gv&&netVerCmp(p.gv,LUNIVE_VER)>0&&!NET.newer){ NET.newer=true; }
     if(NET.party&&NET.party.mate===id){ NET.party.info=p; NET.party.at=p.seen; }
     netPaintSoon(); return;
   }
   let m; try{ m=JSON.parse(msg); }catch(e){ return; }
   if(!m||m.f===NET.id) return;
+  if(m._i){ if(NET.seenI.has(m._i)) return; NET.seenI.set(m._i,performance.now()); }    // the same message from the other relay
   if(topic.startsWith(NET_P+'q/')){ netQueueMsg(m); return; }
   if(NET.match&&topic===NET.match.topic){ netMatchMsg(m); return; }
   netInbox(m);
@@ -22381,21 +22461,28 @@ function netPaint(){
   const P=NET.party, mate=P?(NET.peers.get(P.mate)||P.info):null;
   const stTxt=NET.st==='online'?(peers.length+1)+' ONLINE':NET.st==='connecting'?'CONNECTING…':'OFFLINE';
   const row=p=>`<button class="op-row rx" data-id="${p.id}"><span class="op-av">${framedHTML(netAvatar(p.pf),frameById(p.fr))}</span>
-    <span class="op-t"><b>${netEsc(p.n)}</b><small class="st-${p.s}">${NET_ST[p.s]||''}</small></span><span class="op-tr">${TROPHY_SVG}${(p.tr||0).toLocaleString('en-US')}</span></button>`;
+    <span class="op-t"><b>${netEsc(p.n)}</b><small class="st-${p.s}">${NET_ST[p.s]||''}${!p.gv||netVerCmp(p.gv,LUNIVE_VER)<0?' · old version':''}</small></span><span class="op-tr">${TROPHY_SVG}${(p.tr||0).toLocaleString('en-US')}</span></button>`;
   el.innerHTML=`<div class="op-head"><i class="op-dot ${NET.st}"></i><b>${stTxt}</b><em>players</em></div>
+    ${NET.newer?'<div class="op-upd"><span><b>NEW VERSION OUT</b>Players on it can\'t see you until you reload</span><button class="op-reload rx" id="opReload">RELOAD</button></div>':''}
     <div class="op-code"><span>YOUR TEAM CODE</span><b id="opCode" title="Click to copy">${(State.teamCode||'').replace(/(\d{3})(\d{4})/,'$1 $2')}</b>
       <button class="op-join rx" id="opJoin">JOIN A TEAM</button></div>
     ${P?`<div class="op-party"><span class="op-av">${framedHTML(netAvatar(mate&&mate.pf),frameById(mate&&mate.fr))}</span>
       <span class="op-t"><small>${P.lead===NET.id?'YOUR TEAMMATE':'YOUR LEADER'}</small><b>${netEsc(mate&&mate.n||'…')}</b><em class="op-pst" data-st="${netMateStatus()}">${PST_TXT[netMateStatus()]}</em></span><button class="op-leave rx" id="opLeave">LEAVE</button></div>`:''}
     ${NET.pending?'<div class="op-wait">Joining '+NET.pending.code+'…</div>':''}
     <div class="op-list">${NET.st!=='online'?'<div class="op-empty">'+(NET.st==='connecting'?'Connecting to the online servers…':'Can\'t reach the online servers. Trying again…')+'</div>':
-      peers.length?peers.map(row).join(''):'<div class="op-empty">No one else is online right now. Share your team code with a friend!</div>'}</div>
+      peers.length?peers.map(row).join(''):'<div class="op-empty">No one else is online right now. Share your team code with a friend!</div>'}${NET.st==='online'?netOldHTML():''}</div>
     <div class="op-msg" id="opMsg"></div>`;
   el.querySelectorAll('.op-row').forEach(b=>{ wireRx(b); b.onclick=()=>{ netProfile(b.dataset.id); SFX.open(); }; });
   const j=$el('opJoin'); wireRx(j); j.onclick=()=>{ netJoinPop(); SFX.open(); };
   const c=$el('opCode'); c.onclick=()=>{ try{ navigator.clipboard.writeText(State.teamCode); netSay('Team code copied'); }catch(e){ netSay('Your code: '+State.teamCode); } SFX.press(); };
   const lv=$el('opLeave'); if(lv){ wireRx(lv); lv.onclick=()=>{ netLeaveParty(); SFX.back(); }; }
+  const rl=$el('opReload'); if(rl){ wireRx(rl); rl.onclick=()=>location.reload(); }
   netPlace();
+}
+/* players on an older version: online, but their game can't see yours until they reload */
+function netOldHTML(){
+  const old=[...NET.others.values()].filter(o=>o.v<NET_VER); if(!old.length) return '';
+  return '<div class="op-oldh">ON AN OLDER VERSION</div>'+old.map(o=>`<div class="op-old"><b>${netEsc(o.n)}</b><small>Needs to reload the page to play with you</small></div>`).join('');
 }
 /* the panel sits under the Mail button and fills the space down to the bottom corner */
 function netPlace(){
@@ -22497,7 +22584,7 @@ function netGotStart(m){
 function netBeginMatch(cfg){
   const isHost=cfg.host===NET.id, me=isHost?'h':'g', other=isHost?'g':'h';
   const M=NET.match={cfg,mid:cfg.mid,mode:cfg.mode,isHost,me,other,otherId:isHost?cfg.guest:cfg.host,topic:NET_P+'m/'+cfg.mid,
-    seenAt:performance.now(),sentAt:0,kaT:0,fx:[],dot:new Map(),dotAt:0,units:{},over:false,left:false,abort:false};
+    seenAt:performance.now(),sentAt:0,stAt:0,flushAt:0,out:[],evq:[],kaT:0,fx:[],dot:new Map(),dotAt:0,units:{},over:false,left:false,abort:false};
   NET.partyAsk=null; NET.ready=false; if(NET.party&&NET.party.ms) NET.party.ms.r=false; NET.pstKey='';
   if(NET.mq) NET.mq.sub(M.topic);
   M.kaT=setInterval(()=>{ if(NET.match===M&&!M.over) netMs({k:'ka'}); },1000);     // still here (a hidden tab draws no frames)
@@ -22559,44 +22646,102 @@ function netSpawnAll(){
   alive=units.length;
 }
 
-/* ---------- what goes back and forth ---------- */
-function netMs(m){ const M=NET.match; if(!M||!NET.mq) return; m.f=NET.id; m.r=execState?execState.round:0; NET.mq.pub(M.topic,JSON.stringify(m)); }
+/* ---------- what goes back and forth ----------
+   Everything a game has to say in a frame goes out as one message: where its
+   fighters are (20 times a second while they move, 4 when they stand still),
+   and the attacks, hits and knockouts since the last one. The other game
+   plays it back a little behind, on an even clock, so the internet's hiccups
+   don't show: no freezing and jumping, just smooth movement. */
+function netMs(m){
+  const M=NET.match; if(!M||!NET.mq) return;
+  m.r=execState?execState.round:0;
+  if(m.k==='bye'||m.k==='ka'){ m.f=NET.id; NET.mq.pub(M.topic,JSON.stringify(m)); return; }    // these can't wait for a frame
+  M.out.push(m);
+  if(M.over||!gameOn) netFlush(M,performance.now(),null);
+}
+function netFlush(M,now,list){
+  if(!NET.mq||(!list&&!M.out.length)) return;
+  const m={k:'m',f:NET.id,ts:Math.round(now),r:execState?execState.round:0};
+  if(list) m.s=list;
+  if(M.out.length){ m.l=M.out; M.out=[]; }
+  M.flushAt=now;
+  NET.mq.pub(M.topic,JSON.stringify(m));
+}
 function netFx(e){ const M=NET.match; if(M) M.fx.push(e); }
 /* a fighter as a dozen numbers: where, which way, health, and what it's in the middle of */
 function netPack(u,now){
   const p=u.mesh.position, lp=u._np||(u._np={x:p.x,z:p.z});
-  const mv=Math.hypot(p.x-lp.x,p.z-lp.z)>.03; lp.x=p.x; lp.z=p.z;
+  const mv=Math.hypot(p.x-lp.x,p.z-lp.z)>.02; lp.x=p.x; lp.z=p.z;
   let f=mv?1:0;
   if(stunned(u,now)) f|=2; if(u.slowUntil&&now<u.slowUntil) f|=4; if(u.poisonUntil&&now<u.poisonUntil) f|=8; if(u.burnLeft>0) f|=16;
   if(u.flying) f|=32; if(u.skate) f|=64; if(vanished(u,now)) f|=128; if(u.frozenUntil&&now<u.frozenUntil) f|=256;
   return [u.nid,+p.x.toFixed(2),+p.z.toFixed(2),+u.mesh.rotation.y.toFixed(2),Math.round(u.hp),Math.round(u.maxHp),f,Math.round((u.airY||0)*100),spOn(u,now)?Math.round(u.spUntil-now):0];
 }
-/* every frame: the hits you landed go out at once; where your fighters are, fifteen times a second */
 function netTick(now){
   const M=NET.match; if(!M||!NET.mq) return;
   NET.ctx=null;
-  if(M.fx.length){ netMs({k:'x',e:M.fx}); M.fx=[]; }
-  if(M.dot.size&&now-M.dotAt>120){ M.dotAt=now; const e=[]; M.dot.forEach((v,key)=>{ const q=key.split('|'); e.push(['h',q[0],q[1]||null,v,4,q[2]||0]); }); M.dot.clear(); netMs({k:'x',e}); }
-  if(now-M.sentAt>=66){ M.sentAt=now; const list=[]; units.forEach(u=>{ if(u.mine&&u.alive) list.push(netPack(u,now)); }); if(list.length) netMs({k:'s',u:list}); }
+  const r=execState?execState.round:0;
+  if(M.fx.length){ M.out.push({k:'x',e:M.fx,r}); M.fx=[]; }
+  if(M.dot.size&&now-M.dotAt>120){ M.dotAt=now; const e=[]; M.dot.forEach((v,key)=>{ const q=key.split('|'); e.push(['h',q[0],q[1]||null,v,4,q[2]||0]); }); M.dot.clear(); M.out.push({k:'x',e,r}); }
+  // your fighters: on the move 20 times a second, standing still 4 (and at once when something changes)
+  let list=null;
+  if(now-M.stAt>=50){
+    const mine=units.filter(u=>u.mine&&u.alive);
+    let want=now-M.stAt>=250;
+    if(!want) for(const u of mine){ const p=u.mesh.position;
+      if(Math.abs(p.x-(u._sx||0))+Math.abs(p.z-(u._sz||0))>.01||Math.abs(u.mesh.rotation.y-(u._sr||0))>.02||(u.airY||0)>0||Math.round(u.hp)!==u._sh||u._sm){ want=true; break; } }
+    if(want&&mine.length){
+      M.stAt=now; list=mine.map(u=>{ const a=netPack(u,now); u._sx=a[1]; u._sz=a[2]; u._sr=a[3]; u._sh=a[4]; u._sm=!!(a[6]&1); return a; });
+    }
+  }
+  if(list||(M.out.length&&now-M.flushAt>=33)) netFlush(M,now,list);
+  // what they said, played back on the even clock
+  if(M.evq.length){
+    const rt=M.off===undefined?Infinity:now-M.off-M.D;
+    while(M.evq.length){ const e=M.evq[0]; if(e.ts>rt&&now-e.at<450) break; M.evq.shift(); netEvent(e.x); }
+  }
   if(!M.over&&!M.left&&now-M.seenAt>12000) netOtherLeft();
+}
+/* their clock against ours: the quickest a message has ever come (it creeps up if the road gets longer),
+   and how much later than that most messages come (80 in 100 of the last 120). We draw them that much
+   behind, so there's nearly always a next position to move toward; the rare very late one is covered by
+   carrying on the way they were going */
+function netClock(M,now,ts){
+  const tr=now-ts;
+  if(M.off===undefined||tr<M.off) M.off=tr; else M.off+=(tr-M.off)*.003;
+  const W=M.jw||(M.jw=[]); W.push(tr-M.off); if(W.length>120) W.shift();
+  const so=W.slice().sort((a,b)=>a-b), p80=so[Math.floor((so.length-1)*.8)];
+  const want=Math.max(50,Math.min(240,p80+40));
+  M.D=M.D===undefined?want:M.D+(want-M.D)*(want>M.D?.2:.04);     // more delay at once when it's needed, less slowly
 }
 function netMatchMsg(m){
   const M=NET.match; if(!M||m.f!==M.otherId) return;
   const now=performance.now(); M.seenAt=now;
   if(m.k==='bye'){ if(!M.over) netOtherLeft(); return; }
-  if(m.k==='ka') return;
-  const S=execState; if(!S||!gameOn) return;
+  if(m.k!=='m') return;
+  netClock(M,now,m.ts);
+  const S=execState;
+  if(m.s&&S&&gameOn&&m.r===S.round) m.s.forEach(a=>{ const u=M.units[a[0]]; if(u&&u.puppet&&u.alive) netApplyState(u,a,now,m.ts); });
+  if(m.l) m.l.forEach(x=>M.evq.push({x,ts:m.ts,at:now}));
+}
+function netEvent(m){
+  const M=NET.match, S=execState; if(!M||!S||!gameOn) return;
   if(m.k==='r'){ if(m.r===S.round&&S.phase==='fight') execRoundEnd(m.w?(m.w===M.mySide?EXEC.YOU:EXEC.THEM):null); return; }
   if(m.r!==S.round) return;                                       // something from a round that's already over
-  if(m.k==='s') m.u.forEach(a=>{ const u=M.units[a[0]]; if(u&&u.puppet&&u.alive) netApplyState(u,a,now); });
-  else if(m.k==='x') m.e.forEach(netApplyFx);
+  if(m.k==='x') m.e.forEach(netApplyFx);
   else if(m.k==='a') netApplyAct(m);
   else if(m.k==='d'){ const u=M.units[m.n]; if(u&&u.puppet&&u.alive){ u.lastSrc=m.by?M.units[m.by]||null:null; NET.inDie=true; try{ kill(u); }finally{ NET.inDie=false; } } }
 }
 
 /* ---------- the fighters someone else runs: drawn from what their game says ---------- */
-function netApplyState(u,a,now){
-  u.netS={x:a[1],z:a[2],ry:a[3],f:a[6],ay:a[7]/100,at:now};
+function netApplyState(u,a,now,ts){
+  // where they were, kept in order on their clock; we move along these
+  const B=u.nb||(u.nb=[]), s={t:ts,x:a[1],z:a[2],ry:a[3],f:a[6],ay:a[7]/100}, last=B[B.length-1];
+  if(!last||ts>last.t){
+    if(last){ const dt=(ts-last.t)/1000; u._pv=(s.f&1)&&dt>0&&dt<.6?{x:(s.x-last.x)/dt,z:(s.z-last.z)/dt}:null; }
+    B.push(s); if(B.length>40) B.shift();
+  }
+  u.netS=s;
   if(a[5]&&u.maxHp!==a[5]) u.maxHp=a[5];
   if(u.hp!==a[4]){ u.hp=a[4]; if(u.tag) drawTag(u,true); }
   const f=a[6], O=NET.orig;
@@ -22608,21 +22753,40 @@ function netApplyState(u,a,now){
   u.flying=!!(f&32);
   if(u.key==='panne'&&!(f&64)&&u.skate) netReplay(u,()=>NET.act.endSkate(u));
 }
+const netAng=(a,b,k)=>{ let d=b-a; d=Math.atan2(Math.sin(d),Math.cos(d)); return a+d*k; };
 function puppetStep(u,dt,now){
-  const s=u.netS;
-  if(s){
-    const p=u.mesh.position, dx=s.x-p.x, dz=s.z-p.z;
-    if(dx*dx+dz*dz>25){ p.x=s.x; p.z=s.z; } else { const k=Math.min(1,dt*14); p.x+=dx*k; p.z+=dz*k; }
-    let da=s.ry-u.mesh.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); u.mesh.rotation.y+=da*Math.min(1,dt*16);
-    u.airY+=(s.ay-(u.airY||0))*Math.min(1,dt*10);
+  const M=NET.match, B=u.nb;
+  let g=null, moving=false;
+  if(B&&B.length&&M&&M.off!==undefined){
+    const rt=now-M.off-M.D;                                         // the moment of their game we're showing
+    while(B.length>1&&B[1].t<=rt) B.shift();
+    const a=B[0], b=B[1];
+    if(b&&rt>a.t){
+      const k=(rt-a.t)/Math.max(1,b.t-a.t), far=(b.x-a.x)*(b.x-a.x)+(b.z-a.z)*(b.z-a.z)>25;   // a jump (a teleport, a respawn): no gliding across the map
+      g=far?(k<.5?a:b):{x:a.x+(b.x-a.x)*k,z:a.z+(b.z-a.z)*k,ry:netAng(a.ry,b.ry,k),ay:a.ay+(b.ay-a.ay)*k,f:b.f};
+      moving=!!(b.f&1);
+    } else if(!b&&rt>a.t){
+      // nothing newer yet: carry on the way they were going for a moment, then wait
+      const ex=Math.min(rt-a.t,220)/1000, v=u._pv;
+      g=v?{x:a.x+v.x*ex,z:a.z+v.z*ex,ry:a.ry,ay:a.ay,f:a.f}:a;
+      moving=!!(a.f&1)&&rt-a.t<300;
+    } else { g=a; moving=!!(a.f&1); }
+  }
+  if(g){
+    const p=u.mesh.position, dx=g.x-p.x, dz=g.z-p.z;
+    if(dx*dx+dz*dz>25){ p.x=g.x; p.z=g.z; }
+    else { const k=1-Math.exp(-dt*32); p.x+=dx*k; p.z+=dz*k; }               // a soft edge on every correction
+    u.mesh.rotation.y=netAng(u.mesh.rotation.y,g.ry,1-Math.exp(-dt*22));
+    u.airY=(u.airY||0)+(g.ay-(u.airY||0))*Math.min(1,dt*14);
   }
   u.mesh.position.y=u.airY>0?u.airY:0;
   if(u.mesh.userData.halo) u.mesh.userData.halo.rotation.y+=dt*1.6;
   animateFlair(u.mesh,now,u.bob);
-  animateWalk(u.mesh,u,dt,!!(s&&(s.f&1))&&now-s.at<300);
+  animateWalk(u.mesh,u,dt,moving);
   animateAction(u.mesh,u,now); statusStep(u,now,dt);
   syncNameTag(u); u.seen=seenByYou(u);
 }
+
 /* an attack, a super or a Shift from someone else's fighter: played out here, for show (it can't touch anyone) */
 const NET_ACTS=['fire','demonSwing','oblivionSlash','gyroSlash','spoonSwing','kiraStab','ultimate','useShift','emmaDash','crisisFly','endFlight','yumeFocus','levineVanish','kiraObsession','panneSkate','endSkate'];
 NET.act={};
@@ -22748,9 +22912,10 @@ function netResultDesc(won){
   if(M.mode==='duel') return (won?'You beat '+n:n+' won')+(sc?' · '+sc:'')+(M.cfg.friendly?' · friendly match':'');
   return (won?'You and '+n+' won':'You and '+n+' lost')+(sc?' · '+sc:'');
 }
-function netMatchOver(){ const M=NET.match; if(M) M.over=true; }
+function netMatchOver(){ const M=NET.match; if(M){ M.over=true; netFlush(M,performance.now(),null); } }
 function netStopMatch(){
   const M=NET.match; if(!M) return;
+  netFlush(M,performance.now(),null);
   if(!M.over) netMs({k:'bye'});
   clearInterval(M.kaT);
   if(NET.mq) NET.mq.unsub(M.topic);
@@ -27756,16 +27921,13 @@ function persistSettings(){ State.settings=Object.assign({},settings); saveState
   addEventListener('keydown',e=>{ if(e.key==='Escape'&&!modal.classList.contains('hidden')) close(); });   // after the lobby's own key handler, which leaves Escape to this
 })();
 
-addEventListener('pagehide',()=>{ try{ if(NET.match) netMs({k:'bye'}); if(NET.mq&&NET.mq.ready){ NET.st='off'; NET.mq.pub(NET_P+'p/'+NET.id,'',true); try{ NET.mq.ws.close(); }catch(e){} } }catch(e){} });
+/* leaving the page (closing it, reloading, going somewhere else): your card comes down at once */
+addEventListener('pagehide',()=>{ try{ if(NET.match) netMs({k:'bye'}); const X=NET.mq; if(X){ X.pub(NET_P+'p/'+NET.id,'',true); X.drop(); NET.mq=null; NET.st='off'; } }catch(e){} });
 addEventListener('pageshow',e=>{ if(e.persisted&&State.online&&!NET.mq) netConnect(); });          // back from the browser's page cache
-/* the page is hidden (another tab, another app, the phone locked): you're not in the lobby, so your card comes down;
-   in a team, a queue or a match it stays, so nothing breaks */
+/* in another tab or app you stay online and seen; back on the page, a connection that fell asleep is made again at once */
 document.addEventListener('visibilitychange',()=>{
-  if(!State.online) return;
-  if(document.hidden){
-    if(NET.match||NET.queue||NET.party) return;
-    NET.away=true; if(NET.mq&&NET.mq.ready) NET.mq.pub(NET_P+'p/'+NET.id,'',true);
-  } else if(NET.away){ NET.away=false; if(NET.mq&&NET.mq.ready) netBeat(true); else if(!NET.mq) netConnect(); }
+  if(document.hidden||!State.online) return;
+  if(!NET.mq) netConnect(); else { NET.mq.kick(); if(NET.mq.ready) netBeat(true); }
 });
 (async function(){
   await loadState();
