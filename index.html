@@ -2895,7 +2895,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.17.0 · BETA</span>
+    <span class="hub-version">VERSION 3.17.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3058,7 +3058,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.17.0</div></div>
+</svg><div class="set-ver">VERSION 3.17.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -22066,7 +22066,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=4, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.17.0';
+const NET_VER=4, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.17.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -23083,9 +23083,9 @@ function buildLaurent(){
   const gold=()=>cmat(GOLD,{spec:1.6,shin:110,rim:.6});
   buildHead(r,{skin:SK,face:{iris:0x4a2e1a,brow:0x1a120c,lash:0x140c08,mouth:'smirk',tilt:-.9,drop:.18,browAng:.4}});
   buildHair(r.head,{boy:true,root:0x0e0b0a,tip:0x2a1e16,shade:0x060404,shine:0x5a4636,rim:.5,
-    fringe:{n:7,spread:48,len:40,sweep:-12,w:.09,alt:5,jag:1.2},sides:{n:1,el:70,w:.05},back:'short',spikesN:0,napeEl:140,vol:1.06});
+    fringe:{n:10,spread:60,len:80,sweep:-16,w:.105,alt:7,jag:1.8,t:.05,fan:8},sides:{n:1,el:88,w:.07},back:'short',spikesN:0,napeEl:140,vol:1.06});
   // the snapback, worn backwards: a round crown, the brim over the nape, the strap and its gap at the front
-  const cap=new THREE.Group(); cap.position.set(0,HEAD_C+.04,-.03); cap.rotation.x=-.34; r.head.add(cap);
+  const cap=new THREE.Group(); cap.position.set(0,HEAD_C+.015,-.035); cap.rotation.x=-.2; r.head.add(cap);
   const BR=HEAD_R*1.13;
   const crown=lathe([[BR,.16],[BR*1.0,.25],[BR*.94,.35],[BR*.78,.45],[BR*.46,.52],[0,.53]],40,14);
   gradY(crown,CAP,0xd8d6d0);
