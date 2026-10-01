@@ -2363,7 +2363,7 @@ body.lite-ui #hub .lb-sp{display:none;}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.10.1 · BETA</span>
+    <span class="hub-version">VERSION 3.10.2 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2506,7 +2506,7 @@ body.lite-ui #hub .lb-sp{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.10.1</div></div>
+</svg><div class="set-ver">VERSION 3.10.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -6645,7 +6645,7 @@ const CHARACTERS = [
    desc:'A war machine built to put an end to war crimes, who became the worst one of all. Every shot is nuclear waste, his arms open into electro blades, and his super is every element at once.',
    atkName:'Nuclear Waste',ultName:'Elemental Collapse',spName:'Electro Blades',build:buildGyro},
   {key:'mathias',name:'Mathias',rarity:'common',accent:0xd8b46a,hp:300,cd:1000,dmg:10,atk:'baguette',
-   desc:"An old soul in a young man's body: old money, round glasses and a chef's hands. His baguettes come straight from Italy, and they are sharp. Seven hits and the kitchen knives come out.",
+   desc:"An old soul in a young man's body: old money and a chef's hands. His baguettes come straight from Italy, and they are sharp. Seven hits and the kitchen knives come out.",
    atkName:'Sharp Baguette',ultName:'Kitchen Knives',spName:'Wooden Spoon',build:buildMathias},
   {key:'panne',name:'Panne',rarity:'epic',accent:0x2de0d0,hp:440,cd:400,dmg:20,atk:'spray',
    desc:"Always an artist, never the friendly kind. She lives for music and graffiti: a wide V of spray paint, a fast board to get out of trouble, and a block party nobody walks out of quickly.",
@@ -7765,7 +7765,7 @@ function chefKnifeProp(){
 }
 
 /* --- Mathias: an old soul in a young man's body. Old money and a chef:
-   chestnut hair combed neatly to one side, round tortoiseshell glasses,
+   chestnut hair combed neatly to one side,
    a white shirt with the sleeves rolled, a wine-red ascot, a cream cable
    knit thrown over his shoulders, a black bistro apron, navy trousers and
    brown loafers. A gold watch, a signet ring, and a very sharp baguette --- */
@@ -7786,24 +7786,6 @@ function buildMathias(){
       // short, tidy sideburns
       (hg,st,add)=>{ for(const sd of [-1,1]) add(headLock(st,{az0:sd*78,az1:sd*80,el0:62,el1:94,r0:st._vol-.004,r1:st._vol+.008,w:.07,t:.03,lift:.004,n:5,belly:.1,taper:.8,inner:.5})); }
     ]});
-  // proper glasses: wide soft-cornered frames in dark tortoiseshell, clear lenses with a glint, temples back to his ears
-  const gl=new THREE.Group(); gl.position.set(0,HEAD_C-.03,HEAD_R*.985); r.head.add(gl);
-  const rr=(w,h,c,path)=>{ const p=path?new THREE.Path():new THREE.Shape(), x=w/2, y=h/2;
-    p.moveTo(-x+c,-y); p.lineTo(x-c,-y); p.quadraticCurveTo(x,-y,x,-y+c); p.lineTo(x,y-c); p.quadraticCurveTo(x,y,x-c,y);
-    p.lineTo(-x+c,y); p.quadraticCurveTo(-x,y,-x,y-c); p.lineTo(-x,-y+c); p.quadraticCurveTo(-x,-y,-x+c,-y); return p; };
-  const FRAME=cmat(0x2a1a14,{spec:1.4,shin:110,rim:.8}), LW=.17, LH=.122;
-  for(const s of [-1,1]){
-    const side=new THREE.Group(); side.position.set(s*.108,0,-.012); side.rotation.y=s*.22; gl.add(side);
-    const sh=rr(LW+.03,LH+.028,.05); sh.holes.push(rr(LW,LH,.038,true));
-    const fg=new THREE.ExtrudeGeometry(sh,{depth:.014,bevelEnabled:true,bevelThickness:.003,bevelSize:.003,bevelSegments:1,curveSegments:8}); fg.translate(0,0,-.007);
-    const fr=part(side,fg,FRAME); fr.userData.keep=true;
-    const lens=part(side,new THREE.ShapeGeometry(rr(LW,LH,.038)),cmat(0xdcecf8,{opacity:.14,spec:2.6,shin:170,rim:1.2,side:THREE.DoubleSide}),0,0,-.004); lens.userData.keep=true;
-    const glint=part(side,softBox(.06,.008,.002,.003,1),glowMat(0xffffff,{transparent:true,opacity:.55}),-s*.035,.03,.004); glint.rotation.z=s*.6; glint.userData.keep=true;
-    const hinge=part(side,softBox(.02,.026,.02,.005,1),FRAME,s*(LW/2+.012),.022,-.012); hinge.userData.keep=true;
-    const arm=part(gl,softBox(.011,.013,.24,.004,2),FRAME,s*.212,.024,-.15); arm.rotation.y=s*.1;
-  }
-  const br=part(gl,softBox(.05,.014,.014,.005,2),FRAME,0,.022,.002); br.userData.keep=true;            // the bridge
-  for(const s of [-1,1]) part(gl,sphere(.008,8,6),cmat(0xeee8dc,{opacity:.6,rim:.5}),s*.024,-.032,-.03);   // nose pads
   legs(r,{skin:SK,pants:{col:TROUSER,len:'long',wide:1.04,hem:darkHex(TROUSER,.85)},shoe:{type:'oxford',col:LOAFER,sole:0x2a1a10}});
   r.legs.forEach(lp=>part(lp,softBox(.005,.4,.005,.002,2),cmat(darkHex(TROUSER,.7),{rim:.5}),0,-.27,.081));   // pressed creases
   torso(r,SHIRT);
