@@ -2376,9 +2376,12 @@ body.lite-ui #hub .lb-sp{display:none;}
 .ad-head{display:flex;align-items:baseline;gap:8px;}
 .ad-head b{font:400 19px var(--sk-big);letter-spacing:.06em;background:linear-gradient(90deg,#fff3c4,#ffd36a,#5dffcf,#fff3c4) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:ftSweep 5s linear infinite;}
 .ad-head em{font:600 10.5px var(--ui);font-style:normal;color:var(--dim);letter-spacing:.06em;margin-left:auto;}
-.ad-slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-.ad-s{position:relative;aspect-ratio:1;border-radius:10px;padding:5px;background:radial-gradient(120% 90% at 50% 20%,var(--rb1,#262a33),var(--rb2,#14171d));box-shadow:inset 0 0 0 1.5px var(--rc,rgba(255,255,255,.1));}
+.ad-slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%;}
+/* the icon sits inside its square rather than sizing it, so no browser can push the five past the card */
+.ad-s{display:block;min-width:0;overflow:hidden;position:relative;aspect-ratio:1;border-radius:10px;padding:5px;background:radial-gradient(120% 90% at 50% 20%,var(--rb1,#262a33),var(--rb2,#14171d));box-shadow:inset 0 0 0 1.5px var(--rc,rgba(255,255,255,.1));}
 .ad-s.empty{opacity:.65;}
+.ad-s>.art-svg{position:absolute;left:5px;top:5px;width:calc(100% - 10px);height:calc(100% - 10px);}
+#hub .art-dock{box-sizing:border-box;}
 .ad-stats{display:flex;gap:12px;font:600 11px var(--ui);color:var(--dim);letter-spacing:.06em;}
 .ad-stats b{color:#fff;font-size:12.5px;}
 @media (max-height:640px){ #hub .art-dock{top:88px;width:270px;padding:8px 10px;gap:5px;}
@@ -2539,6 +2542,16 @@ body.lite-ui #hub .lb-sp{display:none;}
 body.potato *,body.potato *::before,body.potato *::after{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
 body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
 .potato-row small{max-width:440px;}
+
+/* ---- Auto Equip ---- */
+.aiv-btn.best{border-color:rgba(255,214,107,.45);background:rgba(255,200,80,.1);color:#ffe3a1;}
+.aiv-btn.best:hover{background:rgba(255,200,80,.22);color:#fff;border-color:rgba(255,214,107,.8);}
+/* ---- the Pets screen's two tabs ---- */
+.stash-mode.pet-tabs{top:104px;bottom:auto;}
+#stash-screen #stashMode{display:none;}
+#stash-screen:not(.pet-mode) #boxTabs{display:none;}
+#stash-screen.busy .pet-tabs,#stash-screen.showing .pet-tabs{opacity:0;pointer-events:none;}
+@media (max-height:640px){ .stash-mode.pet-tabs{top:88px;} }
 </style>
 </head>
 <body>
@@ -2671,7 +2684,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.12.3 · BETA</span>
+    <span class="hub-version">VERSION 3.13.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2722,6 +2735,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
 <div id="pets-screen" class="screen hidden">
   <button class="back-chip b3 plum rx" data-back><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>BACK</button>
   <div class="panel-head"><div class="panel-title">Pets</div><div class="panel-sub">They follow you into every fight</div></div>
+  <div class="stash-mode pet-tabs" id="petTabs"><button class="on rx" data-m="crate" data-t="pets">MY PETS</button><button class="rx" data-m="pet" data-t="box">PET BOX<em class="pt-free"></em></button></div>
   <div class="roster glass" id="petRoster"></div>
   <div class="info-card glass pet-info">
     <div class="ic-top"><span class="rarity-tag" id="petRarity"></span><span class="ic-state" id="petState"></span><span class="ic-idx" id="petIdx"></span></div>
@@ -2748,7 +2762,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
     <section class="art-left glass"><div class="eyebrow">Equipped relics</div><div class="art-slots" id="artSlots"></div>
       <div class="eyebrow">Your stats · every character</div><div class="art-stats" id="artStats"></div>
       <div class="eyebrow">Set bonuses</div><div class="art-sets" id="artSets"></div></section>
-    <section class="art-mid glass"><div class="art-box" id="artBox"></div><div class="art-invbar"><span class="aiv-n" id="artCount"></span><button class="aiv-btn rx" id="artAutoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>AUTO DELETE</button></div><div class="art-filter" id="artFilter"></div><div class="art-grid" id="artGrid"></div></section>
+    <section class="art-mid glass"><div class="art-box" id="artBox"></div><div class="art-invbar"><span class="aiv-n" id="artCount"></span><button class="aiv-btn best rx" id="artBestBtn" title="Put on the strongest relics you own"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11L10 22l9-12h-6.5z"/></svg>AUTO EQUIP</button><button class="aiv-btn rx" id="artAutoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>AUTO DELETE</button></div><div class="art-filter" id="artFilter"></div><div class="art-grid" id="artGrid"></div></section>
     <section class="art-detail glass" id="artDetail"></section>
   </div>
   <div class="art-msg" id="artMsg"></div>
@@ -2760,6 +2774,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
 <div id="stash-screen" class="screen hidden">
   <button class="back-chip b3 plum rx" data-back><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>BACK</button>
   <div class="panel-head"><div class="panel-title">Stash</div><div class="panel-sub" id="stashSub">10 coins a crate · tap the chest</div></div>
+  <div class="stash-mode pet-tabs" id="boxTabs"><button class="rx" data-m="crate" data-t="pets">MY PETS</button><button class="on rx" data-m="pet" data-t="box">PET BOX<em class="pt-free"></em></button></div>
   <div class="stash-mode" id="stashMode"><button class="on rx" data-m="crate">CRATES<em id="crateFreeDot"></em></button><button class="rx" data-m="pet">PET BOXES<em id="petFreeDot"></em></button></div>
   <div class="odds-card glass">
     <div class="eyebrow">What's inside</div>
@@ -2831,7 +2846,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.12.3</div></div>
+</svg><div class="set-ver">VERSION 3.13.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -2840,7 +2855,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
     <div class="row toggle-row fs-only"><span>Fullscreen<small>Fill the whole screen · press F any time</small></span><div class="switch" id="fsSwitch"></div></div>
     <div class="row toggle-row">Control hints <div class="switch on" id="hintsSwitch"></div></div>
     <div class="sec-label set-sec">GRAPHICS</div>
-    <div class="row toggle-row potato-row"><span>Performance mode<small>For slow PCs and laptops: no shadows, grass, glow or glass blur, a lighter picture and a calmer menu, so the game runs smooth</small></span><div class="switch" id="potatoSwitch"></div></div>
+    <div class="row toggle-row potato-row"><span>Performance mode<small>For slow PCs and laptops: no shadows, grass, glow or glass blur, a lighter picture and a calmer menu, locked at a smooth 60 FPS</small></span><div class="switch" id="potatoSwitch"></div></div>
     <div class="row toggle-row gfx-row"><span>Quality<small>How much is drawn: grass, shadows, detail</small></span>
       <span class="seg" id="gfxPick"><button class="title-tile" data-q="low">Low</button><button class="title-tile" data-q="medium">Medium</button><button class="title-tile" data-q="high">High</button><button class="title-tile" data-q="ultra">Ultra</button></span></div>
     <div class="row toggle-row gfx-row"><span>Render resolution<small>Auto lowers it by itself when frames run slow</small></span>
@@ -11141,7 +11156,7 @@ function applyGfxState(){
   GFX.rsAuto=rs==='auto'; GFX.rs=GFX.rsAuto?1:Math.max(.5,Math.min(1.5,+rs||1)); GFX.auto=GFX.rsAuto&&!FIXED_RES;
   GFX.fps=+State.gfxFps||0; GFX.vsync=State.gfxVsync!==false; GFX.bloom=State.gfxBloom!==false; GFX.mblur=+State.gfxMblur||0;
   /* Performance mode: no glow or blur passes, and (on Auto) a softer picture to start from */
-  if(GFX.potato){ GFX.bloom=false; GFX.mblur=0; if(GFX.rsAuto) GFX.rs=.7; }
+  if(GFX.potato){ GFX.bloom=false; GFX.mblur=0; GFX.fps=60; if(GFX.rsAuto) GFX.rs=.7; }
 }
 
 /* ---------- pacing the frames ----------
@@ -11159,7 +11174,7 @@ const Frame=(function(){
     if(GFX.vsync||document.hidden||!mc){
       const tick=t=>{ if(!pend.has(id)) return;
         if(gap&&t-last<gap-2){ pend.set(id,{k:'raf',h:requestAnimationFrame(tick)}); return; }   // too soon for the limit: wait a refresh
-        last=t; pend.delete(id); fn(t); };
+        last=(gap&&t-last<gap*2)?last+gap:t; pend.delete(id); fn(t); };
       pend.set(id,{k:'raf',h:requestAnimationFrame(tick)});
     } else {
       const go=()=>{ if(!pend.has(id)) return; pend.delete(id); last=performance.now(); fn(last); };
@@ -12031,7 +12046,6 @@ const Lobby=(function(){
   function frame(now){
     if(!running) return;
     raf=Frame.req(frame);
-    if(GFX.potato&&last&&now-last<31) return;          // Performance mode: the menu draws at 30
     if(Perf.lobby.tick(now)) resize();
     const dt=Math.min(.05,(now-(last||now))/1000); last=now; t+=dt;
     WORLD_UNI.uTime.value=t;
@@ -12886,7 +12900,7 @@ function refreshHub(){
   applyAccent(hc.key);
   // the command column
   setText('badgeChars',State.unlocked.length+'/'+CHARACTERS.length);
-  const crates=State.infCoins?Infinity:Math.floor(State.coins/10)+(State.freeCrates||0)+(State.freePetCrates||0);
+  const crates=State.infCoins?Infinity:Math.floor(State.coins/10)+(State.freeCrates||0);
   { const n=petsOwned().length, eq=PET_BY[State.equippedPet];
     setText('badgePets',State.freePetCrates>0?State.freePetCrates+' FREE BOX'+(State.freePetCrates>1?'ES':''):'');
     setText('subPets',eq?'With '+eq.name:n?n+' / '+PETS.length+' found':'Open a pet box'); }
@@ -13113,7 +13127,7 @@ document.querySelectorAll('[data-go]').forEach(b=>{
     if(g==='start') beginRun();
     else if(g==='chars'){ show('chars'); openChars(); }
     else if(g==='pets'){ show('pets'); openPets(); }
-    else if(g==='stash'){ show('stash'); refreshStash(); }
+    else if(g==='stash'){ stashMode='crate'; show('stash'); refreshStash(); }
     else if(g==='achv'){ show('achv'); renderAchievements(); }
     else if(g==='road'){ show('road'); openRoad(); }
     else if(g==='music'){ show('music'); renderTracks(); }
@@ -13217,7 +13231,7 @@ function paintGfx(){
   document.getElementById('bloomSwitch').classList.toggle('on',GFX.bloom);
   document.getElementById('potatoSwitch').classList.toggle('on',GFX.potato);
   // what Performance mode decides for you is greyed out while it's on
-  ['gfxPick','bloomSwitch','gfxMbPick'].forEach(id=>{ const r=document.getElementById(id).closest('.row'); if(r) r.classList.toggle('gfx-lock',GFX.potato); });
+  ['gfxPick','gfxFpsPick','bloomSwitch','gfxMbPick'].forEach(id=>{ const r=document.getElementById(id).closest('.row'); if(r) r.classList.toggle('gfx-lock',GFX.potato); });
 }
 /* a change takes effect at once: the governors start over, the lobby resizes (and a running match with it) */
 function gfxChanged(){
@@ -13424,6 +13438,8 @@ function refreshStash(){
   document.querySelectorAll('#stashMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===stashMode));
   setText('petFreeDot',State.freePetCrates>0?'FREE ×'+State.freePetCrates:''); setText('crateFreeDot',State.freeCrates>0?'FREE ×'+State.freeCrates:'');
   $('stashSub').textContent=pet?PET_PRICE+' coins a pet box · tap the chest':'10 coins a crate · tap the chest';
+  S.stash.querySelector('.panel-title').textContent=pet?'Pets':'Stash';
+  paintPetTabs();
   Lobby.chestStyle(pet?'pet':'crate');
   const bp=$('openCrate').querySelector('.bp'), bt=$('openTen').querySelector('.bp');
   if(!bp.dataset.coin){ bp.dataset.coin=bp.innerHTML; bt.dataset.coin=bt.innerHTML; }
@@ -13594,7 +13610,7 @@ function applyPetResult(pick){
   if(!Array.isArray(State.pets)) State.pets=[];
   State.pets.push(p.id);
   const first=!State.equippedPet; if(first) State.equippedPet=p.id;
-  return {kind:'pet',tier:p.rarity,id:p.id,label:r.name+' PET',name:p.name,sub:first?'Your first pet! She follows you into every fight':'New pet! Equip her in Pets',
+  return {kind:'pet',tier:p.rarity,id:p.id,label:r.name+' PET',name:p.name,sub:first?'Your first pet! She follows you into every fight':'New pet! Equip her in My Pets',
     glow:TIER_GLOW[p.rarity]||0xffffff,chip:r.color,ink:rarityInk(p.rarity)};
 }
 function openPetBox(n){
@@ -13625,6 +13641,7 @@ function renderPetOdds(){
 /* ---------- the Pets screen ---------- */
 let petIdx=0;
 function openPets(){
+  paintPetTabs();
   const eq=PETS.findIndex(p=>p.id===State.equippedPet);
   if(eq>=0) petIdx=eq;
   renderPetRoster(); setPetView(petIdx,true);
@@ -13678,6 +13695,16 @@ $('petEquip').onclick=()=>{
   else SFX.back();
 };
 document.querySelectorAll('#stashMode button').forEach(b=>b.addEventListener('click',()=>setStashMode(b.dataset.m)));
+/* the two tabs of the Pets screen: your pets, and the pet box (the pink chest) */
+function paintPetTabs(){
+  const n=+State.freePetCrates||0;
+  document.querySelectorAll('.pet-tabs .pt-free').forEach(e=>{ e.textContent=n>0?'FREE ×'+n:''; });
+}
+function openPetBoxView(){ stashMode='pet'; show('stash'); refreshStash(); SFX.toggle&&SFX.toggle(true);
+  Lobby.burstAt(null,18,[0xffffff,0xffb8dc,0xff8ac4]); }
+function openMyPets(){ if(crateBusy) return; show('pets'); openPets(); SFX.toggle&&SFX.toggle(false); }
+document.querySelectorAll('#petTabs [data-t="box"]').forEach(b=>{ wireRx(b); b.addEventListener('click',openPetBoxView); });
+document.querySelectorAll('#boxTabs [data-t="pets"]').forEach(b=>{ wireRx(b); b.addEventListener('click',openMyPets); });
 
 /* ---------- redeem codes ---------- */
 /* one code only: ADMIN — every character, every trophy (with its title and
@@ -14396,8 +14423,7 @@ function clearKillFeed(){ const box=document.getElementById('killFeed'); if(box)
    ========================================================== */
 const Perf=(function(){
   function governor(isLobby){
-    // the menu runs at 30 in Performance mode, so that's what it aims for there
-    const tgt=()=>isLobby&&GFX.potato?Math.max(33.3,gfxTarget()):gfxTarget();
+    const tgt=gfxTarget;
     let scale=1, ema=16.7, last=0, good=0, slowAtMin=0, changedAt=0, tier=0, graceUntil=0, backoff=1, lastUp=0;
     const G={
       /* tier: 0 = everything; 1 = the sun's shadows off; 2 = grass and weather off as well (onTier applies it) */
@@ -14419,7 +14445,8 @@ const Perf=(function(){
           if(now-lastUp<10000) backoff=Math.min(8,backoff*2);        // it just stepped up and couldn't hold it: wait longer next time
           // the extras go first (they cost the most), then the resolution
           if(G.onTier&&tier<2&&(tier===0||scale<=.72)){ tier++; G.onTier(tier); changedAt=now; ema=tgt(); return false; }
-          if(scale>.56){ scale=Math.max(.55,scale*.85); changedAt=now; ema=tgt(); return true; }
+          const floor=GFX.potato?.48:.55;
+          if(scale>floor+.01){ scale=Math.max(floor,scale*.85); changedAt=now; ema=tgt(); return true; }
           slowAtMin+=dt;
           if(slowAtMin>3000&&!document.body.classList.contains('lite-ui')){ document.body.classList.add('lite-ui'); changedAt=now; }
           if(!isLobby&&slowAtMin>6000&&!GFX.potato&&typeof potatoHint==='function') potatoHint();
@@ -20670,6 +20697,43 @@ function artStats(list){
     cr:Math.min(100,Math.round((ART_BASE.cr+t.cr)*10)/10), cd:Math.round((ART_BASE.cd+t.cd)*10)/10, def:Math.round(t.def*10)/10, spd:Math.round(t.spd*10)/10, t};
 }
 function artPlayerStats(){ artEnsure(); return artStats(artEquippedList()); }
+/* ---------- Auto Equip: the strongest five you own ----------
+   A loadout is scored the way a fight plays out: the damage it deals (ATK, crits, attack
+   speed) times how long it lasts (HP, DEF). Each slot keeps its four strongest relics plus
+   the best one of every set, and every combination of those is tried, so a set bonus can
+   win over bigger single numbers. */
+function artPower(list){ const s=artStats(list); return s.atk*(1+Math.min(100,s.cr)/100*s.cd/100)*(1+s.spd/100)*s.hp*(1+s.def/100); }
+function artBestLoadout(){
+  const all=State.artifacts||[];
+  const cand=ART_SLOTS.map(s=>{
+    const L=all.filter(a=>a.slot===s.id); if(!L.length) return [null];
+    const sc=new Map(L.map(a=>[a,artPower([a])])), top=L.slice().sort((x,y)=>sc.get(y)-sc.get(x)), pick=new Set(top.slice(0,4));
+    Object.keys(ART_SETS).forEach(id=>{ const b=top.find(a=>a.set===id); if(b) pick.add(b); });
+    return [...pick];
+  });
+  let best=null, bestP=-1; const cur=new Array(cand.length);
+  (function rec(i){
+    if(i===cand.length){ const p=artPower(cur.filter(Boolean)); if(p>bestP){ bestP=p; best=cur.slice(); } return; }
+    for(const a of cand[i]){ cur[i]=a; rec(i+1); }
+  })(0);
+  return {list:best,power:bestP};
+}
+function artAutoEquip(){
+  artEnsure();
+  const st0=artPlayerStats(), p0=artPower(artEquippedList()), r=artBestLoadout();
+  const same=ART_SLOTS.every((s,i)=>((r.list[i]&&r.list[i].id)||'')===(State.artEquip[s.id]||''));
+  if(same||r.power<=p0*1.000001){ SFX.press(); artFlash('You already wear your strongest relics'); return; }
+  const was=Object.assign({},State.artEquip);
+  ART_SLOTS.forEach((s,i)=>{ if(r.list[i]) State.artEquip[s.id]=r.list[i].id; });
+  const n=ART_SLOTS.filter(s=>State.artEquip[s.id]!==was[s.id]).length, st=artPlayerStats();
+  artSel=null; saveState(); refreshArtDock(); refreshHub(); renderArtifacts();
+  SFX.win&&SFX.win();
+  const ch=[];
+  if(st.hp!==st0.hp) ch.push('HP '+st0.hp+' → '+st.hp);
+  if(st.atk!==st0.atk) ch.push('ATK '+Math.round(st0.atk)+' → '+Math.round(st.atk));
+  if(!ch.length&&st.cr!==st0.cr) ch.push('CRIT '+st0.cr+'% → '+st.cr+'%');
+  artFlash('Best relics on · '+n+' changed'+(ch.length?' · '+ch.join(' · '):''));
+}
 /* the bots: a random set of relics each, better the higher your rank (rank 1-9 bots carry little) */
 let ART_BOT={};
 function artBotReset(){ ART_BOT={}; }
@@ -20829,6 +20893,7 @@ function artSorted(){
 function renderArtGrid(){
   const cnt=$el('artCount'); cnt.innerHTML=`RELICS <b>${State.artifacts.length}</b> / ${ART_MAX}`; cnt.classList.toggle('full',State.artifacts.length>=ART_MAX);
   const ab=$el('artAutoBtn'); if(!ab._w){ ab._w=1; wireRx(ab); ab.onclick=openArtAuto; }
+  const bb=$el('artBestBtn'); if(!bb._w){ bb._w=1; wireRx(bb); bb.onclick=artAutoEquip; }
   const f=$el('artFilter');
   f.innerHTML=[['all','All']].concat(ART_SLOTS.map(s=>[s.id,s.short])).map(([id,n])=>{ const cnt=id==='all'?State.artifacts.length:State.artifacts.filter(a=>a.slot===id).length;
     return `<button class="af rx${artFilt===id?' on':''}" data-f="${id}">${n}<em>${cnt}</em></button>`; }).join('');
