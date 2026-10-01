@@ -2534,6 +2534,11 @@ body.lite-ui #hub .lb-sp{display:none;}
 .aset.on.s-halo{border-color:rgba(255,243,192,.55);box-shadow:inset 0 0 18px rgba(255,248,214,.12);}
 .ad-set.s-halo{background:linear-gradient(90deg,#ffffff,#ffe9a0,#cdeeff,#ffffff) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:ftSweep 4s linear infinite;}
 .aa-chip.s-halo{--cc:#fff1b8;}
+
+/* ---- Performance mode ---- */
+body.potato *,body.potato *::before,body.potato *::after{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
+.potato-row small{max-width:440px;}
 </style>
 </head>
 <body>
@@ -2666,7 +2671,7 @@ body.lite-ui #hub .lb-sp{display:none;}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.12.2 · BETA</span>
+    <span class="hub-version">VERSION 3.12.3 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2826,7 +2831,7 @@ body.lite-ui #hub .lb-sp{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.12.2</div></div>
+</svg><div class="set-ver">VERSION 3.12.3</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -2835,6 +2840,7 @@ body.lite-ui #hub .lb-sp{display:none;}
     <div class="row toggle-row fs-only"><span>Fullscreen<small>Fill the whole screen · press F any time</small></span><div class="switch" id="fsSwitch"></div></div>
     <div class="row toggle-row">Control hints <div class="switch on" id="hintsSwitch"></div></div>
     <div class="sec-label set-sec">GRAPHICS</div>
+    <div class="row toggle-row potato-row"><span>Performance mode<small>For slow PCs and laptops: no shadows, grass, glow or glass blur, a lighter picture and a calmer menu, so the game runs smooth</small></span><div class="switch" id="potatoSwitch"></div></div>
     <div class="row toggle-row gfx-row"><span>Quality<small>How much is drawn: grass, shadows, detail</small></span>
       <span class="seg" id="gfxPick"><button class="title-tile" data-q="low">Low</button><button class="title-tile" data-q="medium">Medium</button><button class="title-tile" data-q="high">High</button><button class="title-tile" data-q="ultra">Ultra</button></span></div>
     <div class="row toggle-row gfx-row"><span>Render resolution<small>Auto lowers it by itself when frames run slow</small></span>
@@ -3150,7 +3156,7 @@ async function loadState(){
 
 /* Reset game: every bit of progress goes back to how a new player starts,
    and the game reloads. Audio, controls and graphics settings stay. */
-const KEEP_ON_RESET=['settings','gfx','gfxRes','gfxFps','gfxVsync','gfxBloom','gfxMblur'];
+const KEEP_ON_RESET=['settings','gfx','gfxRes','gfxFps','gfxVsync','gfxBloom','gfxMblur','gfxPotato','potatoHint'];
 async function resetProgress(){
   const fresh=JSON.parse(STATE_DEFAULTS);
   KEEP_ON_RESET.forEach(k=>{ if(State[k]!==undefined) fresh[k]=State[k]; });
@@ -11113,23 +11119,29 @@ function mazeSight(a,b){
    pace the frames; bloom and motion blur are post effects in a match and in
    The Truth. All of it is saved with your settings. */
 const GFX_Q={
+  potato:{density:.18,pr:1,   shadow:512, kit:.3},        // Performance mode (it overrides whichever quality is picked)
   low:   {density:.35,pr:1,   shadow:1024,kit:.38},
   medium:{density:.65,pr:1.25,shadow:1024,kit:.5},
   high:  {density:1,  pr:1.5, shadow:1536,kit:.6},
   ultra: {density:1,  pr:2,   shadow:2048,kit:.78}
 };
 const FIXED_RES=/fixedres/.test(location.hash);        // #fixedres pins the resolution (for screenshots)
-const GFX={q:'high',density:1,auto:!FIXED_RES,rs:1,rsAuto:true,fps:0,vsync:true,bloom:true,mblur:0};
-function setGfx(q){ if(!GFX_Q[q]) q='high'; GFX.q=q; GFX.density=GFX_Q[q].density; document.body.classList.toggle('lite-ui',q==='low'); }
+const GFX={q:'high',density:1,auto:!FIXED_RES,rs:1,rsAuto:true,fps:0,vsync:true,bloom:true,mblur:0,potato:false};
+/* the preset in use: Performance mode wins over the picked quality */
+function gfxQ(){ return GFX_Q[GFX.potato?'potato':GFX.q]||GFX_Q.high; }
+function setGfx(q){ if(!GFX_Q[q]||q==='potato') q='high'; GFX.q=q; GFX.density=gfxQ().density; document.body.classList.toggle('lite-ui',q==='low'||GFX.potato); document.body.classList.toggle('potato',GFX.potato); }
 /* the pixel ratio a renderer should use before the governor's own scale */
-function gfxPR(){ return Math.min(window.devicePixelRatio||1,GFX_Q[GFX.q].pr)*GFX.rs; }
+function gfxPR(){ return Math.min(window.devicePixelRatio||1,gfxQ().pr)*GFX.rs; }
 /* the frame time the governor aims for: never faster than a 60Hz screen shows */
 function gfxTarget(){ return Math.max(16.7,GFX.fps?1000/GFX.fps:0); }
 function applyGfxState(){
+  GFX.potato=State.gfxPotato===true;
   setGfx(GFX.q);
   const rs=State.gfxRes===undefined?'auto':State.gfxRes;
   GFX.rsAuto=rs==='auto'; GFX.rs=GFX.rsAuto?1:Math.max(.5,Math.min(1.5,+rs||1)); GFX.auto=GFX.rsAuto&&!FIXED_RES;
   GFX.fps=+State.gfxFps||0; GFX.vsync=State.gfxVsync!==false; GFX.bloom=State.gfxBloom!==false; GFX.mblur=+State.gfxMblur||0;
+  /* Performance mode: no glow or blur passes, and (on Auto) a softer picture to start from */
+  if(GFX.potato){ GFX.bloom=false; GFX.mblur=0; if(GFX.rsAuto) GFX.rs=.7; }
 }
 
 /* ---------- pacing the frames ----------
@@ -11591,7 +11603,7 @@ const Lobby=(function(){
   function renderLook(dt){
     const L=look, U=L.mat.uniforms, k=1-Math.exp(-dt*5);
     lookNow.s+=(lookTo.s-lookNow.s)*k; lookNow.h+=(lookTo.h-lookNow.h)*k;
-    const wantBand=lookTo.b>0&&hero&&hero.visible;
+    const wantBand=lookTo.b>0&&hero&&hero.visible&&!GFX.potato;
     lookNow.b+=((wantBand?1:0)-lookNow.b)*Math.min(1,dt*(wantBand?3:8));
     lookNow.flash=Math.max(0,lookNow.flash-dt*2.2);
     const ki=Math.min(1,dt*4.5);
@@ -11599,6 +11611,7 @@ const Lobby=(function(){
     U.uStyle.value=lookNow.s; U.uHero.value=lookNow.h; U.uBandK.value=lookNow.b<.01?0:lookNow.b; U.uFlash.value=lookNow.flash*lookNow.flash;
     U.uTime.value=t;
     // 1) the world, your character included (for its shadow; the shadows are redrawn every other frame)
+    if(keyLight&&keyLight.castShadow===GFX.potato) keyLight.castShadow=!GFX.potato;
     if((++shadowN)&1) R.shadowMap.needsUpdate=true;
     cam.layers.set(0);
     R.setRenderTarget(L.rtEnv); R.render(scene,cam);
@@ -12018,6 +12031,7 @@ const Lobby=(function(){
   function frame(now){
     if(!running) return;
     raf=Frame.req(frame);
+    if(GFX.potato&&last&&now-last<31) return;          // Performance mode: the menu draws at 30
     if(Perf.lobby.tick(now)) resize();
     const dt=Math.min(.05,(now-(last||now))/1000); last=now; t+=dt;
     WORLD_UNI.uTime.value=t;
@@ -13201,10 +13215,16 @@ function paintGfx(){
   document.querySelectorAll('#gfxMbPick [data-v]').forEach(b=>b.classList.toggle('selected',+b.dataset.v===GFX.mblur));
   document.getElementById('vsyncSwitch').classList.toggle('on',GFX.vsync);
   document.getElementById('bloomSwitch').classList.toggle('on',GFX.bloom);
+  document.getElementById('potatoSwitch').classList.toggle('on',GFX.potato);
+  // what Performance mode decides for you is greyed out while it's on
+  ['gfxPick','bloomSwitch','gfxMbPick'].forEach(id=>{ const r=document.getElementById(id).closest('.row'); if(r) r.classList.toggle('gfx-lock',GFX.potato); });
 }
 /* a change takes effect at once: the governors start over, the lobby resizes (and a running match with it) */
 function gfxChanged(){
+  const wasPotato=GFX.potato;
   applyGfxState(); saveState(); paintGfx(); Perf.lobby.reset(); Perf.game.reset(); PostFX.reset();
+  if(typeof gameOn!=='undefined'&&gameOn&&world) try{ applyGameTier(Perf.game.tier); }catch(e){}   // shadows and grass follow at once
+  if(wasPotato&&!GFX.potato) potatoWake();
   try{ Lobby.resize(); }catch(e){} if(typeof gameResize==='function'&&typeof gameOn!=='undefined'&&gameOn) try{ gameResize(); }catch(e){}
   SFX.press();
 }
@@ -13214,6 +13234,24 @@ document.querySelectorAll('#gfxFpsPick [data-v]').forEach(b=>b.addEventListener(
 document.querySelectorAll('#gfxMbPick [data-v]').forEach(b=>b.addEventListener('click',()=>{ State.gfxMblur=+b.dataset.v; gfxChanged(); }));
 document.getElementById('vsyncSwitch').addEventListener('click',()=>{ State.gfxVsync=!GFX.vsync; gfxChanged(); });
 document.getElementById('bloomSwitch').addEventListener('click',()=>{ State.gfxBloom=!GFX.bloom; gfxChanged(); });
+document.getElementById('potatoSwitch').addEventListener('click',()=>{ State.gfxPotato=!GFX.potato; gfxChanged(); });
+/* Performance mode also stops the menus' looping animations (glows and pulses repaint the page every frame) */
+let potatoStopped=0;
+setInterval(()=>{
+  if(!GFX.potato||!document.getAnimations||document.hidden) return;
+  try{ document.getAnimations().forEach(a=>{ const t=a.effect&&a.effect.getComputedTiming&&a.effect.getComputedTiming();
+    if(t&&t.iterations===Infinity&&a.playState==='running'){ a.cancel(); potatoStopped++; } }); }catch(e){}
+},1200);
+/* ...and when it's switched off they start again */
+function potatoWake(){
+  if(!potatoStopped) return; potatoStopped=0;
+  const b=document.body, d=b.style.display; b.style.display='none'; void b.offsetHeight; b.style.display=d;
+}
+/* a match that stays slow even at the lowest resolution points to Performance mode, once */
+function potatoHint(){
+  if(GFX.potato||State.potatoHint) return; State.potatoHint=true; saveState();
+  toast('Laggy? Turn on Performance mode in Settings',5200);
+}
 
 /* ---------- characters ---------- */
 let charIdx=0;
@@ -13319,10 +13357,10 @@ function weightedPick(entries){
 }
 /* every rarity has its own chance in a crate, shared by the characters of it you don't have yet
    (once you have them all, its share goes to coins). A BEAST is 2% of every crate; the
-   1,000-coin jackpot is 1% */
+   1,000-coin jackpot is 0.3% */
 const RARITY_CHANCE = {common:.12, angelic:.07, epic:.05, legendary:.035, celestial:.02};
 const MUSIC_CHANCE = .04;
-const JACKPOT_CHANCE = .01;
+const JACKPOT_CHANCE = .003;
 function stashEntries(){
   const entries=[]; let used=0;
   for(const r in RARITY_CHANCE){
@@ -13333,7 +13371,7 @@ function stashEntries(){
   const mus=TRACKS.filter(t=>!State.music.includes(t.id));
   if(mus.length){ used+=MUSIC_CHANCE; mus.forEach(t=>entries.push({type:'music',id:t.id,w:MUSIC_CHANCE/mus.length})); }
   const rest=COIN_TABLE.filter(c=>c.amount<1000), CT=rest.reduce((s,c)=>s+c.w,0);
-  entries.push({type:'coins',amount:1000,w:JACKPOT_CHANCE});                                    // the jackpot: 1% of every crate
+  entries.push({type:'coins',amount:1000,w:JACKPOT_CHANCE});                                    // the jackpot: 0.3% of every crate
   rest.forEach(c=>entries.push({type:'coins',amount:c.amount,w:(1-used-JACKPOT_CHANCE)*c.w/CT}));
   return entries;
 }
@@ -14357,31 +14395,34 @@ function clearKillFeed(){ const box=document.getElementById('killFeed'); if(box)
    even the lowest step struggles, the menus drop their glass blur too.
    ========================================================== */
 const Perf=(function(){
-  function governor(){
+  function governor(isLobby){
+    // the menu runs at 30 in Performance mode, so that's what it aims for there
+    const tgt=()=>isLobby&&GFX.potato?Math.max(33.3,gfxTarget()):gfxTarget();
     let scale=1, ema=16.7, last=0, good=0, slowAtMin=0, changedAt=0, tier=0, graceUntil=0, backoff=1, lastUp=0;
     const G={
       /* tier: 0 = everything; 1 = the sun's shadows off; 2 = grass and weather off as well (onTier applies it) */
       get tier(){ return tier; }, onTier:null,
       get scale(){ return scale; },
       /* a new scene: a couple of seconds of grace, since the first frames compile shaders and stutter */
-      reset(){ scale=1; ema=gfxTarget(); last=0; good=0; slowAtMin=0; changedAt=0; tier=0; backoff=1; lastUp=0; graceUntil=performance.now()+2500; },
+      reset(){ scale=1; ema=tgt(); last=0; good=0; slowAtMin=0; changedAt=0; tier=0; backoff=1; lastUp=0; graceUntil=performance.now()+2500; },
       /* once a frame, with the rAF time; true when the scale changed */
       tick(now){
         if(!last){ last=now; return false; }
         const dt=now-last; last=now;
         if(dt>250||document.hidden) return false;            // a stall or a hidden tab tells us nothing
-        if(now<graceUntil){ ema=gfxTarget(); return false; }
+        if(now<graceUntil){ ema=tgt(); return false; }
         ema+=(dt-ema)*.06;
         if(GFX.auto===false||now-changedAt<1500) return false;
-        const tg=gfxTarget();
+        const tg=tgt();
         if(ema>tg*1.26){
           good=0;
           if(now-lastUp<10000) backoff=Math.min(8,backoff*2);        // it just stepped up and couldn't hold it: wait longer next time
           // the extras go first (they cost the most), then the resolution
-          if(G.onTier&&tier<2&&(tier===0||scale<=.72)){ tier++; G.onTier(tier); changedAt=now; ema=gfxTarget(); return false; }
-          if(scale>.56){ scale=Math.max(.55,scale*.85); changedAt=now; ema=gfxTarget(); return true; }
+          if(G.onTier&&tier<2&&(tier===0||scale<=.72)){ tier++; G.onTier(tier); changedAt=now; ema=tgt(); return false; }
+          if(scale>.56){ scale=Math.max(.55,scale*.85); changedAt=now; ema=tgt(); return true; }
           slowAtMin+=dt;
           if(slowAtMin>3000&&!document.body.classList.contains('lite-ui')){ document.body.classList.add('lite-ui'); changedAt=now; }
+          if(!isLobby&&slowAtMin>6000&&!GFX.potato&&typeof potatoHint==='function') potatoHint();
         } else if(ema<tg*1.07){
           // smooth (at least a steady 60): after a while, try stepping back up
           good+=dt; slowAtMin=0;
@@ -14393,7 +14434,7 @@ const Perf=(function(){
     };
     return G;
   }
-  return {lobby:governor(),game:governor()};
+  return {lobby:governor(true),game:governor(false)};
 })();
 /* the character portraits are drawn in the background after boot, a few at a
    time when the page is idle, so the Characters screen opens instantly */
@@ -14556,10 +14597,10 @@ function zoneAt(e){
   return Z[Z.length-1].r;
 }
 function place(n){ return n===1?'1st PLACE!':n===2?'2nd PLACE':n===3?'3rd PLACE':n+'th PLACE'; }
-function toast(txt){
+function toast(txt,ms){
   const t=document.getElementById('toast');
   t.textContent=txt; t.classList.add('show');
-  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1600);
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),ms||1600);
 }
 
 /* ---------- the closing storm: a glowing wall and a shaded outside ---------- */
@@ -14684,7 +14725,7 @@ function startGame(ch){
   const cv=document.getElementById('gameCanvas');
   if(!renderer){
     // multisampling on a high-density screen costs a lot and shows little
-    renderer=new THREE.WebGLRenderer({canvas:cv,antialias:devicePixelRatio<1.5,powerPreference:'high-performance'});
+    renderer=new THREE.WebGLRenderer({canvas:cv,antialias:devicePixelRatio<1.5&&!GFX.potato,powerPreference:'high-performance'});
     renderer.outputEncoding=THREE.sRGBEncoding;
     renderer.toneMapping=THREE.ACESFilmicToneMapping;
     renderer.shadowMap.enabled=true;
@@ -14706,10 +14747,11 @@ function startGame(ch){
   scene.add(new THREE.HemisphereLight(LC(L.hemi.sky),LC(L.hemi.gnd),L.hemi.i));
   sunLight=new THREE.DirectionalLight(LC(L.sun.col),L.sun.i);
   sunLight.castShadow=!world.hide;
-  sunLight.shadow.mapSize.setScalar(GFX_Q[GFX.q].shadow);
+  sunLight.shadow.mapSize.setScalar(gfxQ().shadow);
   const sc2=sunLight.shadow.camera; sc2.left=-26; sc2.right=26; sc2.top=26; sc2.bottom=-26; sc2.near=1; sc2.far=140;
   sunLight.shadow.bias=-.0004; sunLight.shadow.normalBias=.03;
   scene.add(sunLight); scene.add(sunLight.target);
+  if(GFX.potato) applyGameTier(2);
   const zn=makeZone(); zoneWall=zn.wall; zoneShade=zn.shade;
   document.getElementById('mapLabel').textContent=world.name;
   if(world.hide){
@@ -14726,7 +14768,7 @@ function startGame(ch){
   }
   scene.add(zoneWall); scene.add(zoneShade);
   if(isExec()){ zoneWall.material.uniforms.uCol.value.set(0x5aff8a); zoneShade.material.color.set(0x06200e); zoneWall.visible=zoneShade.visible=false; }   // Execution closes in with poison
-  KIT_DETAIL=GFX_Q[GFX.q].kit;              // lighter figures for the match (back to full in the menus)
+  KIT_DETAIL=gfxQ().kit;              // lighter figures for the match (back to full in the menus)
 
   if(isExec()) execStart(ch);
   else {
@@ -14796,6 +14838,7 @@ function spawnFighter(c,isP,display,pos,team){
 }
 /* what the frame-rate governor gives up when the resolution alone isn't enough (Perf.game.tier) */
 function applyGameTier(tier){
+  if(GFX.potato) tier=2;                       // Performance mode: no sun shadows, grass or weather at all
   if(sunLight&&!(world&&world.hide)) sunLight.castShadow=tier<1;
   if(world&&world.grass){ world.grassOn=tier<2; if(!world.grassOn) world.grass.forEach(m=>{ m.visible=false; }); }
   if(world&&world.particles) world.particles.visible=tier<2;
@@ -17052,7 +17095,7 @@ function dungeonSetup(ch){
   const si=force==='you'?0:force==='bot'?1+Math.floor(Math.random()*others.length):Math.floor(Math.random()*roster.length);
   alive=roster.length-1;
   const namePool=botNamePool(9);
-  KIT_DETAIL=GFX_Q[GFX.q].kit;
+  KIT_DETAIL=gfxQ().kit;
   let seeker=null;
   roster.forEach((c,i)=>{
     const isS=i===si, a=i/roster.length*Math.PI*2+.2, R=4.9;
@@ -23982,7 +24025,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     T.pB.u.uTx.value.set(1.5/W,1.5/Hh); T.pC.u.uRes.value.set(W,Hh); T.pF.u.uRes.value.set(sz.x,sz.y); T.pF.u.uSrc.value.set(W,Hh);
   }
   function resize(){
-    if(!T) return; const pr=Math.min(devicePixelRatio||1,T.touchMode?1.25:GFX_Q[GFX.q].pr)*GFX.rs;
+    if(!T) return; const pr=Math.min(devicePixelRatio||1,T.touchMode?1.25:gfxQ().pr)*GFX.rs;
     renderer.setPixelRatio(pr); renderer.setSize(innerWidth,innerHeight,false);
     T.cam.aspect=innerWidth/innerHeight; T.cam.updateProjectionMatrix(); sizeTargets();
   }
@@ -25753,7 +25796,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   /* ---------- in and out ---------- */
   function ensureRenderer(){
     if(renderer) return;
-    renderer=new THREE.WebGLRenderer({canvas:document.getElementById('gameCanvas'),antialias:devicePixelRatio<1.5,powerPreference:'high-performance'});
+    renderer=new THREE.WebGLRenderer({canvas:document.getElementById('gameCanvas'),antialias:devicePixelRatio<1.5&&!GFX.potato,powerPreference:'high-performance'});
     renderer.outputEncoding=THREE.sRGBEncoding; renderer.toneMapping=THREE.ACESFilmicToneMapping;
     renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFShadowMap; renderer.shadowMap.autoUpdate=false;
   }
