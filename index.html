@@ -2728,7 +2728,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.14.0 · BETA</span>
+    <span class="hub-version">VERSION 3.14.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2890,7 +2890,7 @@ body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.14.0</div></div>
+</svg><div class="set-ver">VERSION 3.14.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -16971,11 +16971,35 @@ function animateAction(mesh,u,now){
     if(ud.arms&&a>0) ud.arms[0].rotation.x-=.7*a;
     if(ud.body&&a>0) ud.body.rotation.y-=.25*a;
   }
-  // Millie: the scythe sweeps across with each swing; in the waltz she spins with it held out
+  // Millie: every swing is a real slash. Her arm comes up level, the scythe tips out flat with the
+  // blade leading, and her twist plus her arm carry it 180 degrees across the front, from one side to
+  // the other in step with the red crescent (forehand, then backhand); a follow-through, then ready again.
+  // In the waltz she spins with it held out.
   if(ud.scythe&&ud.arms){
-    if(spOn(u,now)){ if(ud.body) ud.body.rotation.y=(now/1000*15)%(Math.PI*2); ud.arms[0].rotation.x=-1.45; ud.arms[0].rotation.z=ud.armZ[0]-1; ud.arms[1].rotation.x=-1.2; ud.arms[1].rotation.z=ud.armZ[1]+.9; }
-    else if(u.reapAt&&now-u.reapAt<320){ const k=(now-u.reapAt)/320, s=Math.sin(Math.PI*k), e=1-Math.pow(1-Math.min(1,k*1.5),3), sd=u.reapSide||1;
-      ud.arms[0].rotation.x=-.12-1.35*s; ud.arms[0].rotation.z=ud.armZ[0]+.3*s; if(ud.body) ud.body.rotation.y=sd*(-.95+1.9*e)*Math.min(1,s*2.2); }
+    const g=ud.scythe;
+    if(!ud.scyQ0){ ud.scyQ0=g.quaternion.clone();
+      ud.scyQF=new THREE.Quaternion().setFromEuler(new THREE.Euler(0,0,Math.PI));     // shaft out along the arm, blade leading one way
+      ud.scyQB=new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI,0,0)); }  // ...and the other
+    if(spOn(u,now)){ if(ud.body) ud.body.rotation.y=(now/1000*15)%(Math.PI*2); ud.arms[0].rotation.x=-1.45; ud.arms[0].rotation.z=ud.armZ[0]-1; ud.arms[1].rotation.x=-1.2; ud.arms[1].rotation.z=ud.armZ[1]+.9;
+      if(ud.scyOn){ g.quaternion.copy(ud.scyQ0); ud.scyOn=false; } }
+    else if(u.reapAt&&now-u.reapAt<MIL_SLASH_MS){
+      const t=now-u.reapAt, sd=u.reapSide||1;
+      // into the slash pose in 40ms, held through the cut, eased back out at the end
+      const w=t<40?t/40:t<250?1:Math.max(0,1-(t-250)/(MIL_SLASH_MS-250)), we=w*w*(3-2*w);
+      // where the blade points (0 = straight ahead): from her one side, round the front, to the other
+      const q=Math.max(0,Math.min(1,(t-25)/125)), e=.5-.5*Math.cos(Math.PI*q);
+      const over=t>150?Math.sin(Math.min(1,(t-150)/100)*Math.PI/2)*.2:0;
+      const th=sd*(-Math.PI/2-.15+(Math.PI+.3)*e+over), psi=th*.5, c=th-psi;
+      const A=ud.arms[0];
+      A.rotation.x+=(-Math.PI/2-A.rotation.x)*we;                 // level: the arm points out flat...
+      A.rotation.z+=(c-A.rotation.z)*we;                          // ...and swings round in that plane
+      ud.arms[1].rotation.x+=(-.55-ud.arms[1].rotation.x)*we*.7;  // the free arm out for balance
+      ud.arms[1].rotation.z+=(ud.armZ[1]+.5-ud.arms[1].rotation.z)*we*.7;
+      if(ud.body){ ud.body.rotation.y+=(psi-ud.body.rotation.y)*we; ud.body.rotation.x+=(.14-ud.body.rotation.x)*we*.8; }
+      g.quaternion.copy(ud.scyQ0).slerp(sd>0?ud.scyQF:ud.scyQB,we);
+      ud.scyOn=true;
+    }
+    else if(ud.scyOn){ g.quaternion.copy(ud.scyQ0); ud.scyOn=false; }
   }
   // Kira: a flick of the wrist for the pencil, a short hard thrust for the knife
   if(ud.pencil&&ud.arms){
@@ -20528,6 +20552,7 @@ function reapSweep(u,d,side){
       mat.uniforms.uS.value=Math.min(1,t/SW); mat.uniforms.uA.value=t<SW?1:Math.max(0,1-(t-SW)/FADE); return t>=SW+FADE; },
     stop(){ freeObj(g); }});
 }
+const MIL_SLASH_MS=430;            // the whole swing, wind-up to ready (the cut itself is 25-150ms, with the crescent)
 function millieReap(u,dir,dmg){
   const now=performance.now(); u.reapAt=now; u.reapSide=u.reapSide===1?-1:1; u.lastAtkAt=now;
   const d=V3(dir.x,0,dir.z).normalize(); u.mesh.rotation.y=Math.atan2(d.x,d.z);
