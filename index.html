@@ -2592,6 +2592,20 @@ body.lite-ui #hub .lb-sp{display:none;}
   background:linear-gradient(180deg,#fff0b8,#ffc94a 55%,#f5a623);box-shadow:0 14px 30px -12px rgba(255,190,60,.8),inset 0 1px 0 rgba(255,255,255,.6);}
 .mc-claim:hover{filter:brightness(1.06);}
 .mc-claim.done{background:rgba(255,255,255,.07);color:var(--dim);box-shadow:none;cursor:default;}
+.mc-tabs{display:flex;gap:6px;margin:-2px 0 14px;overflow-x:auto;scrollbar-width:none;}
+.mc-tab{position:relative;flex:none;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--dim);font:700 11px var(--ui);letter-spacing:.06em;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+.mc-tab.on{background:rgba(255,214,107,.16);border-color:rgba(255,214,107,.5);color:#fff;}
+.mc-tab.new::after{content:'';position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#ff5d7a;box-shadow:0 0 6px #ff5d7a;}
+.mc-link{display:block;margin:4px 0 2px;padding:11px;border-radius:12px;text-align:center;text-decoration:none;font:800 12.5px var(--ui);letter-spacing:.2em;color:#fff;
+  background:linear-gradient(90deg,rgba(124,92,255,.55),rgba(80,180,255,.45));border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 24px -12px rgba(124,92,255,.9);}
+.mc-link:hover{filter:brightness(1.12);}
+.mg-relic{background:radial-gradient(circle at 50% 30%,rgba(255,93,156,.22),transparent 70%),rgba(255,255,255,.04);border-color:rgba(255,120,180,.4);}
+.mg-relic .mg-ic svg{width:34px;height:34px;}
+.mc-relic{display:flex;align-items:center;gap:12px;margin-top:8px;padding:10px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(255,93,156,.14),rgba(93,255,207,.06));border:1px solid rgba(255,140,190,.35);}
+.mcr-ic{flex:none;width:46px;height:46px;display:flex;align-items:center;justify-content:center;} .mcr-ic svg{width:44px;height:44px;}
+.mc-relic b{display:block;font:800 12px var(--ui);letter-spacing:.08em;color:#ffd0e4;}
+.mc-relic small{display:block;font:600 11px var(--ui);color:#fff;margin-top:2px;}
+.mc-relic em{display:block;font:600 10.5px var(--ui);font-style:normal;color:#9dffd8;margin-top:3px;}
 
 /* the exclusive pictures in the profile */
 .pfp-tile.excl{box-shadow:0 0 0 2px rgba(201,184,255,.5),0 0 16px rgba(201,184,255,.35);}
@@ -3322,7 +3336,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.27.1 · BETA</span>
+    <span class="hub-version">VERSION 3.28.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3489,7 +3503,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.27.1</div></div>
+</svg><div class="set-ver">VERSION 3.28.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -14356,7 +14370,7 @@ const HeroTalk=(function(){
   function schedule(){
     clearTimeout(idleT);
     idleT=setTimeout(()=>{
-      if(!S.hub.classList.contains('hidden')&&document.visibilityState==='visible'&&performance.now()-lastSay>9000){ say(hero(),next(hero())); Lobby.react('emote'); }
+      if(!S.hub.classList.contains('hidden')&&document.visibilityState==='visible'&&performance.now()-lastSay>9000&&!hubOverlay()){ say(hero(),next(hero())); Lobby.react('emote'); }
       schedule();
     },15000+Math.random()*12000);
   }
@@ -22731,7 +22745,13 @@ function renderArtAuto(){
 }
 
 /* ---------- the Mail ---------- */
-var MAILS=[{id:'welcome1',from:'Szamóca',role:'The creator',subject:'Hello everyone!',
+var MAILS=[{id:'native1',from:'Szamóca',role:'The creator',subject:'Native versions are out now!',
+  body:['Lunive is out now as a real app for Windows and Mac. Install it once, and it updates itself from then on.','Thanks for playing the game :)'],
+  link:{href:'https://github.com/szamocaa/Lunive/releases/latest',label:'DOWNLOAD FOR WINDOWS & MAC'},
+  sign:'- Szamóca',
+  gifts:{crates:10,petBoxes:10,artBoxes:20,
+    arts:[{slot:'feather',rar:'beast',set:'aurora',lvl:20,main:'atkF',echo:[['cr',4.8],['cd',10.8],['atkP',5],['spd',2.2]]}]}},
+  {id:'welcome1',from:'Szamóca',role:'The creator',subject:'Hello everyone!',
   body:['Hello everyone, if you have any ideas for the game, let me know!','Click the Support button, and feel free to text me.'],
   sign:'- Szamóca',
   gifts:{coins:100,crates:5,petBoxes:5,artBoxes:5,pfps:['x_daydream','x_porcelain','x_seraph']}}];
@@ -22739,7 +22759,7 @@ function mailUnclaimed(){ return (MAILS||[]).filter(m=>!(State.mailClaimed||[]).
 function refreshMailBtn(){
   const n=mailUnclaimed().length, d=$el('mailDot'), b=$el('mailBtn'); if(!d) return;
   d.textContent=n?String(n):''; d.classList.toggle('hidden',!n); b.classList.toggle('hot',n>0);
-  setText('mailSub',n?'A letter from the creator':'No new mail');
+  setText('mailSub',n?(n>1?n+' letters from the creator':'A letter from the creator'):'No new mail');
   placeMailBtn();
 }
 function placeMailBtn(){
@@ -22747,36 +22767,59 @@ function placeMailBtn(){
   m.style.top=(d.offsetTop+d.offsetHeight+16)+'px';
 }
 (function(){ const d=$el('artDock'); if(d&&window.ResizeObserver) new ResizeObserver(placeMailBtn).observe(d); window.addEventListener('resize',placeMailBtn); })();
-function openMail(){ $el('mailPop').classList.add('on'); renderMail(); SFX.open(); }
+function openMail(){ $el('mailPop').classList.add('on'); try{ HeroTalk.hide(); }catch(e){} renderMail(); SFX.open(); }
 function closeMail(){ $el('mailPop').classList.remove('on'); SFX.back(); }
+let mailSel=null;
 function renderMail(){
-  const el=$el('mailPop'), m=MAILS[0], done=(State.mailClaimed||[]).includes(m.id), g=m.gifts;
+  const el=$el('mailPop'), L=MAILS||[], claimed=State.mailClaimed||[], un=mailUnclaimed();
+  if(!mailSel||!L.some(x=>x.id===mailSel)) mailSel=(un[0]||L[0]).id;
+  const m=L.find(x=>x.id===mailSel), done=claimed.includes(m.id), g=m.gifts;
   const gift=(ic,n,label)=>`<div class="mg"><span class="mg-ic">${ic}</span><b>${n}</b><small>${label}</small></div>`;
   const CRATE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3 10h18v10H3zM3 10l2.5-5h13L21 10M10 13h4v3h-4z"/></svg>';
   const PAW='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 13.2c-2.9 0-5.4 2.7-5.4 4.8 0 1.5 1.2 2.3 2.6 2.3 1.1 0 1.9-.6 2.8-.6s1.7.6 2.8.6c1.4 0 2.6-.8 2.6-2.3 0-2.1-2.5-4.8-5.4-4.8z"/><ellipse cx="5.6" cy="11" rx="1.7" ry="2.2"/><ellipse cx="9.2" cy="6.9" rx="1.8" ry="2.4"/><ellipse cx="14.8" cy="6.9" rx="1.8" ry="2.4"/><ellipse cx="18.4" cy="11" rx="1.7" ry="2.2"/></svg>';
+  const tiles=[]; if(g.coins) tiles.push(gift(COIN_SVG,g.coins,'Coins'));
+  if(g.crates) tiles.push(gift(CRATE,'×'+g.crates,'Character stashes'));
+  if(g.petBoxes) tiles.push(gift(PAW,'×'+g.petBoxes,'Pet stashes'));
+  if(g.artBoxes) tiles.push(gift(artSVG('flower','aurora'),'×'+g.artBoxes,'Artifact boxes'));
+  (g.arts||[]).forEach(a=>tiles.push(`<div class="mg mg-relic r-${a.rar}"><span class="mg-ic">${artSVG(a.slot,a.set)}</span><b>Lv ${a.lvl}</b><small>${ART_RAR[a.rar].name} ${ART_SLOT_BY[a.slot].short}</small></div>`));
+  const relics=(g.arts||[]).map(a=>{ const fake={main:a.main,lvl:a.lvl};
+    return `<div class="mc-relic r-${a.rar}"><span class="mcr-ic">${artSVG(a.slot,a.set)}</span><div><b>${ART_RAR[a.rar].name} · ${ART_SLOT_BY[a.slot].name}</b>
+      <small>${ART_SETS[a.set].name} · Lv ${a.lvl} · MAX · ${artMainText(fake)}</small>
+      <em>${a.echo.map(([k,v])=>artFmt(k,v)).join(' · ')}</em></div></div>`; }).join('');
+  const tabs=L.length>1?`<div class="mc-tabs">${L.map(x=>`<button class="mc-tab rx${x.id===mailSel?' on':''}${claimed.includes(x.id)?'':' new'}" data-m="${x.id}">${x.subject}</button>`).join('')}</div>`:'';
   el.innerHTML=`<div class="mail-card">
     <div class="mc-head"><div class="mc-from"><span class="mc-av">S</span><div><b>${m.from}</b><small>${m.role}</small></div></div><button class="aa-x rx" id="mailX" aria-label="Close">×</button></div>
+    ${tabs}
     <div class="mc-subj">${m.subject}</div>
     <div class="mc-body">${m.body.map(p=>`<p>${p}</p>`).join('')}<p class="mc-sign">${m.sign}</p></div>
+    ${m.link?`<a class="mc-link rx" href="${m.link.href}" target="_blank" rel="noopener">${m.link.label}</a>`:''}
     <div class="mc-gifts"><div class="mc-gl">ATTACHED</div>
-      <div class="mc-grid">${gift(COIN_SVG,g.coins,'Coins')}${gift(CRATE,'×'+g.crates,'Character crates')}${gift(PAW,'×'+g.petBoxes,'Pet boxes')}${gift(artSVG('flower','aurora'),'×'+g.artBoxes,'Artifact boxes')}</div>
-      <div class="mc-pfps"><span>3 EXCLUSIVE PROFILE PICTURES</span><div>${g.pfps.map(id=>`<img src="${exclPfp(id).src}" alt="" title="${exclPfp(id).name}">`).join('')}</div></div></div>
+      <div class="mc-grid">${tiles.join('')}</div>${relics}
+      ${g.pfps&&g.pfps.length?`<div class="mc-pfps"><span>${g.pfps.length} EXCLUSIVE PROFILE PICTURES</span><div>${g.pfps.map(id=>`<img src="${exclPfp(id).src}" alt="" title="${exclPfp(id).name}">`).join('')}</div></div>`:''}</div>
     <button class="mc-claim rx${done?' done':''}" id="mailClaim"${done?' disabled':''}>${done?'CLAIMED':'CLAIM ALL'}</button></div>`;
   const x=$el('mailX'); wireRx(x); x.onclick=closeMail;
   const c=$el('mailClaim'); wireRx(c); c.onclick=()=>claimMail(m);
+  el.querySelectorAll('.mc-tab').forEach(t=>{ wireRx(t); t.onclick=()=>{ mailSel=t.dataset.m; SFX.press&&SFX.press(); renderMail(); }; });
   el.onclick=e=>{ if(e.target===el) closeMail(); };
 }
 function claimMail(m){
   if(!Array.isArray(State.mailClaimed)) State.mailClaimed=[];
   if(State.mailClaimed.includes(m.id)) return;
-  const g=m.gifts;
+  const g=m.gifts, got=[];
   State.mailClaimed.push(m.id);
-  State.coins+=g.coins; State.freeCrates=(+State.freeCrates||0)+g.crates; State.freePetCrates=(+State.freePetCrates||0)+g.petBoxes; State.freeArtBoxes=(+State.freeArtBoxes||0)+g.artBoxes;
-  if(!Array.isArray(State.exclPfps)) State.exclPfps=[];
-  g.pfps.forEach(id=>{ if(!State.exclPfps.includes(id)) State.exclPfps.push(id); });
+  if(g.coins){ State.coins+=g.coins; got.push(g.coins+' coins'); }
+  if(g.crates) State.freeCrates=(+State.freeCrates||0)+g.crates;
+  if(g.petBoxes) State.freePetCrates=(+State.freePetCrates||0)+g.petBoxes;
+  if(g.artBoxes) State.freeArtBoxes=(+State.freeArtBoxes||0)+g.artBoxes;
+  const boxes=(g.crates||0)+(g.petBoxes||0)+(g.artBoxes||0); if(boxes) got.push(boxes+' boxes');
+  if(g.pfps&&g.pfps.length){ if(!Array.isArray(State.exclPfps)) State.exclPfps=[]; g.pfps.forEach(id=>{ if(!State.exclPfps.includes(id)) State.exclPfps.push(id); }); got.push(g.pfps.length+' profile pictures'); }
+  if(g.arts&&g.arts.length){ if(!Array.isArray(State.artifacts)) State.artifacts=[];
+    g.arts.forEach(a=>{ State.artSeq=(+State.artSeq||0)+1;
+      State.artifacts.push({id:'a'+State.artSeq+'_'+Math.floor(Math.random()*1e6).toString(36),slot:a.slot,rar:a.rar,set:a.set,lvl:a.lvl,main:a.main,echo:a.echo.map(([k,v])=>({k,v})),t:Date.now(),gift:m.id}); });
+    got.push(g.arts.length===1?'a '+ART_RAR[g.arts[0].rar].name.toLowerCase()+' relic':g.arts.length+' relics'); }
   saveState(); refreshHub(); refreshMailBtn(); renderMail();
   SFX.reveal&&SFX.reveal('legendary'); Lobby.burstAt(null,46,[0xfff1c4,0xffd66b,0xffffff,0xc9b8ff]);
-  achvPop('MAIL','Gifts claimed · thank you for playing','100 coins · 15 boxes · 3 profile pictures','');
+  achvPop('MAIL','Gifts claimed · thank you for playing',got.join(' · '),'');
 }
 
 /* ---------- three exclusive profile pictures, and they move ---------- */
@@ -22880,7 +22923,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.27.1';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.28.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
