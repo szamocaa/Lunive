@@ -2838,6 +2838,132 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 .ew-opt.locked .ew-gif img{filter:grayscale(1) brightness(.55);} .ew-opt.locked b,.ew-opt.locked small{opacity:.6;} .ew-opt.locked .ew-lock{display:block;}
 .ew-opt.locked.on{border-color:rgba(255,255,255,.35);box-shadow:none;background:rgba(255,255,255,.06);}
 .ew-foot.bad{color:#ffb3c2;}
+/* ===== round 46: the emote wheel you set up, dancing in the lobby, private stats ===== */
+.ew-empty{width:420px;max-width:80vw;padding:26px 18px;border-radius:16px;border:1px dashed rgba(255,255,255,.2);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
+.ew-empty b{font-size:15px;letter-spacing:.08em;} .ew-empty small{font-size:12px;color:rgba(255,255,255,.55);}
+/* the lobby's EMOTE chip, under your pedestal */
+#hub .em-chip{position:absolute;left:50%;bottom:20px;transform:translateX(-50%) scale(var(--s,1));z-index:6;display:flex;align-items:center;gap:9px;padding:7px 8px 7px 14px;border-radius:999px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.16);background:rgba(12,14,26,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;box-shadow:0 10px 26px -10px rgba(0,0,0,.6);
+  font:700 11.5px var(--sk-h,var(--ui));letter-spacing:.2em;transition:background .2s,border-color .2s,box-shadow .2s;}
+#hub .em-chip:hover{border-color:#ffd36a;background:rgba(30,26,20,.8);}
+#hub .em-chip .emc-ic{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:linear-gradient(135deg,#ffe08a,#ff9de2);color:#20121c;}
+#hub .em-chip b{font-weight:700;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#hub .em-chip kbd{font:800 10px var(--sk-h,var(--ui));letter-spacing:0;padding:3px 7px;border-radius:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);}
+#hub .em-chip.on{border-color:#ffd36a;box-shadow:0 0 0 1px #ffd36a,0 0 26px rgba(255,200,80,.35);animation:emcBeat .66s ease-in-out infinite;}
+#hub .em-chip.on .emc-ic{background:#ff5f7e;color:#fff;}
+@keyframes emcBeat{50%{box-shadow:0 0 0 1px #ffd36a,0 0 34px rgba(255,200,80,.55);}}
+@media (max-width:900px){ #hub .em-chip{bottom:64px;} }
+body.in-game #hub .em-chip{display:none;}
+/* Characters: the two tabs */
+.stash-mode.char-tabs{top:104px;bottom:auto;}
+.stash-mode.char-tabs button.on[data-ct="emotes"]{background:linear-gradient(135deg,#fff1c4,#ff9de2);color:#2a1020;}
+@media (max-height:640px){ .stash-mode.char-tabs{top:88px;} }
+#chars-screen.em-mode .roster,#chars-screen.em-mode .info-card,#chars-screen.em-mode .nav-arrows,#chars-screen.em-mode .lockin-flash,#chars-screen.em-mode .deco{display:none !important;}
+#chars-screen:not(.em-mode) .em-wheel-card,#chars-screen:not(.em-mode) .em-coll,#chars-screen:not(.em-mode) .em-prev{display:none !important;}
+/* the wheel */
+.em-wheel-card{position:absolute;left:20px;top:90px;bottom:20px;width:min(340px,31vw);z-index:3;display:flex;flex-direction:column;align-items:center;padding:16px 16px 14px;color:#fff;border-radius:18px;overflow:auto;scrollbar-width:thin;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06),0 18px 40px -18px #ff9de2,inset 0 3px 0 #ffd36a;}
+.ew2-head,.ec2-head{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+.ew2-head b,.ec2-head b{font:400 28px var(--sk-big,var(--display));letter-spacing:.03em;font-style:italic;}
+.ew2-head span,.ec2-head span{font:700 10px var(--sk-h,var(--ui));letter-spacing:.2em;color:rgba(255,255,255,.55);white-space:nowrap;}
+.ew2-sub{width:100%;margin-top:2px;font:500 11.5px var(--sk-body,var(--ui));color:rgba(255,255,255,.55);}
+.ew2-sub kbd,.ew2-tip kbd{font:800 10px var(--sk-h,var(--ui));padding:1px 6px;border-radius:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;}
+.ew2-ring{position:relative;width:272px;height:272px;flex:none;margin:30px 0 22px;}
+.ew2-arc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.ew2-arc circle{fill:none;stroke:rgba(255,255,255,.08);stroke-width:22;}
+.ew2-arc .ew2-dash{stroke:rgba(255,211,106,.35);stroke-width:1.2;stroke-dasharray:3 6;transform-origin:50% 50%;animation:ew2Spin 30s linear infinite;}
+@keyframes ew2Spin{to{transform:rotate(360deg);}}
+.ew2-hub{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;
+  background:radial-gradient(circle at 35% 30%,#fff6d8,#ffc93a 55%,#ff8a3a);box-shadow:0 0 0 4px rgba(255,211,106,.18),0 10px 24px -8px rgba(255,150,40,.7);}
+.ew2-hub b{font:800 24px var(--sk-h,var(--ui));color:#2a1604;}
+.ew2-slot{position:absolute;width:96px;height:106px;margin:-53px 0 0 -48px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px;cursor:pointer;
+  background:rgba(14,16,28,.9);border:1px solid rgba(255,255,255,.14);transition:transform .25s cubic-bezier(.2,.9,.3,1.4),border-color .15s,box-shadow .15s;}
+.ew2-slot.p0{left:50%;top:15%;} .ew2-slot.p1{left:85%;top:50%;} .ew2-slot.p2{left:50%;top:85%;} .ew2-slot.p3{left:15%;top:50%;}
+.ew2-slot:hover{transform:scale(1.05);border-color:rgba(255,255,255,.4);}
+.ew2-slot.sel{border-color:#ffd36a;box-shadow:0 0 0 1px #ffd36a,0 0 22px rgba(255,200,80,.35);}
+.ew2-slot.drop{transform:scale(1.1);border-color:#7dffbe;box-shadow:0 0 0 2px #7dffbe;}
+.ew2-slot.drag{opacity:.4;}
+.ew2-slot.pop{animation:ew2Pop .45s cubic-bezier(.2,.9,.3,1.5);}
+@keyframes ew2Pop{0%{transform:scale(.6);}100%{transform:scale(1);}}
+.ew2-slot img{width:62px;height:62px;object-fit:contain;border-radius:10px;background:#fff;pointer-events:none;}
+.ew2-slot b{font:700 10.5px var(--sk-h,var(--ui));letter-spacing:.04em;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ew2-slot em{font:700 10px var(--sk-h,var(--ui));font-style:normal;letter-spacing:.2em;color:rgba(255,255,255,.35);}
+.ew2-slot small{font:600 9px var(--sk-h,var(--ui));letter-spacing:.12em;color:rgba(255,255,255,.3);}
+.ew2-slot:not(.full){border-style:dashed;background:rgba(14,16,28,.6);}
+.ew2-n{position:absolute;left:-7px;top:-7px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 11px var(--sk-h,var(--ui));font-style:normal;background:#1b1f33;border:1px solid rgba(255,255,255,.3);}
+.ew2-slot.sel .ew2-n{background:#ffd36a;color:#20140a;border-color:#ffd36a;}
+.ew2-x{position:absolute;right:-7px;top:-7px;width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,140,160,.55);background:#2a1420;color:#ffb3c2;font:700 14px/1 var(--sk-h,var(--ui));cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;opacity:0;transition:opacity .15s;}
+.ew2-slot:hover .ew2-x,.ew2-slot.sel .ew2-x{opacity:1;} .ew2-x:hover{background:#ff5f7e;color:#fff;}
+.ew2-tip{width:100%;margin-top:6px;font:500 11.5px/1.45 var(--sk-body,var(--ui));color:rgba(255,255,255,.55);text-align:center;}
+.ew2-tip b{color:#fff;}
+.ew2-btns{display:flex;gap:8px;margin-top:12px;}
+.ew2-btns button{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:10px;padding:7px 16px;font:700 10.5px var(--sk-h,var(--ui));letter-spacing:.2em;cursor:pointer;}
+.ew2-btns button:hover:not([disabled]){border-color:#ffd36a;} .ew2-btns button[disabled]{opacity:.35;cursor:default;}
+/* the collection */
+.em-coll{position:absolute;right:20px;top:90px;width:min(370px,32vw);max-height:calc(100% - 110px);z-index:3;display:flex;flex-direction:column;padding:16px 14px 12px;color:#fff;border-radius:18px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06),0 18px 40px -18px #ffd36a,inset 0 3px 0 #ff9de2;}
+.ec2-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;overflow:auto;scrollbar-width:thin;min-height:0;}
+.ec2-row{display:flex;align-items:center;gap:11px;padding:8px 10px 8px 8px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);cursor:pointer;
+  transition:border-color .15s,background .15s,transform .25s cubic-bezier(.2,.9,.3,1.4);animation:ec2In .4s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:calc(var(--i)*60ms);}
+@keyframes ec2In{from{opacity:0;transform:translateX(16px);}}
+.ec2-row:hover{border-color:rgba(255,255,255,.3);transform:translateX(-3px);}
+.ec2-row.playing{border-color:#ffd36a;background:rgba(255,211,106,.08);box-shadow:0 0 0 1px #ffd36a;}
+.ec2-row.drag{opacity:.45;}
+.ec2-gif{position:relative;width:64px;height:64px;flex:none;border-radius:11px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.ec2-gif img{max-width:62px;max-height:62px;pointer-events:none;}
+.ec2-play{position:absolute;right:3px;bottom:3px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:9px;background:rgba(10,12,22,.85);color:#fff;}
+.ec2-row.playing .ec2-play{background:#ffd36a;color:#20140a;}
+.ec2-row.locked .ec2-gif img{filter:grayscale(1) brightness(.6);}
+.ec2-t{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.ec2-t b{font:700 14px var(--sk-h,var(--ui));letter-spacing:.04em;}
+.ec2-t small{font:500 11px var(--sk-body,var(--ui));color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ec2-t em{font:700 9px var(--sk-h,var(--ui));font-style:normal;letter-spacing:.16em;margin-top:2px;}
+.ec2-on{color:#7dffbe;} .ec2-off{color:rgba(255,255,255,.4);} .ec2-lk{color:#ffd36a;}
+.ec2-btn{flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:74px;border:0;border-radius:10px;padding:7px 10px;cursor:pointer;font:800 10.5px var(--sk-h,var(--ui));letter-spacing:.14em;
+  background:linear-gradient(135deg,#7dffbe,#3ad18d);color:#06281a;}
+.ec2-btn small{font-size:8px;letter-spacing:.14em;opacity:.7;}
+.ec2-btn.off{background:rgba(255,255,255,.08);color:#ffb3c2;box-shadow:inset 0 0 0 1px rgba(255,140,160,.4);}
+.ec2-btn.buy{flex-direction:row;gap:5px;background:linear-gradient(135deg,#fff1b8,#ffc93a);color:#2a1a02;}
+.ec2-btn.buy .coin-ic{width:15px;height:15px;} .ec2-btn.buy b{font-size:13px;letter-spacing:.02em;}
+.ec2-foot{margin-top:10px;font:500 11px var(--sk-body,var(--ui));color:rgba(255,255,255,.45);text-align:center;}
+/* "now previewing", under the pedestal */
+.em-prev{position:absolute;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);z-index:4;display:flex;align-items:center;gap:10px;padding:7px 8px 7px 14px;border-radius:999px;opacity:0;pointer-events:none;
+  background:rgba(12,14,26,.82);border:1px solid rgba(255,211,106,.5);color:#fff;transition:opacity .2s,transform .25s;}
+.em-prev.on{opacity:1;pointer-events:auto;transform:translateX(-50%);}
+.em-prev b{font:700 13px var(--sk-h,var(--ui));letter-spacing:.06em;white-space:nowrap;} .em-prev small{font:700 9px var(--sk-h,var(--ui));letter-spacing:.2em;color:#ffd36a;}
+.em-prev button{border:0;border-radius:999px;padding:6px 12px;background:rgba(255,255,255,.1);color:#fff;font:700 10px var(--sk-h,var(--ui));letter-spacing:.16em;cursor:pointer;}
+.em-prev button:hover{background:#ff5f7e;}
+.emp-eq{display:flex;align-items:flex-end;gap:2px;height:14px;} .emp-eq i{width:3px;border-radius:2px;background:#ffd36a;animation:empEq .7s ease-in-out infinite;} .emp-eq i:nth-child(2){animation-delay:-.25s;} .emp-eq i:nth-child(3){animation-delay:-.5s;}
+@keyframes empEq{0%,100%{height:4px;}50%{height:14px;}}
+@media (max-width:900px){ .em-wheel-card{width:min(300px,44vw);} .ew2-ring{transform:scale(.86);margin:0 -18px;} .em-coll{width:min(320px,46vw);} }
+/* Profile: what others see */
+.pv-sec .pv-all{margin-left:auto;display:flex;gap:4px;}
+.pv-all button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);border-radius:8px;padding:4px 9px;font:700 9px var(--sk-h);letter-spacing:.16em;cursor:pointer;}
+.pv-all button.on{background:#fff;color:#0b0d16;border-color:#fff;}
+.pv-priv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+.pvp{display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer;color:#fff;text-align:left;font:inherit;
+  transition:border-color .2s,transform .25s cubic-bezier(.2,.9,.3,1.4);}
+.pvp:hover{border-color:var(--acc);transform:translateY(-2px);}
+.pvp .ps-t{display:flex;flex-direction:column;justify-content:center;gap:4px;height:64px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);}
+.pvp .ps-t>span{font:700 8.5px var(--sk-h);letter-spacing:.18em;color:rgba(255,255,255,.5);white-space:nowrap;}
+.pvp .ps-t>b{display:flex;align-items:center;gap:3px;font:700 18px var(--sk-h);} .pvp .ps-t>b em{font-style:normal;font-size:11px;color:rgba(255,255,255,.5);margin-left:2px;}
+.pvp .rank-badge{width:28px;height:28px;}
+.pvp-sw{display:flex;align-items:center;gap:7px;padding:0 3px 2px;font:700 9.5px var(--sk-h);letter-spacing:.2em;color:#7dffbe;}
+.pvp-dot{position:relative;width:28px;height:15px;border-radius:999px;background:rgba(125,255,190,.28);flex:none;}
+.pvp-dot::after{content:'';position:absolute;top:2.5px;left:15px;width:10px;height:10px;border-radius:50%;background:#7dffbe;transition:left .2s,background .2s;}
+.pvp.hid{border-color:rgba(180,140,255,.28);} .pvp.hid .pvp-sw{color:#c9b3ff;} .pvp.hid .pvp-dot{background:rgba(180,140,255,.25);} .pvp.hid .pvp-dot::after{left:3px;background:#b48cff;}
+/* a private stat: a "?" over a blur (yours here, and on your card online) */
+.ps-t.priv{position:relative;overflow:hidden;}
+.ps-t.priv::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(135deg,rgba(160,130,255,.18),rgba(255,255,255,.02) 60%),repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 6px,transparent 6px 12px);}
+.ps-t.priv>span{position:relative;z-index:2;}
+.ps-t.priv .ps-blur{filter:blur(5px);opacity:.55;user-select:none;}
+.ps-q{position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:2;font:800 24px var(--sk-h,var(--ui));font-style:normal;color:#fff;text-shadow:0 2px 12px rgba(120,90,255,.8);}
+.opf-stats.six{grid-template-columns:repeat(3,1fr);}
+.opf-stats .ps-t.priv .ps-q{font-size:20px;right:10px;}
+.pvt-st .pv-lk,.pv-lk{width:11px;height:11px;fill:none;stroke:#c9b3ff;stroke-width:2.4;stroke-linecap:round;vertical-align:-1px;margin-left:5px;}
+.pvt-st.is-priv{border-color:rgba(180,140,255,.3);}
+@media (max-width:900px){ .pv-priv{grid-template-columns:repeat(2,minmax(0,1fr));} }
+
 .ec-art{background:#fff;display:flex;align-items:center;justify-content:center;}
 .ec-art img{max-width:88%;max-height:88%;}
 .ec-play{position:absolute;right:8px;bottom:8px;width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;font-size:17px;line-height:1;color:#fff;background:rgba(14,16,28,.82);box-shadow:0 4px 12px rgba(0,0,0,.35);}
@@ -3050,9 +3176,10 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <div class="playing-as" id="playingAs">Solo · <b>Beta</b></div>
   </section>
 
+  <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.22.0 · BETA</span>
+    <span class="hub-version">VERSION 3.23.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3080,6 +3207,10 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
   <button class="back-chip b3 plum rx" data-back><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>BACK</button>
   <div class="deco" aria-hidden="true"><span class="stamp" id="charStamp"></span></div>
   <div class="panel-head"><div class="panel-title">Characters</div><div class="panel-sub">Choose your character</div></div>
+  <div class="stash-mode char-tabs" id="charTabs"><button class="on rx" data-ct="chars">CHARACTERS</button><button class="rx" data-ct="emotes">EMOTES<em id="ctNew"></em></button></div>
+  <div class="em-wheel-card glass" id="emWheelCard"></div>
+  <div class="em-coll glass" id="emColl"></div>
+  <div class="em-prev" id="emPrev"></div>
   <div class="roster glass" id="roster"></div>
   <div class="lockin-flash" aria-hidden="true"></div>
   <div class="info-card glass">
@@ -3216,7 +3347,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.22.0</div></div>
+</svg><div class="set-ver">VERSION 3.23.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3271,16 +3402,14 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
       <button class="pv-name rx" id="pvName" title="Change your name and its colour"><b id="profileUnameDisplay"></b><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></button>
       <button class="pv-title rx" id="pvTitle" title="Choose a title"><span class="profile-title-tag" id="profileTitleDisplay"></span><span class="pv-none" id="pvTitleNone">Choose a title</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
       <div class="pv-play" id="pvPlay"></div>
-      <div class="pv-tip">Your picture, frame, name colour, title and favourite characters are what other players see when they open your profile online.</div>
+      <div class="pv-tip">Your picture, frame, name colour and title are what other players see when they open your profile online, with your stats, unless you make them private.</div>
     </section>
     <section class="pv-right glass">
       <div class="pv-tro" id="pvTro"></div>
-      <div class="pv-sec"><b>FAVOURITE CHARACTERS</b><small>Shown to others on your profile</small></div>
-      <div class="pv-favs" id="pvFavs"></div>
+      <div class="pv-sec"><b>SHOWN TO OTHERS</b><small>What players see when they open your profile online · private ones show a ?</small><span class="pv-all"><button data-pall="0">ALL PUBLIC</button><button data-pall="1">ALL PRIVATE</button></span></div>
+      <div class="pv-priv" id="pvPriv"></div>
       <div class="pv-sec"><b>ARTIFACTS</b><small>What you have on right now</small></div>
       <div class="pv-arts" id="pvArts"></div>
-      <div class="pv-sec"><b>CHARACTERS</b><small id="pvRankSub"></small></div>
-      <div class="pv-ranks" id="pvRanks"></div>
     </section>
   </div>
   <div class="pv-pop" id="pvPop">
@@ -3312,10 +3441,6 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
           <div id="titleShop"></div>
           <div class="sec-label excl hidden" id="exclLabel">TITLE — EXCLUSIVE</div>
           <div id="titleExcl" class="hidden"></div>
-        </div>
-        <div class="pv-pane" data-p="fav">
-          <div class="pv-favhint" id="pvFavHint"></div>
-          <div class="pv-favpick" id="favPick"></div>
         </div>
       </div>
     </div>
@@ -3504,6 +3629,8 @@ const State = {
   framesOwned: [],         // profile picture frames
   equippedFrame: '',
   emotesOwned: [],          // the emotes you bought (Shop, 200 coins each)
+  emoteWheel: null,         // your wheel: four slots of emote ids, 0 = empty (Characters → Emotes)
+  privacy: null,            // {w,m,c,r}: wins, matches, characters, best rank hidden from others (Profile)
   nameColor: '',            // the colour of your name (Profile)
   favChars: [],            // your three favourite characters (Profile; others see them online)
   winsByChar: {},
@@ -12708,7 +12835,7 @@ const Lobby=(function(){
   function setHero(key,opts){
     if(!R) init();
     if(heroKey===key&&hero&&!(opts&&opts.force)) return;
-    if(hero){ pedestal.remove(hero); disposeModel(hero); }
+    if(hero){ if(HD.emNote){ hero.remove(HD.emNote); HD.emNote=null; } pedestal.remove(hero); disposeModel(hero); }
     hero=byKey(key).build();
     hero.traverse(o=>{ if(o.isMesh&&!o.userData.isShadow&&!o.userData.flame) o.castShadow=true; if(o.userData&&o.userData.isShadow) o.visible=false; });
     hero.traverse(o=>o.layers.enable(1));
@@ -12725,8 +12852,8 @@ const Lobby=(function(){
     mateSt=st||'';
     if(key===mateKey) return;
     const had=!!mateKey;
-    if(mate){ matePed.remove(mate); disposeModel(mate); mate=null; }
-    mateKey=key;
+    if(mate){ if(MD.emNote){ mate.remove(MD.emNote); MD.emNote=null; } matePed.remove(mate); disposeModel(mate); mate=null; }
+    mateKey=key; if(!key) mateDanceS=null;
     if(had!==!!key) applyFrame();
     if(!key) return;
     if(!matePed){
@@ -12775,6 +12902,7 @@ const Lobby=(function(){
           if(ud.body) ud.body.position.y+=Math.abs(Math.sin(t*7+1))*.035*mateReady;
           if(matePed.userData.ring) matePed.userData.ring.material.color.setHSL(.38,.9,.62+.1*mateReady);
         }
+        if(mateDanceS){ MD.mesh=m; MD.emote=mateDanceS; emotePoseRig(MD,now); danceNote(MD,now,1.7); }
         if(matePopT>=0){ matePopT+=dt/.55; const k=matePopT<1?1-Math.pow(1-matePopT,3)*Math.cos(matePopT*9)*.9:1; m.scale.setScalar(Math.max(.01,k)); if(matePopT>=1){ matePopT=-1; m.scale.setScalar(1); } }
       }
     }
@@ -12929,6 +13057,31 @@ const Lobby=(function(){
     _v1.project(cam); if(_v1.z>1) return null;
     return {x:(_v1.x*.5+.5)*innerWidth,y:(-_v1.y*.5+.5)*innerHeight};
   }
+  /* ---------- a dance from the emote wheel (B in the lobby), or a preview in Characters → Emotes;
+     your teammate's, from what they tell you ---------- */
+  let heroDance=null, mateDanceS=null, danceAud=false; const HD={mesh:null,emote:null,emNote:null}, MD={mesh:null,emote:null,emNote:null};
+  function dance(id){
+    id=+id||0; if(id&&!emoteBy(id)) id=0;
+    if((heroDance?heroDance.id:0)===id) return;
+    if(heroDance&&hero){ HD.mesh=hero; emoteResetRig(HD); }
+    heroDance=id?{id,t0:performance.now()}:null;
+    if(id){ emote=null; cheerT=-1; }
+  }
+  function mateDance(id){
+    id=+id||0; if(id&&!emoteBy(id)) id=0;
+    if((mateDanceS?mateDanceS.id:0)===id) return;
+    if(mateDanceS&&mate){ MD.mesh=mate; emoteResetRig(MD); }
+    mateDanceS=id?{id,t0:performance.now()}:null;
+  }
+  function danceNote(U,now,ph){ const n=emoteNote(U); n.layers.enable(1); n.position.set(Math.sin(now/260+ph)*.18,2.45+Math.sin(now/180+ph)*.08,0); n.material.rotation=Math.sin(now/300+ph)*.3; }
+  function danceSound(){
+    if((typeof gameOn!=='undefined'&&gameOn)||(typeof Truth!=='undefined'&&Truth.on)) return;
+    const want=new Map();
+    if(heroDance&&hero&&hero.visible) want.set('me',{id:heroDance.id,k:1});
+    if(mateDanceS&&mate&&matePed&&matePed.visible) want.set('mate',{id:mateDanceS.id,k:heroDance?.22:.7});
+    if(!want.size&&!danceAud) return;
+    danceAud=want.size>0; EmoteAudio.sync(want,danceAud);
+  }
   function react(kind,on){
     if(kind==='ready') readyOn=!!on;
     else if(kind==='cheer'){ cheerT=0; emote=null; }
@@ -12989,7 +13142,7 @@ const Lobby=(function(){
         if(pedestal.userData.ring) pedestal.userData.ring.material.color.setHSL((t*.3)%1,.9,.7+.1*ready);
       }
       // a move now and then while you're in the lobby or looking through the characters
-      if((mode==='hub'||mode==='chars')&&hopT<0&&popT<0&&cheerT<0&&ready<.2&&!emote){
+      if((mode==='hub'||mode==='chars')&&hopT<0&&popT<0&&cheerT<0&&ready<.2&&!emote&&!heroDance){
         emoteNext-=dt; if(emoteNext<=0){ emote={type:EMOTES[Math.floor(Math.random()*EMOTES.length)],t:0}; emoteNext=7+Math.random()*7; }
       }
       if(emote){
@@ -13009,7 +13162,9 @@ const Lobby=(function(){
       if(hopT>=0){ hopT+=dt/.6; const h=Math.sin(Math.min(1,hopT)*Math.PI); hero.position.y=PED_TOP-.12+h*.55; hero.rotation.y+=dt*10*(1-hopT); if(hopT>=1){ hopT=-1; hero.position.y=PED_TOP-.12; } }
       if(popT>=0){ popT+=dt/.55; const s=popT<1?1-Math.pow(1-popT,3)*Math.cos(popT*9)*.9:1; hero.scale.setScalar(Math.max(.01,s)); if(popT>=1){ popT=-1; hero.scale.setScalar(1); } }
     }
+    if(heroDance&&hero&&hero.visible){ HD.mesh=hero; HD.emote=heroDance; emotePoseRig(HD,now); danceNote(HD,now,0); }
     stepMate(dt,now);
+    danceSound();
     // your pet, beside your character
     if(pet){
       pet.visible=!!(hero&&hero.visible)&&!stage;
@@ -13083,7 +13238,7 @@ const Lobby=(function(){
     if(meteorT>=L){ meteorT=-1; meteor.material.opacity=0; }
   }
   function start(){ init(); if(running) return; running=true; last=0; raf=Frame.req(frame); }
-  function stop(){ running=false; Frame.cancel(raf); }
+  function stop(){ running=false; Frame.cancel(raf); dance(0); if(danceAud){ danceAud=false; try{ EmoteAudio.stopAll(); }catch(e){} } }
   /* ---------- portraits: a head-and-shoulders render of each character ---------- */
   let PR=null, PS=null, PC=null; const PCACHE={};
   function cachedPortrait(key){ return PCACHE[key]||null; }
@@ -13105,7 +13260,7 @@ const Lobby=(function(){
     PS.remove(m); disposeModel(m);
     return PCACHE[key]=url;
   }
-  return {setMate,teamReady(v){ teamRdy=!!v; },get mateKey(){ return mateKey; },get mateShown(){ return !!(matePed&&matePed.visible); },
+  return {dance,mateDance,danceId:()=>heroDance?heroDance.id:0,mateDanceId:()=>mateDanceS?mateDanceS.id:0,setMate,teamReady(v){ teamRdy=!!v; },get mateKey(){ return mateKey; },get mateShown(){ return !!(matePed&&matePed.visible); },
     init,start,stop,snap,setMode,showcase,endShowcase,setIsland,setHero,showChest,openChest,portrait,setPet,petStage,petPoke,chestStyle,get petKey(){ return petKey; },get stageKey(){ return stageKey; },cachedPortrait,burstAt,setAccent,headScreen,react,get heroKey(){return heroKey;},get mode(){return mode;},get running(){return running;},resize,
     get info(){ return R?{mem:Object.assign({},R.info.memory),calls:R.info.render.calls,tris:R.info.render.triangles,progs:R.info.programs?R.info.programs.length:0}:null; }};
 })();
@@ -13681,6 +13836,7 @@ const S = {
 };
 const CAM_FOR={hub:'hub',chars:'chars',stash:'stash',pets:'pets',art:'panel',road:'panel',music:'panel',settings:'panel',profile:'panel',achv:'panel',maps:'maps',shop:'panel',loading:'load'};
 function show(n){
+  try{ lobbyLeave(n); }catch(e){}
   if(n!=='stash') stashLeave();
   if(n!=='shop') shopLeave();
   for(const k in S){ const on=k===n; S[k].classList.toggle('hidden',!on); if(on&&k!=='game'){ S[k].classList.remove('enter'); void S[k].offsetWidth; S[k].classList.add('enter'); } }
@@ -14092,6 +14248,8 @@ document.querySelectorAll('[data-back]').forEach(b=> b.addEventListener('click',
 addEventListener('keydown',e=>{
   if(document.body.classList.contains('in-game')) return;
   if(e.target&&e.target.tagName==='INPUT') return;
+  if(e.code==='KeyB'&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!S.hub.classList.contains('hidden')){ lobbyEmoteKey(); return; }   // dance in the lobby
+  if(e.key==='Escape'&&lobbyEm&&!S.hub.classList.contains('hidden')&&!hubOverlay()){ lobbyDance(0); return; }
   if(e.key==='Escape'&&!document.getElementById('resetModal').classList.contains('hidden')) return;   // Escape only closes the Reset game dialog
   if(e.key==='Escape'&&document.getElementById('showcase').classList.contains('on')){ showcaseClose(); return; }
   if(e.key==='Escape'&&document.getElementById('haul').classList.contains('on')){ haulClose(); return; }
@@ -14105,7 +14263,7 @@ addEventListener('keydown',e=>{
       if(ae&&ae.tagName==='BUTTON'&&S.hub.contains(ae)&&ae.offsetParent) return;   // a focused button clicks itself
       if(CMD.keys&&CMD.cur>=0){ CMD.items[CMD.cur].click(); cmdLight(-1); } else beginRun(); return; }
   }
-  if(!S.chars.classList.contains('hidden')){ if(e.key==='ArrowLeft') document.getElementById('prevChar').click(); if(e.key==='ArrowRight') document.getElementById('nextChar').click(); }
+  if(!S.chars.classList.contains('hidden')&&charTab!=='emotes'){ if(e.key==='ArrowLeft') document.getElementById('prevChar').click(); if(e.key==='ArrowRight') document.getElementById('nextChar').click(); }
 });
 
 /* ---------- settings ---------- */
@@ -14215,6 +14373,7 @@ let charIdx=0;
 const RGLOW={starter:'#dfe3e8',common:'#ffffff',angelic:'#7fe3ff',epic:'#ff4d6a',legendary:'#ffd426',celestial:'#ff2a44'};
 function rosterOrder(){ return CHARACTERS.map((c,i)=>i).sort((a,b)=>RARITY_ORDER.indexOf(CHARACTERS[a].rarity)-RARITY_ORDER.indexOf(CHARACTERS[b].rarity)||a-b); }
 function openChars(){
+  charTab='chars'; try{ charTabPaint(); }catch(e){}
   charIdx = Math.max(0, CHARACTERS.findIndex(c=>c.key===State.selectedChar));
   const box=document.getElementById('roster'), order=rosterOrder();
   const own=CHARACTERS.filter(c=>State.unlocked.includes(c.key)).length;
@@ -14676,7 +14835,7 @@ function applyAdmin(){
   (EXCL_PFPS||[]).forEach(p=>{ if(!State.exclPfps.includes(p.id)) State.exclPfps.push(p.id); });
   SHOP_TITLES.concat(EXCL_TITLES).forEach(t=>{ if(!State.titlesOwned.includes(t)) State.titlesOwned.push(t); });
   State.truthSalvia=true;
-  State.emotesOwned=EMOTES.map(e=>e.id);
+  State.emotesOwned=EMOTES.map(e=>e.id); EMOTES.forEach(E=>emoteWheelAdd(E.id));
   if(!State.trophies||typeof State.trophies!=='object') State.trophies={};
   if(!State.adminTro&&!(State.redeemed||[]).includes('ADMIN')) CHARACTERS.forEach(ch=>{ State.trophies[ch.key]=Math.max(charTrophies(ch.key),390); });
   State.adminTro=true;
@@ -15107,26 +15266,17 @@ function pvRender(){
   const tot=totalTrophies(), wins=Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0), own=CHARACTERS.filter(c=>State.unlocked.includes(c.key));
   const best=own.reduce((m,c)=>Math.max(m,charRank(c.key)),1);
   $el('pvTro').innerHTML=`<div class="pvt-main">${TROPHY_SVG}<span><b>${tot.toLocaleString('en-US')}</b><small>TROPHIES</small></span></div>
-    <div class="pvt-st"><span>WINS</span><b>${wins.toLocaleString('en-US')}</b></div>
-    <div class="pvt-st"><span>MATCHES</span><b>${(State.matches||0).toLocaleString('en-US')}</b></div>
-    <div class="pvt-st"><span>CHARACTERS</span><b>${own.length}<em>/ ${CHARACTERS.length}</em></b></div>
-    <div class="pvt-st"><span>BEST RANK</span><b><span class="rank-badge t-${rankTier(best)}"><b>${best}</b></span></b></div>`;
-  // favourites
-  $el('pvFavs').innerHTML=favList().map((k,i)=>{ const c=k&&byKey(k);
-    if(!c) return `<button class="pv-fav empty rx" data-i="${i}"><i>+</i><small>Pick a favourite</small></button>`;
-    return `<button class="pv-fav rx" data-i="${i}" style="--rc:${(RARITY[c.rarity]||{}).color||'#fff'}"><img alt="" data-key="${c.key}"><b>${c.name}</b><span class="pvf-r">${rankBadge(c.key)}<em>${TROPHY_SVG}${charTrophies(c.key)}</em></span></button>`; }).join('');
-  $el('pvFavs').querySelectorAll('.pv-fav').forEach(b=>{ wireRx(b); b.onclick=()=>{ pvOpen('fav',+b.dataset.i); SFX.open(); }; });
+    <div class="pvt-st${pvHide('w')?' is-priv':''}"><span>WINS${pvHide('w')?PV_LOCK:''}</span><b>${wins.toLocaleString('en-US')}</b></div>
+    <div class="pvt-st${pvHide('m')?' is-priv':''}"><span>MATCHES${pvHide('m')?PV_LOCK:''}</span><b>${(State.matches||0).toLocaleString('en-US')}</b></div>
+    <div class="pvt-st${pvHide('c')?' is-priv':''}"><span>CHARACTERS${pvHide('c')?PV_LOCK:''}</span><b>${own.length}<em>/ ${CHARACTERS.length}</em></b></div>
+    <div class="pvt-st${pvHide('r')?' is-priv':''}"><span>BEST RANK${pvHide('r')?PV_LOCK:''}</span><b><span class="rank-badge t-${rankTier(best)}"><b>${best}</b></span></b></div>`;
+  pvPrivRender();
   // the artifacts you have on
   const eq=artEquippedList(), st=artPlayerStats(), sc=artSetCounts(eq);
   $el('pvArts').innerHTML=`<div class="opf-slots">${ART_SLOTS.map(s=>{ const a=eq.find(x=>x.slot===s.id);
       return `<span class="opf-slot${a?' r-'+a.rar+' s-'+a.set:' empty'}" title="${a?ART_RAR[a.rar].name+' · '+ART_SETS[a.set].name+' · Lv '+a.lvl:s.name+' · empty'}">${a?'<span class="at-aura"></span>':''}${artSVG(s.id,a?a.set:'ghost')}${a?'<i>'+a.lvl+'</i>':''}</span>`; }).join('')}</div>
     <div class="pva-row"><div class="opf-sets">${Object.values(ART_SETS).filter(X=>(sc[X.id]||0)>=2).map(X=>`<span class="opf-set s-${X.id}">${X.name} · ${sc[X.id]>=4?4:2} pieces</span>`).join('')||'<span class="opf-set none">No set bonus</span>'}</div>
     <div class="opf-as"><span>HP <b>${st.hp}</b></span><span>ATK <b>${Math.round(st.atk)}</b></span><span>CRIT <b>${st.cr}%</b></span><span>CRIT DMG <b>${st.cd}%</b></span></div></div>`;
-  // every character, best first, the locked ones last
-  const list=CHARACTERS.slice().sort((a,b)=>{ const oa=State.unlocked.includes(a.key), ob=State.unlocked.includes(b.key); if(oa!==ob) return ob-oa; return charTrophies(b.key)-charTrophies(a.key)||a.name.localeCompare(b.name); });
-  $el('pvRankSub').textContent=own.length+' of '+CHARACTERS.length+' unlocked · ranked by trophies';
-  $el('pvRanks').innerHTML=list.map(c=>{ const o=State.unlocked.includes(c.key), tr=charTrophies(c.key), p=rankProgress(tr);
-    return `<div class="pv-rk${o?'':' locked'}" title="${c.name}${o?' · '+tr+' trophies':' · locked'}"><img alt="" data-key="${c.key}"><span class="pvr-t"><b>${c.name}</b><span class="pvr-bar"><i style="width:${o?Math.round(p.k*100):0}%"></i></span><em>${o?tr+(p.next?' / '+p.next:' · MAX'):'Locked'}</em></span>${o?rankBadge(c.key):'<span class="lock-glyph small"></span>'}</div>`; }).join('');
   pvFaces();
 }
 /* the little window: picture & frame, name, title, or a favourite */
@@ -15161,6 +15311,46 @@ $el('pvPopX').addEventListener('click',()=>{ pvClose(); SFX.back(); });
 $el('pvPop').addEventListener('click',e=>{ if(e.target===$el('pvPop')) pvClose(); });
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&$el('pvPop').classList.contains('on')){ e.stopImmediatePropagation(); e.preventDefault(); pvClose(); } },true);
 $el('newUsernameInput').addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Enter') $el('renameBtn').click(); });
+
+
+/* ---------- what others see: wins, matches, characters and best rank can each be private
+   (then other players get a "?" on a blur instead, and the number never leaves your game) ---------- */
+const PRIV_KEYS=[{k:'w',name:'WINS'},{k:'m',name:'MATCHES'},{k:'c',name:'CHARACTERS'},{k:'r',name:'BEST RANK'}];
+const PV_LOCK='<svg class="pv-lk" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function pvHide(k){ return !!(State.privacy&&typeof State.privacy==='object'&&State.privacy[k]); }
+function myWins(){ return Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0); }
+function bestRank(){ return CHARACTERS.filter(c=>State.unlocked.includes(c.key)).reduce((m,c)=>Math.max(m,charRank(c.key)),1); }
+/* one stat as another player sees it */
+function privTile(label,html,hidden,i){
+  if(!hidden) return `<div class="ps-t"><span>${label}</span><b>${html}</b></div>`;
+  return `<div class="ps-t priv" title="Private"><span>${label}</span><b class="ps-blur" aria-hidden="true">${['128','2,417','14<em>/ 26</em>','37'][i%4]}</b><i class="ps-q">?</i></div>`;
+}
+/* the four on someone's online card (an older game sends no privacy: everything it sends is shown) */
+function opfPrivTiles(p){
+  const pv=typeof p.pv==='string'?p.pv:'', n=v=>v==null?'—':(+v||0).toLocaleString('en-US');
+  return [['w','WINS',n(p.w)],['m','MATCHES',n(p.m)],
+    ['c','CHARACTERS',p.cc==null?'—':(p.cc||0)+'<em>/ '+(p.ct||CHARACTERS.length)+'</em>'],
+    ['r','BEST RANK',p.br==null?'—':`<span class="rank-badge t-${rankTier(p.br||1)}"><b>${p.br||1}</b></span>`]]
+    .map(([k,l,v],i)=>privTile(l,v,pv.includes(k),i)).join('');
+}
+/* your Profile: the four, each a switch between PUBLIC and PRIVATE, showing what others will see */
+function pvPrivSet(k,v){
+  if(!State.privacy||typeof State.privacy!=='object') State.privacy={};
+  State.privacy[k]=!!v; saveState();
+  try{ if(State.online) netBeat(true); }catch(e){}
+}
+function pvPrivRender(){
+  const box=$el('pvPriv'); if(!box) return;
+  const own=CHARACTERS.filter(c=>State.unlocked.includes(c.key)).length, br=bestRank();
+  const val={w:myWins().toLocaleString('en-US'),m:(State.matches||0).toLocaleString('en-US'),c:own+'<em>/ '+CHARACTERS.length+'</em>',r:`<span class="rank-badge t-${rankTier(br)}"><b>${br}</b></span>`};
+  box.innerHTML=PRIV_KEYS.map((P,i)=>{ const h=pvHide(P.k);
+    return `<button class="pvp${h?' hid':''} rx" data-pk="${P.k}" title="${h?'Private · others see a ?':'Public · others see it'} · click to change">
+      ${privTile(P.name,val[P.k],h,i)}<span class="pvp-sw"><i class="pvp-dot"></i><b>${h?'PRIVATE':'PUBLIC'}</b></span></button>`; }).join('');
+  box.querySelectorAll('.pvp').forEach(b=>{ wireRx(b); b.onclick=()=>{ const k=b.dataset.pk, h=!pvHide(k); pvPrivSet(k,h); pvRender(); SFX.toggle&&SFX.toggle(!h); }; });
+  const all=PRIV_KEYS.every(P=>pvHide(P.k)), none=PRIV_KEYS.every(P=>!pvHide(P.k));
+  document.querySelectorAll('#profile-screen [data-pall]').forEach(b=>{ b.classList.toggle('on',b.dataset.pall==='1'?all:none);
+    if(!b._w){ b._w=1; wireRx(b); b.onclick=()=>{ PRIV_KEYS.forEach(P=>{ if(!State.privacy||typeof State.privacy!=='object') State.privacy={}; State.privacy[P.k]=b.dataset.pall==='1'; }); pvPrivSet('w',b.dataset.pall==='1'); pvRender(); SFX.press&&SFX.press(); }; } });
+}
 
 /* ---------- shop ----------
    Five bundles that change every 10 minutes, and the BEAST characters, on
@@ -22448,7 +22638,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.22.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.23.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -22528,9 +22718,9 @@ function netInfo(){
   const sets=Object.values(ART_SETS).filter(S=>(sc[S.id]||0)>=2).map(S=>[S.id,sc[S.id]>=4?4:2]);
   return {id:NET.id,n:State.username||'Player',ti:State.equippedTitle||'',pf:State.equippedPfp||'',fr:(myFrame()||{}).id||'',
     tr:totalTrophies(),ch:State.selectedChar,cr:charRank(State.selectedChar),
-    cc:CHARACTERS.filter(c=>State.unlocked.includes(c.key)).length,ct:CHARACTERS.length,pc:petsOwned().length,pt:PETS.length,
+    cc:pvHide('c')?null:CHARACTERS.filter(c=>State.unlocked.includes(c.key)).length,ct:CHARACTERS.length,pc:petsOwned().length,pt:PETS.length,
     ar:eq.map(a=>[a.slot,a.rar,a.set,a.lvl]),as:[st.hp,Math.round(st.atk),st.cr,st.cd],sb:sets,
-    w:Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0),nc:State.nameColor||'',fv:favList().filter(Boolean).map(k=>[k,charRank(k)]),cd:State.teamCode,s:netStatus(),v:NET_VER,gv:LUNIVE_VER,dv:NET_DEV,t:Date.now()};
+    w:pvHide('w')?null:myWins(),m:pvHide('m')?null:(State.matches||0),br:pvHide('r')?null:bestRank(),pv:PRIV_KEYS.filter(P=>pvHide(P.k)).map(P=>P.k).join(''),nc:State.nameColor||'',cd:State.teamCode,s:netStatus(),v:NET_VER,gv:LUNIVE_VER,dv:NET_DEV,t:Date.now()};
 }
 function netEnable(on){
   State.online=!!on; saveState();
@@ -22745,7 +22935,7 @@ function netInbox(m){
     case 'start': netGotStart(m); break;
     case 'ping': netSend(m.f,{k:'pong'}); break;
     case 'pst': if(NET.party&&NET.party.mate===m.f){
-      const was=NET.party.ms; NET.party.ms={r:!!m.r,sc:m.sc||'lobby',ch:m.ch,md:m.md,at:performance.now()}; NET.party.at=performance.now();
+      const was=NET.party.ms; NET.party.ms={r:!!m.r,sc:m.sc||'lobby',ch:m.ch,md:m.md,em:+m.em||0,at:performance.now()}; NET.party.at=performance.now();
       if(NET.party.lead===m.f) netFollowMode(m.md);
       if(m.r&&m.sc==='lobby'&&!(was&&was.r)){ SFX.toggle&&SFX.toggle(true); }
       netMateUI(); netPaintSoon(); netTryStart();
@@ -22934,13 +23124,11 @@ function netProfile(id){
     <button class="aa-x rx opf-x" id="opfX" aria-label="Close">×</button>
     <div class="opf-top"><span class="opf-av">${framedHTML(netAvatar(p.pf),frameById(p.fr))}</span>
       <div class="opf-who"><b${nameStyle(p.nc)}>${netEsc(p.n)}</b><span class="opf-title"></span><small class="st-${p.s}">${NET_ST[p.s]||''}</small></div></div>
-    <div class="opf-stats">
+    <div class="opf-stats six">
       <div><span>TROPHIES</span><b>${TROPHY_SVG}${(p.tr||0).toLocaleString('en-US')}</b></div>
-      <div><span>CHARACTERS</span><b>${p.cc||0}<em>/ ${p.ct||CHARACTERS.length}</em></b></div>
+      ${opfPrivTiles(p)}
       <div><span>PETS</span><b>${p.pc||0}<em>/ ${p.pt||PETS.length}</em></b></div>
-      <div><span>WINS</span><b>${(p.w||0).toLocaleString('en-US')}</b></div>
     </div>
-    ${(p.fv&&p.fv.length)?'<div class="opf-sec">FAVOURITE CHARACTERS</div><div class="opf-favs">'+p.fv.map(([k,r])=>{ const c=byKey(k); return c?'<span class="opf-fav"><img alt="" data-key="'+k+'"><b>'+c.name+'</b><span class="rank-badge t-'+rankTier(r||1)+'"><b>'+(r||1)+'</b></span></span>':''; }).join('')+'</div>':''}
     <div class="opf-sec">PLAYING AS</div>
     <div class="opf-char">${ch?`<img alt="" data-key="${ch.key}"><b>${ch.name}</b><span class="rank-badge t-${rankTier(p.cr||1)}"><b>${p.cr||1}</b></span>`:'—'}</div>
     <div class="opf-sec">ARTIFACTS</div>
@@ -23396,7 +23584,7 @@ function netPst(force){
   const P=NET.party; if(!P||!NET.mq||!NET.mq.ready) return;
   const sc=netScreen();
   if(NET.ready&&(sc!=='lobby'||!netTeamPlay())){ NET.ready=false; netReadyUI(); }    // leaving the lobby takes your ready back
-  const st={r:!!NET.ready,sc,ch:State.selectedChar,md:State.selectedMode};
+  const st={r:!!NET.ready,sc,ch:State.selectedChar,md:State.selectedMode,em:sc==='lobby'?(lobbyEm||0):0};
   const key=JSON.stringify(st); if(!force&&key===NET.pstKey) return; NET.pstKey=key;
   netSend(P.mate,Object.assign({k:'pst'},st));
 }
@@ -23431,23 +23619,25 @@ function netReadyUI(){
   const me=$el('meTag'); if(me) me.classList.toggle('has',rd);
 }
 /* their character, and the tag over their head */
+/* what your teammate is doing, in words (dancing: the dance's name) */
+function mateStTxt(st,ms){ const E=st==='lobby'&&ms&&ms.em&&emoteBy(ms.em); return E?'♪ '+E.name:(PST_TXT[st]||PST_TXT.lobby); }
 function netMateUI(){
   const P=NET.party, card=P?(NET.peers.get(P.mate)||P.info):null, ms=P&&P.ms;
   const key=P&&State.online?((ms&&ms.ch)||(card&&card.ch)||'vael'):null;
   const st=P?netMateStatus():'';
-  try{ Lobby.setMate(key,st); }catch(e){}
+  try{ Lobby.setMate(key,st); Lobby.mateDance(key&&ms&&ms.sc==='lobby'?ms.em:0); }catch(e){}
   const el=$el('mateTag');
   if(el){
     el.classList.toggle('has',!!key);
     if(key){
       el.dataset.st=st;
-      const nm=el.querySelector('.mt-name'), sp=el.querySelector('.mt-st'), name=card&&card.n||'Teammate', txt=PST_TXT[st]||PST_TXT.lobby;
+      const nm=el.querySelector('.mt-name'), sp=el.querySelector('.mt-st'), name=card&&card.n||'Teammate', txt=mateStTxt(st,ms);
       if(nm.textContent!==name) nm.textContent=name;
       if(sp.textContent!==txt) sp.textContent=txt;
     }
   }
   const ps=document.querySelector('#onPanel .op-pst');                 // the panel's line too, at once
-  if(ps&&P){ ps.dataset.st=st; const txt=PST_TXT[st]||PST_TXT.lobby; if(ps.textContent!==txt) ps.textContent=txt; }
+  if(ps&&P){ ps.dataset.st=st; const txt=mateStTxt(st,ms); if(ps.textContent!==txt) ps.textContent=txt; }
   netReadyUI();
 }
 
@@ -23666,7 +23856,7 @@ function emoteShopHTML(){
     return `<div class="fcard ecard${own?' own':''}" style="--i:${i}"><div class="fc-art ec-art"><img src="${E.gif}" alt=""><button class="ec-play rx" data-eprev="${E.id}" title="Listen">♪</button></div>
       <div class="fc-name">${E.name}</div><div class="fc-sub">${E.sub} · with its own song</div>
       ${own?'<div class="bc-owned fc-on">OWNED · PRESS B</div>':`<button class="bc-buy rx" data-ebuy="${E.id}">${COIN_SVG}<b>${EMOTE_PRICE}</b></button>`}</div>`; }).join('');
-  return `<section class="shop-sec frames-sec emote-sec"><div class="ss-head"><b>EMOTES</b><em>${EMOTE_PRICE} coins each · press B in a match to dance</em></div><div class="frame-row">${cards}</div></section>`;
+  return `<section class="shop-sec frames-sec emote-sec"><div class="ss-head"><b>EMOTES</b><em>${EMOTE_PRICE} coins each · press B to dance · set up your wheel in Characters → Emotes</em></div><div class="frame-row">${cards}</div></section>`;
 }
 function emoteShopWire(box){
   box.querySelectorAll('[data-ebuy]').forEach(b=>{ wireRx(b); b.onclick=()=>buyEmote(+b.dataset.ebuy); });
@@ -23675,10 +23865,10 @@ function emoteShopWire(box){
 function buyEmote(id){
   const E=emoteBy(id); if(!E||emoteOwned(id)) return;
   if(!canPay(EMOTE_PRICE)){ shopBroke(EMOTE_PRICE); return; }
-  pay(EMOTE_PRICE); if(!Array.isArray(State.emotesOwned)) State.emotesOwned=[]; State.emotesOwned.push(id);
+  pay(EMOTE_PRICE); if(!Array.isArray(State.emotesOwned)) State.emotesOwned=[]; State.emotesOwned.push(id); emoteWheelAdd(id);
   saveState(); refreshHub(); renderShop();
   SFX.reveal&&SFX.reveal('epic'); Lobby.burstAt(null,30,[0xffd36a,0xffffff,0xff9de2]);
-  shopSay(E.name+' is yours · press B in a match to dance it');
+  shopSay(E.name+' is yours · it\'s on your wheel · press B to dance it');
 }
 const emPulse=(c,a,b)=>c>a&&c<b?Math.sin((c-a)/(b-a)*Math.PI):0;
 
@@ -23688,48 +23878,58 @@ const EmoteAudio=(function(){
   const vol=()=>{ try{ return settings.music?Math.max(.2,settings.musicVol):Math.max(.15,settings.sfxVol*.6); }catch(e){ return .6; } };
   function el(key,id){ const k=key+'|'+id; let a=pool.get(k); if(!a){ const E=emoteBy(id); if(!E) return null; a=new Audio(); a.loop=true; a.preload='auto'; a.src=E.src; a._key=key; pool.set(k,a); } return a; }
   /* want: Map key -> {id, k (0..1)} */
-  function sync(want){
+  function sync(want,duck){
     pool.forEach((a,k)=>{ const w=want.get(a._key); if(!w||k!==a._key+'|'+w.id){ if(!a.paused){ a.pause(); } a._on=false; } });
     want.forEach((w,key)=>{ const a=el(key,w.id); if(!a) return; a.volume=Math.max(0,Math.min(1,vol()*w.k));
       if(!a._on){ a._on=true; try{ a.currentTime=0; }catch(e){} const p=a.play(); if(p&&p.catch) p.catch(()=>{}); } });
     // the match music steps back while you dance
-    const me=want.has('me');
+    const me=duck===undefined?want.has('me'):!!duck;
     try{ if(me&&duckFrom===null){ duckFrom=Music.volume; Music.setVolume(duckFrom*.3); } else if(!me&&duckFrom!==null){ Music.setVolume(duckFrom); duckFrom=null; } }catch(e){}
   }
   function stopAll(){ sync(new Map()); }
   return {sync,stopAll};
 })();
 
-/* the wheel */
+/* the wheel: the dances in your slots (Characters → Emotes), each on its slot's number key */
 const EmoteWheel=(function(){
-  let el=null, open=false, sel=1, onPick=null, accX=0;
+  let el=null, open=false, sel=0, onPick=null, accX=0, opts=[], footDef='';
   function build(){
     el=document.createElement('div'); el.id='emoteWheel';
-    el.innerHTML=`<div class="ew-card"><div class="ew-head"><b>EMOTES</b><small>Press 1 · 2 · 3, or click · B to close</small></div><div class="ew-row">${EMOTES.map((E,i)=>
-      `<button class="ew-opt" data-i="${i}"><i>${i+1}</i><span class="ew-gif"><img src="${E.gif}" alt=""></span><b>${E.name}</b><small>${E.sub}</small><em class="ew-lock">LOCKED · ${EMOTE_PRICE} COINS IN THE SHOP</em></button>`).join('')}</div>
-      <div class="ew-foot" id="ewFoot">Dances until you move or attack · it has its own song</div></div>`;
+    el.innerHTML=`<div class="ew-card"><div class="ew-head"><b>EMOTES</b><small id="ewKeys"></small></div><div class="ew-row" id="ewRow"></div><div class="ew-foot" id="ewFoot"></div></div>`;
     document.body.appendChild(el);
-    el.querySelectorAll('.ew-opt').forEach(b=>{ b.addEventListener('mouseenter',()=>hi(+b.dataset.i)); b.addEventListener('click',e=>{ e.stopPropagation(); pick(+b.dataset.i); }); });
+  }
+  function fill(){
+    opts=emoteWheelSlots().map((id,slot)=>({slot,id})).filter(o=>o.id);
+    const row=el.querySelector('#ewRow'), owned=EMOTES.some(E=>emoteOwned(E.id));
+    row.innerHTML=opts.length?opts.map((o,j)=>{ const E=emoteBy(o.id);
+      return `<button class="ew-opt" data-j="${j}"><i>${o.slot+1}</i><span class="ew-gif"><img src="${E.gif}" alt=""></span><b>${E.name}</b><small>${E.sub}</small></button>`; }).join('')
+      :`<div class="ew-empty"><b>${owned?'Your wheel is empty':'No emotes yet'}</b><small>${owned?'Put your dances on it in Characters → Emotes':'They are '+EMOTE_PRICE+' coins each in the Shop'}</small></div>`;
+    row.querySelectorAll('.ew-opt').forEach(b=>{ b.addEventListener('mouseenter',()=>hi(+b.dataset.j)); b.addEventListener('click',e=>{ e.stopPropagation(); pick(+b.dataset.j); }); });
+    el.querySelector('#ewKeys').textContent=opts.length?'Press '+opts.map(o=>o.slot+1).join(' · ')+', or click · B to close':'B to close';
+    foot(opts.length?footDef:owned?'Set up your wheel in Characters → Emotes':'Emotes are '+EMOTE_PRICE+' coins each in the Shop');
   }
   function hi(i){ sel=i; if(el) el.querySelectorAll('.ew-opt').forEach((b,j)=>b.classList.toggle('on',j===i)); }
-  function show(cb){ if(!el) build(); onPick=cb; open=true; accX=0;
-    el.querySelectorAll('.ew-opt').forEach((b,i)=>b.classList.toggle('locked',!emoteOwned(EMOTES[i].id)));
-    const own=EMOTES.findIndex(E=>emoteOwned(E.id)); hi(own>=0?own:1);
-    foot(EMOTES.some(E=>emoteOwned(E.id))?'Dances until you move or attack · it has its own song':'You have no emotes yet · they are '+EMOTE_PRICE+' coins each in the Shop');
+  function show(cb,o){ if(!el) build(); onPick=cb; open=true; accX=0;
+    footDef=(o&&o.foot)||'Dances until you move or attack · it has its own song';
+    fill(); hi(Math.min(Math.max(0,opts.length-1),Math.floor(opts.length/2)));
     el.classList.add('on'); try{ SFX.open&&SFX.open(); }catch(e){} }
   function foot(t,bad){ const f=el&&el.querySelector('#ewFoot'); if(f){ f.textContent=t; f.classList.toggle('bad',!!bad); } }
   function hide(){ if(!open) return; open=false; if(el) el.classList.remove('on'); }
-  function pick(i){ if(!EMOTES[i]) return;
-    if(!emoteOwned(EMOTES[i].id)){ hi(i); foot(EMOTES[i].name+' is locked · buy it in the Shop for '+EMOTE_PRICE+' coins',true); try{ SFX.error&&SFX.error(); }catch(e){} return; }
-    const cb=onPick; hide(); onPick=null; if(cb){ try{ SFX.press&&SFX.press(); }catch(e){} cb(EMOTES[i].id); } }
+  function pick(j){ const o=opts[j]; if(!o) return;
+    const cb=onPick; hide(); onPick=null; if(cb){ try{ SFX.press&&SFX.press(); }catch(e){} cb(o.id); } }
+  function pickSlot(s){ const j=opts.findIndex(o=>o.slot===s);
+    if(j<0){ foot('Slot '+(s+1)+' is empty · set it in Characters → Emotes',true); try{ SFX.error&&SFX.error(); }catch(e){} return; }
+    pick(j); }
   // keys and the mouse reach the wheel before the game
-  addEventListener('keydown',e=>{ if(!open) return; const c=e.code;
-    if(c==='Digit1'||c==='Digit2'||c==='Digit3'||c==='Numpad1'||c==='Numpad2'||c==='Numpad3'){ e.preventDefault(); e.stopImmediatePropagation(); pick(+c.slice(-1)-1); }
+  addEventListener('keydown',e=>{ if(!open) return; const c=e.code, m=/^(Digit|Numpad)([1-9])$/.exec(c);
+    if(m&&+m[2]<=EMOTE_SLOTS){ e.preventDefault(); e.stopImmediatePropagation(); pickSlot(+m[2]-1); }
     else if(c==='Escape'||c==='KeyB'){ e.preventDefault(); e.stopImmediatePropagation(); hide(); }
     else if(c==='Enter'){ e.preventDefault(); e.stopImmediatePropagation(); pick(sel); } },true);
-  addEventListener('mousemove',e=>{ if(!open||!document.pointerLockElement) return; e.stopImmediatePropagation(); accX=Math.max(-150,Math.min(150,accX+e.movementX)); const i=accX<-45?0:accX>45?2:1; if(i!==sel) hi(i); },true);
+  addEventListener('mousemove',e=>{ if(!open||!document.pointerLockElement) return; e.stopImmediatePropagation();
+    const n=opts.length; if(!n) return;
+    accX=Math.max(-150,Math.min(150,accX+e.movementX)); const i=Math.min(n-1,Math.floor((accX+150)/300*n)); if(i!==sel) hi(i); },true);
   addEventListener('mousedown',e=>{ if(!open) return; if(e.target&&e.target.closest&&e.target.closest('#emoteWheel .ew-card')) return;
-    e.preventDefault(); e.stopImmediatePropagation(); if(document.pointerLockElement) pick(sel); else hide(); },true);
+    e.preventDefault(); e.stopImmediatePropagation(); if(document.pointerLockElement&&opts.length) pick(sel); else hide(); },true);
   return {show,hide,get open(){ return open; }};
 })();
 
@@ -23813,6 +24013,155 @@ function emoteStep(now,dt){
   }
   EmoteAudio.sync(want);
 }
+
+
+/* ==========================================================
+   Round 46: your emote wheel. Four slots, set up in Characters → Emotes:
+   which dances are on it, in which order, and which aren't. B opens it in a
+   match, in The Truth, and now in the lobby too — where your character
+   dances on the pedestal, and your teammate sees (and hears) it.
+   ========================================================== */
+const EMOTE_SLOTS=4;
+/* the wheel as it stands: four ids, 0 for an empty slot (only dances you own) */
+function emoteWheelSlots(){
+  let w=State.emoteWheel;
+  if(!Array.isArray(w)) w=EMOTES.filter(E=>emoteOwned(E.id)).map(E=>E.id);   // never set up: everything you own, in order
+  const out=[], seen=new Set();
+  for(let i=0;i<EMOTE_SLOTS;i++){ const id=+(w[i]||0); if(id&&emoteBy(id)&&emoteOwned(id)&&!seen.has(id)){ seen.add(id); out.push(id); } else out.push(0); }
+  return out;
+}
+function emoteWheelSet(w){ State.emoteWheel=w.slice(0,EMOTE_SLOTS).map(x=>+x||0); saveState(); }
+/* a dance you've just got goes into the first free slot (if the wheel was set up by hand; otherwise it's on it anyway) */
+function emoteWheelAdd(id){
+  if(!Array.isArray(State.emoteWheel)) return;
+  const w=emoteWheelSlots(); if(w.includes(id)) return;
+  const i=w.indexOf(0); if(i<0) return; w[i]=id; State.emoteWheel=w;
+}
+
+/* ---------- dancing in the lobby: B, the wheel, and your character dances on the pedestal ---------- */
+var lobbyEm=0;
+function lobbyDance(id,quiet){
+  id=+id||0; if(id&&(!emoteBy(id)||!emoteOwned(id))) id=0;
+  lobbyEm=id; try{ Lobby.dance(id); }catch(e){}
+  lobbyEmUI();
+  if(!quiet) try{ if(NET.party) netPst(); }catch(e){}
+}
+function lobbyLeave(n){
+  if(n==='hub'&&!S.hub.classList.contains('hidden')) return;
+  emPrevId=0; const p=$el('emPrev'); if(p) p.classList.remove('on');
+  if(lobbyEm||Lobby.danceId()){ lobbyEm=0; Lobby.dance(0); lobbyEmUI(); }
+}
+function lobbyEmUI(){
+  const b=$el('emChip'); if(!b) return;
+  const E=lobbyEm&&emoteBy(lobbyEm);
+  b.classList.toggle('on',!!E);
+  b.querySelector('b').textContent=E?E.name:'EMOTE';
+  b.querySelector('.emc-ic').textContent=E?'■':'♪';
+  b.title=E?'Stop dancing (B)':'Emote (B)';
+}
+function hubOverlay(){ return !!document.querySelector('#showcase.on,#haul.on,#shopPop.on,#pvPop.on,#mailPop.on')||!$el('resetModal').classList.contains('hidden'); }
+function lobbyEmoteKey(){
+  if(EmoteWheel.open){ EmoteWheel.hide(); return; }
+  if(S.hub.classList.contains('hidden')||hubOverlay()) return;
+  if(lobbyEm){ lobbyDance(0); SFX.press&&SFX.press(); return; }
+  EmoteWheel.show(id=>lobbyDance(id),{foot:'Dances until you press B again'+(NET.party?' · your teammate sees it':'')});
+}
+
+/* ---------- Characters → Emotes: the wheel on the left, your collection on the right,
+   your character in the middle dancing whatever you click ---------- */
+var charTab='chars', emSel=0, emPrevId=0;
+function charTabPaint(){
+  S.chars.classList.toggle('em-mode',charTab==='emotes');
+  document.querySelectorAll('#charTabs [data-ct]').forEach(b=>b.classList.toggle('on',b.dataset.ct===charTab));
+  const sub=S.chars.querySelector('.panel-sub'); if(sub) sub.textContent=charTab==='emotes'?'Set up your emote wheel':'Choose your character';
+  const n=$el('ctNew'); if(n){ const w=emoteWheelSlots(), loose=EMOTES.filter(E=>emoteOwned(E.id)&&!w.includes(E.id)).length; n.textContent=loose&&w.includes(0)?'+'+loose:''; }
+}
+function charTabSet(t){
+  if(t===charTab) return;
+  charTab=t; charTabPaint(); SFX.press&&SFX.press();
+  if(t==='emotes'){
+    HeroTalk.hide(); Lobby.setHero(State.selectedChar,{pop:true}); applyAccent(State.selectedChar);
+    const w=emoteWheelSlots(); emSel=Math.max(0,w.indexOf(0)); emLocker();
+  } else { emPreview(0); setChar(charIdx,true); }
+}
+function emPreview(id){
+  id=+id||0; if(id&&id===emPrevId) id=0;          // the same one again stops it
+  emPrevId=id; try{ Lobby.dance(id); }catch(e){}
+  const p=$el('emPrev'), E=id&&emoteBy(id);
+  if(p){ p.classList.toggle('on',!!E); if(E) p.innerHTML=`<span class="emp-eq"><i></i><i></i><i></i></span><b>${E.name}</b><small>PREVIEW</small><button class="rx" id="emPrevStop">■ STOP</button>`;
+    const s=$el('emPrevStop'); if(s){ wireRx(s); s.onclick=()=>{ emPreview(0); emLocker(); }; } }
+  document.querySelectorAll('#emColl .ec2-row').forEach(r=>{ const on=+r.dataset.e===id; r.classList.toggle('playing',on); const i=r.querySelector('.ec2-play'); if(i) i.textContent=on?'■':'▶'; });
+}
+/* put a dance in a slot (from wherever it was: the two swap) */
+function emPut(id,slot){
+  if(!emoteOwned(id)) return;
+  const w=emoteWheelSlots(), from=w.indexOf(id);
+  if(from===slot) return;
+  if(from>=0) w[from]=w[slot]; w[slot]=id; emoteWheelSet(w);
+  const nx=w.indexOf(0); emSel=nx>=0?nx:slot;
+  SFX.pickup&&SFX.pickup(); emLocker(slot);
+}
+function emSwap(a,b){ if(a===b) return; const w=emoteWheelSlots(); [w[a],w[b]]=[w[b],w[a]]; emoteWheelSet(w); emSel=b; SFX.press&&SFX.press(); emLocker(b); }
+function emTake(slot){ const w=emoteWheelSlots(); if(!w[slot]) return; w[slot]=0; emoteWheelSet(w); emSel=slot; SFX.back&&SFX.back(); emLocker(); }
+function emBuyHere(id){
+  if(emoteOwned(id)) return;
+  if(!canPay(EMOTE_PRICE)){ SFX.error&&SFX.error(); toast('Not enough coins · you need '+Math.max(0,EMOTE_PRICE-(State.coins||0))+' more'); return; }
+  buyEmote(id);
+  const w=emoteWheelSlots(), at=w.indexOf(id); if(at>=0) emSel=Math.max(0,w.indexOf(0));
+  emLocker(at); if(emPrevId!==id) emPreview(id);
+}
+function emLocker(pop){
+  const w=emoteWheelSlots(), own=EMOTES.filter(E=>emoteOwned(E.id)).length;
+  if(emSel<0||emSel>=EMOTE_SLOTS) emSel=0;
+  const wc=$el('emWheelCard'), cc=$el('emColl'); if(!wc||!cc) return;
+  wc.innerHTML=`<div class="ew2-head"><b>YOUR WHEEL</b><span>${w.filter(Boolean).length} / ${EMOTE_SLOTS} slots</span></div>
+    <div class="ew2-sub">Press <kbd>B</kbd> in the lobby, in a match or in The Truth</div>
+    <div class="ew2-ring">
+      <svg class="ew2-arc" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="78"/><circle class="ew2-dash" cx="100" cy="100" r="92"/></svg>
+      <i class="ew2-hub"><b>B</b></i>
+      ${w.map((id,i)=>{ const E=id&&emoteBy(id);
+        return `<div class="ew2-slot p${i}${i===emSel?' sel':''}${E?' full':''}${pop===i?' pop':''}" data-s="${i}" draggable="${E?'true':'false'}" title="${E?E.name+' · slot '+(i+1):'Empty slot '+(i+1)}">
+          <i class="ew2-n">${i+1}</i>${E?`<img src="${E.gif}" alt="" draggable="false"><b>${E.name}</b><button class="ew2-x" data-x="${i}" title="Take it off the wheel">×</button>`:'<em>EMPTY</em><small>slot '+(i+1)+'</small>'}</div>`; }).join('')}
+    </div>
+    <div class="ew2-tip">${own?'Pick a slot, then <b>EQUIP</b> a dance · drag them around to change the layout · <b>×</b> takes one off':'No emotes yet · they are '+EMOTE_PRICE+' coins each, here or in the Shop'}</div>
+    <div class="ew2-btns"><button class="rx" data-ew="fill"${own?'':' disabled'}>FILL</button><button class="rx" data-ew="clear"${w.some(Boolean)?'':' disabled'}>CLEAR</button></div>`;
+  cc.innerHTML=`<div class="ec2-head"><b>COLLECTION</b><span>${own} / ${EMOTES.length} owned</span></div>
+    <div class="ec2-list">${EMOTES.map((E,k)=>{ const mine=emoteOwned(E.id), at=w.indexOf(E.id), on=emPrevId===E.id;
+      return `<div class="ec2-row${mine?'':' locked'}${at>=0?' equipped':''}${on?' playing':''}" data-e="${E.id}" draggable="${mine?'true':'false'}" style="--i:${k}" title="Click to watch it">
+        <span class="ec2-gif"><img src="${E.gif}" alt="" draggable="false"><i class="ec2-play">${on?'■':'▶'}</i></span>
+        <span class="ec2-t"><b>${E.name}</b><small>${E.sub} · with its own song</small>${at>=0?`<em class="ec2-on">ON YOUR WHEEL · ${at+1}</em>`:mine?'<em class="ec2-off">NOT ON YOUR WHEEL</em>':'<em class="ec2-lk">LOCKED</em>'}</span>
+        ${mine?(at>=0?`<button class="ec2-btn off rx" data-off="${at}">REMOVE</button>`:`<button class="ec2-btn rx" data-put="${E.id}">EQUIP<small>SLOT ${emSel+1}</small></button>`):`<button class="ec2-btn buy rx" data-buy="${E.id}">${COIN_SVG}<b>${EMOTE_PRICE}</b></button>`}
+      </div>`; }).join('')}</div>
+    <div class="ec2-foot">Click a dance to watch ${byKey(State.selectedChar).name} do it · drag one onto a slot</div>`;
+  // the wheel
+  wc.querySelectorAll('.ew2-slot').forEach(s=>{ const i=+s.dataset.s;
+    s.onclick=()=>{ emSel=i; SFX.hover&&SFX.hover(); const id=w[i]; if(id&&emPrevId!==id) emPreview(id); emLocker(); };
+    s.addEventListener('dragstart',e=>{ if(!w[i]){ e.preventDefault(); return; } e.dataTransfer.setData('text/plain','s:'+i); e.dataTransfer.effectAllowed='move'; s.classList.add('drag'); });
+    s.addEventListener('dragend',()=>s.classList.remove('drag'));
+    s.addEventListener('dragover',e=>{ e.preventDefault(); s.classList.add('drop'); });
+    s.addEventListener('dragleave',()=>s.classList.remove('drop'));
+    s.addEventListener('drop',e=>{ e.preventDefault(); s.classList.remove('drop'); const d=(e.dataTransfer.getData('text/plain')||'').split(':');
+      if(d[0]==='e') emPut(+d[1],i); else if(d[0]==='s') emSwap(+d[1],i); });
+  });
+  wc.querySelectorAll('[data-x]').forEach(b=>{ b.onclick=e=>{ e.stopPropagation(); emTake(+b.dataset.x); }; });
+  wc.querySelectorAll('[data-ew]').forEach(b=>{ wireRx(b); b.onclick=()=>{
+    if(b.dataset.ew==='fill'){ const w2=emoteWheelSlots(); EMOTES.filter(E=>emoteOwned(E.id)&&!w2.includes(E.id)).forEach(E=>{ const j=w2.indexOf(0); if(j>=0) w2[j]=E.id; }); emoteWheelSet(w2); SFX.pickup&&SFX.pickup(); }
+    else { emoteWheelSet([0,0,0,0]); emSel=0; SFX.back&&SFX.back(); }
+    emLocker(); }; });
+  // the collection
+  cc.querySelectorAll('.ec2-row').forEach(r=>{ const id=+r.dataset.e;
+    r.onclick=()=>emPreview(id);
+    r.addEventListener('dragstart',e=>{ if(!emoteOwned(id)){ e.preventDefault(); return; } e.dataTransfer.setData('text/plain','e:'+id); e.dataTransfer.effectAllowed='move'; r.classList.add('drag'); });
+    r.addEventListener('dragend',()=>r.classList.remove('drag')); });
+  cc.ondragover=e=>{ e.preventDefault(); }; cc.ondrop=e=>{ const d=(e.dataTransfer.getData('text/plain')||'').split(':'); if(d[0]==='s'){ e.preventDefault(); emTake(+d[1]); } };   // a slot dropped back here comes off
+  cc.querySelectorAll('[data-put]').forEach(b=>{ wireRx(b); b.onclick=e=>{ e.stopPropagation(); emPut(+b.dataset.put,emSel); }; });
+  cc.querySelectorAll('[data-off]').forEach(b=>{ wireRx(b); b.onclick=e=>{ e.stopPropagation(); emTake(+b.dataset.off); }; });
+  cc.querySelectorAll('[data-buy]').forEach(b=>{ wireRx(b); b.onclick=e=>{ e.stopPropagation(); emBuyHere(+b.dataset.buy); }; });
+  charTabPaint();
+}
+document.querySelectorAll('#charTabs [data-ct]').forEach(b=>{ wireRx(b); b.addEventListener('click',()=>charTabSet(b.dataset.ct)); });
+$el('emChip').addEventListener('click',e=>{ e.stopPropagation(); lobbyEmoteKey(); });
+lobbyEmUI();
 
 /* ---- 64e-laurent.js ---- */
 /* ==========================================================
@@ -29842,7 +30191,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     if(EmoteWheel.open){ EmoteWheel.hide(); return; }
     if(!T||T.phase!=='play'||T.paused||T.doc||T.invOpen||T.choice||T.inDream||T.inTape||T.inSalvia) return;
     if(T.emote){ emoteStopT(); return; }
-    EmoteWheel.show(id=>emoteStartT(id));
+    EmoteWheel.show(id=>emoteStartT(id),{foot:'Dances until you move or shoot · the camera steps back to watch'});
   }
   function emoteStartT(id){
     if(!T||T.phase!=='play'||!emoteBy(id)||!emoteOwned(id)) return;
