@@ -3536,7 +3536,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.29.1 · BETA</span>
+    <span class="hub-version">VERSION 3.29.2 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3703,7 +3703,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.29.1</div></div>
+</svg><div class="set-ver">VERSION 3.29.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -23173,7 +23173,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.29.1';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.29.2';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -23658,7 +23658,7 @@ function netProfile(id){
   el.innerHTML=`<div class="opf-card">
     <button class="aa-x rx opf-x" id="opfX" aria-label="Close">×</button>
     <div class="opf-top"><span class="opf-av">${framedHTML(netAvatar(p.pf),frameById(p.fr))}</span>
-      <div class="opf-who"><b${nameStyle(p.nc)}>${netEsc(p.n)}</b><span class="opf-title"></span><small class="st-${p.s}">${NET_ST[p.s]||''}</small>${/^\d{9}$/.test(String(p.ai||''))?`<small class="opf-aid">ID ${KyCloud.fmt(p.ai)}</small>`:''}</div></div>
+      <div class="opf-who"><b${nameStyle(p.nc)}>${netEsc(p.n)}</b><span class="opf-title"></span><small class="st-${p.s}">${NET_ST[p.s]||''}</small>${/^\d{9}$/.test(String(p.ai||''))?`<small class="opf-aid">${KyCloud.fmt(p.ai)}</small>`:''}</div></div>
     <div class="opf-stats six">
       <div><span>TROPHIES</span><b>${TROPHY_SVG}${(p.tr||0).toLocaleString('en-US')}</b></div>
       ${opfPrivTiles(p)}
@@ -24966,7 +24966,7 @@ const Kyuchi=(function(){
     else { const st=busy?'<i class="ky-dot busy"></i>SAVING…':lastErr?'<i class="ky-dot bad"></i>NOT SAVED':dirty?'<i class="ky-dot wait"></i>SAVING SOON':'<i class="ky-dot ok"></i>SAVED';
       el.innerHTML=`<div class="ky-row">${LOGO_()}<span class="ky-t"><b>${esc(ses.name)}</b><small>${esc(ses.email)} · ${verified===false?'<a class="ky-a" data-ky="verify">not confirmed · send the link again</a>':verified?'<span class="ky-ok">✓ confirmed</span>':'Kyuchi ID'}</small></span>
         <span class="ky-st"><b>${st}</b><small id="kyAgo">${ses.syncedAt?'last saved '+ago(ses.syncedAt):''}</small></span></div>
-        ${lastErr?`<div class="ky-err">${esc(lastErr)}</div>`:''}${ses.aid?`<div class="ky-aid">ACCOUNT ID<b>${esc(String(ses.aid).replace(/(\d{3})(?=\d)/g,'$1 '))}</b></div>`:''}
+        ${lastErr?`<div class="ky-err">${esc(lastErr)}</div>`:''}${ses.aid?`<div class="ky-aid">ACCOUNT ID<b>#${esc(String(ses.aid))}</b></div>`:''}
         <div class="ky-btns"><button class="ky-b main rx" data-ky="save"${busy?' disabled':''}>SAVE NOW</button><button class="ky-b rx" data-ky="switch">SWITCH ACCOUNT</button><button class="ky-b rx" data-ky="logout">LOG OUT</button><button class="ky-b del rx" data-ky="delete">DELETE ACCOUNT</button></div>`; }
     el.querySelectorAll('[data-ky]').forEach(b=>{ if(b.classList.contains('rx')) wireRx(b); b.onclick=()=>act(b.dataset.ky); });
   }
@@ -25094,7 +25094,8 @@ const KyCloud=(function(){
   const ROOT=()=>'projects/'+(KYU_CFG.projectId||'mock')+'/databases/(default)/documents/';
   const DOCS=()=>K.FS().replace(/\/$/,'');
   const BAN_KEY='lunive:ban', LB_KEY='lunive:lb', CARD=['n','tro','best','pf','fr','nc','ti','adm','v','at'];
-  const fmt=a=>{ const s=String(a||''); return /^\d{9}$/.test(s)?s.slice(0,3)+' '+s.slice(3,6)+' '+s.slice(6):s; };
+  const fmt=a=>{ const s=String(a||'').replace(/\D/g,''); return s?'#'+s:''; };          // every Account ID starts with a hashtag
+  const CREATOR_AID='999999999';                                                     // the creator's, and only theirs
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
   const ago=t=>{ const s=Math.max(0,(Date.now()-t)/1000); return s<45?'just now':s<3600?Math.round(s/60)+' min ago':s<86400?Math.round(s/3600)+' h ago':Math.round(s/86400)+' days ago'; };
   let admin=false, letters=[], seen=null, lb=null, meRank=0, lastPub='', pubBusy=false, banned=null, pollT=0;
@@ -25127,7 +25128,7 @@ const KyCloud=(function(){
   /* a new Account ID: the number and your card go in together, or not at all; a taken number just means another roll */
   async function claim(t,uid){
     for(let i=0;i<6;i++){
-      const aid=String(100000000+Math.floor(Math.random()*900000000)), c=Object.assign({aid},card());
+      const aid=String(100000000+Math.floor(Math.random()*899999999)), c=Object.assign({aid},card());   // never #999999999
       try{ await commit(t,[{update:{name:ROOT()+'ids/'+aid,fields:K.enc({uid,at:Date.now()})},currentDocument:{exists:false}},
                            {update:{name:ROOT()+'players/'+uid,fields:K.enc(c)},currentDocument:{exists:false}}]);
         lastPub=sig(c)+'|'+uid; return c; }
@@ -25137,6 +25138,22 @@ const KyCloud=(function(){
       }
     }
     return null;
+  }
+  /* the creator's Account ID is #999999999: a new card gets it, and one that had a random number switches to it */
+  async function creatorId(t,uid,d){
+    const ids={update:{name:ROOT()+'ids/'+CREATOR_AID,fields:K.enc({uid,at:Date.now()})},currentDocument:{exists:false}};
+    const c=d?null:Object.assign({aid:CREATOR_AID},card());
+    const mine=d?{update:{name:ROOT()+'players/'+uid,fields:K.enc({aid:CREATOR_AID})},updateMask:{fieldPaths:['aid']},currentDocument:{exists:true}}
+               :{update:{name:ROOT()+'players/'+uid,fields:K.enc(c)},currentDocument:{exists:false}};
+    try{ await commit(t,[ids,mine]); }
+    catch(e){
+      if(!['ALREADY_EXISTS','FAILED_PRECONDITION'].includes(e.code)) throw e;
+      const i=await pub('ids/'+CREATOR_AID).catch(()=>null);                       // already yours, from another device?
+      if(!i||i.uid!==uid) throw e;
+      await commit(t,[mine]);
+    }
+    if(c) lastPub=sig(c)+'|'+uid;
+    return d?Object.assign({},d,{aid:CREATOR_AID}):c;
   }
   function setAid(aid){
     const s=Kyuchi.session; if(!s||!/^\d{9}$/.test(String(aid||''))) return;
@@ -25166,6 +25183,7 @@ const KyCloud=(function(){
       let d=await mine('players/'+uid,t);
       if(!Kyuchi.session||Kyuchi.session.uid!==uid) return;
       if(d&&d.banned&&!admin){ setAid(d.aid); wall(d,uid); return; }
+      if(admin&&(!d||d.aid!==CREATOR_AID)){ try{ d=await creatorId(t,uid,d); }catch(e){ console.warn('[Lunive cloud] creator ID',e&&e.code); } }
       if(!d||!d.aid) d=await claim(t,uid);
       if(d&&d.aid) setAid(d.aid);
       await publish();
@@ -25342,7 +25360,7 @@ const KyCloud=(function(){
   }
   function copyId(aid){
     const done=()=>{ toast('Account ID '+fmt(aid)+' copied',2200); SFX.press&&SFX.press(); };
-    try{ navigator.clipboard.writeText(String(aid)).then(done,()=>toast('Account ID: '+fmt(aid),3600)); }catch(e){ toast('Account ID: '+fmt(aid),3600); }
+    try{ navigator.clipboard.writeText(fmt(aid)).then(done,()=>toast('Account ID: '+fmt(aid),3600)); }catch(e){ toast('Account ID: '+fmt(aid),3600); }
   }
 
   /* ---------- your ID in your profile ---------- */
@@ -25399,7 +25417,7 @@ const KyCloud=(function(){
     if(!admin) return;
     let el=$el('admPop'); if(!el){ el=document.createElement('div'); el.id='admPop'; document.body.appendChild(el); }
     el.innerHTML=`<div class="adm-card"><div class="adm-head"><span class="adm-badge">CREATOR</span><b>Creator tools</b><button class="aa-x rx" id="admX" aria-label="Close">×</button></div>
-      <div class="adm-find"><input id="admId" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="ACCOUNT ID"><button class="adm-btn rx" id="admGo">FIND</button></div>
+      <div class="adm-find"><input id="admId" inputmode="numeric" autocomplete="off" maxlength="11" placeholder="#ACCOUNT ID"><button class="adm-btn rx" id="admGo">FIND</button></div>
       <div id="admWho"><div class="adm-hint">Type a player's Account ID (it's in their profile, and on the leaderboard) and press FIND</div></div>
       <div class="adm-msg" id="admMsg"></div>
       <div class="adm-sec adm-bans"><b>BANNED PLAYERS</b><div id="admBans"><div class="adm-hint">Loading…</div></div></div></div>`;
@@ -25428,7 +25446,7 @@ const KyCloud=(function(){
   function drawWho(){
     const o=who, el=$el('admWho'); if(!o||!el) return;
     el.innerHTML=`<div class="adm-p"><span class="ap-av">${av(o)}</span><span class="ap-t"><b${nameStyle(o.nc)}>${esc(o.n)}</b>
-        <small>ID ${fmt(o.aid)} · ${(+o.tro||0).toLocaleString('en-US')} trophies${o.v?' · v'+esc(o.v):''}${o.at?' · seen '+ago(+o.at):''}</small>${o.ti?`<em data-t="${esc(o.ti)}">${esc(o.ti)}</em>`:''}</span>
+        <small>${fmt(o.aid)} · ${(+o.tro||0).toLocaleString('en-US')} trophies${o.v?' · v'+esc(o.v):''}${o.at?' · seen '+ago(+o.at):''}</small>${o.ti?`<em data-t="${esc(o.ti)}">${esc(o.ti)}</em>`:''}</span>
         <span class="adm-st ${o.banned?'off':'on'}">${o.banned?'BANNED':'ACTIVE'}</span></div>
       <div class="adm-sec"><b>${o.banned?'BANNED':'BAN'}</b>${o.banned
         ?`<div class="adm-row"><span class="adm-why">${o.why?'Reason: '+esc(o.why):'No reason given'}${o.bat?' · '+ago(+o.bat):''}</span><button class="adm-btn ok rx" id="admUnban">UNBAN</button></div>`
@@ -25467,7 +25485,7 @@ const KyCloud=(function(){
     const el=$el('admBans'); if(!el) return;
     let L; try{ L=await bannedList(); }catch(e){ el.innerHTML='<div class="adm-hint">Couldn\'t load the list</div>'; return; }
     if(!$el('admBans')) return;
-    el.innerHTML=L.length?L.map(o=>`<div class="adm-ban"><b>${esc(o.n)}</b><small>ID ${fmt(o.aid)}${o.why?' · '+esc(o.why):''}</small><button class="adm-btn ok rx" data-ub="${esc(o.uid)}">UNBAN</button></div>`).join('')
+    el.innerHTML=L.length?L.map(o=>`<div class="adm-ban"><b>${esc(o.n)}</b><small>${fmt(o.aid)}${o.why?' · '+esc(o.why):''}</small><button class="adm-btn ok rx" data-ub="${esc(o.uid)}">UNBAN</button></div>`).join('')
       :'<div class="adm-hint">No one is banned</div>';
     el.querySelectorAll('[data-ub]').forEach(b=>{ wireRx(b); b.onclick=()=>unban(b.dataset.ub,b); });
   }
