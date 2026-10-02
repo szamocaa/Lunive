@@ -2713,6 +2713,110 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 .opf-set{font:700 10.5px var(--ui);letter-spacing:.06em;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.07);color:#fff;}
 .opf-set.s-aurora{color:#7dffd8;} .opf-set.s-limerence{color:#ff8fc2;} .opf-set.s-halo{color:#fff3c4;} .opf-set.none{color:var(--dim);}
 .opf-as{display:flex;gap:12px;font:600 11px var(--ui);color:var(--dim);letter-spacing:.06em;} .opf-as b{color:#fff;font-size:12.5px;}
+/* ===== the profile, remade: who you are on the left, what you've done on the right ===== */
+.nc-grad{-webkit-background-clip:text !important;background-clip:text !important;color:transparent !important;-webkit-text-fill-color:transparent;text-shadow:none !important;background-size:200% 100%;animation:ncShift 5s linear infinite;}
+@keyframes ncShift{to{background-position:-200% 0;}}
+#profile-screen .pv-wrap{position:absolute;left:24px;right:24px;top:100px;bottom:18px;display:grid;grid-template-columns:minmax(280px,330px) minmax(0,1fr);gap:14px;}
+#profile-screen .pv-wrap>.glass{padding:18px 18px 16px;overflow:auto;scrollbar-width:thin;color:#fff;}
+.pv-left{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;}
+.pv-av{position:relative;border:0;background:none;padding:0;margin:6px 0 12px;cursor:pointer;border-radius:22px;transition:transform .3s cubic-bezier(.2,.9,.3,1.4);}
+.pv-av:hover{transform:translateY(-3px) scale(1.03);}
+.pv-av .pf-host.pf-big{display:block;border-radius:20px;box-shadow:0 0 0 2px rgba(255,255,255,.14),0 18px 36px -14px rgba(0,0,0,.8);}
+#profile-screen .pv-av .avatar-big,#profile-screen .pv-av .pf-host.framed>img.pfi{width:156px;height:156px;border-radius:18px;}
+.pv-av:hover .pf-host.pf-big{box-shadow:0 0 0 2px var(--acc),0 18px 36px -14px rgba(0,0,0,.8),0 0 26px color-mix(in srgb,var(--acc) 40%,transparent);}
+.pv-edit{position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:5px;white-space:nowrap;font:700 9.5px var(--sk-h);font-style:normal;letter-spacing:.18em;
+  padding:5px 10px;border-radius:999px;background:rgba(12,14,24,.92);border:1px solid var(--sk-line2);color:rgba(255,255,255,.8);transition:background .2s,color .2s;}
+.pv-av:hover .pv-edit{background:var(--acc);color:#0b0d16;border-color:transparent;}
+.pv-edit svg,.pv-name svg,.pv-title svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+.pv-name{display:flex;align-items:center;justify-content:center;gap:8px;max-width:100%;border:0;background:none;padding:4px 10px;border-radius:12px;cursor:pointer;color:#fff;}
+.pv-name b{font:400 38px var(--sk-big);letter-spacing:.03em;line-height:1.05;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;filter:drop-shadow(0 4px 14px rgba(0,0,0,.55));padding-bottom:2px;}
+.pv-name svg{width:15px;height:15px;opacity:.4;transition:opacity .2s;}
+.pv-name:hover{background:rgba(255,255,255,.06);} .pv-name:hover svg{opacity:1;}
+.pv-title{display:flex;align-items:center;gap:8px;border:1px solid var(--sk-line);background:rgba(255,255,255,.05);border-radius:999px;padding:7px 12px 7px 16px;cursor:pointer;color:#fff;max-width:100%;transition:border-color .2s,background .2s;}
+.pv-title:hover{border-color:var(--acc);background:rgba(255,255,255,.09);}
+.pv-title .profile-title-tag{margin:0;font:700 12.5px var(--sk-h);letter-spacing:.08em;color:#ffd6f2;}
+.pv-none{font:600 12px var(--sk-h);letter-spacing:.1em;color:rgba(255,255,255,.5);}
+.pv-title svg{opacity:.55;}
+.pv-play{display:flex;align-items:center;gap:10px;width:100%;margin-top:8px;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
+.pv-play>span:first-child{font:700 9px var(--sk-h);letter-spacing:.2em;color:rgba(255,255,255,.5);writing-mode:vertical-rl;transform:rotate(180deg);}
+.pv-play img{width:46px;height:46px;border-radius:11px;object-fit:cover;background:#11131d;}
+.pv-play>b{font:700 15px var(--sk-h);letter-spacing:.04em;text-align:left;flex:1;}
+.pv-tip{margin-top:auto;padding-top:10px;font:500 11.5px var(--sk-body);line-height:1.45;color:rgba(255,255,255,.45);}
+.pv-tro{display:grid;grid-template-columns:minmax(0,1.7fr) repeat(4,minmax(0,1fr));gap:8px;}
+.pvt-main{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;background:radial-gradient(120% 140% at 0% 0%,rgba(255,210,90,.18),transparent 60%),rgba(255,255,255,.04);border:1px solid rgba(255,214,110,.22);}
+.pvt-main .tro-ic{width:40px;height:40px;flex:none;filter:drop-shadow(0 4px 10px rgba(255,180,40,.35));}
+.pvt-main span{display:flex;flex-direction:column;}
+.pvt-main b{font:400 36px var(--sk-big);line-height:1;letter-spacing:.02em;background:linear-gradient(180deg,#fff6d0,#ffc93a);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.pvt-main small{font:700 9.5px var(--sk-h);letter-spacing:.24em;color:rgba(255,226,150,.75);margin-top:3px;}
+.pvt-st{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);min-width:0;}
+.pvt-st>span{font:700 8.5px var(--sk-h);letter-spacing:.18em;color:rgba(255,255,255,.5);white-space:nowrap;}
+.pvt-st>b{display:flex;align-items:center;gap:3px;font:700 18px var(--sk-h);} .pvt-st>b em{font-style:normal;font-size:11px;color:rgba(255,255,255,.5);margin-left:2px;}
+.pvt-st .rank-badge{width:28px;height:28px;}
+.pv-sec{display:flex;align-items:baseline;gap:10px;margin:16px 2px 8px;}
+.pv-sec b{font:700 11px var(--sk-h);letter-spacing:.24em;color:#fff;}
+.pv-sec small{font:500 11px var(--sk-body);color:rgba(255,255,255,.45);}
+.pv-favs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.pv-fav{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px 10px;border-radius:16px;cursor:pointer;color:#fff;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--rc,#fff) 40%,transparent);background:radial-gradient(100% 80% at 50% 0%,color-mix(in srgb,var(--rc,#fff) 22%,transparent),transparent 70%),rgba(255,255,255,.03);
+  transition:transform .3s cubic-bezier(.2,.9,.3,1.4),border-color .2s;}
+.pv-fav:hover{transform:translateY(-3px);border-color:var(--acc);}
+.pv-fav img{width:84px;height:84px;border-radius:14px;object-fit:cover;background:#11131d;box-shadow:0 10px 20px -10px rgba(0,0,0,.8);}
+.pv-fav>b{font:700 14px var(--sk-h);letter-spacing:.04em;}
+.pvf-r{display:flex;align-items:center;gap:8px;} .pvf-r em{display:flex;align-items:center;gap:3px;font:700 12px var(--sk-h);font-style:normal;color:#ffe08a;} .pvf-r .tro-ic{width:13px;height:13px;}
+.pv-fav.empty{justify-content:center;min-height:150px;border:1px dashed rgba(255,255,255,.18);background:rgba(255,255,255,.02);}
+.pv-fav.empty i{font:300 40px var(--sk-h);font-style:normal;line-height:1;color:rgba(255,255,255,.5);}
+.pv-fav.empty small{font:600 11px var(--sk-h);letter-spacing:.1em;color:rgba(255,255,255,.45);}
+.pv-fav.empty:hover i,.pv-fav.empty:hover small{color:#fff;}
+.pv-arts{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;}
+.pv-arts .opf-slots{width:min(330px,100%);}
+.pva-row{display:flex;flex-direction:column;gap:8px;flex:1;min-width:220px;}
+.pv-ranks{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px;}
+.pv-rk{display:flex;align-items:center;gap:9px;padding:7px 9px 7px 7px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);min-width:0;}
+.pv-rk img{width:40px;height:40px;border-radius:10px;object-fit:cover;background:#11131d;flex:none;}
+.pvr-t{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;}
+.pvr-t b{font:700 12.5px var(--sk-h);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pvr-bar{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden;} .pvr-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd36a,#ff9e1f);}
+.pvr-t em{font:600 10px var(--sk-h);font-style:normal;letter-spacing:.06em;color:rgba(255,255,255,.5);}
+.pv-rk .rank-badge{width:28px;height:28px;}
+.pv-rk.locked{opacity:.42;} .pv-rk.locked img{filter:grayscale(1) brightness(.6);} .pv-rk .lock-glyph{flex:none;margin-right:4px;}
+.pv-pop{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(4,6,12,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.pv-pop.on{display:flex;animation:pvIn .22s ease-out;}
+@keyframes pvIn{from{opacity:0;}to{opacity:1;}}
+.pv-card{width:min(760px,94vw);max-height:86vh;display:flex;flex-direction:column;border-radius:18px;background:var(--sk-glass2);border:1px solid var(--sk-line2);box-shadow:0 30px 70px -20px rgba(0,0,0,.85);color:#fff;animation:pvUp .3s cubic-bezier(.2,.9,.3,1.2);}
+@keyframes pvUp{from{transform:translateY(16px) scale(.98);}to{transform:none;}}
+.pv-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 12px 20px;border-bottom:1px solid var(--sk-line);}
+.pv-head b{font:700 14px var(--sk-h);letter-spacing:.26em;}
+.pv-body{overflow:auto;padding:4px 20px 20px;scrollbar-width:thin;}
+.pv-pane{display:none;} .pv-pane.on{display:block;}
+.pv-preview{margin-top:14px;padding:14px;border-radius:14px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
+.pv-preview b{font:400 40px var(--sk-big);letter-spacing:.03em;text-transform:uppercase;display:inline-block;}
+.pv-colors{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;}
+.pv-col{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 6px 7px;border-radius:12px;border:1px solid var(--sk-line);background:rgba(255,255,255,.04);cursor:pointer;color:#fff;transition:border-color .15s,transform .2s;}
+.pv-col:hover{border-color:var(--sk-line2);transform:translateY(-2px);}
+.pv-col.on{border-color:#fff;box-shadow:0 0 0 1px #fff,0 0 18px rgba(255,255,255,.18);}
+.pv-col b{font:400 26px var(--sk-big);line-height:1.05;}
+.pv-col small{font:600 9.5px var(--sk-h);letter-spacing:.1em;color:rgba(255,255,255,.6);}
+.pv-favhint{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 10px;font:500 12px var(--sk-body);color:rgba(255,255,255,.6);}
+.pv-rm{flex:none;border:1px solid rgba(255,120,140,.4);background:rgba(255,80,110,.12);color:#ffb3c2;border-radius:10px;padding:7px 12px;font:700 10.5px var(--sk-h);letter-spacing:.14em;cursor:pointer;}
+.pv-favpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;}
+.pv-fc{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 6px 8px;border-radius:12px;border:1px solid var(--sk-line);background:rgba(255,255,255,.04);cursor:pointer;color:#fff;transition:border-color .15s,transform .2s;}
+.pv-fc:hover{border-color:var(--acc);transform:translateY(-2px);}
+.pv-fc img{width:64px;height:64px;border-radius:11px;object-fit:cover;background:#11131d;}
+.pv-fc b{font:700 11.5px var(--sk-h);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.pv-fc .rank-badge{width:24px;height:24px;} .pv-fc .rank-badge b{font-size:12px;}
+.pv-fc>i{position:absolute;left:6px;top:6px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 11px var(--sk-h);font-style:normal;background:rgba(255,255,255,.18);}
+.pv-fc.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc);} .pv-fc.on>i{background:var(--acc);color:#0b0d16;}
+.pv-fc.used{opacity:.7;}
+.opf-favs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+.opf-fav{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 7px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);min-width:0;}
+.opf-fav img{width:52px;height:52px;border-radius:10px;object-fit:cover;background:#11131d;}
+.opf-fav>b{font:700 11.5px var(--ui);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.opf-fav .rank-badge{width:24px;height:24px;} .opf-fav .rank-badge b{font-size:12px;}
+@media (max-width:860px),(max-height:520px){
+  #profile-screen .pv-wrap{display:block;overflow:auto;top:128px;left:12px;right:12px;bottom:10px;}
+  #profile-screen .pv-wrap>.glass{overflow:visible;margin-bottom:12px;}
+  .pv-tro{grid-template-columns:repeat(2,minmax(0,1fr));} .pvt-main{grid-column:1/-1;}
+}
 .opf-inv{margin-top:4px;border:0;border-radius:12px;padding:11px;font:800 12px var(--ui);letter-spacing:.18em;cursor:pointer;color:#0a1426;background:linear-gradient(180deg,#bfe0ff,#6aa8ff);box-shadow:0 4px 0 #2a5ea8;}
 /* an invite, top centre */
 #onInvite{position:fixed;left:50%;top:18px;z-index:61;transform:translate(-50%,-140%);transition:transform .35s cubic-bezier(.2,1.3,.4,1);}
@@ -2922,7 +3026,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.20.2 · BETA</span>
+    <span class="hub-version">VERSION 3.21.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3086,7 +3190,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.20.2</div></div>
+</svg><div class="set-ver">VERSION 3.21.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3131,28 +3235,64 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 <!-- ===== PROFILE ===== -->
 <div id="profile-screen" class="screen hidden">
   <button class="back-chip b3 plum rx" data-back><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>BACK</button>
-  <div class="panel-head"><div class="panel-title">Profile</div><div class="panel-sub">Your identity</div></div>
-  <div class="center-panel glass">
-    <div class="profile-top">
-      <span class="pf-host pf-big"><img class="avatar-big pfi" id="profileAvatarImg" src="" alt=""></span>
-      <div><div class="profile-uname" id="profileUnameDisplay"></div><div class="profile-title-tag hidden" id="profileTitleDisplay"></div></div>
+  <div class="panel-head"><div class="panel-title">Profile</div><div class="panel-sub">Tap your picture, name or title to change it</div></div>
+  <div class="pv-wrap">
+    <section class="pv-left glass">
+      <button class="pv-av rx" id="pvAv" title="Change your picture and frame">
+        <span class="pf-host pf-big"><img class="avatar-big pfi" id="profileAvatarImg" src="" alt=""></span>
+        <i class="pv-edit"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>PICTURE &amp; FRAME</i>
+      </button>
+      <button class="pv-name rx" id="pvName" title="Change your name and its colour"><b id="profileUnameDisplay"></b><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></button>
+      <button class="pv-title rx" id="pvTitle" title="Choose a title"><span class="profile-title-tag" id="profileTitleDisplay"></span><span class="pv-none" id="pvTitleNone">Choose a title</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+      <div class="pv-play" id="pvPlay"></div>
+      <div class="pv-tip">Your picture, frame, name colour, title and favourite characters are what other players see when they open your profile online.</div>
+    </section>
+    <section class="pv-right glass">
+      <div class="pv-tro" id="pvTro"></div>
+      <div class="pv-sec"><b>FAVOURITE CHARACTERS</b><small>Shown to others on your profile</small></div>
+      <div class="pv-favs" id="pvFavs"></div>
+      <div class="pv-sec"><b>ARTIFACTS</b><small>What you have on right now</small></div>
+      <div class="pv-arts" id="pvArts"></div>
+      <div class="pv-sec"><b>CHARACTERS</b><small id="pvRankSub"></small></div>
+      <div class="pv-ranks" id="pvRanks"></div>
+    </section>
+  </div>
+  <div class="pv-pop" id="pvPop">
+    <div class="pv-card">
+      <div class="pv-head"><b id="pvPopT"></b><button class="aa-x rx" id="pvPopX" aria-label="Close">×</button></div>
+      <div class="pv-body">
+        <div class="pv-pane" data-p="pic">
+          <div class="sec-label">PICTURE — ACHIEVEMENTS</div>
+          <div class="pfp-grid" id="pfpPicker"></div>
+          <div class="sec-label">PICTURE — BOUGHT ONES</div>
+          <div class="pfp-grid" id="pfpShop"></div>
+          <div class="sec-label excl hidden" id="pfpExclLabel">PICTURE — EXCLUSIVE</div>
+          <div class="pfp-grid hidden" id="pfpExcl"></div>
+          <div class="sec-label">FRAME</div>
+          <div class="pfp-grid frame-grid" id="framePicker"></div>
+        </div>
+        <div class="pv-pane" data-p="name">
+          <div class="pv-preview"><b id="pvNamePrev"></b></div>
+          <div class="sec-label">NAME</div>
+          <div class="redeem-row"><input id="newUsernameInput" placeholder="new username" maxlength="16"><button id="renameBtn" class="b3 sea rx">RENAME · 100</button></div>
+          <div class="msg" id="renameMsg"></div>
+          <div class="sec-label">NAME COLOUR</div>
+          <div class="pv-colors" id="nameColors"></div>
+        </div>
+        <div class="pv-pane" data-p="title">
+          <div class="sec-label">TITLE — ACHIEVEMENTS</div>
+          <div id="titlePicker"></div>
+          <div class="sec-label">TITLE — BOUGHT ONES</div>
+          <div id="titleShop"></div>
+          <div class="sec-label excl hidden" id="exclLabel">TITLE — EXCLUSIVE</div>
+          <div id="titleExcl" class="hidden"></div>
+        </div>
+        <div class="pv-pane" data-p="fav">
+          <div class="pv-favhint" id="pvFavHint"></div>
+          <div class="pv-favpick" id="favPick"></div>
+        </div>
+      </div>
     </div>
-    <div class="redeem-row" style="margin-top:16px;"><input id="newUsernameInput" placeholder="new username" maxlength="16"><button id="renameBtn" class="b3 sea rx">RENAME · 100</button></div>
-    <div class="msg" id="renameMsg"></div>
-    <div class="sec-label">PROFILE PICTURE — ACHIEVEMENTS</div>
-    <div class="pfp-grid" id="pfpPicker"></div>
-    <div class="sec-label">PROFILE PICTURE — BOUGHT ONES</div>
-    <div class="pfp-grid" id="pfpShop"></div>
-    <div class="sec-label excl hidden" id="pfpExclLabel">PROFILE PICTURE — EXCLUSIVE</div>
-    <div class="pfp-grid hidden" id="pfpExcl"></div>
-    <div class="sec-label">PROFILE FRAME</div>
-    <div class="pfp-grid frame-grid" id="framePicker"></div>
-    <div class="sec-label">TITLE — ACHIEVEMENTS</div>
-    <div id="titlePicker"></div>
-    <div class="sec-label">TITLE — BOUGHT ONES</div>
-    <div id="titleShop"></div>
-    <div class="sec-label excl hidden" id="exclLabel">TITLE — EXCLUSIVE</div>
-    <div id="titleExcl" class="hidden"></div>
   </div>
 </div>
 
@@ -3337,6 +3477,8 @@ const State = {
   equippedPfp: '',
   framesOwned: [],         // profile picture frames
   equippedFrame: '',
+  nameColor: '',            // the colour of your name (Profile)
+  favChars: [],            // your three favourite characters (Profile; others see them online)
   winsByChar: {},
   achievementsDone: [],
   titlesOwned: [],
@@ -13647,7 +13789,7 @@ function refreshHub(){
   setText('subStash',crates>0?'Crates waiting':'Crates and codes');
   $el('pcAvatar').src = currentAvatarSrc(); paintFrame($el('pcAvatar'));
   try{ if(checkMissions()) saveState(); }catch(e){}       // the Extras count what you own: they can come true anywhere
-  setText('pcName',State.username || 'Player');
+  setText('pcName',State.username || 'Player'); paintName($el('pcName'),State.nameColor);
   setText('pcTitle',State.equippedTitle || 'No title yet'); paintTitle($el('pcTitle'),State.equippedTitle);
   setText('winsBadge',Object.values(State.winsByChar||{}).reduce((s,n)=>s+(n||0),0));
   const left=CHARACTERS.length-State.unlocked.length;
@@ -14870,6 +15012,7 @@ function openProfile(){
     if(own){ const e=document.createElement('em'); e.textContent=t; paintTitle(e,t); tile.appendChild(e); tile.onclick=()=>{ State.equippedTitle=t; saveState(); openProfile(); refreshHub(); SFX.press(); }; }
     else { tile.textContent=t+' (locked)'; tile.title=m?m.text+' to unlock':''; }
     xBox.appendChild(tile); });
+  pvRender();
 }
 document.getElementById('renameBtn').addEventListener('click', function(){
   const inp=document.getElementById('newUsernameInput'), msg=document.getElementById('renameMsg');
@@ -14880,9 +15023,115 @@ document.getElementById('renameBtn').addEventListener('click', function(){
   if(!free && !canPay(100)){ msg.style.color='#ff9bb8'; msg.textContent='Need 100 coins to rename.'; return; }
   if(free) State.freeRenameUsed=true; else pay(100);
   State.username=val; saveState();
-  refreshHub(); openProfile(); SFX.win();
+  refreshHub(); openProfile(); SFX.win(); pvColors();
   msg.style.color='var(--mint)'; msg.textContent='Username updated.';
 });
+
+
+/* ==========================================================
+   PROFILE — who you are, at a glance. On the left: your picture (tap it:
+   picture and frame), your name (tap it: rename it, and give it a colour),
+   your title (tap it: pick another). On the right: your trophies, the
+   three characters you show off (other players see them when they open
+   your profile online), the artifacts you have on, and every character's
+   rank.
+   ========================================================== */
+const NAME_COLORS=[
+  {id:'',name:'White',c:'#ffffff'},
+  {id:'sky',name:'Sky',c:'#7cc8ff'},{id:'ice',name:'Ice',c:'#bdf2ff'},{id:'mint',name:'Mint',c:'#5dffb0'},{id:'lime',name:'Lime',c:'#c2ff5a'},
+  {id:'sun',name:'Sun',c:'#ffd36a'},{id:'peach',name:'Peach',c:'#ffab73'},{id:'coral',name:'Coral',c:'#ff7a6b'},{id:'red',name:'Blood',c:'#ff3b4e'},
+  {id:'rose',name:'Rose',c:'#ff7ab8'},{id:'pink',name:'Bubblegum',c:'#ff9de2'},{id:'violet',name:'Violet',c:'#b48cff'},{id:'ink',name:'Shadow',c:'#8a8fa8'},
+  {id:'gold',name:'Gold',g:'linear-gradient(90deg,#fff1b8,#ffc93a 30%,#ff9e1f 50%,#ffc93a 70%,#fff1b8)'},
+  {id:'aurora',name:'Aurora',g:'linear-gradient(90deg,#5dffcf,#6aa6ff 25%,#c36bff 50%,#6aa6ff 75%,#5dffcf)'},
+  {id:'sunset',name:'Sunset',g:'linear-gradient(90deg,#ffd36a,#ff6b8e 25%,#9b6bff 50%,#ff6b8e 75%,#ffd36a)'},
+  {id:'sakura',name:'Sakura',g:'linear-gradient(90deg,#fff0f6,#ff9ec8 25%,#ff5f9e 50%,#ff9ec8 75%,#fff0f6)'},
+  {id:'hell',name:'Hellfire',g:'linear-gradient(90deg,#ffe14a,#ff5a1f 25%,#b3001b 50%,#ff5a1f 75%,#ffe14a)'},
+  {id:'void',name:'Void',g:'linear-gradient(90deg,#d9dcff,#6b5cff 25%,#2a1a6a 50%,#6b5cff 75%,#d9dcff)'},
+  {id:'chroma',name:'Chroma',g:'linear-gradient(90deg,#ff5f6d,#ffc371,#5dffb0,#6aa6ff,#c36bff,#ff5f6d)'}
+];
+const nameColorBy=id=>NAME_COLORS.find(c=>c.id===(id||''))||NAME_COLORS[0];
+/* a name in its colour: a flat one, or a gradient running through the letters */
+function paintName(el,id){
+  if(!el) return; const c=nameColorBy(id);
+  el.classList.toggle('nc-grad',!!c.g);
+  if(c.g){ el.style.color=''; el.style.backgroundImage=c.g; }
+  else { el.style.backgroundImage=''; el.style.color=id?c.c:''; }
+}
+/* the same, as attributes for a name written into HTML (someone else's, online) */
+function nameStyle(id){ if(!id) return ''; const c=nameColorBy(id); if(!c.id) return ''; return c.g?` class="nc-grad" style="background-image:${c.g}"`:` style="color:${c.c}"`; }
+/* your three favourites (only characters you own count) */
+function favList(){ const f=Array.isArray(State.favChars)?State.favChars:[]; return [0,1,2].map(i=>f[i]&&byKey(f[i])&&State.unlocked.includes(f[i])?f[i]:null); }
+function favSave(f){ State.favChars=f.map(x=>x||''); saveState(); try{ if(State.online) netBeat(); }catch(e){} }
+
+/* portraits: the cached ones at once, the rest a few at a time */
+function pvFaces(root){
+  const imgs=[...(root||$el('profile-screen')).querySelectorAll('img[data-key]')].filter(im=>{ if(im.getAttribute('src')) return false; const u=Lobby.cachedPortrait(im.dataset.key); if(u){ im.src=u; return false; } return true; });
+  let k=0; (function next(){ if(k>=imgs.length||S.profile.classList.contains('hidden')) return; const im=imgs[k++]; try{ im.src=Lobby.portrait(im.dataset.key); }catch(e){} setTimeout(next,16); })();
+}
+function pvRender(){
+  if(!$el('pvTro')) return;
+  paintName($el('profileUnameDisplay'),State.nameColor);
+  const t=State.equippedTitle; $el('pvTitleNone').style.display=t?'none':''; $el('profileTitleDisplay').classList.toggle('hidden',!t);
+  const hc=byKey(State.selectedChar);
+  $el('pvPlay').innerHTML=hc?`<span>PLAYING AS</span><img alt="" data-key="${hc.key}"><b>${hc.name}</b>${rankBadge(hc.key)}`:'';
+  // trophies, on top
+  const tot=totalTrophies(), wins=Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0), own=CHARACTERS.filter(c=>State.unlocked.includes(c.key));
+  const best=own.reduce((m,c)=>Math.max(m,charRank(c.key)),1);
+  $el('pvTro').innerHTML=`<div class="pvt-main">${TROPHY_SVG}<span><b>${tot.toLocaleString('en-US')}</b><small>TROPHIES</small></span></div>
+    <div class="pvt-st"><span>WINS</span><b>${wins.toLocaleString('en-US')}</b></div>
+    <div class="pvt-st"><span>MATCHES</span><b>${(State.matches||0).toLocaleString('en-US')}</b></div>
+    <div class="pvt-st"><span>CHARACTERS</span><b>${own.length}<em>/ ${CHARACTERS.length}</em></b></div>
+    <div class="pvt-st"><span>BEST RANK</span><b><span class="rank-badge t-${rankTier(best)}"><b>${best}</b></span></b></div>`;
+  // favourites
+  $el('pvFavs').innerHTML=favList().map((k,i)=>{ const c=k&&byKey(k);
+    if(!c) return `<button class="pv-fav empty rx" data-i="${i}"><i>+</i><small>Pick a favourite</small></button>`;
+    return `<button class="pv-fav rx" data-i="${i}" style="--rc:${(RARITY[c.rarity]||{}).color||'#fff'}"><img alt="" data-key="${c.key}"><b>${c.name}</b><span class="pvf-r">${rankBadge(c.key)}<em>${TROPHY_SVG}${charTrophies(c.key)}</em></span></button>`; }).join('');
+  $el('pvFavs').querySelectorAll('.pv-fav').forEach(b=>{ wireRx(b); b.onclick=()=>{ pvOpen('fav',+b.dataset.i); SFX.open(); }; });
+  // the artifacts you have on
+  const eq=artEquippedList(), st=artPlayerStats(), sc=artSetCounts(eq);
+  $el('pvArts').innerHTML=`<div class="opf-slots">${ART_SLOTS.map(s=>{ const a=eq.find(x=>x.slot===s.id);
+      return `<span class="opf-slot${a?' r-'+a.rar+' s-'+a.set:' empty'}" title="${a?ART_RAR[a.rar].name+' · '+ART_SETS[a.set].name+' · Lv '+a.lvl:s.name+' · empty'}">${a?'<span class="at-aura"></span>':''}${artSVG(s.id,a?a.set:'ghost')}${a?'<i>'+a.lvl+'</i>':''}</span>`; }).join('')}</div>
+    <div class="pva-row"><div class="opf-sets">${Object.values(ART_SETS).filter(X=>(sc[X.id]||0)>=2).map(X=>`<span class="opf-set s-${X.id}">${X.name} · ${sc[X.id]>=4?4:2} pieces</span>`).join('')||'<span class="opf-set none">No set bonus</span>'}</div>
+    <div class="opf-as"><span>HP <b>${st.hp}</b></span><span>ATK <b>${Math.round(st.atk)}</b></span><span>CRIT <b>${st.cr}%</b></span><span>CRIT DMG <b>${st.cd}%</b></span></div></div>`;
+  // every character, best first, the locked ones last
+  const list=CHARACTERS.slice().sort((a,b)=>{ const oa=State.unlocked.includes(a.key), ob=State.unlocked.includes(b.key); if(oa!==ob) return ob-oa; return charTrophies(b.key)-charTrophies(a.key)||a.name.localeCompare(b.name); });
+  $el('pvRankSub').textContent=own.length+' of '+CHARACTERS.length+' unlocked · ranked by trophies';
+  $el('pvRanks').innerHTML=list.map(c=>{ const o=State.unlocked.includes(c.key), tr=charTrophies(c.key), p=rankProgress(tr);
+    return `<div class="pv-rk${o?'':' locked'}" title="${c.name}${o?' · '+tr+' trophies':' · locked'}"><img alt="" data-key="${c.key}"><span class="pvr-t"><b>${c.name}</b><span class="pvr-bar"><i style="width:${o?Math.round(p.k*100):0}%"></i></span><em>${o?tr+(p.next?' / '+p.next:' · MAX'):'Locked'}</em></span>${o?rankBadge(c.key):'<span class="lock-glyph small"></span>'}</div>`; }).join('');
+  pvFaces();
+}
+/* the little window: picture & frame, name, title, or a favourite */
+function pvOpen(p,i){
+  const pop=$el('pvPop');
+  pop.querySelectorAll('.pv-pane').forEach(x=>x.classList.toggle('on',x.dataset.p===p));
+  $el('pvPopT').textContent=p==='pic'?'PICTURE & FRAME':p==='name'?'NAME':p==='title'?'TITLE':'FAVOURITE '+(i+1);
+  if(p==='name') pvColors();
+  if(p==='fav') pvFavPick(i);
+  pop.classList.add('on'); pop.querySelector('.pv-body').scrollTop=0;
+}
+function pvClose(){ $el('pvPop').classList.remove('on'); }
+function pvColors(){
+  const box=$el('nameColors'), cur=State.nameColor||'';
+  box.innerHTML=NAME_COLORS.map(c=>`<button class="pv-col rx${cur===c.id?' on':''}" data-c="${c.id}" title="${c.name}"><b${c.g?` class="nc-grad" style="background-image:${c.g}"`:` style="color:${c.c}"`}>Aa</b><small>${c.name}</small></button>`).join('');
+  box.querySelectorAll('.pv-col').forEach(b=>{ b.onclick=()=>{ State.nameColor=b.dataset.c; saveState(); pvColors(); pvRender(); refreshHub(); SFX.press(); }; });
+  const pv=$el('pvNamePrev'); pv.textContent=State.username||'Player'; paintName(pv,State.nameColor);
+}
+function pvFavPick(i){
+  const box=$el('favPick'), fav=favList(), cur=fav[i], own=CHARACTERS.filter(c=>State.unlocked.includes(c.key));
+  $el('pvFavHint').innerHTML='<span>Pick who goes in slot '+(i+1)+'. Other players see your favourites when they open your profile.</span>'+(cur?'<button class="pv-rm rx" id="pvFavRm">TAKE OUT '+byKey(cur).name.toUpperCase()+'</button>':'');
+  box.innerHTML=own.map(c=>{ const at=fav.indexOf(c.key);
+    return `<button class="pv-fc rx${at===i?' on':at>=0?' used':''}" data-k="${c.key}"><img alt="" data-key="${c.key}"><b>${c.name}</b>${rankBadge(c.key)}${at>=0?'<i>'+(at+1)+'</i>':''}</button>`; }).join('');
+  box.querySelectorAll('.pv-fc').forEach(b=>{ b.onclick=()=>{ const f=favList(), k=b.dataset.k, j=f.indexOf(k); if(j>=0&&j!==i) f[j]=f[i]; f[i]=k; favSave(f); pvClose(); pvRender(); SFX.press(); }; });
+  const rm=$el('pvFavRm'); if(rm) rm.onclick=()=>{ const f=favList(); f[i]=null; favSave(f); pvClose(); pvRender(); SFX.back(); };
+  pvFaces(box);
+}
+$el('pvAv').addEventListener('click',()=>{ pvOpen('pic'); SFX.open(); });
+$el('pvName').addEventListener('click',()=>{ pvOpen('name'); SFX.open(); });
+$el('pvTitle').addEventListener('click',()=>{ pvOpen('title'); SFX.open(); });
+$el('pvPopX').addEventListener('click',()=>{ pvClose(); SFX.back(); });
+$el('pvPop').addEventListener('click',e=>{ if(e.target===$el('pvPop')) pvClose(); });
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&$el('pvPop').classList.contains('on')){ e.stopImmediatePropagation(); e.preventDefault(); pvClose(); } },true);
+$el('newUsernameInput').addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Enter') $el('renameBtn').click(); });
 
 /* ---------- shop ----------
    Five bundles that change every 10 minutes, and the BEAST characters, on
@@ -22160,7 +22409,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.20.2';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.21.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -22242,7 +22491,7 @@ function netInfo(){
     tr:totalTrophies(),ch:State.selectedChar,cr:charRank(State.selectedChar),
     cc:CHARACTERS.filter(c=>State.unlocked.includes(c.key)).length,ct:CHARACTERS.length,pc:petsOwned().length,pt:PETS.length,
     ar:eq.map(a=>[a.slot,a.rar,a.set,a.lvl]),as:[st.hp,Math.round(st.atk),st.cr,st.cd],sb:sets,
-    w:Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0),cd:State.teamCode,s:netStatus(),v:NET_VER,gv:LUNIVE_VER,dv:NET_DEV,t:Date.now()};
+    w:Object.values(State.winsByChar||{}).reduce((a,b)=>a+(+b||0),0),nc:State.nameColor||'',fv:favList().filter(Boolean).map(k=>[k,charRank(k)]),cd:State.teamCode,s:netStatus(),v:NET_VER,gv:LUNIVE_VER,dv:NET_DEV,t:Date.now()};
 }
 function netEnable(on){
   State.online=!!on; saveState();
@@ -22588,13 +22837,13 @@ function netPaint(){
   const P=NET.party, mate=P?(NET.peers.get(P.mate)||P.info):null;
   const stTxt=NET.st==='online'?(peers.length+1)+' ONLINE':NET.st==='connecting'?'CONNECTING…':'OFFLINE';
   const row=p=>`<button class="op-row rx" data-id="${p.id}"><span class="op-av">${framedHTML(netAvatar(p.pf),frameById(p.fr))}</span>
-    <span class="op-t"><b>${netEsc(p.n)}</b><small class="st-${p.s}">${NET_ST[p.s]||''}${!p.gv||netVerCmp(p.gv,LUNIVE_VER)<0?' · old version':''}</small></span><span class="op-tr">${TROPHY_SVG}${(p.tr||0).toLocaleString('en-US')}</span></button>`;
+    <span class="op-t"><b${nameStyle(p.nc)}>${netEsc(p.n)}</b><small class="st-${p.s}">${NET_ST[p.s]||''}${!p.gv||netVerCmp(p.gv,LUNIVE_VER)<0?' · old version':''}</small></span><span class="op-tr">${TROPHY_SVG}${(p.tr||0).toLocaleString('en-US')}</span></button>`;
   el.innerHTML=`<div class="op-head"><i class="op-dot ${NET.st}"></i><b>${stTxt}</b><em>players</em></div>
     ${NET.newer?'<div class="op-upd"><span><b>NEW VERSION OUT</b>Players on it can\'t see you until you reload</span><button class="op-reload rx" id="opReload">RELOAD</button></div>':''}
     <div class="op-code"><span>YOUR TEAM CODE</span><b id="opCode" title="Click to copy">${(State.teamCode||'').replace(/(\d{3})(\d{4})/,'$1 $2')}</b>
       <button class="op-join rx" id="opJoin">JOIN A TEAM</button></div>
     ${P?`<div class="op-party"><span class="op-av">${framedHTML(netAvatar(mate&&mate.pf),frameById(mate&&mate.fr))}</span>
-      <span class="op-t"><small>${P.lead===NET.id?'YOUR TEAMMATE':'YOUR LEADER'}</small><b>${netEsc(mate&&mate.n||'…')}</b><em class="op-pst" data-st="${netMateStatus()}">${PST_TXT[netMateStatus()]}</em></span><button class="op-leave rx" id="opLeave">LEAVE</button></div>`:''}
+      <span class="op-t"><small>${P.lead===NET.id?'YOUR TEAMMATE':'YOUR LEADER'}</small><b${nameStyle(mate&&mate.nc)}>${netEsc(mate&&mate.n||'…')}</b><em class="op-pst" data-st="${netMateStatus()}">${PST_TXT[netMateStatus()]}</em></span><button class="op-leave rx" id="opLeave">LEAVE</button></div>`:''}
     ${NET.pending?'<div class="op-wait">Joining '+NET.pending.code+'…</div>':''}
     <div class="op-list">${NET.st!=='online'?'<div class="op-empty">'+(NET.st==='connecting'?'Connecting to the online servers…':'Can\'t reach the online servers. Trying again…')+'</div>':
       peers.length?peers.map(row).join(''):'<div class="op-empty">No one else is online right now. Share your team code with a friend!</div>'}${NET.st==='online'?netOldHTML():''}</div>
@@ -22645,13 +22894,14 @@ function netProfile(id){
   el.innerHTML=`<div class="opf-card">
     <button class="aa-x rx opf-x" id="opfX" aria-label="Close">×</button>
     <div class="opf-top"><span class="opf-av">${framedHTML(netAvatar(p.pf),frameById(p.fr))}</span>
-      <div class="opf-who"><b>${netEsc(p.n)}</b><span class="opf-title"></span><small class="st-${p.s}">${NET_ST[p.s]||''}</small></div></div>
+      <div class="opf-who"><b${nameStyle(p.nc)}>${netEsc(p.n)}</b><span class="opf-title"></span><small class="st-${p.s}">${NET_ST[p.s]||''}</small></div></div>
     <div class="opf-stats">
       <div><span>TROPHIES</span><b>${TROPHY_SVG}${(p.tr||0).toLocaleString('en-US')}</b></div>
       <div><span>CHARACTERS</span><b>${p.cc||0}<em>/ ${p.ct||CHARACTERS.length}</em></b></div>
       <div><span>PETS</span><b>${p.pc||0}<em>/ ${p.pt||PETS.length}</em></b></div>
       <div><span>WINS</span><b>${(p.w||0).toLocaleString('en-US')}</b></div>
     </div>
+    ${(p.fv&&p.fv.length)?'<div class="opf-sec">FAVOURITE CHARACTERS</div><div class="opf-favs">'+p.fv.map(([k,r])=>{ const c=byKey(k); return c?'<span class="opf-fav"><img alt="" data-key="'+k+'"><b>'+c.name+'</b><span class="rank-badge t-'+rankTier(r||1)+'"><b>'+(r||1)+'</b></span></span>':''; }).join('')+'</div>':''}
     <div class="opf-sec">PLAYING AS</div>
     <div class="opf-char">${ch?`<img alt="" data-key="${ch.key}"><b>${ch.name}</b><span class="rank-badge t-${rankTier(p.cr||1)}"><b>${p.cr||1}</b></span>`:'—'}</div>
     <div class="opf-sec">ARTIFACTS</div>
@@ -22661,7 +22911,7 @@ function netProfile(id){
     ${!NET.party&&p.s!=='match'?`<button class="opf-inv rx" id="opfInv">INVITE TO YOUR TEAM</button>`:''}
   </div>`;
   if(p.ti) el.querySelector('.opf-title').appendChild(t);
-  const im=el.querySelector('img[data-key]'); if(im){ const u=Lobby.cachedPortrait(im.dataset.key); im.src=u||Lobby.portrait(im.dataset.key); }
+  el.querySelectorAll('img[data-key]').forEach(im=>{ const u=Lobby.cachedPortrait(im.dataset.key); im.src=u||Lobby.portrait(im.dataset.key); });
   el.classList.add('on');
   const close=()=>{ el.classList.remove('on'); };
   $el('opfX').onclick=()=>{ close(); SFX.back(); };
