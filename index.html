@@ -378,6 +378,18 @@ body.lite-ui #hub .reticle *{animation:none !important;}
 /* the three modes: wider cards, the map pool under the description */
 .map-grid.modes{grid-template-columns:repeat(3,minmax(0,1fr));width:min(1020px,calc(100vw - 40px));}
 .map-grid.modes .mcard{min-height:280px;}
+.mode-cats{position:absolute;left:50%;top:120px;transform:translateX(-50%);display:flex;justify-content:center;gap:6px;padding:5px;border-radius:15px;width:max-content;max-width:94vw;background:rgba(10,12,22,.55);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:relative;z-index:2;}
+.mode-cats button{border:0;border-radius:11px;padding:9px 24px 8px;background:transparent;color:rgba(255,255,255,.72);font:800 13px/1 var(--ui);letter-spacing:.16em;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:background .15s,color .15s;}
+.mode-cats button small{font:600 9.5px/1 var(--ui);letter-spacing:.06em;opacity:.65;}
+.mode-cats button:hover{color:#fff;background:rgba(255,255,255,.08);}
+.mode-cats button.on{background:#fff;color:#0b0d16;}
+.mode-cats button.on[data-c="online"]{background:linear-gradient(135deg,#d6ffe6,#5dff9a);color:#06240f;}
+.mode-cats button.on[data-c="events"]{background:linear-gradient(135deg,#ffd6de,#ff4a6a);color:#2a0610;}
+@media (min-width:861px) and (min-height:501px){ #mapGrid.map-grid.modes{grid-template-columns:repeat(var(--n,3),minmax(0,1fr));width:min(calc(var(--n,3) * 340px),calc(100vw - 40px));} }
+@media (max-width:860px),(max-height:500px){ .map-grid.modes{justify-content:safe center;} }
+.mcard.soon{cursor:default;filter:saturate(.35) brightness(.72);} .mcard.soon:hover{transform:none;}
+.mcard.soon .mc-sel{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+@media(max-width:560px){ .mode-cats button{padding:8px 14px 7px;font-size:12px;} }
 .map-grid.modes .mc-art{height:118px;}
 .map-grid.modes .mc-art svg{width:56px;height:56px;}
 .map-grid.modes .mc-name{font-size:30px;}
@@ -1374,7 +1386,7 @@ body.dg-seeker #ultBar{background:linear-gradient(90deg,#ff9bb0,#ff3a5a) !import
 .rt-total{display:flex;align-items:center;gap:8px;font-family:var(--display);}
 .rt-total .tro-ic{width:34px;height:34px;} .rt-total b{font-size:40px;line-height:1;font-weight:400;} .rt-total small{font-family:var(--ui);font-size:10px;letter-spacing:.24em;color:var(--dim);align-self:flex-end;margin-bottom:6px;}
 .rt-next{font-family:var(--ui);font-size:13px;color:var(--dim);letter-spacing:.04em;} .rt-next b{color:var(--paper);}
-#roadClaimAll{margin:0;padding:10px 22px;font-size:15px;} #roadClaimAll.hidden{display:none;}
+#roadClaimAll{margin:0;padding:10px 22px;font-size:15px;} #roadClaimAll.hidden{display:none;} #roadClaimAll:disabled{opacity:.4;filter:grayscale(.7);cursor:default;pointer-events:none;}
 .road-wrap{position:absolute;left:0;right:0;top:188px;bottom:22px;z-index:3;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
 .road{position:relative;height:100%;min-height:260px;}
@@ -2895,7 +2907,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.18.1 · BETA</span>
+    <span class="hub-version">VERSION 3.19.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -2904,6 +2916,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 <div id="maps-screen" class="screen hidden">
   <button class="back-chip b3 plum rx" data-back><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>BACK</button>
   <div class="panel-head"><div class="panel-title">Game Modes</div><div class="panel-sub">Pick a mode · the map is random</div></div>
+  <div class="mode-cats" id="modeCats"></div>
   <div class="map-grid" id="mapGrid"></div>
 </div>
 
@@ -3058,7 +3071,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.18.1</div></div>
+</svg><div class="set-ver">VERSION 3.19.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3957,6 +3970,17 @@ const SFX=(function(){
         noise(b,{hz:3800,q:3,dur:.03,peak:.12,delay:.05}); tone(b,{type:'triangle',f:5200,f1:4800,dur:.04,peak:.03,delay:.42}); tone(b,{type:'triangle',f:4600,dur:.03,peak:.02,delay:.55}); },
       rack(){ if(!ready()) return; const b=tbIn({gain:.9}); noise(b,{hz:2400,q:2,dur:.05,peak:.14}); tone(b,{type:'square',f:700,dur:.02,peak:.04}); noise(b,{hz:3200,q:2.5,dur:.04,peak:.16,delay:.12}); tone(b,{type:'square',f:1100,dur:.015,peak:.05,delay:.12}); },
       ricochet(at){ if(!ready()) return; const b=tb(at); noise(b,{hz:2600,q:2,dur:.06,peak:.18}); tone(b,{f:2600+Math.random()*1200,f1:900,dur:.25,peak:.025,delay:.01,send:.4}); },
+      /* the submachine gun: short and snappy, fourteen a second */
+      smg(){ if(!ready()) return; const b=tbIn({gain:.8});
+        noise(b,{ft:'lowpass',hz:6500,hz2:900,dur:.09,peak:.75,atk:.001}); tone(b,{f:180,f1:70,dur:.08,peak:.5,atk:.001}); noise(b,{hz:2400,q:.7,dur:.18,peak:.1,atk:.001}); noise(b,{hz:4200,q:3,dur:.02,peak:.06,delay:.03}); },
+      /* the AK: a heavier crack with a ring to it */
+      ak(){ if(!ready()) return; const b=tbIn({gain:1});
+        noise(b,{ft:'lowpass',hz:7500,hz2:400,dur:.2,peak:.95,atk:.001}); tone(b,{f:130,f1:42,dur:.18,peak:.8,atk:.001}); noise(b,{hz:1500,q:.6,dur:.42,peak:.16,atk:.001});
+        tone(b,{type:'triangle',f:2900,f1:2700,dur:.06,peak:.02,delay:.01}); },
+      /* the rifle: one enormous shot, the room ringing, then the bolt going back and forward */
+      rifle(){ if(!ready()) return; const b=tbIn({gain:1.25});
+        noise(b,{ft:'lowpass',hz:9000,hz2:250,dur:.55,peak:1,atk:.001}); tone(b,{f:90,f1:30,dur:.6,peak:1,atk:.001}); noise(b,{hz:900,q:.5,dur:1.1,peak:.22,atk:.001});
+        noise(b,{hz:2800,q:3,dur:.04,peak:.14,delay:.5}); tone(b,{type:'square',f:600,dur:.02,peak:.04,delay:.5}); noise(b,{hz:3400,q:3,dur:.04,peak:.16,delay:.72}); tone(b,{type:'square',f:1000,dur:.015,peak:.05,delay:.72}); },
       gun(){ if(!ready()) return; const b=tb({gain:1.6});
         noise(b,{ft:'lowpass',hz:6000,hz2:400,dur:.35,peak:.9,atk:.001,send:1.2}); tone(b,{f:90,f1:30,dur:.5,peak:.9,atk:.001}); noise(b,{hz:1500,q:.5,dur:1.8,peak:.12,delay:.05,send:1.6});
         const bi=tbIn({gain:1}); tone(bi,{f:5200,dur:3.5,peak:.03,atk:.05,delay:.1}); },
@@ -13652,20 +13676,45 @@ CMD.items.forEach((b,i)=>{
 });
 $el('cmdList').addEventListener('pointerleave',()=>{ if(!CMD.keys) cmdLight(-1); });
 /* ---------- choosing a game mode (the map is random) ---------- */
-function renderMaps(){
+/* the modes come in three groups: against bots, against real players, and the limited events */
+const MODE_CATS=[
+  {id:'offline',name:'OFFLINE',sub:'Against bots',modes:['last','exec','hide']},
+  {id:'online',name:'ONLINE',sub:'Real players',modes:['duel','duo'],soon:[{id:'hide',name:'Hide & Seek Online',tag:'ONLINE',art:['#0a0716','#5dff9a','#3a2a5c','#0a1228']},{id:'truth',name:'The Truth Online',tag:'CO-OP',art:['#0c0608','#5dff9a','#2a1416','#0a0708']}]},
+  {id:'events',name:'EVENTS',sub:'Limited',modes:['truth']}];
+let MODE_CAT=null;
+const modeCatOf=id=>(MODE_CATS.find(c=>c.modes.includes(id))||MODE_CATS[0]).id;
+function renderModeCats(){
+  const box=document.getElementById('modeCats'); if(!box) return;
+  box.innerHTML=MODE_CATS.map(c=>`<button class="rx${c.id===MODE_CAT?' on':''}" data-c="${c.id}">${c.name}<small>${c.sub}</small></button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ if(MODE_CAT===b.dataset.c) return; MODE_CAT=b.dataset.c; SFX.toggle&&SFX.toggle(true); renderMaps(MODE_CAT); }));
+}
+/* the tabs sit just above the cards, wherever the cards end up on this screen */
+function placeModeCats(){ const box=document.getElementById('modeCats'), g=document.getElementById('mapGrid'); if(!box||!g||!g.offsetParent) return;
+  const top=g.getBoundingClientRect().top-box.offsetHeight-12, head=document.querySelector('#maps-screen .panel-head'), hb=head?head.getBoundingClientRect().bottom+8:0;
+  box.style.top=Math.max(hb,top)+'px'; }
+addEventListener('resize',()=>{ try{ placeModeCats(); }catch(e){} });
+function renderMaps(cat){
   const g=document.getElementById('mapGrid'), cur=curMode().id;
+  MODE_CAT=cat||modeCatOf(cur); renderModeCats();
+  const C=MODE_CATS.find(c=>c.id===MODE_CAT);
   g.classList.add('modes');
-  g.innerHTML=MODES.map(M=>{ const a=M.art, sel=cur===M.id;
+  g.innerHTML=MODES.filter(M=>C.modes.includes(M.id)).map(M=>{ const a=M.art, sel=cur===M.id;
     const maps=M.maps.map(id=>BIOMES[id].name);
     return `<button class="mcard b3 rx${sel?' sel':''}${M.id==='hide'?' dun':''}${M.id==='exec'?' exec':''}${M.event?' truth':''}${M.online?' online'+(State.online?'':' off'):''}" data-mode="${M.id}" style="--a:${a[0]};--b:${a[1]};--c:${a[2]};--d:${a[3]}">
       <span class="mc-art"><i class="mc-hill h1"></i><i class="mc-hill h2"></i>${modeSvg(M.id)}</span>
       <span class="mc-body"><span class="mc-mode">${M.tag}</span>${M.isNew?'<span class="mc-new">NEW</span>':''}${M.event?'<span class="mc-ev">LIMITED</span>':''}
       <b class="mc-name">${M.name}</b>
       <span class="mc-maps">${M.event?'Solo · First person · Whitmore Hill':maps.length>1?'Random map · '+maps.length+' maps':'Map · '+maps[0]}</span>${M.online&&!State.online?'<span class="mc-off">Turn on Online mode in Settings</span>':''}</span>
-      <span class="mc-sel">${sel?'SELECTED':'SELECT'}</span></button>`; }).join('');
-  g.querySelectorAll('.mcard').forEach(b=>{ wireRx(b); b.addEventListener('click',()=>{
+      <span class="mc-sel">${sel?'SELECTED':'SELECT'}</span></button>`; }).join('')+
+    (C.soon||[]).map(M=>{ const a=M.art; return `<div class="mcard b3 soon${M.id==='truth'?' truth':''}" style="--a:${a[0]};--b:${a[1]};--c:${a[2]};--d:${a[3]}">
+      <span class="mc-art"><i class="mc-hill h1"></i><i class="mc-hill h2"></i>${modeSvg(M.id)}</span>
+      <span class="mc-body"><span class="mc-mode">${M.tag}</span><b class="mc-name">${M.name}</b><span class="mc-maps">With your teammate</span></span>
+      <span class="mc-sel">NEXT UPDATE</span></div>`; }).join('');
+  g.style.setProperty('--n',g.querySelectorAll('.mcard').length);
+  requestAnimationFrame(placeModeCats);
+  g.querySelectorAll('button.mcard').forEach(b=>{ wireRx(b); b.addEventListener('click',()=>{
     if(State.selectedMode===b.dataset.mode){ SFX.back(); showHub(); return; }
-    State.selectedMode=b.dataset.mode; saveState(); SFX.toggle(true); renderMaps(); refreshHub(); }); });
+    State.selectedMode=b.dataset.mode; saveState(); SFX.toggle(true); renderMaps(MODE_CAT); refreshHub(); }); });
 }
 function showHub(){
   show('hub'); cmdLight(-1);
@@ -14441,6 +14490,9 @@ function applyAdmin(){
   (EXCL_PFPS||[]).forEach(p=>{ if(!State.exclPfps.includes(p.id)) State.exclPfps.push(p.id); });
   SHOP_TITLES.concat(EXCL_TITLES).forEach(t=>{ if(!State.titlesOwned.includes(t)) State.titlesOwned.push(t); });
   State.truthSalvia=true;
+  if(!State.trophies||typeof State.trophies!=='object') State.trophies={};
+  CHARACTERS.forEach(ch=>{ State.trophies[ch.key]=Math.max(charTrophies(ch.key),390); });
+  State.roadMax=Math.max(State.roadMax||0,totalTrophies());
   adminRelics();
 }
 /* one Beast relic for every slot of every set, at level 20 (only the ones you don't have yet, and only while there's room) */
@@ -15168,7 +15220,7 @@ function renderRoad(scroll){
   document.getElementById('roadTotal').textContent=tot.toLocaleString('en-US');
   const next=ROAD.find(n=>n.t>mx), cl=roadClaimable().length;
   document.getElementById('roadNext').innerHTML=cl?`<b>${cl}</b> reward${cl>1?'s':''} waiting`:next?`Next reward at <b>${next.t.toLocaleString('en-US')}</b>`:'<b>Every reward claimed</b>';
-  document.getElementById('roadClaimAll').classList.toggle('hidden',cl<2);
+  { const ca=document.getElementById('roadClaimAll'); ca.classList.remove('hidden'); ca.disabled=!cl; ca.textContent=cl?'CLAIM ALL ('+cl+')':'CLAIM ALL'; }
   road.querySelectorAll('.rn-claim').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const t=+b.closest('.rnode').dataset.t; roadTake([ROAD.find(n=>n.t===t)]); }));
   if(scroll){ const wrap=document.getElementById('roadWrap'), first=ROAD.find(n=>n.t<=mx&&!got.includes(n.t));
     const x=first?ROAD.indexOf(first)*RD_NODE_W:roadX(tot); wrap.scrollLeft=Math.max(0,x-wrap.clientWidth*.35); }
@@ -22076,7 +22128,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=4, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.18.1';
+const NET_VER=4, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.19.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -24112,7 +24164,7 @@ const Truth=(function(){
   /* the needles: colour and what it does (the ledger in the pharmacy says which is which) */
   const NEEDLES={heavy:{col:0xd08a2a,name:'amber'},blur:{col:0xdfe8ee,name:'clear'},halluc:{col:0x2a6aff,name:'blue'},vertigo:{col:0x3ad060,name:'green'},
     numb:{col:0x8a9098,name:'grey'},rush:{col:0xe0302a,name:'red'},mirror:{col:0x9a4ae0,name:'violet'},bright:{col:0xffd23a,name:'gold'},
-    deaf:{col:0x1a1a1a,name:'black'},dark:{col:0x2a2a8a,name:'indigo'},drowse:{col:0xf2eee4,name:'milky'},lethal:{col:0xb4d020,name:'yellow-green'},wake:{col:0xfff4e0,name:'white'}};
+    deaf:{col:0x1a1a1a,name:'black'},dark:{col:0x2a2a8a,name:'indigo'},drowse:{col:0xf2eee4,name:'milky'},lethal:{col:0xb4d020,name:'yellow-green'},wake:{col:0xfff4e0,name:'white'},clear:{col:0x5ff0ff,name:'glowing'}};
 
   /* ---------- building: static parts are collected per material and merged ---------- */
   const _m=new THREE.Matrix4(), _q=new THREE.Quaternion(), _e=new THREE.Euler(), _v=new THREE.Vector3(), _v2=new THREE.Vector3(), _s=new THREE.Vector3(), _c=new THREE.Color(), YUP=new THREE.Vector3(0,1,0);
@@ -24702,8 +24754,8 @@ const Truth=(function(){
   function itemName(it){
     if(it.kind==='needle') return 'Syringe ('+NEEDLES[it.fx].name+')';
     if(it.kind==='doc') return it.doc.title;
-    if(it.kind==='drug') return DRUGS[it.d].name+(DRUGS[it.d].n>1?' ('+it.n+' left)':'');
-    return {flashlight:'Flashlight',vial:'Unlabeled vial',blotter:'LSD blotter',gun:'Revolver',bullet:'Bullet',tape:'VHS tape',key:'Small key',pistol:'Pistol'}[it.kind]||'Something';
+    if(it.kind==='drug') return DRUGS[it.d].name+(it.inf?' (never runs out)':DRUGS[it.d].n>1?' ('+it.n+' left)':'');
+    return {flashlight:'Flashlight',vial:'Unlabeled vial',blotter:'LSD blotter',gun:'Revolver',bullet:'Bullet',tape:'VHS tape',key:'Small key',pistol:'Pistol',smg:'Submachine gun',ak:'AK-47',rifle:'Rifle'}[it.kind]||'Something';
   }
   function addNeedle(x,y,z,fx,tray){
     const s=syringe(NEEDLES[fx].col); s.scale.setScalar(1.35); s.rotation.set(0,Math.random()*6.28,Math.PI/2,'YXZ'); s.position.set(x,y+.016,z); T.root.add(s);
@@ -24893,13 +24945,13 @@ const Truth=(function(){
     else if(h){ _Hh.set(-.2,1.06,.33); _pole.set(-.2,-1,-.3); }
     else { _Hh.set(-.24,.86,.03+sw*.12*walk); _pole.set(-.2,0,-1); }
     ikArm(u.arms[-1],_S.set(-.205,1.4,0),_Hh,_pole);
-    u.gun.visible=gun;
+    u.gun.visible=gun; armSelf(u,h);
     if(gun){ _qg.copy(QF).slerp(QA,a); u.gun.quaternion.copy(_qg); _t1.set(0,-.055,.045).applyQuaternion(_qg); u.gun.position.copy(_Hh).sub(_t1); }
   }
 
   /* ---------- the mirror in the white room: it shows you, and what's behind you ---------- */
   function makeMirror(o){
-    const size=T.touchMode?256:512, rt=new THREE.WebGLRenderTarget(size,size*o.h/o.w|0,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat});
+    const size=T.touchMode||GFX.potato?256:1024, rt=new THREE.WebGLRenderTarget(size,size*o.h/o.w|0,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat});
     rt.texture.encoding=THREE.sRGBEncoding;
     const mat=new THREE.ShaderMaterial({uniforms:{tMap:{value:rt.texture},tGrime:{value:T.tx.grime},tCrack:{value:T.tx.cracks},uTM:{value:new THREE.Matrix4()},uCrack:{value:0},uT:{value:0},uFade:{value:1}},
       vertexShader:'uniform mat4 uTM; varying vec4 vP; varying vec2 vUv; void main(){ vUv=uv; vP=uTM*vec4(position,1.); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
@@ -26472,7 +26524,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     salviaReset();
     drugReset(); T.fx={}; T.poison=null; T.lsd=null; T.inv=T.inv.filter(isSalvia); T.invSel=0; T.flashOn=false; T.echo=[]; T.blackout=0; T.aimK=0; T.gy=0; T.col=null;
     for(const it of T.items){ if(T.inv.includes(it)) continue; it.taken=false; it.obj.visible=true; if(it.n0!==undefined) it.n=it.n0; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; }
-    pistolReset();
+    armReset();
     T.bulletBack=0; herHide(false); closePhantom(true); T.fadeOut=null; if(T.fig){ T.root.remove(T.fig.m); T.fig=null; }
     T.deaths++; T.dRoll=0; T.black=0; T.white=0; T.pulse=0; T.stat=0;
     const P=T.p; Object.assign(P,{x:3.3,z:7.6,y:.98,yaw:Math.PI+.35,pitch:1.42,vx:0,vz:0,stam:1,exh:0,exK:0});
@@ -26803,7 +26855,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
       else { b.position.copy(m.billP); b.quaternion.copy(m.billQ); }
       if(e>.65&&!h.act.sn){ h.act.sn=1; SFX.tr.sniff(); }
       if(e>.65&&e<1.4){ L.scale.x=.058*(1-s); L.position.x=-.004+.029*s; }
-      if(e>1.36&&!h.act.hit){ h.act.hit=1; L.visible=false; it.n--; T.kick=.5; takeDrug('cocaine'); }
+      if(e>1.36&&!h.act.hit){ h.act.hit=1; L.visible=false; if(!it.inf) it.n--; T.kick=.5; takeDrug('cocaine'); }
       done=e>1.9;
     } else if(D.use==='bump'){ // the key into the bag, a little heap on its tip, up to your nose
       const kk=U.key, heap=kk.userData.heap, k=ease(clamp((e-.55)/.4,0,1))*(1-ease(clamp((e-1.35)/.4,0,1)));
@@ -26838,7 +26890,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
       if(e>1.05&&!h.act.hit){ h.act.hit=1; SFX.tr.gulp(); it.n--; takeDrug('rx'); }
       done=e>1.95;
     }
-    if(done){ T.lookDown=0; if(it.n<=0){ consume(it); unequip(true); } else h.act=null; }
+    if(done){ T.lookDown=0; if(it.inf&&U.mir) U.mir.userData.line.forEach(l=>l.visible=true); if(it.n<=0){ consume(it); unequip(true); } else h.act=null; }
   }
   function injectHand(h,dt,sway,bob,up){
     const U=h.vm.userData, S=U.syr, it=h.it, restP=_d1.set(lerp(.26,.16,up)+sway,lerp(-.32,-.14,up)+bob,-.34);
@@ -27064,7 +27116,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
   /* ---------- what you carry ---------- */
   const DESC={
     flashlight:()=>'Heavy, rubber grip. The beam shakes when something is near.',
-    needle:it=>it.fx==='drowse'?'Milky. Someone wrote K-0 on the barrel in a child\'s hand.':it.fx==='wake'?'Someone wrote WAKE UP on the barrel. It\'s your handwriting.':'Something '+NEEDLES[it.fx].name+' in a glass barrel.',
+    needle:it=>it.fx==='drowse'?'Milky. Someone wrote K-0 on the barrel in a child\'s hand.':it.fx==='wake'?'Someone wrote WAKE UP on the barrel. It\'s your handwriting.':it.fx==='clear'?'It glows a faint blue. Someone wrote CLEAR on the barrel in marker. Whatever you took, whatever you see, this takes it all away.':'Something '+NEEDLES[it.fx].name+' in a glass barrel.',
     vial:()=>'No label. The cork is new.',
     blotter:()=>'A square of paper with an eye printed on it.',
     gun:it=>it.final?'A revolver. One chamber is loaded.':'A revolver. Six chambers. '+(hasBullet()?'One is loaded.':'All empty.'),
@@ -27073,10 +27125,13 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     key:()=>'A small brass key. The tag says SAFE.',
     doc:it=>it.doc.title+'. You can read it again.',
     drug:it=>DRUGS[it.d].desc,
-    pistol:()=>'A night guard\'s pistol, heavy and cold. However many times you fire it, it never clicks empty. Nothing in this place runs out.'
+    pistol:()=>'A night guard\'s pistol, heavy and cold. However many times you fire it, it never clicks empty. Nothing in this place runs out.',
+    smg:()=>'A short black submachine gun. Hold the trigger and it doesn\'t stop. The magazine never empties.',
+    ak:()=>'An AK-47 with a worn wooden stock. Heavy, loud, and it keeps going as long as you hold the trigger.',
+    rifle:()=>'A long hunting rifle with a scope. One shot at a time, and every one of them is enormous. Right click to look through the scope.'
   };
-  const ACT={flashlight:'Hold',needle:'Hold',vial:'Hold',blotter:'Hold',gun:'Hold',bullet:'Load',doc:'Read',drug:'Hold',pistol:'Hold'};
-  const USE={flashlight:'click to switch it on or off',needle:'click to inject',vial:'click to drink',blotter:'click to put it on your tongue',gun:'click to put it to your head',pistol:'click to fire'};
+  const ACT={flashlight:'Hold',needle:'Hold',vial:'Hold',blotter:'Hold',gun:'Hold',bullet:'Load',doc:'Read',drug:'Hold',pistol:'Hold',smg:'Hold',ak:'Hold',rifle:'Hold'};
+  const USE={flashlight:'click to switch it on or off',needle:'click to inject',vial:'click to drink',blotter:'click to put it on your tongue',gun:'click to put it to your head',pistol:'click to fire',smg:'hold the mouse to fire',ak:'hold the mouse to fire',rifle:'click to fire · right click for the scope'};
   const useOf=it=>it.kind==='drug'?DRUGS[it.d].verb:USE[it.kind];
   const ICON={
     flashlight:'<rect x="5" y="17" width="16" height="7" rx="2"/><path d="M21 16l6-4v17l-6-4z"/><path d="M28 18l3-1M28 20.5h3.5M28 23l3 1" stroke-width="1.4"/>',
@@ -27088,6 +27143,9 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     doc:'<path d="M8 4h12l5 5v19H8z"/><path d="M20 4v5h5M11 14h11M11 18h11M11 22h8"/>',
     tape:'<rect x="4" y="9" width="24" height="14" rx="1.5"/><circle cx="11" cy="16" r="2.6"/><circle cx="21" cy="16" r="2.6"/><path d="M13.6 16h4.8M8 21h16"/>',
     key:'<circle cx="10" cy="16" r="5"/><path d="M15 16h13M24 16v4M27 16v3"/>',
+    smg:'<path d="M3 11h20v5H13l-1 2H10l-1.4 7H5l1.6-9H3z"/><path d="M23 12h5v2.5h-5M14 16l1.5 8h3l-1.5-8"/>',
+    ak:'<path d="M2 12l9-2h14v4H14l-1 2-5 1.5-6-.5z"/><path d="M25 11h5v2h-5M17 14l3 9 3-1-2.5-8"/>',
+    rifle:'<path d="M1 14l9-1.5h21v2.5H12l-1.6 1.8L2 18z"/><rect x="13" y="8.5" width="9" height="2.6" rx="1"/><path d="M16 11.1v1.4M20 11.1v1.4"/>',
     pistol:'<path d="M4 10h22v5H15l-1.4 2.4H11.5L9.6 27H5.4l2.4-12H4z"/><path d="M11.5 17.4c0 2.2 1.2 3.4 3.4 3.4" stroke-width="1.4"/><path d="M8 12.5h15" stroke-width="1.2"/>',
     drug:'<g transform="rotate(-35 16 16)"><rect x="6" y="12" width="20" height="8" rx="4"/><path class="liq" d="M10 12h6v8h-6a4 4 0 0 1 0-8z"/></g>'
   };
@@ -27133,24 +27191,24 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
     let vm;
     if(it.kind==='flashlight'){ vm=flashMesh(); T.flashOn=true; SFX.tr.click({gain:.9}); }
     else if(it.kind==='gun') vm=gunMesh();
-    else if(it.kind==='pistol'){ vm=pistolMesh(true); SFX.tr.rack&&SFX.tr.rack(); }
+    else if(isArm(it.kind)){ vm=armView(it.kind); SFX.tr.rack&&SFX.tr.rack(); }
     else if(it.kind==='needle') vm=syringe(NEEDLES[it.fx].col);
     else if(it.kind==='vial') vm=vialMesh();
     else if(it.kind==='drug') vm=drugVM(it);
     else { vm=new THREE.Mesh(new THREE.PlaneGeometry(.04,.04),T.mats.blot); }
-    T.cam.add(vm); T.hand={it,vm,t:0,act:null}; SFX.tr.glass(it.kind==='needle'||it.kind==='vial'?1:.3);
+    vm.traverse(o=>o.layers.set(3)); T.cam.add(vm); T.hand={it,vm,t:0,act:null}; SFX.tr.glass(it.kind==='needle'||it.kind==='vial'?1:.3);
   }
   function unequip(silent){ const h=T.hand; if(!h) return;
     T.cam.remove(h.vm); h.vm.traverse(o=>{ if(o.geometry&&!GEOSET.has(o.geometry)) o.geometry.dispose(); }); T.aimK=0;
     if(h.it.kind==='flashlight'){ T.flashOn=false; T.mats._lens.color.setScalar(.05); if(!silent) SFX.tr.click({gain:.6}); }
-    T.hand=null; }
+    T.hand=null; T.trigger=false; T.zoom=false; }
   function consume(it){ T.inv.splice(T.inv.indexOf(it),1); if(T.invSel>=T.inv.length) T.invSel=Math.max(0,T.inv.length-1); }
   /* the click: what the thing in your hand does */
   function handAction(){
     const h=T.hand; if(!h||h.act) return;
     if(T.choice&&h.it.kind==='gun'){ fireChoice(); return; }
     const k=h.it.kind;
-    if(k==='pistol'){ pistolFire(); return; }
+    if(isArm(k)){ armFire(); return; }
     if(k==='flashlight'){ T.flashOn=!T.flashOn; SFX.tr.click({gain:.9}); return; }
     if(k==='gun'){ if(!h.aimOn){ h.aimOn=true; SFX.tr.cock(); T.heartKick=1; if(!T.aimHinted){ T.aimHinted=1; hint(T.touchMode?'tap again to pull the trigger':'click to pull the trigger · Q to lower it'); } }
       else if((h.aimK||0)>.92) fire(); return; }
@@ -27159,7 +27217,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
   function handStep(dt){
     const h=T.hand; if(!h) return; const vm=h.vm, P=T.p, k=h.it.kind;
     if(k==='drug'){ drugHand(h,dt); return; }
-    if(k==='pistol'){ pistolHand(h,dt); return; }
+    if(isArm(k)){ armHand(h,dt); return; }
     const sway=Math.sin(T.t*1.3)*.006, bob=Math.sin(P.bob)*P.bobAmp*.25;
     h.t=Math.min(1,h.t+dt*3); const up=ease(h.t);
     if(k==='gun'){ // held out in front of you; or up, against the side of your head, shaking
@@ -27184,7 +27242,7 @@ void main(){ vec2 uv=vUv; float row=floor(uv.y*120.);
       vm.position.set(lerp(.16,.04,a),lerp(-.14,-.2,a)-drop*.35,lerp(-.34,-.3,a)); vm.quaternion.copy(VM_REST).slerp(VM_JAB,a);
       vm.userData.plunger.position.y=lerp(.06,.014,push); const l=vm.userData.liq; l.scale.y=lerp(.052,.004,push); l.position.y=lerp(-.006,-.029,push);
       if(e>.62&&!h.act.hit){ h.act.hit=1; SFX.tr.inject(); T.pulse=1; T.heartKick=.8; }
-      if(e>1.75){ const it=h.it; consume(it); unequip(true); if(it.kind==='drug') takeDrug(it.d); else if(it.fx==='lethal') startPoison(22); else if(it.fx==='wake') startCollapse('wake'); else giveFx(it.fx,FX_DUR[it.fx]); T.used=(T.used||0)+1; }
+      if(e>1.75){ const it=h.it; consume(it); unequip(true); if(it.kind==='drug') takeDrug(it.d); else if(it.fx==='lethal') startPoison(22); else if(it.fx==='wake') startCollapse('wake'); else if(it.fx==='clear') clearAll(); else giveFx(it.fx,FX_DUR[it.fx]); T.used=(T.used||0)+1; }
     } else if(k==='vial'){
       const a=ease(clamp(e/.6,0,1)), back=ease(clamp((e-1.5)/.4,0,1));
       vm.position.set(lerp(.15,.02,a),lerp(-.17,-.06,a)-back*.4,lerp(-.3,-.2,a)); vm.quaternion.setFromEuler(_e.set(lerp(0,1.9,a),0,lerp(.1,.3,a)));
@@ -27967,7 +28025,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     cam.position.set(P.x+Math.cos(P.yaw)*bx,P.y+(T.inDream||T.inSalvia?T.gy||0:0)+by+heave,P.z-Math.sin(P.yaw)*bx);
     const roll=Math.sin(T.t*.5)*.13*ver+Math.sin(T.t*1.7)*.02*ver-Math.cos(P.bob)*P.bobAmp*.18+(T.dRoll||0)+(T.kick||0)*.02*Math.sin(T.t*60)+(T.aimK||0)*(.09+Math.sin(T.t*1.3)*.012);
     cam.rotation.set(P.pitch+Math.sin(T.t*.7)*.03*ver+(T.kick||0)*.05,P.yaw+Math.sin(T.t*.37)*.05*ver,roll,'YXZ');
-    const fov=66+(P.sprinting?5:0)+Math.sin(T.t*.8)*7*ver+rush*6+T.pulse*4+(T.lsd?Math.sin(T.t*.9)*6*T.lsd.lvl:0)-lv('drowse')*4-(T.aimK||0)*6-(T.phase==='scare'&&T.tp.scare.t>1.1?18:0)+(T.drugFov||0);
+    const fov=66+(P.sprinting?5:0)+Math.sin(T.t*.8)*7*ver+rush*6+T.pulse*4+(T.lsd?Math.sin(T.t*.9)*6*T.lsd.lvl:0)-lv('drowse')*4-(T.aimK||0)*6-(T.phase==='scare'&&T.tp.scare.t>1.1?18:0)+(T.drugFov||0)-(T.zoomK||0)*44;
     T.fov+=(fov-T.fov)*Math.min(1,dt*4); if(Math.abs(cam.fov-T.fov)>.05){ cam.fov=T.fov; cam.updateProjectionMatrix(); }
     drugCam(dt);
   }
@@ -28296,14 +28354,19 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     stains(b,[[97,41,1.6],[93,33,1.2],[101.6,33.6,1]],r);
     papers(b,91.4,31.4,102.6,42,4,r);
   }
-  /* ---------- the night guards' pistols: they never run out ---------- */
+  /* ---------- the night guards' guns: pistols, submachine guns, AK-47s, rifles. None of them ever runs out ---------- */
   const _po=new THREE.Vector3(), _pd=new THREE.Vector3();
+  /* the materials every gun and every pair of hands shares */
+  function armMats(){
+    if(T.mats._pSlide) return;
+    T.mats._pSlide=new THREE.MeshStandardMaterial({color:LCc(0x1d1f23),roughness:.32,metalness:.85}); T.mats._pFrame=new THREE.MeshStandardMaterial({color:LCc(0x141517),roughness:.62,metalness:.15});
+      T.mats._pBright=new THREE.MeshStandardMaterial({color:LCc(0x9a9ca2),roughness:.2,metalness:.95}); T.mats._pDot=new THREE.MeshBasicMaterial({color:LCc(0xd8f0d0),toneMapped:false}); T.mats._pHole=new THREE.MeshBasicMaterial({color:0x000000});
+      T.mats._pSkin=new THREE.MeshStandardMaterial({map:T.tx.skin,color:LCc(0xc9a58c),roughness:.62}); T.mats._pSleeve=new THREE.MeshStandardMaterial({map:T.tx.sheet,color:LCc(0x6e8490),roughness:.95});
+      T.mats._pFlash=new THREE.MeshBasicMaterial({map:T.tx.glowP||(T.tx.glowP=texGlow()),color:LCc(0xffb868),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false});
+  }
   function pistolMesh(view){
     const g=new THREE.Group(), PI=Math.PI;
-    if(!T.mats._pSlide){ T.mats._pSlide=new THREE.MeshStandardMaterial({color:LCc(0x1d1f23),roughness:.32,metalness:.85}); T.mats._pFrame=new THREE.MeshStandardMaterial({color:LCc(0x141517),roughness:.62,metalness:.15});
-      T.mats._pBright=new THREE.MeshStandardMaterial({color:LCc(0x9a9ca2),roughness:.2,metalness:.95}); T.mats._pDot=new THREE.MeshBasicMaterial({color:LCc(0xd8f0d0),toneMapped:false}); T.mats._pHole=new THREE.MeshBasicMaterial({color:0x000000});
-      T.mats._pSkin=new THREE.MeshStandardMaterial({map:T.tx.skin,color:LCc(0xf0dccc),roughness:.6}); T.mats._pSleeve=new THREE.MeshStandardMaterial({map:T.tx.sheet,color:LCc(0xb2c6ce),roughness:.95});
-      T.mats._pFlash=new THREE.MeshBasicMaterial({map:T.tx.glowP||(T.tx.glowP=texGlow()),color:LCc(0xffb868),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}); }
+    armMats();
     const S=T.mats._pSlide, F=T.mats._pFrame, B=T.mats._pBright, D=T.mats._pDot, K=T.mats._pHole;
     const add=(par,geo,m,x,y,z,sx,sy,sz,rx,ry,rz)=>{ const me=new THREE.Mesh(geo,m); me.position.set(x,y,z); me.scale.set(sx,sy,sz); me.rotation.set(rx||0,ry||0,rz||0); par.add(me); return me; };
     const slide=new THREE.Group(); g.add(slide);
@@ -28333,13 +28396,6 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     g.userData.slide=slide; return g;
   }
   /* the one lying on a table: the same shape, merged into three meshes */
-  function pistolWorldMesh(){ const g=new THREE.Group(), b=new Batch(), PI=Math.PI;
-    b.box('dark',0,.021,-.062,.03,.03,.19); for(let i=0;i<6;i++) b.box('rubber',0,.022,.012+i*.0042,.0312,.022,.0016);
-    b.box('rubber',0,0,-.07,.028,.014,.16); b.add('rubber',GEO.tor,0,-.016,-.028,.019,.019,.04,0,PI/2,0);
-    b.add('rubber',GEO.box,0,-.05,.022,.027,.085,.042,-.3,0,0); b.add('rubber',GEO.box,0,-.092,.035,.03,.01,.047,-.3,0,0);
-    b.cyl('steel',0,.018,-.156,.0068,.012,PI/2,0,0); b.box('steel',0,-.013,-.027,.004,.016,.005,.25,0,0);
-    b.flush(g); return g; }
-  function addPistol(x,y,z,ry){ const g=pistolWorldMesh(); g.scale.setScalar(1.25); g.rotation.set(0,ry||0,Math.PI/2,'YXZ'); g.position.set(x,y+.02,z); T.root.add(g); return addItem('pistol',{obj:g,x,y:y+.02,z,r:.2}); }
   function texBulletHole(){ const W=64, c=C(W,W), x=c.getContext('2d'), r=mulberry32(77);
     let g=x.createRadialGradient(32,32,0,32,32,28); g.addColorStop(0,'rgba(10,8,6,.0)'); g.addColorStop(.3,'rgba(150,140,120,.55)'); g.addColorStop(.55,'rgba(60,52,40,.35)'); g.addColorStop(1,'rgba(40,34,26,0)');
     x.fillStyle=g; x.fillRect(0,0,W,W);
@@ -28379,40 +28435,148 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     if(!p){ if(T.puffs.length>=8) p=T.puffs[0]; else { const m=new THREE.MeshBasicMaterial({map:T.tx.glowP||(T.tx.glowP=texGlow()),transparent:true,depthWrite:false}); T.mats['_puff'+T.puffs.length]=m;
         const s=new THREE.Mesh(T.puffGeo,m); T.root.add(s); p={s,t:0}; T.puffs.push(p); } }
     p.s.position.set(x,y,z); p.s.material.color.setHex(col); p.t=.4; p.big=big||1; p.s.visible=true; }
-  function pistolDot(on){ let el=document.getElementById('truthDot');
-    if(!el){ if(!on) return; el=document.createElement('div'); el.id='truthDot'; el.style.cssText='position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:rgba(240,236,228,.8);box-shadow:0 0 0 1px rgba(0,0,0,.55);pointer-events:none;z-index:3;opacity:0;transition:opacity .25s';
-      const ui=$t('truthUI'); if(!ui) return; ui.appendChild(el); }
-    el.style.opacity=on?'1':'0'; }
-  function pistolHand(h,dt){
-    const vm=h.vm, P=T.p, sway=Math.sin(T.t*1.3)*.006, bob=Math.sin(P.bob)*P.bobAmp*.25;
-    h.t=Math.min(1,h.t+dt*3); const up=ease(h.t), k=h.kick||0; h.kick=Math.max(0,k-dt*7);
-    vm.position.set(.13+sway,lerp(-.38,-.16,up)+bob+k*.02,-.32+k*.05); vm.rotation.set(k*.34+(1-up)*.7,.035,0); vm.scale.setScalar(.88);
-    const ud=vm.userData; ud.slide.position.z=k>.62?.026:k/.62*.026;
-    const fl=ud.flash; if((h.flashT||0)>0){ h.flashT-=dt; fl.visible=true; fl.rotation.z=Math.random()*6.28; fl.scale.setScalar(.09+Math.random()*.08); } else fl.visible=false;
+  /* what each one does: how fast it fires, how much it kicks, how wide it sprays; where the hands and the muzzle are */
+  const ARMS={
+    pistol:{name:'Pistol',auto:false,ms:190,kick:1,pitch:.012,spread:0,snd:'pistol'},
+    smg:{name:'Submachine gun',auto:true,ms:70,kick:.4,pitch:.006,spread:.024,snd:'smg',s:.62,p:[.12,-.15,-.3],grip:[0,-.05,.06],fore:[0,-.004,-.21],muz:[0,.037,-.37]},
+    ak:{name:'AK-47',auto:true,ms:100,kick:.65,pitch:.011,spread:.014,snd:'ak',s:.56,p:[.11,-.145,-.3],grip:[0,-.05,.065],fore:[0,0,-.215],muz:[0,.035,-.585]},
+    rifle:{name:'Rifle',auto:false,ms:950,kick:1.5,pitch:.03,spread:0,snd:'rifle',s:.5,p:[.11,-.13,-.3],grip:[0,-.042,.06],fore:[0,-.012,-.25],muz:[0,.045,-.795],zoom:true}
+  };
+  const isArm=k=>!!ARMS[k];
+  /* the guns, built in metres; the barrel points down -z, the grip sits near the origin */
+  function armBuild(b,kind){ const PI=Math.PI;
+    if(kind==='pistol'){
+      b.box('dark',0,.021,-.062,.03,.03,.19); for(let i=0;i<6;i++) b.box('rubber',0,.022,.012+i*.0042,.0312,.022,.0016);
+      b.box('rubber',0,0,-.07,.028,.014,.16); b.add('rubber',GEO.tor,0,-.016,-.028,.019,.019,.04,0,PI/2,0);
+      b.box('rubber',0,-.05,.022,.027,.085,.042,-.3,0,0); b.box('rubber',0,-.092,.035,.03,.01,.047,-.3,0,0);
+      b.cyl('steel',0,.018,-.156,.0068,.012,PI/2,0,0); b.box('steel',0,-.013,-.027,.004,.016,.005,.25,0,0); return; }
+    if(kind==='smg'){
+      b.box('dark',0,.03,-.02,.042,.055,.3); b.box('rubber',0,.022,-.21,.05,.05,.13);
+      for(let i=0;i<5;i++) b.box('dark',0,.0,-.16-i*.022,.052,.006,.012);
+      b.cyl('dark',0,.037,-.315,.011,.09,PI/2,0,0); b.cyl('steel',0,.037,-.362,.008,.012,PI/2,0,0);
+      b.add('dark',GEO.tor,0,.076,-.25,.015,.015,.03,0,PI/2,0); b.box('dark',0,.062,-.25,.008,.022,.008);
+      b.cyl('dark',0,.068,.1,.013,.024,0,0,PI/2); b.box('dark',0,.06,.1,.018,.012,.02);
+      b.box('rubber',0,-.05,.06,.03,.09,.04,-.25,0,0); b.add('dark',GEO.tor,0,-.012,.02,.017,.017,.04,0,PI/2,0); b.box('steel',0,-.01,.018,.004,.014,.005);
+      b.box('dark',0,-.078,-.075,.026,.13,.034,.18,0,0);
+      for(const sx of [-1,1]) b.cyl('steel',sx*.016,.035,.24,.005,.22,PI/2,0,0); b.box('rubber',0,.03,.355,.05,.085,.022);
+      b.box('steel',.022,.04,-.05,.003,.02,.05); b.cyl('dark',-.024,.045,-.12,.006,.04,0,0,PI/2); return; }
+    if(kind==='ak'){
+      b.box('dark',0,.02,0,.046,.06,.27); b.box('dark',0,.056,.005,.043,.014,.25); b.box('dark',.024,.04,.02,.004,.012,.06);
+      b.cyl('dark',0,.035,-.345,.009,.42,PI/2,0,0); b.cyl('dark',0,.063,-.21,.012,.2,PI/2,0,0);
+      b.box('wood',0,.022,-.215,.052,.046,.17); b.box('wood',0,.065,-.23,.042,.02,.13);
+      b.box('dark',0,.052,-.5,.02,.032,.022); b.box('dark',0,.075,-.5,.006,.025,.008); b.cyl('dark',0,.035,-.565,.012,.04,PI/2,0,0);
+      b.box('dark',0,.068,-.08,.03,.012,.034);
+      b.box('wood',0,-.048,.065,.031,.085,.036,-.32,0,0); b.add('dark',GEO.tor,0,-.012,.02,.018,.018,.04,0,PI/2,0); b.box('steel',0,-.01,.02,.004,.016,.005);
+      for(let i=0;i<5;i++) b.box('dark',0,-.03-i*.04,-.045-i*.012-i*i*.006,.028,.048,.062,-i*.16,0,0);
+      b.box('wood',0,-.008,.29,.042,.07,.3,.07,0,0); b.box('dark',0,-.028,.442,.044,.1,.012,.07,0,0); return; }
+    // the rifle: a long wooden stock, a bolt, a scope
+    b.box('wood',0,.005,-.2,.044,.05,.42); b.box('wood',0,-.02,.2,.046,.085,.42,.1,0,0); b.box('wood',0,-.045,.05,.03,.08,.04,-.35,0,0);
+    b.box('dark',0,-.05,.425,.048,.12,.012,.1,0,0);
+    b.cyl('dark',0,.042,.02,.017,.22,PI/2,0,0); b.cyl('dark',0,.045,-.43,.009,.68,PI/2,0,0); b.cyl('dark',0,.045,-.778,.011,.035,PI/2,0,0);
+    b.bar('steel',[.018,.045,.11],[.06,.025,.13],.005); b.sph('steel',.062,.024,.132,.012);
+    b.cyl('dark',0,.1,-.02,.016,.32,PI/2,0,0); b.cyl('dark',0,.1,-.2,.024,.07,PI/2,0,0); b.cyl('dark',0,.1,.15,.021,.05,PI/2,0,0);
+    b.cyl('steel',0,.1,-.236,.021,.004,PI/2,0,0); b.cyl('steel',0,.1,.176,.018,.004,PI/2,0,0);
+    for(const zz of [-.08,.06]) b.box('dark',0,.072,zz,.018,.03,.016);
+    b.cyl('dark',.02,.1,-.02,.008,.02,0,0,PI/2); b.cyl('dark',0,.12,-.02,.008,.02);
+    b.add('dark',GEO.tor,0,-.012,.03,.018,.018,.04,0,PI/2,0); b.box('steel',0,-.01,.03,.004,.016,.005); b.box('dark',0,-.02,-.01,.03,.008,.07);
   }
-  function pistolFire(){
-    const h=T.hand, now=performance.now(); if(!h||now-(T.pAt||0)<190) return; T.pAt=now;
-    h.kick=1; h.flashT=.05; SFX.tr.pistol&&SFX.tr.pistol(); T.flashP.color.setHex(0xffb060); T.flashP.intensity=7;
-    T.heartKick=Math.max(T.heartKick||0,.25); T.p.pitch=clamp(T.p.pitch+.012,-1.4,1.4); T.shots=(T.shots||0)+1;
+  function armWorld(kind){ const g=new THREE.Group(), b=new Batch(); armBuild(b,kind); b.flush(g); return g; }
+  /* one lying on a table, on its side */
+  function addArm(kind,x,y,z,ry){ const g=armWorld(kind); if(kind==='pistol') g.scale.setScalar(1.25); g.rotation.set(0,ry||0,Math.PI/2,'YXZ'); g.position.set(x,y+(kind==='pistol'?.02:.026),z); T.root.add(g);
+    return addItem(kind,{obj:g,x,y:y+.03,z,r:kind==='pistol'?.2:.3}); }
+  function addPistol(x,y,z,ry){ return addArm('pistol',x,y,z,ry); }
+  /* your hands on it: the right round the grip, the left under the front */
+  function viewHand(vm,x,y,z,left){ const sk=T.mats._pSkin, sl=T.mats._pSleeve, g=new THREE.Group(); g.position.set(x,y,z); vm.add(g);
+    const add=(geo,m,px,py,pz,sx,sy,sz,rx,ry,rz)=>{ const me=new THREE.Mesh(geo,m); me.position.set(px,py,pz); me.scale.set(sx,sy,sz); me.rotation.set(rx||0,ry||0,rz||0); g.add(me); return me; };
+    if(!left){ add(GEO.box,sk,.006,-.012,.004,.04,.068,.05,-.3); for(let i=0;i<3;i++) add(GEO.cyl,sk,-.006,-.0-i*.019,-.026+i*.005,.009,.036,.009,0,0,Math.PI/2);
+      add(GEO.cyl,sk,-.016,.016,-.01,.009,.045,.009,Math.PI/2,0,-.15); add(GEO.cyl,sk,.01,-.065,.075,.023,.15,.021,1.1); add(GEO.cyl,sl,.012,-.12,.16,.031,.13,.029,1.1); }
+    else { add(GEO.box,sk,0,-.03,0,.05,.024,.075); for(let i=0;i<4;i++) add(GEO.cyl,sk,-.03,-.014,-.026+i*.017,.008,.04,.008,0,0,.2);
+      add(GEO.cyl,sk,.028,-.018,.01,.009,.04,.009,0,0,-.3); add(GEO.cyl,sk,-.045,-.07,.05,.022,.15,.02,.95,0,.5); add(GEO.cyl,sl,-.085,-.13,.12,.03,.12,.028,.95,0,.5); }
+    return g; }
+  function armView(kind){
+    armMats(); if(kind==='pistol') return pistolMesh(true);
+    const A=ARMS[kind], s=A.s, vm=new THREE.Group(), gun=armWorld(kind); gun.scale.setScalar(s); vm.add(gun);
+    viewHand(vm,A.grip[0]*s,A.grip[1]*s,A.grip[2]*s,false); viewHand(vm,A.fore[0]*s,A.fore[1]*s,A.fore[2]*s,true);
+    const fl=new THREE.Mesh(new THREE.PlaneGeometry(1,1),T.mats._pFlash); fl.position.set(A.muz[0]*s,A.muz[1]*s,A.muz[2]*s-.01); fl.visible=false; vm.add(fl);
+    vm.userData={flash:fl,gun}; return vm; }
+  /* the dot in the middle of the screen while you hold one; the scope's circle while the rifle is up to your eye */
+  function armUI(dot,scope){
+    let el=document.getElementById('truthDot');
+    if(!el&&dot){ el=document.createElement('div'); el.id='truthDot'; el.style.cssText='position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:rgba(240,236,228,.8);box-shadow:0 0 0 1px rgba(0,0,0,.55);pointer-events:none;z-index:3;opacity:0;transition:opacity .25s';
+      const ui=$t('truthUI'); if(ui) ui.appendChild(el); }
+    if(el) el.style.opacity=dot?'1':'0';
+    let sc=document.getElementById('truthScope');
+    if(!sc&&scope){ sc=document.createElement('div'); sc.id='truthScope';
+      sc.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:3;opacity:0;transition:opacity .12s;background:radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 0,rgba(0,0,0,0) 31vmin,rgba(0,0,0,.6) 31.6vmin,#000 33vmin)';
+      sc.innerHTML='<i style="position:absolute;left:50%;top:calc(50% - 31vmin);height:62vmin;width:1px;background:rgba(0,0,0,.8)"></i><i style="position:absolute;top:50%;left:calc(50% - 31vmin);width:62vmin;height:1px;background:rgba(0,0,0,.8)"></i><b style="position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;border:1px solid rgba(200,30,20,.9)"></b>';
+      const ui=$t('truthUI'); if(ui) ui.appendChild(sc); }
+    if(sc) sc.style.opacity=scope?'1':'0'; }
+  function armHand(h,dt){
+    const vm=h.vm, kind=h.it.kind, A=ARMS[kind], P=T.p, sway=Math.sin(T.t*1.3)*.006, bob=Math.sin(P.bob)*P.bobAmp*.25, z=T.zoomK||0;
+    h.t=Math.min(1,h.t+dt*3); const up=ease(h.t), k=h.kick||0; h.kick=Math.max(0,k-dt*(A.auto?12:7));
+    if(kind==='pistol'){ vm.position.set(.13+sway,lerp(-.38,-.16,up)+bob+k*.02,-.32+k*.05); vm.rotation.set(k*.34+(1-up)*.7,.035,0); vm.scale.setScalar(.88);
+      const ud=vm.userData; ud.slide.position.z=k>.62?.026:k/.62*.026; }
+    else { const p=A.p; vm.position.set(lerp(p[0]+sway,0,z),lerp(lerp(p[1]-.22,p[1],up)+bob,-.05,z)+k*.012,p[2]+k*.035);
+      vm.rotation.set(k*.1+(1-up)*.7,lerp(.03,0,z),(A.auto?Math.sin(T.t*60)*.01*k:0)); vm.visible=z<.8; }
+    const fl=vm.userData.flash; if((h.flashT||0)>0){ h.flashT-=dt; fl.visible=true; fl.rotation.z=Math.random()*6.28; fl.scale.setScalar((kind==='pistol'?.09:.13)+Math.random()*.09); } else fl.visible=false;
+  }
+  /* one shot: a crack, a flash, the kick; then where it went */
+  function armFire(){
+    const h=T.hand; if(!h) return; const A=ARMS[h.it.kind]; if(!A) return;
+    const now=performance.now(); if(now-(T.pAt||0)<A.ms) return; T.pAt=now;
+    h.kick=Math.min(1.3,(A.auto?(h.kick||0)*.6:0)+A.kick); h.flashT=.045; SFX.tr[A.snd]&&SFX.tr[A.snd](); T.flashP.color.setHex(0xffb060); T.flashP.intensity=A.auto?5:7;
+    T.heartKick=Math.max(T.heartKick||0,.25); T.p.pitch=clamp(T.p.pitch+A.pitch*(.75+Math.random()*.5)*(1-.5*(T.zoomK||0)),-1.4,1.4); T.p.yaw+=(Math.random()-.5)*A.pitch*.5; T.shots=(T.shots||0)+1;
     if(T.inDream||T.inTape||T.inSalvia) return;
     const cam=T.cam; cam.updateMatrixWorld(); cam.getWorldDirection(_pd); _po.copy(cam.position);
-    const w=rayWall(_po,_pd,40); let bt=w?w.t:40, best=null;
+    const sp=A.spread*(1-.7*(T.zoomK||0)); if(sp){ _pd.x+=(Math.random()-.5)*sp; _pd.y+=(Math.random()-.5)*sp; _pd.z+=(Math.random()-.5)*sp; _pd.normalize(); }
+    const w=rayWall(_po,_pd,60); let bt=w?w.t:60, best=null;
     if(T.her.on){ const g=T.her.g.position, t=rayCyl(_po,_pd,g.x,g.z,.32,0,2.15); if(t!==null&&t<bt){ bt=t; best={k:'her'}; } }
     if(T.fig){ const F=T.fig, hh=F.m.geometry.parameters.height, t=rayCyl(_po,_pd,F.x,F.z,.36,0,hh); if(t!==null&&t<bt){ bt=t; best={k:'fig'}; } }
     if(netTruthShot) netTruthShot(_po,_pd,bt,b2=>{ bt=b2; best={k:'mate'}; });
     const hx=_po.x+_pd.x*bt, hy=_po.y+_pd.y*bt, hz=_po.z+_pd.z*bt;
-    if(!best){ if(w){ bulletHole(w); puff(hx,hy,hz,0xb8b0a0); SFX.tr.ricochet&&SFX.tr.ricochet(at3(hx,hz,.8)); } return; }
+    if(!best){ if(w){ bulletHole(w); puff(hx,hy,hz,0xb8b0a0,h.it.kind==='rifle'?1.6:1); if(!A.auto||Math.random()<.3) SFX.tr.ricochet&&SFX.tr.ricochet(at3(hx,hz,.8)); } return; }
     if(best.k==='her'){ puff(hx,hy,hz,0x202020,1.6); herVanish(true); T.stat=Math.max(T.stat,.9); }
     else if(best.k==='fig'){ const F=T.fig; puff(hx,hy,hz,0x101010,1.4); T.root.remove(F.m); F.m.geometry.dispose(); T.fig=null; SFX.tr.stat(at3(F.x,F.z,1.2),.45,1); T.stat=.85; stutterNear(F.x,F.z); }
   }
-  function pistolStep(dt){
+  function armStep(dt){
     if(T.puffs) for(const p of T.puffs){ if(p.t<=0) continue; p.t-=dt; const k=1-Math.max(0,p.t)/.4; p.s.quaternion.copy(T.cam.quaternion); p.s.scale.setScalar((.06+k*.32)*p.big); p.s.material.opacity=(1-k)*.85; if(p.t<=0) p.s.visible=false; }
-    const on=!!(T.hand&&T.hand.it.kind==='pistol'&&T.phase==='play'&&!T.doc&&!T.invOpen&&!T.paused);
-    if(on!==!!T.dotOn){ T.dotOn=on; pistolDot(on); }
+    const h=T.hand, A=h&&ARMS[h.it.kind], live=!!A&&T.phase==='play'&&!T.doc&&!T.invOpen&&!T.paused;
+    // holding the trigger: every shot that's due fires, even when the frames come slowly (four at most at once)
+    if(live&&A.auto&&T.trigger){ const now=performance.now(); if(T.autoNext===undefined) T.autoNext=Math.max(now,(T.pAt||0)+A.ms); if(now-T.autoNext>A.ms*4) T.autoNext=now-A.ms*4;
+      for(let n=0;n<4&&now>=T.autoNext;n++){ T.pAt=0; armFire(); T.autoNext+=A.ms; } }
+    else T.autoNext=undefined;
+    if(!live||!A.zoom) T.zoom=false;
+    T.zoomK=clamp((T.zoomK||0)+dt*(T.zoom?7:-7),0,1);
+    const dot=live&&T.zoomK<.5, scope=T.zoomK>.75;
+    if(dot!==!!T.dotOn||scope!==!!T.scopeOn){ T.dotOn=dot; T.scopeOn=scope; armUI(dot,scope); }
   }
-  function pistolReset(){ (T.bHoles||[]).forEach(m=>T.root.remove(m)); T.bHoles=[]; (T.puffs||[]).forEach(p=>{ p.t=0; p.s.visible=false; }); }
+  function armReset(){ (T.bHoles||[]).forEach(m=>T.root.remove(m)); T.bHoles=[]; (T.puffs||[]).forEach(p=>{ p.t=0; p.s.visible=false; }); T.trigger=false; T.zoom=false; T.zoomK=0; }
+  /* the one in the mirror holds it too */
+  function armSelf(u,h){ const k=h&&ARMS[h.it.kind]?h.it.kind:null;
+    if(u.armK!==k){ if(u.armG){ u.armG.parent.remove(u.armG); u.armG.traverse(o=>{ if(o.geometry&&!GEOSET.has(o.geometry)) o.geometry.dispose(); }); u.armG=null; }
+      if(k){ const g=armWorld(k); if(k==='pistol') g.scale.setScalar(1.1); g.traverse(o=>{ if(o.isMesh) o.layers.set(2); }); g.layers.set(2); T.self.add(g); u.armG=g; } u.armK=k; }
+    if(u.armG){ u.armG.position.set(-.19,1.05,.37); u.armG.rotation.set(-.08,Math.PI,0); } }
   /* the teammate hook (filled in by the co-op code; nothing to hit when you play alone) */
   let netTruthShot=null;
+
+  /* ---------- a needle that clears everything: whatever you took, whatever you see ---------- */
+  function clearAll(){
+    drugReset(); T.fx={}; T.poison=null; T.echo=[]; T.blackout=0; T.pulse=0; T.stat=0; T.drugFov=0;
+    if(T.lsd&&T.lsd.stage!=='dream'&&T.lsd.stage!=='fall') T.lsd=null;
+    SFX.tr.set({trip:0,muffle:20000,deaf:0}); T.white=Math.max(T.white||0,.35);
+    setTimeout(()=>{ if(T&&T.phase!=='dead') hint('Everything goes quiet and clear. Your head is your own again.'); },1200);
+  }
+
+  /* ---------- more of everything: rifles, AK-47s and submachine guns; cocaine that never runs out; the clearing needles ---------- */
+  function decorate4(){
+    for(const [k,x,y,z,ry] of [
+      ['ak',74.5,.765,5.55,.1],['ak',76.5,.62,41.0,1.2],['ak',97,.01,35.5,.6],['ak',31.5,.46,29.72,Math.PI/2],['ak',30,.53,17.5,Math.PI/2],
+      ['smg',91.3,.95,7.5,.3],['smg',78.2,.77,17.6,1.4],['smg',102.75,.76,11.85,.2],['smg',23.6,1.08,11.6,.2],
+      ['rifle',101.55,.54,24.2,0],['rifle',49,.46,21.3,Math.PI/2],['rifle',68.5,.01,6,.15]]) addArm(k,x,y,z,ry);
+    for(const [x,y,z] of [[80,.765,12],[102.6,.76,10.95],[93.5,.94,3.45],[30.8,1.08,25.4],[36.2,.01,8.2]]) addDrug(x,y,z,'cocaine');
+    T.items.forEach(it=>{ if(it.kind==='drug'&&it.d==='cocaine') it.inf=true; });
+    for(const [x,y,z] of [[4.4,.6,17.4],[5.2,.46,15.72],[79.5,.61,26.4],[64.8,.01,9.8],[34.8,.46,29.72],[81,.01,33.5]]) addNeedle(x,y,z,'clear',false);
+  }
   /* things far down the halls: the fog has them anyway, so they aren't drawn (the big merged meshes always are) */
   function cullInit(){
     const box=new THREE.Box3(), sp=new THREE.Sphere(), skip=new Set([T.her.g,T.herM,T.wheel&&T.wheel.g]);
@@ -28421,11 +28585,11 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     T.cullAt=-9; }
   function cullStep(){ if(!T.cull||T.inDream||T.inSalvia||T.inTape||T.t-T.cullAt<.25) return; T.cullAt=T.t; const P=T.p;
     for(const c of T.cull){ const want=Math.hypot(c.x-P.x,c.z-P.z)-c.r<34; if(want!==c.on){ c.on=want; for(const m of c.ms) m.layers.mask=want?m.userData.lm:0; } } }
-  /* ---------- her, better: the long nightdress, the hands, the hair over her face ---------- */
-  function buildHer2(layer){
-    const g=new THREE.Group(), PI=Math.PI;
-    const skin=stdMat({map:T.tx.skin,color:0xdcd2c8,roughness:.6}), black=stdMat({color:0x020202,roughness:.9}), nail=stdMat({color:0x2a2222,roughness:.4});
-    const hair=stdMat({color:0x070606,roughness:.5,side:THREE.DoubleSide}), eyeM=new THREE.MeshBasicMaterial({color:0xd8e0e0,toneMapped:false}); T.mats['_eye'+layer]=eyeM;
+  /* ---------- her: the long torn nightdress, the long hands, the black hair over half her face ---------- */
+  function buildHer3(layer){
+    const g=new THREE.Group(), PI=Math.PI, rr=mulberry32(91+layer);
+    const skin=stdMat({map:T.tx.skin,color:0xb8b0aa,roughness:.55}), black=stdMat({color:0x020202,roughness:.9}), nail=stdMat({color:0x2a2222,roughness:.4});
+    const hair=stdMat({color:0x050404,roughness:.36,metalness:.12,side:THREE.DoubleSide}), eyeM=new THREE.MeshBasicMaterial({color:0xd8e0e0,toneMapped:false}); T.mats['_eye'+layer]=eyeM;
     const dress=new THREE.MeshStandardMaterial({map:T.tx.sheet,vertexColors:true,roughness:.95,side:THREE.DoubleSide}); T.mats['_herD'+layer]=dress;
     const prof=[[.03,.3],[.33,.32],[.35,.6],[.31,.95],[.26,1.3],[.21,1.55],[.18,1.75],[.2,1.95],[.22,2.07],[.14,2.14],[.05,2.17]].map(([r,y])=>new THREE.Vector2(r,y));
     const lg=new THREE.LatheGeometry(prof,32), p=lg.attributes.position, col=new Float32Array(p.count*3), cc=new THREE.Color(), rnd=mulberry32(7+layer);
@@ -28453,20 +28617,41 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
       mk(GEO.cyl,skin,-sx*.028,-.06,.008,.006,.08,.006,.3,0,-sx*.5,hand);
       g.userData['arm'+sx]=sh; }
     const head=new THREE.Group(); head.position.set(0,2.33,0); g.add(head);
-    mk(GEO.sph,skin,0,.11,0,.1,.135,.115,0,0,0,head);
-    for(const sx of [-1,1]){ mk(GEO.sph,black,sx*.037,.135,.088,.031,.026,.03,0,0,0,head); mk(GEO.sph,eyeM,sx*.037,.133,.113,.0045,.0045,.0045,0,0,0,head);
-      mk(GEO.sph,black,sx*.058,.075,.085,.016,.03,.012,0,0,sx*.3,head); }
-    mk(GEO.sph,black,0,.048,.1,.032,.012,.02,0,0,0,head); mk(GEO.sph,skin,0,.0,.07,.06,.05,.06,0,0,0,head);
-    const hg=[], rr=mulberry32(91+layer);
-    for(let i=0;i<92;i++){ const lay=i%2, a=PI*(.38+i/91*1.24)+(rr()-.5)*.05, len=.48+rr()*.5+(lay?.08:0), w=.03+rr()*.022, pg=new THREE.PlaneGeometry(w,len,1,5);
-      const pp=pg.attributes.position; for(let k=0;k<pp.count;k++){ const t=(pp.getY(k)+len/2)/len; pp.setZ(k,(1-t)*(1-t)*(.05+lay*.02)); pp.setX(k,pp.getX(k)+Math.sin(t*9+i)*.004); }
-      pg.translate(0,-len/2,0); pg.rotateY(-a+PI/2); const r0=.112+lay*.012+(Math.abs(a-PI)<.5?.02:0); pg.translate(Math.sin(a)*r0,.23,Math.cos(a)*r0*.95);
+    const skinD=stdMat({map:T.tx.skin,color:0x8a7c74,roughness:.62}), bloodM=stdMat({color:0x2a0404,roughness:.22});
+    // the face: a long skull, sunken cheeks, black sockets with a pin of light far back in them, a mouth too wide, two dark streaks
+    mk(GEO.sph,skin,0,.11,0,.097,.135,.11,0,0,0,head);
+    mk(GEO.sph,skin,0,.035,.028,.068,.062,.074,0,0,0,head);
+    for(const sx of [-1,1]){
+      mk(GEO.sph,skin,sx*.056,.102,.072,.026,.02,.024,0,0,0,head);
+      mk(GEO.sph,skinD,sx*.05,.062,.07,.019,.03,.018,0,0,0,head);
+      mk(GEO.sph,black,sx*.036,.128,.09,.029,.025,.027,0,0,0,head);
+      mk(GEO.sph,eyeM,sx*.036,.127,.111,.0042,.0042,.0042,0,0,0,head);
+      mk(GEO.box,bloodM,sx*.037,.088,.1055,.0055,.06,.004,0,0,sx*.06,head);
+      mk(GEO.box,bloodM,sx*.035,.052,.1,.004,.022,.004,0,0,-sx*.1,head);
+      mk(GEO.box,black,sx*.04,.039,.094,.026,.006,.016,0,0,sx*.42,head); }
+    mk(GEO.box,skin,0,.09,.104,.015,.034,.02,-.22,0,0,head);
+    mk(GEO.box,black,0,.046,.099,.058,.011,.02,0,0,0,head);
+    const mouth=mk(GEO.sph,black,0,.044,.094,.026,.008,.012,0,0,0,head);
+    // the hair: a wet black mass from the crown down past her waist, parted just enough for one eye
+    mk(GEO.sph,hair,0,.172,-.034,.106,.094,.108,0,0,0,head);
+    const NC=72, NR=18, cols=[], P=[], gap=a=>a>-.6&&a<.66;
+    for(let c=0;c<=NC;c++){ const a=-PI+c/NC*PI*2, front=Math.cos(a), len=(front>.55?.6:front>0?.82:1.02)+rr()*.26, cl=rr()*6.28;
+      const col=[]; for(let r=0;r<=NR;r++){ const t=r/NR, y=.22-t*len, fall=front>.3?1:Math.min(1,t/.22);
+        let rad=.118+(front>.3?.008+t*.012:.055*ease(fall)), cl2=1+.11*Math.sin(a*11+cl)*t+.05*Math.sin(a*23+cl*2)*t;
+        rad*=cl2; const x=Math.sin(a)*rad+Math.sin(t*7+a*3)*.008*t, z=Math.cos(a)*rad*(front>.3?1:.96)+(front>.3?t*.035:0);
+        col.push([x,y,z]); } cols.push({a,col}); }
+    for(let c=0;c<NC;c++){ const A=cols[c], B=cols[c+1]; if(gap(A.a)||gap(B.a)) continue;
+      for(let r=0;r<NR;r++){ const a0=A.col[r], a1=A.col[r+1], b0=B.col[r], b1=B.col[r+1]; P.push(...a0,...b0,...a1, ...b0,...b1,...a1); } }
+    const cg=new THREE.BufferGeometry(); cg.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); cg.computeVertexNormals(); head.add(new THREE.Mesh(cg,hair));
+    // and loose strands: tapering to points, a few across the face
+    const hg=[];
+    for(let i=0;i<44;i++){ const onFace=i<4, a=onFace?-.4+rr()*.8:.72+rr()*(PI*2-1.44), len=onFace?.32+rr()*.3:.5+rr()*.55, w=onFace?.008+rr()*.008:.016+rr()*.02, pg=new THREE.PlaneGeometry(w,len,1,8), pp=pg.attributes.position;
+      for(let k=0;k<pp.count;k++){ const t=1-(pp.getY(k)+len/2)/len; pp.setX(k,pp.getX(k)*(1-t*.92)+Math.sin(t*8+i)*.006); pp.setZ(k,t*t*.03); }
+      pg.translate(0,-len/2,0); pg.rotateY(a); const r0=onFace?.122:.13; pg.translate(Math.sin(a)*r0,.2,Math.cos(a)*r0);
       const n=pg.toNonIndexed(); pg.dispose(); hg.push(n); }
-    for(let i=0;i<10;i++){ const pg=new THREE.PlaneGeometry(.026,.42+rr()*.3,1,4); pg.translate(0,-.21,0); pg.rotateZ((rr()-.5)*.15); pg.translate(-.012+i*.011,.25,.12+rr()*.008); const n=pg.toNonIndexed(); pg.dispose(); hg.push(n); }
     let cnt=0; hg.forEach(q=>cnt+=q.attributes.position.count); const HP=new Float32Array(cnt*3); let o=0; hg.forEach(q=>{ HP.set(q.attributes.position.array,o); o+=q.attributes.position.array.length; q.dispose(); });
     const hgeo=new THREE.BufferGeometry(); hgeo.setAttribute('position',new THREE.BufferAttribute(HP,3)); hgeo.computeVertexNormals(); head.add(new THREE.Mesh(hgeo,hair));
-    mk(GEO.sph,hair,0,.16,-.01,.108,.1,.12,0,0,0,head);
-    head.rotation.z=.22;
+    head.rotation.z=.22; g.userData.mouth=mouth;
     g.userData.head=head; g.visible=false;
     g.traverse(m=>{ if(m.isMesh){ m.castShadow=true; m.layers.set(layer); } }); g.layers.set(layer);
     T.root.add(g); return g;
@@ -28710,7 +28895,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     if(T.phase==='wake') wakeStep(dt); else if(T.phase==='play') playStep(dt); else if(T.phase==='collapse') collapseStep(dt); else if(T.phase==='shot') shotStep(dt); else if(T.phase==='dead') deadStep(dt);
     else if(T.phase==='suck') suckStep(dt); else if(T.phase==='cut') cutStep(dt); else if(T.phase==='scare') scareStep(dt); else if(T.phase==='erase') eraseStep(dt); else if(T.phase==='garden') gardenStep(dt); else if(T.phase==='never') neverStep(dt);
     if(!on) return;
-    doorsStep(dt); effectsStep(dt); drugStep(dt); salviaStep(dt); lsdStep(dt); dreamStep(dt); tapeStep(dt); body(dt); lightsStep(dt*(T.tFast||1)); ambientStep(dt*(T.tFast||1)); soundStep(); figureStep(dt); herStep(dt); pistolStep(dt); cullStep(); camStep(dt); handStep(dt); dustStep(dt);
+    doorsStep(dt); effectsStep(dt); drugStep(dt); salviaStep(dt); lsdStep(dt); dreamStep(dt); tapeStep(dt); body(dt); lightsStep(dt*(T.tFast||1)); ambientStep(dt*(T.tFast||1)); soundStep(); figureStep(dt); herStep(dt); armStep(dt); cullStep(); camStep(dt); handStep(dt); dustStep(dt);
     if(T.phase==='play'&&!T.doc&&!T.paused&&!T.invOpen&&!T.choice){ T.target=pickTarget(); prompt(!!T.target); } else { T.target=null; prompt(false); }
     postStep(dt); render();
     T.pf.acc+=dt; T.pf.n++;
@@ -28736,10 +28921,11 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
       if(e.code==='Digit1'&&!e.repeat){ if(T.doc) forceCloseDoc(); openInv(); }
       if(e.code==='KeyQ'&&!e.repeat&&T.hand&&!T.hand.act){ if(T.choice) toggleAim(); else if(T.hand.aimOn) T.hand.aimOn=false; else unequip(); }
       if(e.code==='Escape'&&T.doc) closeDoc(); };
-    H.ku=e=>{ if(T) T.keys[e.code]=false; };
-    H.mm=e=>{ if(!on||T.phase!=='play'||T.doc||T.paused||T.invOpen||!locked()) return; const s=.0021*(lv('mirror')>.5?-1:1)*(1+.45*lv('coke')); T.p.yaw-=e.movementX*s; T.p.pitch=clamp(T.p.pitch-e.movementY*.0021,-1.4,1.4); if(T.lookLim) T.p.yaw=clamp(T.p.yaw,T.lookC-T.lookLim,T.lookC+T.lookLim); };
+    H.ku=e=>{ if(T){ T.keys[e.code]=false; if(e.code==='KeyE') T.trigger=false; } };
+    H.mu=e=>{ if(T&&e.button===0) T.trigger=false; };
+    H.mm=e=>{ if(!on||T.phase!=='play'||T.doc||T.paused||T.invOpen||!locked()) return; const s=.0021*(lv('mirror')>.5?-1:1)*(1+.45*lv('coke'))*(1-.7*(T.zoomK||0)); T.p.yaw-=e.movementX*s; T.p.pitch=clamp(T.p.pitch-e.movementY*.0021,-1.4,1.4); if(T.lookLim) T.p.yaw=clamp(T.p.yaw,T.lookC-T.lookLim,T.lookC+T.lookLim); };
     H.md=e=>{ if(!on||T.touchMode||T.invOpen) return; if(!locked()){ if(T.phase!=='shot'&&T.phase!=='never') lock(); return; }
-      if(T.doc){ closeDoc(); return; } if(e.button===0){ if(T.hand&&T.hand.it.kind==='pistol'&&T.phase==='play'&&!T.hand.act) handAction(); else interact(); } else if(e.button===2&&T.hand&&!T.hand.act){ if(T.choice) toggleAim(); else if(T.hand.aimOn) T.hand.aimOn=false; else unequip(); } };
+      if(T.doc){ closeDoc(); return; } if(e.button===0){ if(T.hand&&isArm(T.hand.it.kind)&&T.phase==='play'&&!T.hand.act){ T.trigger=true; handAction(); } else interact(); } else if(e.button===2&&T.hand&&!T.hand.act){ if(T.hand.it.kind==='rifle'&&!T.choice) T.zoom=!T.zoom; else if(T.choice) toggleAim(); else if(T.hand.aimOn) T.hand.aimOn=false; else unequip(); } };
     H.plc=()=>{ if(!on||T.touchMode) return; if(locked()){ setPaused(false); T.invUnlock=false; } else if(T.invUnlock){ } else if(T.phase==='play') setPaused(true); };
     H.wheel=e=>{ if(T&&T.doc){ $t('tdPaper').scrollTop+=e.deltaY; } };
     H.blur=()=>{ if(T) T.keys={}; };
@@ -28758,13 +28944,13 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
       for(const t of e.changedTouches){ if(t.identifier===tc.mid){ tc.mid=undefined; tc.mx=tc.mz=0; tc.sprint=false; }
         else if(t.identifier===tc.lid){ tc.lid=undefined; if(tc.moved<14&&e.timeStamp-tc.t0<900) interact(); } } };
     addEventListener('keydown',H.kd); addEventListener('keyup',H.ku); addEventListener('mousemove',H.mm); addEventListener('blur',H.blur); addEventListener('resize',H.resize);
-    cv.addEventListener('mousedown',H.md); cv.addEventListener('contextmenu',H.ctx); document.addEventListener('pointerlockchange',H.plc); addEventListener('wheel',H.wheel,{passive:true});
+    cv.addEventListener('mousedown',H.md); addEventListener('mouseup',H.mu); cv.addEventListener('contextmenu',H.ctx); document.addEventListener('pointerlockchange',H.plc); addEventListener('wheel',H.wheel,{passive:true});
     ui.addEventListener('touchstart',H.ts,{passive:false}); ui.addEventListener('touchmove',H.tm,{passive:false}); ui.addEventListener('touchend',H.te); ui.addEventListener('touchcancel',H.te);
     T.H=H;
   }
   function unbind(){ const H=T.H, cv=T.canvas, ui=$t('truthUI'); if(!H) return;
     removeEventListener('keydown',H.kd); removeEventListener('keyup',H.ku); removeEventListener('mousemove',H.mm); removeEventListener('blur',H.blur); removeEventListener('resize',H.resize);
-    cv.removeEventListener('mousedown',H.md); cv.removeEventListener('contextmenu',H.ctx); document.removeEventListener('pointerlockchange',H.plc); removeEventListener('wheel',H.wheel);
+    cv.removeEventListener('mousedown',H.md); removeEventListener('mouseup',H.mu); cv.removeEventListener('contextmenu',H.ctx); document.removeEventListener('pointerlockchange',H.plc); removeEventListener('wheel',H.wheel);
     ui.removeEventListener('touchstart',H.ts); ui.removeEventListener('touchmove',H.tm); ui.removeEventListener('touchend',H.te); ui.removeEventListener('touchcancel',H.te); }
 
   /* ---------- in and out ---------- */
@@ -28826,11 +29012,11 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     T.mats.exitSide=stdMat({color:0x1a1a18,roughness:.6});
     T.mats.exitFace=new THREE.MeshBasicMaterial({map:texSign('EXIT',{bg:'#0c3a1a',fg:'#7dffae',edge:'#062010',clean:true,w:256,h:72}),color:LCc(0xb0ffc8),toneMapped:false});
     T.sb=new Batch();
-    decorate(); decorate3();
+    decorate(); decorate3(); decorate4();
     T.wheel.g=wheelchair(); { const s=T.wheel.spots[0]; T.wheel.g.position.set(s[0],0,s[1]); T.wheel.g.rotation.y=s[2]; }
     buildShell();
     T.sb.flush(T.root); T.annexB.flush(T.root);
-    T.her.g=buildHer2(0); T.herM=buildHer2(2); T.self=buildSelf();
+    T.her.g=buildHer3(0); T.herM=buildHer3(2); T.self=buildSelf();
     addTape(); T.uses.push({use:true,x:33.345,y:.86,z:20,r:.3,ok:()=>hasTape()&&!T.inDream&&!T.inTape,label:()=>'Put the tape in',act:insertTape});
     T.root.traverse(o=>{ if(o.isMesh&&!(o.material&&(o.material.transparent||o.material.isMeshBasicMaterial||o.material.isShaderMaterial))){ o.castShadow=true; o.receiveShadow=true; } });
     cullInit();
@@ -28841,7 +29027,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     T.dust=new THREE.Points(dg,dm); T.root.add(T.dust);
     T.pool=[]; T.poolOwner=[];
     for(let i=0;i<(T.touchMode?6:8);i++){ const L=new THREE.PointLight(0xffffff,0,8,2); T.scene.add(L); T.pool.push(L); T.poolOwner.push(null); }
-    T.cam=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.03,70); T.cam.rotation.order='YXZ'; T.scene.add(T.cam);
+    T.cam=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.03,70); T.cam.rotation.order='YXZ'; T.cam.layers.enable(3); T.scene.add(T.cam);
     // the flashlight: one real shadow-casting light, riding on your hand
     const fl=new THREE.SpotLight(0xfff2e0,0,24,.5,.7,1.4); fl.castShadow=true; fl.shadow.mapSize.setScalar(T.touchMode?512:1024); fl.shadow.camera.near=.1; fl.shadow.camera.far=24; fl.shadow.bias=-.0006; fl.shadow.normalBias=.02;
     fl.position.set(.2,-.16,-.2); T.cam.add(fl); fl.target.position.set(.04,-.12,-6); T.cam.add(fl.target); T.flash=fl;
@@ -28850,7 +29036,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   }
   function stop(){
     if(!on) return; on=false;
-    salviaReset(); pistolDot(false);
+    salviaReset(); armUI(false,false);
     Frame.cancel(T.raf); unbind();
     if(document.pointerLockElement) try{ document.exitPointerLock(); }catch(e){}
     SFX.tr.stop();
@@ -28886,7 +29072,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
       look(yaw,pitch){ T.p.yaw=yaw; T.p.pitch=pitch; },spawn:spawnFigure,her:herSpawn,grid:()=>grid,
       take(kind,fx){ const it=T.items.find(i=>i.kind===kind&&!i.taken&&(fx===undefined||i.fx===fx||i.v===fx||i.d===fx)); if(it) toInventory(it); return !!it; },dreset(){ drugReset(); T.fx={}; },
       equip(kind,d){ const it=T.inv.find(i=>i.kind===kind&&(d===undefined||i.d===d)); if(it) equip(it); },salvia(st,ch){ startSalvia(); if(st&&T.sv){ T.sv.story=st; T.sv.chain[0]=st; } if(ch&&T.sv) T.sv.chain=[st||T.sv.story].concat(ch); },svNext:()=>{ if(T.sv){ T.sv.t=SV_LEN; } },
-      pistol(){ const it=T.items.find(i=>i.kind==='pistol'&&!i.taken); if(it){ toInventory(it); equip(it); } return !!it; },fire:pistolFire,act:handAction,inv:openInv,closeInv,die,lsd:startLSD,dream:enterDream,
+      pistol(k){ const it=T.items.find(i=>i.kind===(k||'pistol')&&!i.taken); if(it){ toInventory(it); equip(it); } return !!it; },fire:armFire,unequip:()=>unequip(true),trigger(v){ T.trigger=!!v; },zoom(v){ T.zoom=!!v; },clearAll,act:handAction,inv:openInv,closeInv,die,lsd:startLSD,dream:enterDream,
       poison(){ startPoison(4); },open:openPhantom,collapse:startCollapse,enterDream,wakeUp,place:placeHouse,poseSelf,hgt:(x,z)=>hgt(x,z),DX,DZ,
       aim(){ const h=T.hand; if(h&&h.it.kind==='gun'){ h.aimOn=true; h.aimK=1; T.aimK=1; } },
       tape:insertTape,goScene,cutTo,scare:startScare,fireChoice,toggleAim,garden:startGarden,openSafe}};
