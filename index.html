@@ -24235,7 +24235,7 @@ lobbyEmUI();
    The username is a second sign-in of its own (so no one else can take it),
    and holds nothing but your email, which only your password opens.
    ========================================================== */
-const KYU_CFG={apiKey:'',authDomain:'',projectId:''};      // the Firebase project's web config
+const KYU_CFG={"apiKey": "AIzaSyAynGiV1cpDpFe1M-AAoZWQN7qIdwBfmrg", "authDomain": "kyuchi-id.firebaseapp.com", "projectId": "kyuchi-id"};      // the Firebase project's web config
 const Kyuchi=(function(){
   const M=/(?:^|[#&])kyuapi=([^&]+)/.exec(location.hash), MOCK=M?decodeURIComponent(M[1]):'';   // a stand-in server, for tests
   const AUTH=MOCK?MOCK+'/v1/':'https://identitytoolkit.googleapis.com/v1/';
