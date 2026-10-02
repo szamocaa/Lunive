@@ -2838,6 +2838,65 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 .ew-opt.locked .ew-gif img{filter:grayscale(1) brightness(.55);} .ew-opt.locked b,.ew-opt.locked small{opacity:.6;} .ew-opt.locked .ew-lock{display:block;}
 .ew-opt.locked.on{border-color:rgba(255,255,255,.35);box-shadow:none;background:rgba(255,255,255,.06);}
 .ew-foot.bad{color:#ffb3c2;}
+/* ===== Kyuchi ID: the card in Settings and its window ===== */
+.kyu-card{margin:4px 0 10px;padding:14px 14px 12px;border-radius:14px;color:#fff;
+  background:radial-gradient(120% 140% at 0% 0%,rgba(143,243,255,.14),transparent 55%),radial-gradient(120% 140% at 100% 100%,rgba(210,123,255,.14),transparent 55%),rgba(255,255,255,.04);
+  border:1px solid rgba(160,170,255,.28);}
+.ky-logo{width:40px;height:40px;flex:none;filter:drop-shadow(0 6px 14px rgba(140,130,255,.45));}
+.ky-row{display:flex;align-items:center;gap:12px;}
+.ky-t{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;text-align:left;}
+.ky-t b{font:700 15px var(--sk-h,var(--ui));letter-spacing:.14em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ky-t small{font:500 11.5px var(--sk-body,var(--ui));color:rgba(255,255,255,.6);letter-spacing:0;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ky-a{color:#ffd36a;cursor:pointer;text-decoration:underline;} .ky-ok{color:#7dffbe;}
+.ky-st{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:none;}
+.ky-st b{display:flex;align-items:center;gap:6px;font:700 10px var(--sk-h,var(--ui));letter-spacing:.18em;}
+.ky-st small{font:500 10.5px var(--sk-body,var(--ui));color:rgba(255,255,255,.5);text-transform:none;letter-spacing:0;}
+.ky-dot{width:8px;height:8px;border-radius:50%;display:inline-block;} .ky-dot.ok{background:#7dffbe;box-shadow:0 0 8px #7dffbe;} .ky-dot.wait{background:#ffd36a;}
+.ky-dot.busy{background:#8ff3ff;animation:kyPulse .8s ease-in-out infinite;} .ky-dot.bad{background:#ff5f7e;}
+@keyframes kyPulse{50%{opacity:.3;}}
+.ky-err{margin-top:8px;font:600 11.5px var(--sk-body,var(--ui));color:#ffb3c2;text-transform:none;letter-spacing:0;}
+.ky-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.ky-b{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:10px;padding:8px 14px;cursor:pointer;font:700 11px var(--sk-h,var(--ui));letter-spacing:.16em;}
+.ky-b:hover:not([disabled]){border-color:#8ff3ff;} .ky-b[disabled]{opacity:.45;cursor:default;}
+.ky-b.main{border:0;background:linear-gradient(135deg,#8ff3ff,#8f8cff 55%,#d27bff);color:#120f2a;}
+.ky-b.del{margin-left:auto;color:#ffb3c2;border-color:rgba(255,140,160,.35);}
+.ky-pop{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(4,6,14,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.ky-pop.on{display:flex;animation:pvIn .2s ease-out;}
+.ky-card{position:relative;width:min(430px,100%);max-height:calc(100% - 8px);overflow:auto;padding:20px 22px 20px;border-radius:20px;color:#fff;
+  background:radial-gradient(120% 70% at 0% 0%,rgba(143,243,255,.16),transparent 60%),radial-gradient(120% 70% at 100% 100%,rgba(210,123,255,.16),transparent 60%),linear-gradient(180deg,#161a2c,#0c0e1a);
+  border:1px solid rgba(160,170,255,.3);box-shadow:0 30px 70px -20px rgba(0,0,0,.85);animation:pvUp .3s cubic-bezier(.2,.9,.3,1.2);font-family:var(--sk-body,var(--ui));}
+.ky-x{position:absolute;right:12px;top:12px;}
+.ky-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;} .ky-head b{font:700 16px var(--sk-h,var(--ui));letter-spacing:.24em;}
+.ky-head .ky-logo{width:34px;height:34px;}
+.ky-tabs,.ky-by{display:flex;gap:4px;padding:4px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);margin-bottom:12px;}
+.ky-tabs button,.ky-by button{flex:1;border:0;border-radius:9px;padding:8px 10px;background:transparent;color:rgba(255,255,255,.7);cursor:pointer;font:700 11px var(--sk-h,var(--ui));letter-spacing:.18em;}
+.ky-tabs button.on,.ky-by button.on{background:#fff;color:#0b0d16;}
+.ky-by{align-items:center;} .ky-by span{flex:none;padding:0 8px;font:700 9px var(--sk-h,var(--ui));letter-spacing:.18em;color:rgba(255,255,255,.5);}
+.ky-p{margin:0 0 12px;font:500 13px/1.5 var(--sk-body,var(--ui));color:rgba(255,255,255,.75);} .ky-p b{color:#fff;}
+.ky-f{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.ky-f>span:first-child{font:700 9.5px var(--sk-h,var(--ui));letter-spacing:.2em;color:rgba(255,255,255,.55);}
+.ky-in{display:flex;align-items:center;gap:6px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:0 6px 0 12px;transition:border-color .15s,box-shadow .15s;}
+.ky-in:focus-within{border-color:#8ff3ff;box-shadow:0 0 0 3px rgba(143,243,255,.15);}
+.ky-in input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;padding:11px 0;font:500 14px var(--sk-body,var(--ui));}
+.ky-in input::placeholder{color:rgba(255,255,255,.35);}
+.ky-eye,.ky-dice{flex:none;width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:rgba(255,255,255,.55);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.ky-eye svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;} .ky-eye:hover,.ky-dice:hover,.ky-eye.on{color:#fff;background:rgba(255,255,255,.08);}
+.ky-msg{min-height:18px;margin:2px 0 8px;font:600 12px/1.4 var(--sk-body,var(--ui));color:#ffb3c2;} .ky-msg.good{color:#7dffbe;}
+.ky-go{width:100%;border:0;border-radius:12px;padding:13px;cursor:pointer;font:800 13px var(--sk-h,var(--ui));letter-spacing:.2em;color:#120f2a;background:linear-gradient(135deg,#8ff3ff,#8f8cff 55%,#d27bff);box-shadow:0 12px 26px -12px rgba(143,140,255,.8);}
+.ky-go[disabled]{opacity:.6;cursor:default;} .ky-go.danger{background:linear-gradient(135deg,#ff8aa0,#ff3b5c);color:#fff;}
+.ky-link{display:block;margin:12px auto 0;border:0;background:none;color:rgba(255,255,255,.6);cursor:pointer;font:600 12px var(--sk-body,var(--ui));text-decoration:underline;}
+.ky-link:hover{color:#fff;}
+.ky-fine{margin:12px 0 0;font:500 11px/1.45 var(--sk-body,var(--ui));color:rgba(255,255,255,.45);}
+.ky-picks{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ky-pick{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#fff;cursor:pointer;text-align:left;font:inherit;}
+.ky-pick:hover{border-color:#8ff3ff;} .ky-pick b{font:700 12px var(--sk-h,var(--ui));letter-spacing:.18em;} .ky-pick small{font-size:11px;color:rgba(255,255,255,.55);}
+.kyp-st{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin:4px 0;} .kyp-st i{font-style:normal;font:600 12px var(--sk-h,var(--ui));}
+.ky-pick em{margin-top:4px;font:800 10px var(--sk-h,var(--ui));font-style:normal;letter-spacing:.18em;padding:5px 10px;border-radius:8px;background:rgba(255,255,255,.1);}
+.ky-pick:hover em{background:#fff;color:#0b0d16;}
+.ky-done{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 6px 8px;text-align:center;}
+.ky-done i{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:30px;color:#06281a;background:linear-gradient(135deg,#a8ffd8,#3ad18d);animation:ew2Pop .5s cubic-bezier(.2,.9,.3,1.5);}
+.ky-done b{font:700 18px var(--sk-h,var(--ui));letter-spacing:.06em;} .ky-done small{font:500 12.5px/1.5 var(--sk-body,var(--ui));color:rgba(255,255,255,.65);}
+
 /* ===== round 46: the emote wheel you set up, dancing in the lobby, private stats ===== */
 .ew-empty{width:420px;max-width:80vw;padding:26px 18px;border-radius:16px;border:1px dashed rgba(255,255,255,.2);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
 .ew-empty b{font-size:15px;letter-spacing:.08em;} .ew-empty small{font-size:12px;color:rgba(255,255,255,.55);}
@@ -3179,7 +3238,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.23.0 · BETA</span>
+    <span class="hub-version">VERSION 3.24.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3317,7 +3376,7 @@ body.in-game #hub .em-chip{display:none;}
 <!-- ===== SETTINGS ===== -->
 <div id="settings-screen" class="screen hidden">
   <button class="back-chip b3 plum rx" data-back><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>BACK</button>
-  <div class="panel-head"><div class="panel-title">Settings</div><div class="panel-sub">Audio · Controls · Graphics</div></div>
+  <div class="panel-head"><div class="panel-title">Settings</div><div class="panel-sub">Audio · Graphics · Kyuchi ID</div></div>
   <div class="center-panel glass">
     <div class="set-logo"><svg class="lunive-logo" viewBox="-40 40 2690 1060" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lunive Beta">
   <defs>
@@ -3347,7 +3406,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.23.0</div></div>
+</svg><div class="set-ver">VERSION 3.24.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3371,6 +3430,7 @@ body.in-game #hub .em-chip{display:none;}
     <div class="sec-label set-sec">ONLINE</div>
     <div class="row toggle-row"><span>Online mode<small>See who's playing right now, team up with a friend's 7-digit code, and play 1v1 against real players or 2v2 together against bots</small></span><div class="switch" id="onlineSwitch"></div></div>
     <div class="sec-label set-sec">PROGRESS</div>
+    <div class="kyu-card" id="kyuCard"></div>
     <div class="row toggle-row reset-row"><span>Reset game<small>Delete all your progress and start from scratch. Your settings stay.</small></span><button class="b3 berry rx reset-btn" id="resetBtn">RESET</button></div>
   </div>
   <div class="reset-modal hidden" id="resetModal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
@@ -3668,6 +3728,7 @@ const SAVE_KEY='lunive:save';
 /* the host's storage when there is one, the browser's otherwise */
 async function saveState(){
   const data=JSON.stringify(State);
+  try{ Kyuchi.touch(); }catch(e){}
   try{ if(window.storage){ await window.storage.set(SAVE_KEY,data); return; } }catch(e){}
   try{ localStorage.setItem(SAVE_KEY,data); }catch(e){}
 }
@@ -3710,6 +3771,7 @@ async function loadState(){
    and the game reloads. Audio, controls and graphics settings stay. */
 const KEEP_ON_RESET=['settings','gfx','gfxRes','gfxFps','gfxVsync','gfxBloom','gfxMblur','gfxPotato','potatoHint','online','teamCode'];
 async function resetProgress(){
+  try{ if(Kyuchi.on) Kyuchi.logout(true); }catch(e){}
   const fresh=JSON.parse(STATE_DEFAULTS);
   KEEP_ON_RESET.forEach(k=>{ if(State[k]!==undefined) fresh[k]=State[k]; });
   Object.keys(State).forEach(k=>{ delete State[k]; }); Object.assign(State,fresh);
@@ -22638,7 +22700,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.23.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.24.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -24162,6 +24224,315 @@ function emLocker(pop){
 document.querySelectorAll('#charTabs [data-ct]').forEach(b=>{ wireRx(b); b.addEventListener('click',()=>charTabSet(b.dataset.ct)); });
 $el('emChip').addEventListener('click',e=>{ e.stopPropagation(); lobbyEmoteKey(); });
 lobbyEmUI();
+
+
+/* ==========================================================
+   KYUCHI ID — your progress, saved in the cloud, on any device.
+   Make one in Settings (a username, a real email, a password twice), and log
+   in anywhere else with the username or the email and the password.
+   The accounts are Firebase's: Google keeps the passwords, never the game.
+   Your save is a database document only you can read or write.
+   The username is a second sign-in of its own (so no one else can take it),
+   and holds nothing but your email, which only your password opens.
+   ========================================================== */
+const KYU_CFG={"apiKey": "AIzaSyAynGiV1cpDpFe1M-AAoZWQN7qIdwBfmrg", "authDomain": "kyuchi-id.firebaseapp.com", "projectId": "kyuchi-id"};      // the Firebase project's web config
+const Kyuchi=(function(){
+  const M=/(?:^|[#&])kyuapi=([^&]+)/.exec(location.hash), MOCK=M?decodeURIComponent(M[1]):'';   // a stand-in server, for tests
+  const AUTH=MOCK?MOCK+'/v1/':'https://identitytoolkit.googleapis.com/v1/';
+  const TOKEN=MOCK?MOCK+'/token':'https://securetoken.googleapis.com/v1/token';
+  const FS=()=>(MOCK?MOCK+'/fs/':'https://firestore.googleapis.com/v1/')+'projects/'+(KYU_CFG.projectId||'mock')+'/databases/(default)/documents/';
+  const ready=()=>!!MOCK||!!(KYU_CFG.apiKey&&KYU_CFG.projectId);
+  const KEY=()=>encodeURIComponent(KYU_CFG.apiKey||'mock');
+  const SKEY='kyuchi:session', ALIAS='@kyuchi-id.example.com';
+  const NAME_RE=/^[A-Za-z0-9_]{3,16}$/, MAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  let ses=null, tok=null, tokAt=0, dirty=false, busy=false, lastUp=0, lastErr='', timer=0, verified=null;
+
+  /* ---------- the wire ---------- */
+  const kerr=(code,msg)=>{ const e=new Error(msg||code); e.code=code; return e; };
+  async function req(url,opt){
+    let r; try{ r=await fetch(url,opt); }catch(e){ throw kerr('NETWORK'); }
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){ const E=j.error||{}, m=/^[A-Z_]+(\s|:|$)/.test(E.message||'')?E.message:(E.status||E.message||('HTTP_'+r.status)); const e=kerr(String(m).split(/[ :]/)[0]); e.status=r.status; throw e; }
+    return j;
+  }
+  const api=(path,body)=>req(AUTH+path+'?key='+KEY(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const refresh=rt=>req(TOKEN+'?key='+KEY(),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(rt)});
+  const enc=o=>{ const f={}; for(const k in o){ const v=o[k]; f[k]=typeof v==='number'?{integerValue:String(Math.round(v))}:typeof v==='boolean'?{booleanValue:v}:{stringValue:String(v)}; } return f; };
+  const dec=f=>{ const o={}; for(const k in (f||{})){ const v=f[k]; o[k]=v.stringValue!==undefined?v.stringValue:v.integerValue!==undefined?+v.integerValue:v.booleanValue!==undefined?v.booleanValue:null; } return o; };
+  async function fsGet(path,t){
+    try{ const j=await req(FS()+path,{headers:{Authorization:'Bearer '+t}}); return Object.assign(dec(j.fields),{_ut:j.updateTime||''}); }
+    catch(e){ if(e.status===404||e.code==='NOT_FOUND') return null; throw e; }
+  }
+  /* ut: only if the document is still the version this device last saw (otherwise FAILED_PRECONDITION) */
+  const fsQ=(mask,ut)=>{ const q=(mask||[]).map(f=>'updateMask.fieldPaths='+f); if(ut) q.push('currentDocument.updateTime='+encodeURIComponent(ut)); return q.length?'?'+q.join('&'):''; };
+  const fsSet=(path,t,o,mask,ut)=>req(FS()+path+fsQ(mask,ut),{method:'PATCH',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({fields:enc(o)})});
+  const fsDel=(path,t)=>req(FS()+path,{method:'DELETE',headers:{Authorization:'Bearer '+t}}).catch(()=>null);
+  const aliasMail=n=>String(n).trim().toLowerCase()+ALIAS;
+  const isCred=e=>['INVALID_LOGIN_CREDENTIALS','EMAIL_NOT_FOUND','INVALID_PASSWORD','INVALID_EMAIL'].includes(e.code);
+
+  /* ---------- this device's sign-in ---------- */
+  function store(){ try{ if(ses) localStorage.setItem(SKEY,JSON.stringify(ses)); else localStorage.removeItem(SKEY); }catch(e){} }
+  function restore(){ try{ const s=JSON.parse(localStorage.getItem(SKEY)||'null'); if(s&&s.uid&&s.rt) ses=s; }catch(e){} }
+  async function idToken(){
+    if(tok&&Date.now()<tokAt-60000) return tok;
+    let j; try{ j=await refresh(ses.rt); }
+    catch(e){ if(e.code!=='NETWORK'){ const n=ses&&ses.name; logout(true); toast('Your Kyuchi ID'+(n?' ('+n+')':'')+' needs you to log in again',4200); } throw e; }
+    tok=j.id_token; tokAt=Date.now()+(+j.expires_in||3600)*1000;
+    if(j.refresh_token&&j.refresh_token!==ses.rt){ ses.rt=j.refresh_token; store(); }
+    return tok;
+  }
+  function begin(B,o){ ses=Object.assign({uid:B.localId,email:B.email||o.email,rt:B.refreshToken,syncedAt:0,hash:''},o); tok=B.idToken; tokAt=Date.now()+(+B.expiresIn||3600)*1000; store(); }
+
+  /* ---------- the save: everything but this device's own settings ---------- */
+  function pack(){ const o=JSON.parse(JSON.stringify(State)); KEEP_ON_RESET.forEach(k=>{ delete o[k]; }); return JSON.stringify(o); }
+  function hash(s){ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return (h>>>0).toString(36)+'.'+s.length; }
+  function sumUp(str){ try{ const o=typeof str==='string'?JSON.parse(str):str;
+    return {tro:Object.values(o.trophies||{}).reduce((a,b)=>a+(+b||0),0),coins:o.infCoins?'∞':(+o.coins||0).toLocaleString('en-US'),chars:(o.unlocked||[]).length,matches:+o.matches||0,name:o.username||''}; }catch(e){ return null; } }
+  // nothing to lose here: no trophies, no matches, only the starter, no more coins than a new player
+  const fresh=()=>{ const s=sumUp(State), d=JSON.parse(STATE_DEFAULTS); return !s||(s.tro===0&&s.matches===0&&s.chars<=1&&!State.infCoins&&(+State.coins||0)<=(+d.coins||0)); };
+  async function upload(force,over){
+    if(!ses||busy) return false;
+    const s=pack(), h=hash(s);
+    if(!force&&h===ses.hash){ dirty=false; return true; }
+    busy=true; paint();
+    try{ const t=await idToken();
+      for(let n=0;n<3;n++){ const now=Date.now();
+        try{ const j=await fsSet('kyuchi/'+ses.uid,t,{save:s,savedAt:now,ver:LUNIVE_VER,name:ses.name||''},['save','savedAt','ver','name'],over?'':ses.ut);
+          ses.hash=h; ses.syncedAt=now; ses.ut=j.updateTime||''; store(); dirty=false; lastUp=Date.now(); lastErr=''; return true; }
+        catch(e){
+          if(e.code!=='FAILED_PRECONDITION'&&e.code!=='NOT_FOUND') throw e;
+          // the cloud copy isn't the one this device last saw: never write over a newer save blind
+          const d=await fsGet('kyuchi/'+ses.uid,t);
+          if(!d){ ses.ut=''; continue; }
+          if(!d.save||+d.savedAt===+ses.syncedAt){ ses.ut=d._ut; continue; }          // only its other fields changed
+          busy=false; dirty=false;
+          if(hash(pack())===ses.hash) apply(d.save,+d.savedAt,d._ut); else choose(d,'newer');
+          return false; }
+      }
+      return false; }
+    catch(e){ lastErr=say(e); return false; }
+    finally{ busy=false; paint(); }
+  }
+  /* a save from the cloud replaces this device's (its settings stay) and the game starts again on it */
+  async function apply(str,at,ut,note){
+    const o=JSON.parse(str), keep={}; KEEP_ON_RESET.forEach(k=>{ if(State[k]!==undefined) keep[k]=State[k]; });
+    Object.keys(State).forEach(k=>{ delete State[k]; }); Object.assign(State,JSON.parse(STATE_DEFAULTS),o,keep);
+    ses.hash=hash(pack()); ses.syncedAt=at; ses.ut=ut||''; store();
+    try{ localStorage.setItem('kyuchi:loaded',note||'Progress loaded from your Kyuchi ID'); }catch(e){}
+    await saveState(); location.reload();
+  }
+
+  /* ---------- make one, log in, out ---------- */
+  async function create(name,email,pw){
+    name=name.trim(); email=email.trim();
+    let A; try{ A=await api('accounts:signUp',{email:aliasMail(name),password:pw,returnSecureToken:true}); }
+    catch(e){ throw e.code==='EMAIL_EXISTS'?kerr('NAME_TAKEN'):e; }
+    let B; try{ B=await api('accounts:signUp',{email,password:pw,returnSecureToken:true}); }
+    catch(e){ try{ await api('accounts:delete',{idToken:A.idToken}); }catch(_){} throw e.code==='EMAIL_EXISTS'?kerr('EMAIL_TAKEN'):e; }
+    const s=pack(), now=Date.now();
+    try{
+      await fsSet('alias/'+A.localId,A.idToken,{email,uid:B.localId});
+      var made=await fsSet('kyuchi/'+B.localId,B.idToken,{name,email,save:s,savedAt:now,ver:LUNIVE_VER,aliasUid:A.localId,aliasRT:A.refreshToken});
+    }catch(e){                                              // no database to write to: nothing is left half made
+      for(const X of [A,B]) try{ await api('accounts:delete',{idToken:X.idToken}); }catch(_){}
+      throw e;
+    }
+    try{ await api('accounts:sendOobCode',{requestType:'VERIFY_EMAIL',idToken:B.idToken}); }catch(e){}
+    begin(B,{name,email}); ses.syncedAt=now; ses.hash=hash(s); ses.ut=made&&made.updateTime||''; store(); verified=false; lastUp=Date.now();
+    tick0(); paint();
+  }
+  async function login(by,id,pw){
+    id=id.trim(); let email=id;
+    if(by==='name'){
+      let A; try{ A=await api('accounts:signInWithPassword',{email:aliasMail(id),password:pw,returnSecureToken:true}); }
+      catch(e){ throw isCred(e)?kerr('BAD_NAME_LOGIN'):e; }
+      const d=await fsGet('alias/'+A.localId,A.idToken); if(!d||!d.email) throw kerr('BAD_NAME_LOGIN');
+      email=d.email;
+    }
+    let B; try{ B=await api('accounts:signInWithPassword',{email,password:pw,returnSecureToken:true}); }
+    catch(e){ throw by==='name'&&isCred(e)?kerr('PW_CHANGED'):isCred(e)?kerr('BAD_MAIL_LOGIN'):e; }
+    const d=await fsGet('kyuchi/'+B.localId,B.idToken)||{};
+    begin(B,{name:d.name||(by==='name'?id:email.split('@')[0]),email,ut:d._ut||''});
+    if(by==='email'&&d.aliasRT&&d.name) fixAlias(d,pw);       // a password changed by email: the username follows
+    lookup(); tick0(); paint();
+    return d;
+  }
+  /* after "forgot password", the email's sign-in has the new password and the username's the old one; bring it along */
+  async function fixAlias(d,pw){
+    try{ await api('accounts:signInWithPassword',{email:aliasMail(d.name),password:pw,returnSecureToken:true}); return; }catch(e){ if(!isCred(e)) return; }
+    try{ const r=await refresh(d.aliasRT); const u=await api('accounts:update',{idToken:r.id_token,password:pw,returnSecureToken:true});
+      if(u.refreshToken) await fsSet('kyuchi/'+ses.uid,await idToken(),{aliasRT:u.refreshToken},['aliasRT']); }catch(e){}
+  }
+  function logout(quiet){ ses=null; tok=null; dirty=false; verified=null; store(); if(!quiet) paint(); else try{ paint(); }catch(e){} }
+  async function forgot(email){ await api('accounts:sendOobCode',{requestType:'PASSWORD_RESET',email:email.trim()}); }
+  async function resendVerify(){ await api('accounts:sendOobCode',{requestType:'VERIFY_EMAIL',idToken:await idToken()}); }
+  async function lookup(){ try{ const j=await api('accounts:lookup',{idToken:await idToken()}); verified=!!(j.users&&j.users[0]&&j.users[0].emailVerified); paint(); }catch(e){} }
+  /* delete it all: both sign-ins and both documents (your password again first) */
+  async function destroy(pw){
+    const B=await api('accounts:signInWithPassword',{email:ses.email,password:pw,returnSecureToken:true}).catch(e=>{ throw isCred(e)?kerr('BAD_PW'):e; });
+    const d=await fsGet('kyuchi/'+B.localId,B.idToken)||{};
+    if(d.aliasRT){ try{ const r=await refresh(d.aliasRT); await fsDel('alias/'+(d.aliasUid||r.user_id),r.id_token); await api('accounts:delete',{idToken:r.id_token}); }catch(e){} }
+    await fsDel('kyuchi/'+B.localId,B.idToken);
+    await api('accounts:delete',{idToken:B.idToken});
+    logout();
+  }
+
+  /* ---------- keeping it saved: a minute after something changes, when you leave the page, or SAVE NOW ---------- */
+  function touch(){ if(ses) dirty=true; }
+  function tick(){ if(ses&&dirty&&!busy&&Date.now()-lastUp>60000) upload(); paintAgo(); }
+  function tick0(){ if(!timer) timer=setInterval(tick,15000); }
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden&&ses&&dirty) upload(); });
+  addEventListener('pagehide',()=>{ if(!ses||!dirty||!tok||Date.now()>tokAt-60000) return;
+    const s=pack(); if(s.length>60000||hash(s)===ses.hash) return;            // a small save still gets out as the page closes
+    try{ const now=Date.now(); fetch(FS()+'kyuchi/'+ses.uid+fsQ(['save','savedAt'],ses.ut),{method:'PATCH',keepalive:true,headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},body:JSON.stringify({fields:enc({save:s,savedAt:now})})});
+      ses.pend={hash:hash(s),at:now}; store(); }catch(e){} });          // it only counts once the cloud shows it (next time)
+  /* opening the game: another device saved since this one last did? its progress comes here */
+  async function boot(){
+    restore(); paint();
+    try{ const n=localStorage.getItem('kyuchi:loaded'); if(n){ localStorage.removeItem('kyuchi:loaded'); setTimeout(()=>toast(n==='1'?'Progress loaded from your Kyuchi ID':n,3600),1800); } }catch(e){}
+    if(!ses||!ready()) return;
+    tick0();
+    try{ const d=await fsGet('kyuchi/'+ses.uid,await idToken());
+      if(ses.pend){ if(d&&+d.savedAt===ses.pend.at){ ses.hash=ses.pend.hash; ses.syncedAt=ses.pend.at; } delete ses.pend; store(); }
+      if(d&&d.save&&(+d.savedAt||0)>(+ses.syncedAt||0)){
+        if(hash(pack())!==ses.hash&&!fresh()) choose(d,'newer'); else apply(d.save,+d.savedAt,d._ut);
+        return; }
+      ses.ut=d?d._ut:''; store();
+      if(hash(pack())!==ses.hash) dirty=true;
+      lookup();
+    }catch(e){ lastErr=say(e); paint(); }
+  }
+
+  /* ---------- words for what went wrong ---------- */
+  function say(e){
+    const c=e&&e.code||'';
+    return ({NETWORK:'Can\'t reach Kyuchi ID · check your connection',NAME_TAKEN:'That username is taken · try another',EMAIL_TAKEN:'That email already has a Kyuchi ID · log in instead',
+      INVALID_EMAIL:'That email address doesn\'t look right',WEAK_PASSWORD:'Pick a longer password (8 or more)',BAD_NAME_LOGIN:'Wrong username or password',
+      BAD_MAIL_LOGIN:'Wrong email or password',BAD_PW:'Wrong password',PW_CHANGED:'Your password was changed by email · log in with your email this once',
+      TOO_MANY_ATTEMPTS_TRY_LATER:'Too many tries · wait a few minutes',USER_DISABLED:'This Kyuchi ID is switched off',OPERATION_NOT_ALLOWED:'Kyuchi ID isn\'t switched on yet (Email/Password sign-in)',
+      PERMISSION_DENIED:'The save server said no (its rules)',MISSING_EMAIL:'Type your email',CONFIGURATION_NOT_FOUND:'Kyuchi ID isn\'t set up yet'})[c]||('Something went wrong ('+c+')');
+  }
+
+  /* ==================== the screens ==================== */
+  let kyN=0; const LOGO_=()=>{ const g=++kyN; return '<svg class="ky-logo" viewBox="0 0 40 40"><defs><linearGradient id="kyG'+g+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ff3ff"/><stop offset=".55" stop-color="#8f8cff"/><stop offset="1" stop-color="#d27bff"/></linearGradient></defs><rect x="1" y="1" width="38" height="38" rx="11" fill="url(#kyG'+g+')"/><path d="M14 10v20M14 21l11-11M18 18l8.5 12" fill="none" stroke="#120f2a" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="29.5" cy="11" r="2.4" fill="#fff"/></svg>'; };
+  const EYE='<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const ago=t=>{ const s=Math.max(0,(Date.now()-t)/1000); return s<45?'just now':s<3600?Math.round(s/60)+' min ago':s<86400?Math.round(s/3600)+' h ago':Math.round(s/86400)+' days ago'; };
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  /* the card in Settings */
+  function paint(){
+    const el=document.getElementById('kyuCard'); if(!el) return;
+    if(!ready()){ el.innerHTML=`<div class="ky-row">${LOGO_()}<span class="ky-t"><b>KYUCHI ID</b><small>Save your progress and play on any device · coming soon</small></span></div>`; return; }
+    if(!ses){ el.innerHTML=`<div class="ky-row">${LOGO_()}<span class="ky-t"><b>KYUCHI ID</b><small>Save your progress in the cloud and carry on from any device</small></span></div>
+      <div class="ky-btns"><button class="ky-b main rx" data-ky="create">CREATE KYUCHI ID</button><button class="ky-b rx" data-ky="login">LOG IN</button></div>`; }
+    else { const st=busy?'<i class="ky-dot busy"></i>SAVING…':lastErr?'<i class="ky-dot bad"></i>NOT SAVED':dirty?'<i class="ky-dot wait"></i>SAVING SOON':'<i class="ky-dot ok"></i>SAVED';
+      el.innerHTML=`<div class="ky-row">${LOGO_()}<span class="ky-t"><b>${esc(ses.name)}</b><small>${esc(ses.email)} · ${verified===false?'<a class="ky-a" data-ky="verify">not confirmed · send the link again</a>':verified?'<span class="ky-ok">✓ confirmed</span>':'Kyuchi ID'}</small></span>
+        <span class="ky-st"><b>${st}</b><small id="kyAgo">${ses.syncedAt?'last saved '+ago(ses.syncedAt):''}</small></span></div>
+        ${lastErr?`<div class="ky-err">${esc(lastErr)}</div>`:''}
+        <div class="ky-btns"><button class="ky-b main rx" data-ky="save"${busy?' disabled':''}>SAVE NOW</button><button class="ky-b rx" data-ky="switch">SWITCH ACCOUNT</button><button class="ky-b rx" data-ky="logout">LOG OUT</button><button class="ky-b del rx" data-ky="delete">DELETE ACCOUNT</button></div>`; }
+    el.querySelectorAll('[data-ky]').forEach(b=>{ if(b.classList.contains('rx')) wireRx(b); b.onclick=()=>act(b.dataset.ky); });
+  }
+  function paintAgo(){ const a=document.getElementById('kyAgo'); if(a&&ses&&ses.syncedAt) a.textContent='last saved '+ago(ses.syncedAt); }
+  async function act(k){
+    if(k==='create'||k==='login'){ open(k); SFX.open&&SFX.open(); }
+    else if(k==='save'){ SFX.press&&SFX.press(); const ok=await upload(true); toast(ok?'Saved to your Kyuchi ID':lastErr,2600); }
+    else if(k==='logout'){ if(dirty) await upload(); logout(); SFX.back&&SFX.back(); toast('Logged out of Kyuchi ID · your progress stays on this device too',3400); }
+    else if(k==='delete'){ open('delete'); }
+    else if(k==='switch'){                                  // this account's progress goes up first; it stays there
+      if(hash(pack())!==ses.hash){ const ok=await upload(); if(!ok){ if(!document.querySelector('#kyuPop.on')) toast('Couldn\'t save '+ses.name+'\'s progress first · '+(lastErr||'try again'),3800); return; } }
+      switching=true; open('login'); SFX.open&&SFX.open(); }
+    else if(k==='verify'){ try{ await resendVerify(); toast('Sent · check your inbox (and spam)',3200); }catch(e){ toast(say(e),3200); } }
+  }
+  /* the window: make one, log in, which save, delete */
+  let pop=null, loginBy='name', switching=false;
+  function el(){
+    if(pop) return pop;
+    pop=document.createElement('div'); pop.id='kyuPop'; pop.className='ky-pop';
+    pop.innerHTML=`<div class="ky-card"><button class="aa-x rx ky-x" aria-label="Close">×</button><div class="ky-head">${LOGO_()}<b>KYUCHI ID</b></div><div class="ky-body"></div></div>`;
+    document.body.appendChild(pop);
+    pop.querySelector('.ky-x').onclick=()=>close();
+    pop.addEventListener('mousedown',e=>{ if(e.target===pop&&!pop.classList.contains('locked')) close(); });
+    addEventListener('keydown',e=>{ if(!pop.classList.contains('on')) return; e.stopImmediatePropagation();
+      if(e.key==='Escape'){ e.preventDefault(); if(!pop.classList.contains('locked')) close(); }
+      else if(e.key==='Enter'){ e.preventDefault(); const g=pop.querySelector('.ky-go'); if(g&&!g.disabled) g.click(); } },true);
+    return pop;
+  }
+  function close(){ switching=false; if(pop) pop.classList.remove('on','locked'); }
+  const field=(id,label,type,ph,extra)=>`<label class="ky-f"><span>${label}</span><span class="ky-in"><input id="${id}" type="${type}" placeholder="${ph}" autocomplete="off" spellcheck="false">${extra||''}</span></label>`;
+  const pwField=(id,label,ph,auto)=>field(id,label,'password',ph,`<button type="button" class="ky-eye" data-eye="${id}" title="Show">${EYE}</button>`).replace('autocomplete="off"','autocomplete="'+auto+'"');
+  function open(view,data){
+    const p=el(), body=p.querySelector('.ky-body'); p.classList.add('on'); p.classList.toggle('locked',view==='choose');
+    p.querySelector('.ky-x').style.display=view==='choose'?'none':'';
+    const tabs=(view==='create'||view==='login')&&!switching?`<div class="ky-tabs"><button class="${view==='create'?'on':''}" data-v="create">CREATE</button><button class="${view==='login'?'on':''}" data-v="login">LOG IN</button></div>`:'';
+    if(view==='create') body.innerHTML=tabs+`<p class="ky-p">One Kyuchi ID keeps your progress safe, and lets you carry on from any device.</p>
+      ${field('kyName','USERNAME','text','make one up · 3 to 16 letters, numbers or _','<button type="button" class="ky-dice" title="Think of one for me">🎲</button>')}
+      ${field('kyMail','EMAIL','email','your real email address')}
+      ${pwField('kyPw','PASSWORD','8 or more characters','new-password')}
+      ${pwField('kyPw2','PASSWORD AGAIN','type it once more','new-password')}
+      <div class="ky-msg" id="kyMsg"></div>
+      <button class="ky-go rx">CREATE KYUCHI ID</button>
+      <p class="ky-fine">Google's Firebase keeps your password, never the game. We'll send a link to confirm your email. Your current progress becomes your Kyuchi ID's.</p>`;
+    else if(view==='login') body.innerHTML=tabs+`<p class="ky-p">${switching?'<b>Switch to another Kyuchi ID.</b> '+esc(ses&&ses.name)+'\'s progress stays saved in the cloud; the other account\'s comes here.':'Log in to bring your progress to this device.'}</p>
+      <div class="ky-by"><span>LOG IN WITH</span><button class="${loginBy==='name'?'on':''}" data-by="name">USERNAME</button><button class="${loginBy==='email'?'on':''}" data-by="email">EMAIL</button></div>
+      ${loginBy==='name'?field('kyId','USERNAME','text','your Kyuchi ID username'):field('kyId','EMAIL','email','the email of your Kyuchi ID')}
+      ${pwField('kyPw','PASSWORD','your password','current-password')}
+      <div class="ky-msg" id="kyMsg"></div>
+      <button class="ky-go rx">${switching?'SWITCH':'LOG IN'}</button>
+      <button class="ky-link" id="kyForgot">Forgot your password?</button>`;
+    else if(view==='forgot') body.innerHTML=`<p class="ky-p">Type the email of your Kyuchi ID: we'll send you a link to pick a new password.</p>
+      ${field('kyMail','EMAIL','email','the email of your Kyuchi ID')}<div class="ky-msg" id="kyMsg"></div>
+      <button class="ky-go rx">SEND THE LINK</button><button class="ky-link" data-v="login">Back to log in</button>`;
+    else if(view==='delete') body.innerHTML=`<p class="ky-p"><b>Delete ${esc(ses&&ses.name)} for good?</b> The save in the cloud goes, and so do the username and the email's sign-in. This device keeps its progress.</p>
+      ${pwField('kyPw','YOUR PASSWORD','to make sure it\'s you','current-password')}<div class="ky-msg" id="kyMsg"></div>
+      <button class="ky-go danger rx">DELETE MY KYUCHI ID</button>`;
+    else if(view==='choose'){ const c=sumUp(data.save)||{}, m=sumUp(State)||{};
+      const card=(k,t,s,sub)=>`<button class="ky-pick rx" data-pick="${k}"><b>${t}</b><small>${sub}</small><span class="kyp-st"><i>🏆 ${s.tro}</i><i>🪙 ${s.coins}</i><i>👥 ${s.chars}</i><i>⚔ ${s.matches}</i></span><em>${k==='cloud'?'USE THIS':'KEEP THIS'}</em></button>`;
+      body.innerHTML=`<p class="ky-p">${data.why==='newer'?'Your Kyuchi ID has newer progress from another device, and this device has some of its own.':'This device already has progress.'} <b>Which one do you keep?</b> The other is replaced.</p>
+        <div class="ky-picks">${card('cloud','KYUCHI ID',c,'saved '+(data.savedAt?ago(+data.savedAt):'')+(c.name?' · '+esc(c.name):''))}${card('here','THIS DEVICE',m,'right now'+(m.name?' · '+esc(m.name):''))}</div>`; }
+    else if(view==='done') body.innerHTML=`<div class="ky-done"><i>✓</i><b>${esc(data.title)}</b><small>${esc(data.sub)}</small></div>`;
+    wireAllRx(body);
+    body.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>open(b.dataset.v));
+    body.querySelectorAll('[data-by]').forEach(b=>b.onclick=()=>{ loginBy=b.dataset.by; open('login'); });
+    body.querySelectorAll('[data-eye]').forEach(b=>b.onclick=()=>{ const i=document.getElementById(b.dataset.eye); i.type=i.type==='password'?'text':'password'; b.classList.toggle('on',i.type==='text'); });
+    const dice=body.querySelector('.ky-dice'); if(dice) dice.onclick=()=>{ const n=(typeof randomUsername==='function'?randomUsername():'Player'+Math.floor(Math.random()*999)).replace(/[^A-Za-z0-9_]/g,'').slice(0,16); document.getElementById('kyName').value=n; SFX.press&&SFX.press(); };
+    const fg=body.querySelector('#kyForgot'); if(fg) fg.onclick=()=>open('forgot');
+    body.querySelectorAll('[data-pick]').forEach(b=>b.onclick=async()=>{ close(); if(b.dataset.pick==='cloud') apply(data.save,+data.savedAt,data._ut); else { await upload(true,true); toast('This device\'s progress is now your Kyuchi ID\'s',3400); } });
+    const go=body.querySelector('.ky-go'); if(go) go.onclick=()=>submit(view,go);
+    const first=body.querySelector('input'); if(first) setTimeout(()=>first.focus(),60);
+    if(view==='done') setTimeout(()=>{ if(pop.querySelector('.ky-done')) close(); },2200);
+  }
+  const val=id=>{ const i=document.getElementById(id); return i?i.value:''; };
+  function msg(t,good){ const m=document.getElementById('kyMsg'); if(m){ m.textContent=t; m.classList.toggle('good',!!good); } if(!good&&t) SFX.error&&SFX.error(); }
+  async function submit(view,go){
+    msg(''); const was=go.textContent;
+    if(view==='create'){
+      const n=val('kyName').trim(), e=val('kyMail').trim(), p=val('kyPw'), p2=val('kyPw2');
+      if(!NAME_RE.test(n)) return msg('Usernames are 3 to 16 letters, numbers or _');
+      if(!MAIL_RE.test(e)) return msg('Type a real email address');
+      if(p.length<8) return msg('Your password needs 8 or more characters');
+      if(p!==p2) return msg('The two passwords aren\'t the same');
+    }
+    if(view==='login'&&(!val('kyId').trim()||!val('kyPw'))) return msg(loginBy==='name'?'Type your username and password':'Type your email and password');
+    if(view==='forgot'&&!MAIL_RE.test(val('kyMail').trim())) return msg('Type the email of your Kyuchi ID');
+    if(view==='delete'&&!val('kyPw')) return msg('Type your password');
+    go.disabled=true; go.textContent='…';
+    try{
+      if(view==='create'){ await create(val('kyName'),val('kyMail'),val('kyPw')); SFX.win&&SFX.win(); open('done',{title:'Welcome, '+ses.name+'!',sub:'Your progress is saved to your Kyuchi ID. Check your email for a link to confirm it.'}); }
+      else if(view==='login'&&switching){ const was=ses&&ses.uid, d=await login(loginBy,val('kyId'),val('kyPw'));
+        if(ses.uid===was){ switching=false; open('done',{title:'You\'re already on '+ses.name,sub:'Log in with another Kyuchi ID to switch to it.'}); }
+        else { close(); apply(d.save||'{}',+d.savedAt||0,d._ut,'Switched to '+ses.name); } }        // that account's own progress (a new one starts fresh)
+      else if(view==='login'){ const d=await login(loginBy,val('kyId'),val('kyPw'));
+        if(!d.save){ await upload(true); SFX.win&&SFX.win(); open('done',{title:'Logged in as '+ses.name,sub:'This device\'s progress is saved to your Kyuchi ID.'}); }
+        else if(hash(pack())===hash(d.save)){ ses.hash=hash(d.save); ses.syncedAt=+d.savedAt||Date.now(); ses.ut=d._ut||''; store(); paint(); SFX.win&&SFX.win(); open('done',{title:'Logged in as '+ses.name,sub:'This device already has your progress.'}); }
+        else if(fresh()){ close(); apply(d.save,+d.savedAt||Date.now(),d._ut); }
+        else open('choose',Object.assign({why:'login'},d)); }
+      else if(view==='forgot'){ await forgot(val('kyMail')); msg('If that email has a Kyuchi ID, the link is on its way · check spam too',true); go.textContent='SENT'; return; }
+      else if(view==='delete'){ await destroy(val('kyPw')); open('done',{title:'Kyuchi ID deleted',sub:'Everything in the cloud is gone. Your progress is still on this device.'}); }
+    }catch(e){ msg(say(e)); }
+    go.disabled=false; if(go.textContent==='…') go.textContent=was;
+  }
+  function choose(d,why){ open('choose',Object.assign({why},d)); }
+  return {boot,touch,upload,logout,paint,open,get on(){ return !!ses; },get session(){ return ses; },get ready(){ return ready(); },_:{pack,hash,sumUp,say,get dirty(){ return dirty; }}};
+})();
 
 /* ---- 64e-laurent.js ---- */
 /* ==========================================================
@@ -30533,6 +30904,7 @@ document.addEventListener('visibilitychange',()=>{
   try{ showHub(); }
   catch(e){ console.error(e); }
   try{ if(State.online) netConnect(); netPaint(); }catch(e){ console.error(e); }
+  try{ Kyuchi.boot(); }catch(e){ console.error(e); }
   setTimeout(warmPortraits,2500);
   const splash=document.getElementById('bootSplash');
   if(splash){ requestAnimationFrame(()=>requestAnimationFrame(()=>{ splash.classList.add('gone'); setTimeout(()=>splash.remove(),900); })); }
