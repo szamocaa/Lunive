@@ -1,0 +1,61 @@
+{
+  "name": "lunive",
+  "productName": "Lunive",
+  "version": "3.27.1",
+  "description": "Lunive",
+  "author": "szamocaa",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "prepare-app": "node prepare.js",
+    "start": "node prepare.js && electron .",
+    "dist:win": "node prepare.js && electron-builder --win nsis --x64 --publish never",
+    "dist:mac": "node prepare.js && electron-builder --mac dir --universal --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "io.github.szamocaa.lunive",
+    "productName": "Lunive",
+    "copyright": "© szamocaa",
+    "files": [
+      "main.js",
+      "package.json",
+      "app/**/*"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "asar": true,
+    "win": {
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Lunive",
+      "artifactName": "Lunive-Setup-${version}.${ext}"
+    },
+    "mac": {
+      "icon": "build/icon.png",
+      "category": "public.app-category.games",
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "linux": {
+      "target": [
+        "dir"
+      ],
+      "icon": "build/icon.png",
+      "category": "Game"
+    }
+  },
+  "repository": "https://github.com/szamocaa/Lunive"
+}
