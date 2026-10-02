@@ -1551,7 +1551,15 @@ body.truth-touch #tpBtn{display:block;}
 .tp-keys{margin-top:14px;font-size:11px;letter-spacing:.2em;opacity:.45;}
 .tp-box b{font-size:12px;letter-spacing:.55em;opacity:.5;font-weight:400;margin-bottom:6px;}
 .tp-box button{font:inherit;background:none;border:0;color:#e8e4da;font-size:16px;letter-spacing:.22em;cursor:pointer;padding:8px 14px;}
-#tpLeave{font-size:12px;opacity:.5;} #tpLeave:hover,#tpResume:hover{opacity:1;color:#fff;}
+#tpLeave{font-size:12px;opacity:.5;}
+#tpCo{display:none;flex-direction:column;align-items:center;gap:5px;margin:4px 0 2px;}
+#tpCo.show{display:flex;}
+#tpCo span{font-size:10px;letter-spacing:.32em;opacity:.55;}
+#tpCo em{font-style:normal;font-size:13px;letter-spacing:.32em;padding:5px 18px 5px 22px;border:1px solid rgba(125,255,174,.55);border-radius:999px;color:#7dffae;transition:all .2s;}
+#tpCo.off em{color:#cfcac0;border-color:rgba(232,228,218,.3);border-style:dashed;}
+#tpCo small{font-size:9.5px;letter-spacing:.16em;opacity:.45;}
+#tpCo:not(.locked):hover em{background:rgba(255,255,255,.06);}
+#tpCo.locked{cursor:not-allowed;} #tpCo.locked em{opacity:.45;} #tpLeave:hover,#tpResume:hover{opacity:1;color:#fff;}
 #truthEnd{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;color:#d8d4ca;font-size:20px;letter-spacing:.32em;pointer-events:none;}
 #truthEnd p{margin:0;opacity:0;}
 #truthEnd.on p:nth-child(1){animation:tEnd 4.6s .2s forwards;} #truthEnd.on p:nth-child(2){animation:tEnd 3.6s 1.9s forwards;}
@@ -3313,7 +3321,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.27.0 · BETA</span>
+    <span class="hub-version">VERSION 3.27.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3480,7 +3488,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.27.0</div></div>
+</svg><div class="set-ver">VERSION 3.27.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -3694,7 +3702,7 @@ body.in-game #hub .em-chip{display:none;}
         <div class="ti-acts"><button id="tiUse">Hold</button><button id="tiBack">Put back</button></div></div>
       <div class="ti-keys">1 close &middot; arrows choose &middot; E use &middot; Q put back</div>
     </div></div>
-    <div id="truthPause"><div class="tp-box"><b>THE TRUTH</b><button id="tpResume">Continue</button><button id="tpLeave">Leave</button><small class="tp-keys">WASD walk · Shift run · C crouch · B emote · E use · 1 bag · Q put away</small></div></div>
+    <div id="truthPause"><div class="tp-box"><b>THE TRUTH</b><button id="tpResume">Continue</button><button id="tpCo"><span>TEAMMATE TRACKER</span><em>ON</em><small></small></button><button id="tpLeave">Leave</button><small class="tp-keys">WASD walk · Shift run · C crouch · B emote · E use · 1 bag · Q put away</small></div></div>
     <div id="truthDream"><p>It was all just a dream.</p></div>
     <div id="truthEnd"><p>You woke up.</p><p>Vael never did.</p></div>
     <div id="truthOsd"><span id="osdPlay">PLAY &#9654;</span><span id="osdTime"></span><span id="osdRew">&#9664;&#9664; REW&nbsp;&nbsp;<b id="osdRewT"></b></span></div>
@@ -22871,7 +22879,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.27.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.27.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -30712,10 +30720,19 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     const tag=new THREE.Sprite(sm); tag.scale.set(1.0,.25,1); tag.position.y=2.05; m.add(tag); N.tag=tag;
     m.visible=false; N.mate=m;
   }
+  /* the teammate tracker (top left: their name, how far away they are). The party leader (or, matched with a stranger, the host) can switch it off, for both of you */
+  function tnLead(){ const N=T&&T.net; if(!N) return false; try{ if(NET.party) return NET.party.lead===NET.id; }catch(e){} return !!(N.M&&N.M.isHost); }
+  function tnCoBtn(){ const b=$t('tpCo'); if(!b) return; const N=T&&T.net; b.classList.toggle('show',!!N); if(!N) return; const lead=tnLead();
+    b.classList.toggle('off',!!N.coOff); b.classList.toggle('locked',!lead); b.querySelector('em').textContent=N.coOff?'OFF':'ON';
+    b.querySelector('small').textContent=lead?'for both of you':'only your party leader can change this'; }
+  function tnCoApply(){ const N=T.net, el=$t('truthCo'); if(el) el.classList.toggle('on',!N.coOff); tnCoBtn(); }
+  function tnCoSet(off){ const N=T&&T.net; if(!N||!tnLead()) return; N.coOff=!!off; try{ State.truthCoOff=!!off; saveState(); }catch(e){}
+    netMs({k:'co',v:off?1:0}); N.coSentAt=performance.now(); tnCoApply(); }
   function tnUI(){
     const ui=$t('truthUI');
     const mk=(id,html)=>{ let el=document.getElementById(id); if(!el){ el=document.createElement('div'); el.id=id; el.innerHTML=html||''; ui.appendChild(el); } return el; };
     const co=mk('truthCo','<b></b><small></small>'); co.querySelector('b').textContent=T.net.name; co.className='on';
+    if(tnLead()){ let off=false; try{ off=!!State.truthCoOff; }catch(e){} T.net.coOff=off; } tnCoApply();
     mk('truthHp','<i></i>'); mk('truthHurt');
   }
   function tnStop(){
@@ -30723,7 +30740,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     const M=N.M;
     if(typeof NET!=='undefined'&&NET.match===M){ if(!N.quit&&!N.gone) netMs({k:'out'}); netStopMatch(); }
     netTruthShot=null;
-    ['truthCo','truthHp','truthHurt'].forEach(id=>{ const el=document.getElementById(id); if(el) el.remove(); });
+    ['truthCo','truthHp','truthHurt'].forEach(id=>{ const el=document.getElementById(id); if(el) el.remove(); }); { const b=document.getElementById('tpCo'); if(b) b.classList.remove('show'); }
     T.net=null;
   }
 
@@ -30750,6 +30767,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     // you heal, slowly, once nobody's shooting
     if(N.hp<100&&T.t-N.hurtAt>5&&T.phase!=='dead') N.hp=Math.min(100,N.hp+12*dt);
     N.hurtK=Math.max(0,N.hurtK-dt*.7);
+    if(tnLead()&&now-(N.coSentAt||0)>4000){ N.coSentAt=now; netMs({k:'co',v:N.coOff?1:0}); }
     tnMateStep(dt,now); tnHud();
   }
   function tnMsg(m,now){
@@ -30768,6 +30786,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
         if(it){ it.taken=true; it.obj.visible=false; it.mateHas=true; if(T.target===it){ T.target=null; prompt(false); } } break; }
       case 'dn': if(!T.inDream&&!T.inTape&&!T.inSalvia) hint(e.c==='mate'&&N.iHit?'You killed '+N.name+'.':N.name+' went down.'); N.iHit=false; break;
       case 'wk': tnFree(); break;
+      case 'co': if(!tnLead()){ N.coOff=!!e.v; tnCoApply(); } break;
       case 'out': if(!N.gone){ N.gone=true; tnFree(); hint(N.name+' is gone. You are on your own now.'); } break;
     }
   }
@@ -31633,7 +31652,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   /* ---------- input ---------- */
   const locked=()=>!!T&&document.pointerLockElement===T.canvas;
   function lock(){ try{ const p=T.canvas.requestPointerLock(); if(p&&p.catch) p.catch(()=>{}); }catch(e){} }
-  function setPaused(v){ if(!T) return; T.paused=v; $t('truthPause').classList.toggle('on',v); if(v){ T.keys={}; prompt(false); } }
+  function setPaused(v){ if(!T) return; T.paused=v; $t('truthPause').classList.toggle('on',v); if(v){ T.keys={}; prompt(false); tnCoBtn(); } }
   const KEYS=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight','Space','KeyE','KeyQ','Digit1','Tab','Enter','Backspace','KeyC','KeyB']);
   function bind(){
     const cv=T.canvas, ui=$t('truthUI'), H={};
@@ -31795,6 +31814,9 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   function leave(){ if(!on) return; if(T&&T.net) T.net.quit=true; finish(); }
   document.getElementById('tpResume').addEventListener('click',()=>{ if(!T) return; if(T.touchMode) setPaused(false); else lock(); });
   document.getElementById('tpLeave').addEventListener('click',e=>{ e.stopPropagation(); leave(); });
+  document.getElementById('tpCo').addEventListener('click',e=>{ e.stopPropagation(); if(!T||!T.net) return;
+    if(!tnLead()){ const b=$t('tpCo'); b.animate&&b.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:260}); return; }
+    tnCoSet(!T.net.coOff); SFX.tr.click&&SFX.tr.click({gain:.6}); });
   document.getElementById('tpBtn').addEventListener('click',()=>{ if(T&&T.phase==='play') setPaused(true); });
   document.getElementById('tiBtn').addEventListener('click',()=>{ if(!T) return; if(T.invOpen) closeInv(); else openInv(); });
   document.getElementById('tiUse').addEventListener('click',()=>{ if(T) invUse(); });
