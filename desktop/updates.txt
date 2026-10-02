@@ -1,3 +1,4 @@
+3.29.0: Leaderboard! The top 100 players by trophies, right next to the Trophy Road. Every Kyuchi ID now has its own Account ID too: find it in your profile.
 3.28.2: Limited in the Shop: the "Misery Dada" profile picture, 60 coins!
 3.28.1: New in the Shop: the "Self Love" profile picture, 60 coins!
 3.28.0: Lunive is now a real app for Windows and Mac, and it updates itself from now on. Check your mailbox: there's a gift waiting for you!
