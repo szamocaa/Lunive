@@ -2328,6 +2328,81 @@ body.lite-ui #hub .lb-sp{display:none;}
 .ad-none{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:30px 10px;color:var(--dim);font:500 12.5px var(--ui);}
 .ad-none .art-svg{width:120px;height:100px;}
 .ad-none b{font:700 15px var(--ui);color:#fff;}
+/* ===== the Artifacts screen, clearer (round 49) ===== */
+.art-invbar .aiv-n{white-space:nowrap;}
+#art-screen .art-wrap{grid-template-columns:minmax(250px,290px) minmax(0,1fr) minmax(270px,310px);top:100px;}
+#art-screen .art-coins{clip-path:none;box-shadow:none;border-radius:999px;border:1px solid rgba(255,214,107,.35);background:rgba(12,14,24,.8);padding:7px 16px 7px 12px;}
+#art-screen .eyebrow{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.22em;margin:2px 0 7px;}
+#art-screen .eyebrow::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
+.art-slots{gap:5px;margin-bottom:12px;}
+.as-slot{padding:5px 8px 5px 5px;}
+.as-ic{flex:0 0 42px;height:42px;}
+.as-t b{font-size:14.5px;}
+/* your stats: one tidy table */
+.art-stats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:12px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);}
+.ast2{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.06);}
+.ast2:nth-child(odd){border-right:1px solid rgba(255,255,255,.06);}
+.ast2:nth-last-child(-n+2){border-bottom:0;}
+.ast2 span{grid-column:1/-1;font:700 9px var(--ui);letter-spacing:.18em;color:var(--dim2);}
+.ast2 b{font:700 17px var(--sk-h,var(--ui));color:#fff;line-height:1.2;}
+.ast2 em{align-self:center;font:700 10.5px var(--ui);font-style:normal;color:#6dffa6;margin-left:6px;white-space:nowrap;}
+.ast2 em.z{color:var(--dim2);font-weight:500;}
+/* set bonuses: four pips, and the bonus lines light up */
+.aset2{padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);margin-bottom:6px;}
+.as2-h{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.as2-h b{font:700 13px var(--ui);flex:1;}
+.as2-p{display:flex;gap:3px;}
+.as2-p i{width:9px;height:9px;border-radius:3px;background:rgba(255,255,255,.12);}
+.as2-p i.m{margin-right:3px;}
+.aset2.s-aurora .as2-p i.f{background:linear-gradient(135deg,#5dffcf,#6aa6ff);box-shadow:0 0 6px rgba(93,255,207,.6);}
+.aset2.s-limerence .as2-p i.f{background:linear-gradient(135deg,#ffc0dc,#ff5d9c);box-shadow:0 0 6px rgba(255,93,156,.6);}
+.aset2:not(.s-aurora):not(.s-limerence) .as2-p i.f{background:#ffd36a;box-shadow:0 0 6px rgba(255,211,106,.6);}
+.as2-r{display:flex;gap:7px;align-items:baseline;font:500 11.5px/1.35 var(--ui);color:var(--dim2);margin-top:2px;}
+.as2-r em{flex:none;font:800 9.5px var(--ui);font-style:normal;width:16px;height:16px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:var(--dim);}
+.as2-r.lit{color:#fff;} .as2-r.lit em{background:#6dffa6;color:#0b2416;}
+.aset2.on.s-aurora{border-color:rgba(93,255,207,.4);} .aset2.on.s-limerence{border-color:rgba(255,116,178,.4);}
+/* the box: one slim row */
+.art-box{grid-template-columns:52px minmax(0,1fr) auto;grid-template-areas:"art t btn";padding:8px 10px;gap:12px;}
+.abx-art{width:52px;height:44px;}
+.abx-t b{font-size:18px;}
+.abx-t>span{display:none;}
+.abx-odds i{font-size:9px;padding:1px 5px;}
+.abx-btns{flex-direction:row;}
+.abx-btns .big-btn{flex:none;padding:8px 14px;font-size:13px;}
+/* the toolbar: slot filters with their shapes, and how to sort */
+.art-filter{align-items:center;gap:5px;margin-bottom:8px;}
+.af{padding:5px 10px 5px 8px;}
+.af-ic{display:inline-flex;width:18px;height:18px;opacity:.85;} .af-ic svg{width:100%;height:100%;}
+.af-sort{margin-left:auto;display:flex;align-items:center;gap:3px;font:700 9.5px var(--ui);letter-spacing:.18em;color:var(--dim2);}
+.af-sort button{border:0;border-radius:7px;padding:4px 8px;background:transparent;color:var(--dim);font:700 9.5px var(--ui);letter-spacing:.14em;cursor:pointer;}
+.af-sort button.on{background:rgba(255,255,255,.12);color:#fff;}
+/* the relics: grouped by rarity, each one saying what it gives */
+.art-grid{grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;}
+.ag-h{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:6px 2px 0;}
+.ag-h:first-child{margin-top:0;}
+.ag-h i{width:10px;height:10px;transform:rotate(45deg);background:var(--rc);box-shadow:0 0 8px var(--rc);}
+.ag-h b{font:800 11px var(--ui);letter-spacing:.24em;color:var(--rc);}
+.ag-h span{font:700 11px var(--ui);color:#fff;background:rgba(255,255,255,.08);padding:1px 7px;border-radius:6px;}
+.ag-h em{margin-left:auto;font:600 10px var(--ui);font-style:normal;color:var(--dim2);letter-spacing:.08em;}
+.ag-h::after{content:'';order:2;flex:1;height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--rc) 50%,transparent),transparent);}
+.ag-h em{order:3;margin-left:0;}
+.art-grid .art-tile{min-height:0;aspect-ratio:auto;height:104px;padding:10px 14px 30px;}
+.art-tile .art-svg{width:100%;height:100%;}
+.art-tile .at-gems{display:none;}
+.art-tile .at-lv{left:6px;top:6px;bottom:auto;font-size:10px;}
+.at-st{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:4px 4px 5px;text-align:center;font:700 10.5px var(--ui);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:linear-gradient(0deg,color-mix(in srgb,var(--rc) 34%,rgba(8,9,14,.92)),rgba(8,9,14,.55));border-top:1px solid color-mix(in srgb,var(--rc) 45%,transparent);}
+.art-tile.worn{outline:2px solid #6dffa6;outline-offset:-2px;}
+/* the one you picked: what it would change */
+.ad-cmp{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
+.ad-cmp span{font:700 9px var(--ui);letter-spacing:.2em;color:var(--dim2);}
+.ad-cmp b{font:700 14px var(--ui);color:#fff;}
+.ad-cmp.up{border-color:rgba(109,255,166,.45);} .ad-cmp.up b{color:#6dffa6;}
+.ad-cmp.down{border-color:rgba(255,106,132,.45);} .ad-cmp.down b{color:#ff8aa0;}
+.ad-cmp em{font:500 10.5px var(--ui);font-style:normal;color:var(--dim);}
+@media (max-width:1180px){ .art-box{grid-template-columns:44px minmax(0,1fr);grid-template-areas:"art t" "btn btn";} .abx-btns .big-btn{flex:1;} }
+@media (max-height:680px){ .ast2{padding:5px 9px;} .ast2 b{font-size:15px;} .as-ic{flex-basis:36px;height:36px;} .art-grid .art-tile{height:92px;} }
+
 .ad-art{position:relative;align-self:center;width:150px;height:150px;padding:18px;border-radius:22px;
   background:radial-gradient(120% 90% at 50% 20%,var(--rb1),var(--rb2));box-shadow:inset 0 0 0 2px var(--rc),0 14px 36px -14px var(--rc);}
 .ad-art .at-aura{inset:2%;opacity:.75;filter:blur(14px);}
@@ -3238,7 +3313,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.24.0 · BETA</span>
+    <span class="hub-version">VERSION 3.25.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3277,7 +3352,6 @@ body.in-game #hub .em-chip{display:none;}
     <div class="ic-rank" id="charRank"></div>
     <div class="char-name" id="charName"></div>
     <div class="char-desc" id="charDesc"></div>
-    <div class="ht-meters ic-meters" id="charMeters"></div>
     <div class="stat"><span>ATTACK</span><b id="charAtk"></b></div>
     <div class="stat"><span>SUPER · E</span><b id="charUlt"></b></div>
     <div class="stat" id="charSpRow"><span>SHIFT</span><b id="charSp"></b></div>
@@ -3318,8 +3392,8 @@ body.in-game #hub .em-chip{display:none;}
   <div class="panel-head"><div class="panel-title">Artifacts</div><div class="panel-sub">Five relics · worn by every character</div></div>
   <div class="shop-coins art-coins"><svg class="coin-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="url(#coinG)" stroke="#fff" stroke-width="1.4"/><path d="M14.8 7.6a4.8 4.8 0 1 0 0 8.8 5.6 5.6 0 1 1 0-8.8z" fill="#fff7d6" opacity=".95"/></svg><b id="artCoins">0</b></div>
   <div class="art-wrap">
-    <section class="art-left glass"><div class="eyebrow">Equipped relics</div><div class="art-slots" id="artSlots"></div>
-      <div class="eyebrow">Your stats · every character</div><div class="art-stats" id="artStats"></div>
+    <section class="art-left glass"><div class="eyebrow">What you wear</div><div class="art-slots" id="artSlots"></div>
+      <div class="eyebrow">Your stats · all characters</div><div class="art-stats" id="artStats"></div>
       <div class="eyebrow">Set bonuses</div><div class="art-sets" id="artSets"></div></section>
     <section class="art-mid glass"><div class="art-box" id="artBox"></div><div class="art-invbar"><span class="aiv-n" id="artCount"></span><button class="aiv-btn best rx" id="artBestBtn" title="Put on the strongest relics you own"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11L10 22l9-12h-6.5z"/></svg>AUTO EQUIP</button><button class="aiv-btn rx" id="artAutoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>AUTO DELETE</button></div><div class="art-filter" id="artFilter"></div><div class="art-grid" id="artGrid"></div></section>
     <section class="art-detail glass" id="artDetail"></section>
@@ -3406,7 +3480,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.24.0</div></div>
+</svg><div class="set-ver">VERSION 3.25.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -6544,8 +6618,8 @@ function arms(r,o){
     const hm=cmat(o.glove||o.skin,{rim:.6}), hk=KIT_STYLE.hand;
     const hand=part(r.hands[ai],ellipsoid(.046*th*hk,.054*th*hk,.042*th*hk,18,14),hm,0,-.02,0);
     const th2=part(r.hands[ai],ellipsoid(.018*hk,.03*hk,.018*hk,10,8),hm,-s*.03*hk,-.01,.024*hk);
-    th2.rotation.z=s*.5;
-    if(o.fingerless) part(r.hands[ai],ellipsoid(.049*th,.03*th,.045*th,16,10),cmat(o.fingerless,{rim:.6}),0,.0,0);
+    th2.rotation.z=s*.5; hand.userData.handPart=th2.userData.handPart=true;
+    if(o.fingerless) part(r.hands[ai],ellipsoid(.049*th,.03*th,.045*th,16,10),cmat(o.fingerless,{rim:.6}),0,.0,0).userData.handPart=true;
   });
 }
 
@@ -8893,7 +8967,7 @@ function buildMathias(){
   // a gold watch on the left wrist, a signet ring on the right hand
   const wt=part(r.arms[1],kTorus(.047,.009,8,20),cmat(0x6a3a1e,{rim:.6}),0,-.37,0); wt.rotation.x=Math.PI/2;
   part(r.arms[1],kCyl(.026,.026,.012,16),cmat(GOLD,{spec:1.3,shin:90}),.05,-.37,0).rotation.z=Math.PI/2;
-  part(r.hands[0],kTorus(.018,.006,6,12),cmat(GOLD,{spec:1.3,shin:90}),.03,-.035,.02).rotation.y=Math.PI/2;
+  { const rg=part(r.hands[0],kTorus(.018,.006,6,12),cmat(GOLD,{spec:1.3,shin:90}),.03,-.035,.02); rg.rotation.y=Math.PI/2; rg.userData.handPart=true; }
   // the baguette in his right hand, the spoon and a knife waiting behind it
   const bag=baguetteProp(.66); bag.scale.setScalar(1.3); bag.position.set(0,-.05,.08); bag.rotation.x=1.05; r.hands[0].add(bag);
   const spoon=woodSpoonProp(); spoon.scale.setScalar(1.35); spoon.position.set(0,-.04,.05); spoon.rotation.x=1.1; spoon.visible=false; r.hands[0].add(spoon);
@@ -9033,6 +9107,7 @@ function clawHand(parent){
     part(parent,sphere(.013,8,6),CH,x*1.15,-.14,.05); }
   const th=[V3(-.05,-.05,.03),V3(-.075,-.1,.06),V3(-.07,-.16,.06)];
   part(parent,sweepGeo(th,{up:V3(0,0,1),seg:8,rad:6,inner:1,rx:s=>.011*(1-s*.6)+.002,ry:s=>.011*(1-s*.6)+.002,tipLen:.02}),CH);
+  parent.children.forEach(c=>{ c.userData.handPart=true; });
 }
 
 /* --- Rhyon: black hair with a neon streak, glowing cyan eyes, a black
@@ -12897,7 +12972,7 @@ const Lobby=(function(){
   function setHero(key,opts){
     if(!R) init();
     if(heroKey===key&&hero&&!(opts&&opts.force)) return;
-    if(hero){ if(HD.emNote){ hero.remove(HD.emNote); HD.emNote=null; } pedestal.remove(hero); disposeModel(hero); }
+    if(hero){ if(HD.emNote){ hero.remove(HD.emNote); HD.emNote=null; } HD.emHid=null; pedestal.remove(hero); disposeModel(hero); }
     hero=byKey(key).build();
     hero.traverse(o=>{ if(o.isMesh&&!o.userData.isShadow&&!o.userData.flame) o.castShadow=true; if(o.userData&&o.userData.isShadow) o.visible=false; });
     hero.traverse(o=>o.layers.enable(1));
@@ -12914,8 +12989,8 @@ const Lobby=(function(){
     mateSt=st||'';
     if(key===mateKey) return;
     const had=!!mateKey;
-    if(mate){ if(MD.emNote){ mate.remove(MD.emNote); MD.emNote=null; } matePed.remove(mate); disposeModel(mate); mate=null; }
-    mateKey=key; if(!key) mateDanceS=null;
+    if(mate){ if(MD.emNote){ mate.remove(MD.emNote); MD.emNote=null; } MD.emHid=null; matePed.remove(mate); disposeModel(mate); mate=null; }
+    mateKey=key; if(!key){ MD.emote=MD.emOut=MD.emX=null; MD.emBl=0; }
     if(had!==!!key) applyFrame();
     if(!key) return;
     if(!matePed){
@@ -12964,7 +13039,7 @@ const Lobby=(function(){
           if(ud.body) ud.body.position.y+=Math.abs(Math.sin(t*7+1))*.035*mateReady;
           if(matePed.userData.ring) matePed.userData.ring.material.color.setHSL(.38,.9,.62+.1*mateReady);
         }
-        if(mateDanceS){ MD.mesh=m; MD.emote=mateDanceS; emotePoseRig(MD,now); danceNote(MD,now,1.7); }
+        if(MD.emote||MD.emOut){ MD.mesh=m; emotePoseRig(MD,now); }
         if(matePopT>=0){ matePopT+=dt/.55; const k=matePopT<1?1-Math.pow(1-matePopT,3)*Math.cos(matePopT*9)*.9:1; m.scale.setScalar(Math.max(.01,k)); if(matePopT>=1){ matePopT=-1; m.scale.setScalar(1); } }
       }
     }
@@ -13121,26 +13196,25 @@ const Lobby=(function(){
   }
   /* ---------- a dance from the emote wheel (B in the lobby), or a preview in Characters → Emotes;
      your teammate's, from what they tell you ---------- */
-  let heroDance=null, mateDanceS=null, danceAud=false; const HD={mesh:null,emote:null,emNote:null}, MD={mesh:null,emote:null,emNote:null};
+  let danceAud=false; const HD={mesh:null,emote:null,emNote:null}, MD={mesh:null,emote:null,emNote:null};
   function dance(id){
     id=+id||0; if(id&&!emoteBy(id)) id=0;
-    if((heroDance?heroDance.id:0)===id) return;
-    if(heroDance&&hero){ HD.mesh=hero; emoteResetRig(HD); }
-    heroDance=id?{id,t0:performance.now()}:null;
+    if((HD.emote?HD.emote.id:0)===id) return;
+    if(hero) HD.mesh=hero;
+    emoteSwap(HD,id);
     if(id){ emote=null; cheerT=-1; }
   }
   function mateDance(id){
     id=+id||0; if(id&&!emoteBy(id)) id=0;
-    if((mateDanceS?mateDanceS.id:0)===id) return;
-    if(mateDanceS&&mate){ MD.mesh=mate; emoteResetRig(MD); }
-    mateDanceS=id?{id,t0:performance.now()}:null;
+    if((MD.emote?MD.emote.id:0)===id) return;
+    if(mate) MD.mesh=mate;
+    emoteSwap(MD,id);
   }
-  function danceNote(U,now,ph){ const n=emoteNote(U); n.layers.enable(1); n.position.set(Math.sin(now/260+ph)*.18,2.45+Math.sin(now/180+ph)*.08,0); n.material.rotation=Math.sin(now/300+ph)*.3; }
   function danceSound(){
     if((typeof gameOn!=='undefined'&&gameOn)||(typeof Truth!=='undefined'&&Truth.on)) return;
     const want=new Map();
-    if(heroDance&&hero&&hero.visible) want.set('me',{id:heroDance.id,k:1});
-    if(mateDanceS&&mate&&matePed&&matePed.visible) want.set('mate',{id:mateDanceS.id,k:heroDance?.22:.7});
+    if(HD.emote&&hero&&hero.visible) want.set('me',{id:HD.emote.id,k:1});
+    if(MD.emote&&mate&&matePed&&matePed.visible) want.set('mate',{id:MD.emote.id,k:HD.emote?.22:.7});
     if(!want.size&&!danceAud) return;
     danceAud=want.size>0; EmoteAudio.sync(want,danceAud);
   }
@@ -13204,7 +13278,7 @@ const Lobby=(function(){
         if(pedestal.userData.ring) pedestal.userData.ring.material.color.setHSL((t*.3)%1,.9,.7+.1*ready);
       }
       // a move now and then while you're in the lobby or looking through the characters
-      if((mode==='hub'||mode==='chars')&&hopT<0&&popT<0&&cheerT<0&&ready<.2&&!emote&&!heroDance){
+      if((mode==='hub'||mode==='chars')&&hopT<0&&popT<0&&cheerT<0&&ready<.2&&!emote&&!HD.emote){
         emoteNext-=dt; if(emoteNext<=0){ emote={type:EMOTES[Math.floor(Math.random()*EMOTES.length)],t:0}; emoteNext=7+Math.random()*7; }
       }
       if(emote){
@@ -13224,7 +13298,7 @@ const Lobby=(function(){
       if(hopT>=0){ hopT+=dt/.6; const h=Math.sin(Math.min(1,hopT)*Math.PI); hero.position.y=PED_TOP-.12+h*.55; hero.rotation.y+=dt*10*(1-hopT); if(hopT>=1){ hopT=-1; hero.position.y=PED_TOP-.12; } }
       if(popT>=0){ popT+=dt/.55; const s=popT<1?1-Math.pow(1-popT,3)*Math.cos(popT*9)*.9:1; hero.scale.setScalar(Math.max(.01,s)); if(popT>=1){ popT=-1; hero.scale.setScalar(1); } }
     }
-    if(heroDance&&hero&&hero.visible){ HD.mesh=hero; HD.emote=heroDance; emotePoseRig(HD,now); danceNote(HD,now,0); }
+    if((HD.emote||HD.emOut)&&hero&&hero.visible){ HD.mesh=hero; emotePoseRig(HD,now); }
     stepMate(dt,now);
     danceSound();
     // your pet, beside your character
@@ -13300,7 +13374,7 @@ const Lobby=(function(){
     if(meteorT>=L){ meteorT=-1; meteor.material.opacity=0; }
   }
   function start(){ init(); if(running) return; running=true; last=0; raf=Frame.req(frame); }
-  function stop(){ running=false; Frame.cancel(raf); dance(0); if(danceAud){ danceAud=false; try{ EmoteAudio.stopAll(); }catch(e){} } }
+  function stop(){ running=false; Frame.cancel(raf); if(hero) HD.mesh=hero; emoteHalt(HD); if(danceAud){ danceAud=false; try{ EmoteAudio.stopAll(); }catch(e){} } }
   /* ---------- portraits: a head-and-shoulders render of each character ---------- */
   let PR=null, PS=null, PC=null; const PCACHE={};
   function cachedPortrait(key){ return PCACHE[key]||null; }
@@ -13322,7 +13396,7 @@ const Lobby=(function(){
     PS.remove(m); disposeModel(m);
     return PCACHE[key]=url;
   }
-  return {dance,mateDance,danceId:()=>heroDance?heroDance.id:0,mateDanceId:()=>mateDanceS?mateDanceS.id:0,setMate,teamReady(v){ teamRdy=!!v; },get mateKey(){ return mateKey; },get mateShown(){ return !!(matePed&&matePed.visible); },
+  return {dance,mateDance,danceId:()=>HD.emote?HD.emote.id:0,mateDanceId:()=>MD.emote?MD.emote.id:0,setMate,teamReady(v){ teamRdy=!!v; },get mateKey(){ return mateKey; },get mateShown(){ return !!(matePed&&matePed.visible); },
     init,start,stop,snap,setMode,showcase,endShowcase,setIsland,setHero,showChest,openChest,portrait,setPet,petStage,petPoke,chestStyle,get petKey(){ return petKey; },get stageKey(){ return stageKey; },cachedPortrait,burstAt,setAccent,headScreen,react,get heroKey(){return heroKey;},get mode(){return mode;},get running(){return running;},resize,
     get info(){ return R?{mem:Object.assign({},R.info.memory),calls:R.info.render.calls,tris:R.info.render.triangles,progs:R.info.programs?R.info.programs.length:0}:null; }};
 })();
@@ -14470,7 +14544,6 @@ function setChar(i,instant){
   document.getElementById('charDesc').textContent=c.desc;
   document.getElementById('charAtk').textContent=c.atkName;
   document.getElementById('charUlt').textContent=c.ultName;
-  document.getElementById('charMeters').innerHTML=statMeters(c);
   document.getElementById('charSp').textContent=c.spName||'';
   document.getElementById('charSpRow').style.display=c.spName?'':'none';
   document.getElementById('charStamp').textContent=c.name;
@@ -17150,7 +17223,8 @@ function hurt(u,dmg,instant,src,dot){
   if(u.isPlayer&&u.shield>0&&!instant&&!dot){ u.shield--; hud(); SFX.shieldBlock(); popAt(u,'BLOCKED','block'); return; }
   // Artifacts: the hit in the attacker's ATK, a critical hit now and then, and the target's DEF
   let crit=false;
-  if(u.st&&!instant&&dmg>0){
+  const petHit=PetRun.petHit||!!(NET.pre&&NET.pre.pet);                // a pet's hit is exactly what its card says: no ATK, no crit, no DEF
+  if(u.st&&!instant&&dmg>0&&!petHit){
     if(NET.pre) crit=NET.pre.crit;                                     // a hit sent from another game: their ATK and crit are already in it
     else {
     dmg*=artScale(u,src);
@@ -17158,7 +17232,7 @@ function hurt(u,dmg,instant,src,dot){
     }
     if(u.st.def>0) dmg*=100/(100+u.st.def);
   }
-  if(src&&src!==u&&!instant&&!PetRun.petHit) dmg*=PetRun.dmgK(src,now);                  // a pet's owner: Peach's +80%, Nya's and Maeya's boosts
+  if(src&&src!==u&&!instant&&!petHit) dmg*=PetRun.dmgK(src,now);                  // a pet's owner: Peach's +80%, Nya's and Maeya's boosts
   if(!instant) dmg*=PetRun.takenK(u);                                                      // Reinna: 40% less
   if(u.dmgReduce&&now<u.dmgReduce) dmg*=(u.dmgReduceK||.5);          // a super's damage cut, for bots as much as for you
   if(instant){ const had=Math.max(0,u.hp); u.hp=0; popDamage(u,had,src); }
@@ -22328,12 +22402,6 @@ function artBoxSVG(){
     <path d="M52 50L68 50L66 66L60 72L54 66Z" fill="url(#${u}g)" stroke="#5a3a10" stroke-width="1.4"/><circle cx="60" cy="58" r="3.4" fill="#1c1026"/>
     <circle cx="26" cy="70" r="2.4" fill="url(#${u}a)"/><circle cx="94" cy="70" r="2.4" fill="url(#${u}a)"/></svg>`;
 }
-function artTile(a,cls){
-  const S=ART_SLOT_BY[a.slot], eq=(State.artEquip||{})[a.slot]===a.id;
-  return `<button class="art-tile rx r-${a.rar} s-${a.set}${eq?' worn':''}${cls?' '+cls:''}" data-id="${a.id}" title="${S.name}">
-    <span class="at-aura"></span>${artSVG(a.slot,a.set)}
-    <span class="at-lv">Lv ${a.lvl}</span><span class="at-gems">${'<i></i>'.repeat(ART_RAR[a.rar].gems)}</span>${eq?'<span class="at-eq">ON</span>':''}</button>`;
-}
 
 /* ---------- the Artifacts screen ---------- */
 let artSel=null, artFilt='all', artDiscard=null;
@@ -22355,33 +22423,64 @@ function renderArtSlots(){
       <span class="as-t"><small>${s.num} · ${s.short.toUpperCase()}</small><b>${a?artMainText(a):'Empty'}</b><em>${a?ART_RAR[a.rar].name+' · '+ART_SETS[a.set].name:'Tap to choose one'}</em></span></button>`; }).join('');
   box.querySelectorAll('.as-slot').forEach(b=>{ wireRx(b); b.onclick=()=>{ const id=b.dataset.slot; artFilt=artFilt===id?'all':id; const a=artById(State.artEquip[id]); if(a) artSel=a.id; SFX.press(); renderArtifacts(); }; });
 }
+/* ---- the Artifacts screen, easier to take in at a glance: what you wear and what it adds up to on
+   the left, your relics grouped by rarity (each tile says what it gives), the one you picked on the right ---- */
+let artSort='rar';
+const ART_SHORT={hpF:'HP',atkF:'ATK',hpP:'HP',atkP:'ATK',def:'DEF',cr:'CRIT',cd:'CRIT DMG',spd:'SPEED'};
+/* a tile's line: the main stat, short */
+function artTileStat(a){ const k=ART_MAIN[a.main].st, v=artMainVal(a), n=ART_FLAT[k]?Math.round(v):(v<10?Math.round(v*10)/10:Math.round(v)); return '+'+n+(ART_FLAT[k]?' ':'% ')+ART_SHORT[k]; }
+function artTile(a,cls){
+  const S=ART_SLOT_BY[a.slot], eq=(State.artEquip||{})[a.slot]===a.id;
+  return `<button class="art-tile rx r-${a.rar} s-${a.set}${eq?' worn':''}${cls?' '+cls:''}" data-id="${a.id}" title="${S.name} · ${ART_RAR[a.rar].name} · ${ART_SETS[a.set].name}">
+    <span class="at-aura"></span>${artSVG(a.slot,a.set)}
+    <span class="at-lv">Lv ${a.lvl}</span>${eq?'<span class="at-eq">ON</span>':''}<span class="at-st">${artTileStat(a)}</span></button>`;
+}
 function renderArtStats(){
   const st=artPlayerStats(), red=st.def>0?Math.round(st.def/(st.def+100)*100):0;
-  const row=(k,v,base,suf)=>`<div class="ast"><span>${k}</span><b>${v}${suf||''}</b>${base!==null&&v!==base?`<em>${base}${suf||''} +${Math.round((v-base)*10)/10}</em>`:''}</div>`;
+  const row=(k,v,base,suf,note)=>{ const up=base!==null&&v!==base?Math.round((v-base)*10)/10:0;
+    return `<div class="ast2"><span>${k}</span><b>${v}${suf||''}</b>${note?`<em>${note}</em>`:up?`<em>+${up}${suf||''}</em>`:'<em class="z">—</em>'}</div>`; };
   $el('artStats').innerHTML=row('HP',st.hp,ART_BASE.hp)+row('ATK',Math.round(st.atk*10)/10,ART_BASE.atk)+row('CRIT RATE',st.cr,ART_BASE.cr,'%')+row('CRIT DMG',st.cd,ART_BASE.cd,'%')+
-    `<div class="ast"><span>DEF</span><b>${st.def}%</b>${red?`<em>−${red}% damage taken</em>`:''}</div><div class="ast"><span>ATK SPEED</span><b>+${st.spd}%</b></div>`;
+    row('DEF',st.def,0,'%',red?'−'+red+'% taken':'')+row('ATK SPEED',st.spd,0,'%');
   const c=artSetCounts(artEquippedList());
-  $el('artSets').innerHTML=Object.values(ART_SETS).map(S=>{ const n=c[S.id]||0;
-    return `<div class="aset s-${S.id}${n>=2?' on':''}"><div class="aset-h"><i class="aset-dot"></i><b>${S.name}</b><span>${Math.min(n,4)}/4</span></div>
-      <div class="aset-r${n>=2?' lit':''}">2 pieces · ${S.t2}</div><div class="aset-r${n>=4?' lit':''}">4 pieces · ${S.t4}</div></div>`; }).join('');
+  $el('artSets').innerHTML=Object.values(ART_SETS).map(S=>{ const n=Math.min(4,c[S.id]||0);
+    return `<div class="aset2 s-${S.id}${n>=2?' on':''}"><div class="as2-h"><i class="aset-dot"></i><b>${S.name}</b><span class="as2-p">${[1,2,3,4].map(i=>`<i class="${i<=n?'f':''}${i===2||i===4?' m':''}"></i>`).join('')}</span></div>
+      <div class="as2-r${n>=2?' lit':''}"><em>2</em>${S.t2}</div><div class="as2-r${n>=4?' lit':''}"><em>4</em>${S.t4}</div></div>`; }).join('');
 }
 function artSorted(){
-  const eqIds=Object.values(State.artEquip||{});
-  return State.artifacts.filter(a=>artFilt==='all'||a.slot===artFilt).slice().sort((x,y)=>
-    (eqIds.includes(y.id)-eqIds.includes(x.id))||(ART_RAR_ORDER.indexOf(y.rar)-ART_RAR_ORDER.indexOf(x.rar))||(y.lvl-x.lvl)||(y.t-x.t));
+  const list=State.artifacts.filter(a=>artFilt==='all'||a.slot===artFilt).slice();
+  const ri=a=>ART_RAR_ORDER.indexOf(a.rar);
+  if(artSort==='lvl') return list.sort((x,y)=>(y.lvl-x.lvl)||(ri(y)-ri(x))||(y.t-x.t));
+  if(artSort==='new') return list.sort((x,y)=>y.t-x.t);
+  return list.sort((x,y)=>(ri(y)-ri(x))||(y.lvl-x.lvl)||(y.t-x.t));
 }
 function renderArtGrid(){
   const cnt=$el('artCount'); cnt.innerHTML=`RELICS <b>${State.artifacts.length}</b> / ${ART_MAX}`; cnt.classList.toggle('full',State.artifacts.length>=ART_MAX);
   const ab=$el('artAutoBtn'); if(!ab._w){ ab._w=1; wireRx(ab); ab.onclick=openArtAuto; }
   const bb=$el('artBestBtn'); if(!bb._w){ bb._w=1; wireRx(bb); bb.onclick=artAutoEquip; }
   const f=$el('artFilter');
-  f.innerHTML=[['all','All']].concat(ART_SLOTS.map(s=>[s.id,s.short])).map(([id,n])=>{ const cnt=id==='all'?State.artifacts.length:State.artifacts.filter(a=>a.slot===id).length;
-    return `<button class="af rx${artFilt===id?' on':''}" data-f="${id}">${n}<em>${cnt}</em></button>`; }).join('');
+  f.innerHTML=[['all','All']].concat(ART_SLOTS.map(s=>[s.id,s.short])).map(([id,n])=>{ const k=id==='all'?State.artifacts.length:State.artifacts.filter(a=>a.slot===id).length;
+    return `<button class="af rx${artFilt===id?' on':''}" data-f="${id}">${id==='all'?'':`<span class="af-ic">${artSVG(id,'ghost')}</span>`}${n}<em>${k}</em></button>`; }).join('')+
+    `<span class="af-sort">SORT <button class="${artSort==='rar'?'on':''}" data-s="rar">RARITY</button><button class="${artSort==='lvl'?'on':''}" data-s="lvl">LEVEL</button><button class="${artSort==='new'?'on':''}" data-s="new">NEWEST</button></span>`;
   f.querySelectorAll('.af').forEach(b=>{ wireRx(b); b.onclick=()=>{ artFilt=b.dataset.f; SFX.press(); renderArtifacts(); }; });
+  f.querySelectorAll('[data-s]').forEach(b=>{ b.onclick=()=>{ artSort=b.dataset.s; SFX.press(); renderArtGrid(); }; });
   const list=artSorted(), g=$el('artGrid');
-  g.innerHTML=list.length?list.map(a=>artTile(a,a.id===artSel?'sel':'')).join(''):`<div class="ag-empty">No ${artFilt==='all'?'relics':ART_SLOT_BY[artFilt].short+' relics'} yet. Open a box: 5 coins.</div>`;
+  if(!list.length) g.innerHTML=`<div class="ag-empty">No ${artFilt==='all'?'relics':ART_SLOT_BY[artFilt].short+' relics'} yet. Open a box: 5 coins.</div>`;
+  else if(artSort==='rar'){ let h='', last='';                 // a header over each rarity, best first
+    for(const a of list){ if(a.rar!==last){ last=a.rar; const n=list.filter(x=>x.rar===a.rar).length; h+=`<div class="ag-h r-${a.rar}"><i></i><b>${ART_RAR[a.rar].name}</b><span>${n}</span><em>max Lv ${ART_RAR[a.rar].max}</em></div>`; }
+      h+=artTile(a,a.id===artSel?'sel':''); }
+    g.innerHTML=h; }
+  else g.innerHTML=list.map(a=>artTile(a,a.id===artSel?'sel':'')).join('');
   g.querySelectorAll('.art-tile').forEach(b=>{ wireRx(b); b.onclick=()=>{ artSel=b.dataset.id; artDiscard=null; SFX.press(); renderArtGrid(); renderArtDetail(); $el('artDetail').classList.add('open'); }; });
 }
+/* what this relic would change against the one you wear in its slot */
+function artCompare(a){
+  const e=artById((State.artEquip||{})[a.slot]); if(!e||e.id===a.id) return '';
+  const ka=ART_MAIN[a.main].st, ke=ART_MAIN[e.main].st;
+  if(ka===ke){ const d=artMainVal(a)-artMainVal(e), n=ART_FLAT[ka]?Math.round(d):Math.round(d*10)/10, suf=ART_FLAT[ka]?' ':'% ';
+    return `<div class="ad-cmp ${d>0?'up':d<0?'down':''}"><span>AGAINST WHAT YOU WEAR</span><b>${d>0?'▲ +':d<0?'▼ ':'= '}${n===0&&d===0?'the same':n+suf+ART_STAT_NAME[ka]}</b><em>${artMainText(e)} · Lv ${e.lvl} ${ART_RAR[e.rar].name}</em></div>`; }
+  return `<div class="ad-cmp"><span>AGAINST WHAT YOU WEAR</span><b>${artMainText(a)} instead of ${artMainText(e)}</b><em>Lv ${e.lvl} ${ART_RAR[e.rar].name} · ${ART_SETS[e.set].name}</em></div>`;
+}
+
 function renderArtDetail(){
   const d=$el('artDetail'), a=artById(artSel);
   if(!a){ d.innerHTML=`<div class="ad-none">${artBoxSVG()}<b>No relic picked</b><span>Open a box, then tap a relic to see it here.</span></div>`; return; }
@@ -22396,7 +22495,7 @@ function renderArtDetail(){
     <div class="ad-name">${S.name}</div>
     <div class="ad-set s-${a.set}">${SET.name}</div>
     <div class="ad-lv"><b>Lv ${a.lvl}</b><span>/ ${max}</span><i class="ad-lvbar"><i style="width:${(a.lvl/max*100).toFixed(1)}%"></i></i></div>
-    <div class="ad-main"><span>${S.num} · MAIN STAT</span><b>${artMainText(a)}</b>${nxt}</div>
+    <div class="ad-main"><span>${S.num} · MAIN STAT</span><b>${artMainText(a)}</b>${nxt}</div>${eq?'':artCompare(a)}
     <div class="ad-echo"><span>ECHOES</span>${echoes}</div>
     <div class="ad-setb s-${a.set}"><span>SET · ${Math.min(c,4)}/4 equipped</span><div class="${c>=2?'lit':''}">2 pieces · ${SET.t2}</div><div class="${c>=4?'lit':''}">4 pieces · ${SET.t4}</div><p>${SET.lore}</p></div>
     <div class="ad-btns">
@@ -22700,7 +22799,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.24.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.25.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -23408,7 +23507,7 @@ function netEvent(m){
   if(m.r!==S.round) return;                                       // something from a round that's already over
   if(m.k==='x') m.e.forEach(netApplyFx);
   else if(m.k==='a') netApplyAct(m);
-  else if(m.k==='em'){ const u=M.units[m.n]; if(u&&u.puppet){ if(m.e) emoteStart(u,m.e,true); else emoteStop(u,true); } }
+  else if(m.k==='em'){ const u=M.units[m.n]; if(u&&u.puppet){ if(m.e) emoteStart(u,m.e,true); else emoteStop(u,true,false); } }
   else if(m.k==='d'){ const u=M.units[m.n]; if(u&&u.puppet&&u.alive){ u.lastSrc=m.by?M.units[m.by]||null:null; NET.inDie=true; try{ kill(u); }finally{ NET.inDie=false; } } }
 }
 
@@ -23518,10 +23617,11 @@ function netHurtGate(u,dmg,instant,src,dot){
   if(!(u.net&&u.puppet)) return false;
   if(!src||!src.mine) return true;                              // the poison, the storm: their game counts its own
   let d=dmg, crit=false;
-  if(!instant&&d>0){ d*=artScale(u,src); if(!dot&&src.st&&Math.random()*100<src.st.cr){ d*=1+src.st.cd/100; crit=true; } }
+  const pet=PetRun.petHit;
+  if(!instant&&d>0&&!pet){ d*=artScale(u,src); if(!dot&&src.st&&Math.random()*100<src.st.cr){ d*=1+src.st.cd/100; crit=true; } }
   const M=NET.match;
   if(dot){ const key=u.nid+'|'+src.nid+'|'+(u.dotKind||''); M.dot.set(key,(M.dot.get(key)||0)+d); }
-  else { netFx(['h',u.nid,src.nid,+d.toFixed(2),(crit?1:0)|(instant?2:0),u.dotKind||0]); if(d>0) popDamage(u,Math.max(1,Math.round(d)),src,undefined,crit); }
+  else { netFx(['h',u.nid,src.nid,+d.toFixed(2),(crit?1:0)|(instant?2:0)|(pet?8:0),u.dotKind||0]); if(d>0) popDamage(u,Math.max(1,Math.round(d)),src,undefined,crit); }
   u.lastHurtAt=performance.now();
   return true;
 }
@@ -23544,7 +23644,7 @@ function netApplyFx(e){
   NET.inFx=true;
   try{
     switch(e[0]){
-      case 'h': { const src=by(e[2]); NET.pre={crit:!!(e[4]&1)}; const dk=u.dotKind; if(e[5]) u.dotKind=e[5]; hurt(u,e[3],!!(e[4]&2),src,!!(e[4]&4)); u.dotKind=dk; break; }
+      case 'h': { const src=by(e[2]); NET.pre={crit:!!(e[4]&1),pet:!!(e[4]&8)}; const dk=u.dotKind; if(e[5]) u.dotKind=e[5]; hurt(u,e[3],!!(e[4]&2),src,!!(e[4]&4)); u.dotKind=dk; break; }
       case 'stun': stun(u,e[2]); break;
       case 'slow': slow(u,e[2],e[3]); break;
       case 'knock': knock(u,{x:e[2],z:e[3]},e[4],e[5]); break;
@@ -23829,7 +23929,7 @@ function dgNetEvent(e){
     case 'hide': if(DG.phase==='intro') DG.t=Math.max(DG.t,5.3); else if(DG.phase==='hide') DG.hideEnd=now+DGM.HIDE*1000-60; break;
     case 'rel': if(DG.phase==='intro'||DG.phase==='hide'){ if(DG.phase==='intro'){ DG.count=4; matchStart=now; } dgRelease(now); } break;
     case 'end': dgNetEnd(e.w); break;
-    case 'em': { const u=dgByNid(e.n); if(u&&u.puppet){ if(e.e) emoteStart(u,e.e,true); else emoteStop(u,true); } break; }
+    case 'em': { const u=dgByNid(e.n); if(u&&u.puppet){ if(e.e) emoteStart(u,e.e,true); else emoteStop(u,true,false); } break; }
     case 'see': { const u=dgByNid(e.n); if(u&&u.isPlayer&&DG.phase==='hunt') toast(DG.seeker.display+' SEES YOU — RUN!'); break; }
   }
 }
@@ -23995,38 +24095,101 @@ const EmoteWheel=(function(){
   return {show,hide,get open(){ return open; }};
 })();
 
-/* a dancer of the chibi kind: arms and legs on single pivots, a body that bobs */
-function emotePoseRig(u,now){
-  const mesh=u.mesh, ud=mesh.userData, A=ud.arms, L=ud.legs, B=ud.body, Hd=ud.head, E=emoteBy(u.emote.id); if(!A||!B||!L||!E) return;
-  const t=(now-u.emote.t0)/1000, c=(t/E.len)%1, P=Math.PI, lz=ud.legZ||[0,0];
-  let y=0, x=0, rz=0, ry=0, hz=0, hx=0; const ar=[[0,0],[0,0]], lr=[[0,lz[0]],[0,lz[1]]];
-  if(E.id===1){                   // both hands up on top of the head; quick bounces; a dip to one side, then the other
-    const lean=emPulse(c,.3,.52)-emPulse(c,.8,1), b=Math.sin(c*P*4);
-    y=Math.abs(b)*.05-Math.abs(lean)*.05; x=lean*.05; rz=-lean*.3; hz=lean*.25+b*.04; hx=.1;
-    for(let i=0;i<2;i++){ const s=i?1:-1; ar[i]=[-.18+b*.06,s*(2.38+Math.sin(c*P*4+i)*.08)]; }   // up beside the (big) head, like ears
-    lr[0][0]=lean>0?-lean*.4:0; lr[1][0]=lean<0?lean*.4:0;
-  } else if(E.id===2){            // fists at the chest; hop to one side with an arm flung out, then the other
-    const h=emPulse(c,.1,.38), r=emPulse(c,.6,.88), side=h-r;
-    y=(h+r)*.16+Math.abs(Math.sin(c*P*6))*.015; x=side*.08; rz=side*.3; hz=side*.22;
-    for(let i=0;i<2;i++){ const s=i?1:-1, out=i?h:r; ar[i]=[-1.35*(1-out)-.1*out,-s*.28*(1-out)+s*1.55*out]; }
-    lr[0][1]=lz[0]-Math.max(0,side)*.5+Math.max(0,-side)*.12; lr[1][1]=lz[1]+Math.max(0,-side)*.5-Math.max(0,side)*.12;
-  } else {                        // arms spread wide; turning from side to side; a little bounce
-    const s1=Math.sin(c*P*2); ry=s1*.85; y=Math.abs(Math.sin(c*P*4))*.04; hz=Math.sin(c*P*2+.6)*.16;
-    for(let i=0;i<2;i++){ const s=i?1:-1; ar[i]=[-.1-Math.abs(s1)*.45,s*(1.42+Math.sin(c*P*4+i*P)*.16)]; }
-    lr[0][0]=s1*.2; lr[1][0]=-s1*.2;
+/* a dancer of the chibi kind: arms and legs on single pivots, a body that bobs.
+   A dance eases in from whatever the body was doing and eases back out of it; switching
+   dances cross-fades. Every curve is a smooth one (no corners), the head follows the body
+   a beat late, landings squash a little. Whatever was in their hands is put away. */
+const emS=x=>x<=0?0:x>=1?1:x*x*(3-2*x);                                   // smoothstep
+const emBump=(c,a,b)=>{ if(c<=a||c>=b) return 0; const s=Math.sin((c-a)/(b-a)*Math.PI); return s*s; };   // soft in, soft out
+const EM_TAU=Math.PI*2;
+/* the pose of a dance at time t, before blending */
+function emotePose(id,t,ud){
+  const E=emoteBy(id); if(!E) return null;
+  const c=(t/E.len)%1, lz=ud.legZ||[0,0], o={y:0,x:0,rz:0,ry:0,rx:0,hx:0,hz:0,hy:0,sq:1,ar:[[0,0],[0,0]],lx:[0,0],lz:[lz[0],lz[1]]};
+  if(id===1){              // Bunny Bop: paws up by the ears, two soft bounces a beat, leaning from side to side
+    const b=(1-Math.cos(c*EM_TAU*2))/2, L=Math.sin(c*EM_TAU), Lh=Math.sin((c-.07)*EM_TAU);
+    o.y=b*.055; o.x=L*.035; o.rz=-L*.2; o.hz=Lh*.24; o.hx=.1+b*.07;
+    o.sq=1-.05*Math.pow(1-b,6)+.015*b;
+    for(let i=0;i<2;i++){ const s=i?1:-1, f=Math.sin(c*EM_TAU*2+s*.6);
+      o.ar[i]=[-.12+.05*Math.cos(c*EM_TAU*2+i),s*(2.4+f*.08)]; }
+    o.lx[0]=-.2*Math.max(0,L)**2; o.lx[1]=-.2*Math.max(0,-L)**2;
+    o.lz[0]=lz[0]-(1-b)*.05; o.lz[1]=lz[1]+(1-b)*.05;
+  } else if(id===2){       // Hop Hop: fists at the chest, a hop to each side and an arm flung out on landing
+    const sn=Math.sin(c*EM_TAU), h=Math.abs(sn), side=-Math.cos(c*EM_TAU), land=Math.pow(1-h,8);
+    o.y=h*.16; o.x=side*.085; o.rz=-sn*.2; o.hz=Math.sin((c-.08)*EM_TAU)*.2; o.hx=-.04*h;
+    o.sq=1-.07*land+.035*h;
+    const outR=emS(emBump(c,.1,.66)*1.15), outL=emS(emBump((c+.5)%1,.1,.66)*1.15);
+    for(let i=0;i<2;i++){ const s=i?1:-1, out=i?outR:outL;
+      o.ar[i]=[-1.35*(1-out)-.12*out,-s*.28*(1-out)+s*1.55*out]; }
+    o.lx[0]=o.lx[1]=-.32*h;
+    o.lz[0]=lz[0]-Math.max(0,side)*.42*h-.06*land; o.lz[1]=lz[1]+Math.max(0,-side)*.42*h+.06*land;
+  } else {                 // Puppy Sway: arms out like wings, turning from side to side, stepping on the spot
+    const s1=Math.sin(c*EM_TAU), b=(1-Math.cos(c*EM_TAU*2))/2;
+    o.ry=s1*.8; o.y=b*.04; o.rz=Math.cos(c*EM_TAU)*.07; o.hz=Math.sin((c-.1)*EM_TAU)*.16; o.hy=-Math.sin((c-.06)*EM_TAU)*.32;
+    o.sq=1-.03*Math.pow(1-b,6);
+    for(let i=0;i<2;i++){ const s=i?1:-1, fl=Math.sin(c*EM_TAU*2+i*Math.PI);
+      o.ar[i]=[-.12-.3*Math.abs(s1)-fl*.06,s*(1.45+fl*.17)]; }
+    o.lx[0]=Math.sin(c*EM_TAU*2)*.22; o.lx[1]=-Math.sin(c*EM_TAU*2)*.22;
   }
-  B.position.x=x; B.rotation.set(0,ry,rz);
-  A.forEach((a,i)=>{ a.rotation.x=ar[i][0]; a.rotation.z=ar[i][1]; a.rotation.y=0; });
-  L.forEach((l,i)=>{ l.rotation.x=lr[i][0]; l.rotation.z=lr[i][1]; });
-  if(Hd){ Hd.rotation.x=hx; Hd.rotation.z=hz; }
-  // hops and bounces lift the body and the legs together (the shadow stays on the ground)
-  B.position.y=(ud.baseY||0)+y; if(ud.hipY!==undefined) L.forEach(l=>{ l.position.y=ud.hipY+y; });
+  return o;
+}
+function emoteMix(a,b,k){                                                   // a → b, k from 0 to 1
+  const L=(p,q)=>p+(q-p)*k, o={};
+  for(const n of ['y','x','rz','ry','rx','hx','hz','hy','sq']) o[n]=L(a[n],b[n]);
+  o.ar=[[L(a.ar[0][0],b.ar[0][0]),L(a.ar[0][1],b.ar[0][1])],[L(a.ar[1][0],b.ar[1][0]),L(a.ar[1][1],b.ar[1][1])]];
+  o.lx=[L(a.lx[0],b.lx[0]),L(a.lx[1],b.lx[1])]; o.lz=[L(a.lz[0],b.lz[0]),L(a.lz[1],b.lz[1])];
+  return o;
+}
+/* start, switch or stop a dance on anyone (id 0 stops it; the body eases out of it) */
+function emoteSwap(u,id,fast){
+  const now=performance.now();
+  if(id){
+    if(u.emote&&u.emote.id===id) return;
+    const from=u.emote||(u.emOut&&(u.emBl||0)>0?u.emOut:null);
+    u.emX=from?{id:from.id,t0:from.t0,k:1}:null;                               // cross-fade from the dance before
+    u.emote={id,t0:now}; u.emOut=null; u.emFast=false;
+  } else if(u.emote){ u.emOut=u.emote; u.emote=null; u.emX=null; u.emFast=!!fast; }
+}
+/* stop at once (a fall, a death, the screen changing) */
+function emoteHalt(u){ if(!u) return; const had=u.emote||u.emOut; u.emote=u.emOut=u.emX=null; u.emBl=0; if(had) emoteResetRig(u); }
+/* put away what's in their hands, and give it back */
+function emoteProps(u,hide){
+  const ud=u&&u.mesh&&u.mesh.userData; if(!ud) return;
+  if(hide){ const list=u.emHid||(u.emHid=[]);
+    const put=o=>{ if(o&&o.visible){ o.visible=false; list.push(o); } };
+    (ud.hands||[]).forEach(h=>h.children.forEach(c=>{ if(!c.userData.handPart) put(c); }));
+    put(ud.gyroCannon); put(ud.cyberBlade);
+  } else if(u.emHid){ u.emHid.forEach(o=>{ o.visible=true; }); u.emHid=null; }
+}
+/* every frame for a dancer: blend the dance over what the body is already doing */
+function emotePoseRig(u,now){
+  const mesh=u.mesh, ud=mesh&&mesh.userData; if(!ud) return;
+  const A=ud.arms, Lg=ud.legs, B=ud.body, Hd=ud.head; if(!A||!B||!Lg) return;
+  const D=u.emote||u.emOut; if(!D){ return; }
+  const dt=Math.min(.1,Math.max(0,(now-(u.emAt||now))/1000)); u.emAt=now;
+  u.emBl=Math.max(0,Math.min(1,(u.emBl||0)+(u.emote?dt/.32:-dt/(u.emFast?.13:.24))));
+  if(!u.emote&&u.emBl<=0){ u.emOut=null; emoteResetRig(u); return; }
+  let o=emotePose(D.id,(now-D.t0)/1000,ud); if(!o) return;
+  if(u.emX){ u.emX.k=Math.max(0,u.emX.k-dt/.35); const p=emotePose(u.emX.id,(now-u.emX.t0)/1000,ud);
+    if(p&&u.emX.k>0) o=emoteMix(o,p,emS(u.emX.k)); if(u.emX.k<=0) u.emX=null; }
+  const w=emS(u.emBl), L=(a,b)=>a+(b-a)*w, lz=ud.legZ||[0,0];
+  // what the walk/idle set this frame is the base; the rest of the body is blended from its rest pose
+  B.position.x=o.x*w; B.rotation.z=o.rz*w; B.rotation.y=L(B.rotation.y,o.ry); B.rotation.x=L(B.rotation.x,o.rx);
+  B.position.y=L(B.position.y,(ud.baseY||0)+o.y); B.scale.y=1+(o.sq-1)*w;
+  A.forEach((a,i)=>{ a.rotation.x=L(a.rotation.x,o.ar[i][0]); a.rotation.z=L(a.rotation.z,o.ar[i][1]); a.rotation.y=L(a.rotation.y,0); });
+  Lg.forEach((l,i)=>{ l.rotation.x=L(l.rotation.x,o.lx[i]); l.rotation.z=lz[i]+(o.lz[i]-lz[i])*w; if(ud.hipY!==undefined) l.position.y=ud.hipY+o.y*w; });
+  if(Hd){ Hd.rotation.x=L(Hd.rotation.x,o.hx); Hd.rotation.z=L(Hd.rotation.z,o.hz); Hd.rotation.y=L(Hd.rotation.y,o.hy); }
+  if(w>.06) emoteProps(u,true);
+  // the little note over their head comes and goes with the dance
+  const n=emoteNote(u); n.layers.enable(1); n.material.opacity=w;
+  n.position.set(Math.sin(now/260)*.18,2.45+Math.sin(now/180)*.08+(1-w)*.25,0); n.material.rotation=Math.sin(now/300)*.3;
 }
 function emoteResetRig(u){
   const ud=u&&u.mesh&&u.mesh.userData; if(!ud) return;
-  if(ud.body){ ud.body.position.x=0; ud.body.rotation.z=0; ud.body.rotation.y=0; }
+  if(ud.body){ ud.body.position.x=0; ud.body.rotation.z=0; ud.body.rotation.y=0; ud.body.scale.y=1; }
   if(ud.legs) ud.legs.forEach((l,i)=>{ l.rotation.z=(ud.legZ||[0,0])[i]; if(ud.hipY!==undefined) l.position.y=ud.hipY; });
   if(ud.head){ ud.head.rotation.x=0; ud.head.rotation.z=0; }
+  emoteProps(u,false);
   if(u.emNote){ u.mesh.remove(u.emNote); u.emNote=null; }
 }
 /* a little note floating over a dancer's head */
@@ -24042,12 +24205,13 @@ function emoteNote(u){
 function emoteStart(u,id,remote){
   if(!u||!u.mesh||!u.alive||!emoteBy(id)) return;
   if(u.isPlayer&&!remote&&!emoteOwned(id)) return;
-  u.emote={id,t0:performance.now()}; u.emRot=u.mesh.rotation.y;
+  if(!u.emote) u.emRot=u.mesh.rotation.y;
+  emoteSwap(u,id);
   if(u.isPlayer&&!remote) netEmote(u,id);
 }
-function emoteStop(u,remote){
+function emoteStop(u,remote,fast){
   if(!u||!u.emote) return;
-  u.emote=null; emoteResetRig(u);
+  emoteSwap(u,0,fast!==false);
   if(u.isPlayer&&!remote) netEmote(u,0);
 }
 function netEmote(u,id){
@@ -24058,20 +24222,19 @@ function netEmote(u,id){
 function emoteKey(){
   if(EmoteWheel.open){ EmoteWheel.hide(); return; }
   if(!gameOn||!pUnit||!pUnit.alive||intro) return;
-  if(pUnit.emote){ emoteStop(pUnit); return; }
+  if(pUnit.emote){ emoteStop(pUnit,false,false); return; }
   EmoteWheel.show(id=>{ if(gameOn&&pUnit&&pUnit.alive) emoteStart(pUnit,id); });
 }
 /* every frame, last thing before drawing: the dancers dance, the songs play */
 function emoteStep(now,dt){
   const want=new Map(), me=player&&player.position;
   for(const u of units){
-    if(!u.emote) continue;
-    if(!u.alive){ emoteStop(u,true); continue; }
-    if(u.isPlayer){ u.emRot=netAng(u.emRot===undefined?u.mesh.rotation.y:u.emRot,0,Math.min(1,dt*8)); u.mesh.rotation.y=u.emRot; }   // turn to the camera
+    if(!u.emote&&!u.emOut) continue;
+    if(!u.alive){ emoteHalt(u); continue; }
+    if(u.isPlayer&&u.emote){ u.emRot=netAng(u.emRot===undefined?u.mesh.rotation.y:u.emRot,0,Math.min(1,dt*8)); u.mesh.rotation.y=u.emRot; }   // turn to the camera
     emotePoseRig(u,now);
-    const n=emoteNote(u); n.position.set(Math.sin(now/260)*.18,2.45+Math.sin(now/180)*.08,0); n.material.rotation=Math.sin(now/300)*.3;
-    const d=me?Math.hypot(u.mesh.position.x-me.x,u.mesh.position.z-me.z):0;
-    want.set(u.isPlayer?'me':'u'+(u.nid||u.key),{id:u.emote.id,k:u.isPlayer?1:Math.max(0,1-d/22)*.8});
+    if(u.emote){ const d=me?Math.hypot(u.mesh.position.x-me.x,u.mesh.position.z-me.z):0;
+      want.set(u.isPlayer?'me':'u'+(u.nid||u.key),{id:u.emote.id,k:u.isPlayer?1:Math.max(0,1-d/22)*.8}); }
   }
   EmoteAudio.sync(want);
 }
@@ -30530,8 +30693,10 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     else { _Hh.set(-.24,.86,.03+sw*.12*walk); _pole.set(-.2,0,-1); }
     ikArm(u.arms[-1],_S.set(-.205,1.4,0),_Hh,_pole);
     tnHeld(m,k,aim?s.pitch:null);
-    if(s.em){ if(N.emId!==s.em){ N.emId=s.em; N.emT0=performance.now(); } emoteFigure(m,s.em,N.emT0); }      // they're dancing
-    else { N.emId=0; if(u.armG) u.armG.visible=true; }
+    N.emW=clamp((N.emW||0)+(s.em?dt/.32:-dt/.22),0,1);                                                   // they're dancing: eased in and out
+    if(s.em&&N.emId!==s.em){ N.emId=s.em; N.emT0=performance.now(); }
+    if(N.emW>0&&N.emId) emoteFigure(m,N.emId,N.emT0,emS(N.emW));
+    else { N.emId=s.em||0; if(u.armG) u.armG.visible=true; }
   }
   function tnHeld(m,k,ap){
     const u=m.userData, arm=k&&ARMS[k]?k:null;
@@ -30566,36 +30731,40 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   }
   function emoteStartT(id){
     if(!T||T.phase!=='play'||!emoteBy(id)||!emoteOwned(id)) return;
-    T.emote={id,t0:performance.now()};
+    T.emote={id,t0:performance.now()}; T.emLast=null;
     if(!(T.emK>0)){ T.emYaw=T.p.yaw+Math.PI; T.emPitch=-.14; }        // in front of you, looking back
     T.crouch=false; T.trigger=false; T.zoom=false;
   }
-  function emoteStopT(){ if(T) T.emote=null; }
+  function emoteStopT(){ if(T){ if(T.emote) T.emLast=T.emote; T.emote=null; } }
   /* the dance on a patient's body (yours, or your partner's online) */
-  function emoteFigure(S,id,t0){
+  function emoteFigure(S,id,t0,w){
+    w=w===undefined?1:w; if(w<=0) return;
     const u=S.userData, E=emoteBy(id); if(!E) return;
-    const t=(performance.now()-t0)/1000, c=(t/E.len)%1, PI=Math.PI;
-    let y=0, rz=0, ry=0, ox=0, hz=0, hx=0; const hand={}, pole={}, lg=[[0,0],[0,0]];
-    if(id===1){            // hands up on top of the head, bouncing, a dip to each side
-      const lean=emPulse(c,.3,.52)-emPulse(c,.8,1), b=Math.sin(c*PI*4);
-      y=Math.abs(b)*.05-Math.abs(lean)*.06; rz=-lean*.22; hz=lean*.2+b*.04; hx=.08;
-      for(const sx of [-1,1]){ hand[sx]=[sx*.1,1.84+b*.02,.04]; pole[sx]=[sx,.5,-.4]; }
-      lg[0]=[lean>0?-lean*.35:0,0]; lg[1]=[lean<0?lean*.35:0,0];
-    } else if(id===2){     // fists at the chest, a hop to each side with an arm flung out
-      const h=emPulse(c,.1,.38), r=emPulse(c,.6,.88), side=h-r;
-      y=(h+r)*.16+Math.abs(Math.sin(c*PI*6))*.015; ox=side*.12; rz=side*.18; hz=side*.2;
-      for(const sx of [-1,1]){ const out=sx>0?h:r; hand[sx]=[lerp(sx*.1,sx*.68,out),lerp(1.15,1.36,out),lerp(.26,.04,out)]; pole[sx]=[sx*.5,-1,lerp(0,-.4,out)]; }
-      lg[0]=[0,-Math.max(0,side)*.45]; lg[1]=[0,Math.max(0,-side)*.45];
-    } else {               // arms out wide, turning side to side
-      const s1=Math.sin(c*PI*2); ry=s1*.85; y=Math.abs(Math.sin(c*PI*4))*.04; hz=Math.sin(c*PI*2+.6)*.15;
-      for(const sx of [-1,1]){ hand[sx]=[sx*.66,1.36+Math.sin(c*PI*4+(sx>0?0:PI))*.08,.06+Math.abs(s1)*.2]; pole[sx]=[0,-1,-.2]; }
-      lg[0]=[s1*.2,0]; lg[1]=[-s1*.2,0];
+    const t=(performance.now()-t0)/1000, c=(t/E.len)%1, PI=Math.PI, TAU=PI*2;
+    let y=0, rz=0, ry=0, ox=0, hz=0, hx=0, hy=0; const hand={}, pole={}, lg=[[0,0],[0,0]];
+    if(id===1){            // paws up by the head, soft bounces, leaning from side to side
+      const b=(1-Math.cos(c*TAU*2))/2, L=Math.sin(c*TAU), Lh=Math.sin((c-.07)*TAU);
+      y=b*.05; ox=L*.04; rz=-L*.15; hz=Lh*.2; hx=.08+b*.06;
+      for(const sx of [-1,1]){ const f=Math.sin(c*TAU*2+sx*.6); hand[sx]=[sx*(.11+f*.012),1.83+b*.015+f*.01,.05]; pole[sx]=[sx,.5,-.4]; }
+      lg[0]=[-(Math.max(0,L)**2)*.22,-(1-b)*.04]; lg[1]=[-(Math.max(0,-L)**2)*.22,(1-b)*.04];
+    } else if(id===2){     // fists at the chest, a hop to each side with an arm flung out on landing
+      const sn=Math.sin(c*TAU), h=Math.abs(sn), side=-Math.cos(c*TAU);
+      y=h*.15; ox=side*.11; rz=-sn*.16; hz=Math.sin((c-.08)*TAU)*.16;
+      const outR=emS(emBump(c,.1,.66)*1.15), outL=emS(emBump((c+.5)%1,.1,.66)*1.15);
+      for(const sx of [-1,1]){ const out=sx>0?outR:outL; hand[sx]=[lerp(sx*.1,sx*.66,out),lerp(1.15,1.38,out),lerp(.26,.05,out)]; pole[sx]=[sx*.5,-1,lerp(0,-.4,out)]; }
+      lg[0]=[-h*.32,-Math.max(0,side)*.3]; lg[1]=[-h*.32,Math.max(0,-side)*.3];
+    } else {               // arms out like wings, turning from side to side, stepping on the spot
+      const s1=Math.sin(c*TAU), b=(1-Math.cos(c*TAU*2))/2;
+      ry=s1*.8; y=b*.035; rz=Math.cos(c*TAU)*.06; hz=Math.sin((c-.1)*TAU)*.14; hy=-Math.sin((c-.06)*TAU)*.3;
+      for(const sx of [-1,1]){ const fl=Math.sin(c*TAU*2+(sx>0?0:PI)); hand[sx]=[sx*(.64+fl*.02),1.36+fl*.09,.06+Math.abs(s1)*.18]; pole[sx]=[0,-1,-.2]; }
+      lg[0]=[Math.sin(c*TAU*2)*.2,0]; lg[1]=[-Math.sin(c*TAU*2)*.2,0];
     }
-    S.position.y+=y; S.rotation.y+=ry; S.rotation.z=rz; if(ox) S.translateX(ox);
-    for(const sx of [-1,1]) ikArm(u.arms[sx],_S.set(sx*.205,1.4,0),_Hh.set(hand[sx][0],hand[sx][1],hand[sx][2]),_pole.set(pole[sx][0],pole[sx][1],pole[sx][2]));
-    u.legs[0].rotation.set(lg[0][0],0,lg[0][1]); u.legs[1].rotation.set(lg[1][0],0,lg[1][1]);
-    u.head.rotation.set(hx,0,hz);
-    u.gun.visible=false; if(u.armG) u.armG.visible=false; if(u.flM) u.flM.visible=false;
+    S.position.y+=y*w; S.rotation.y+=ry*w; S.rotation.z=rz*w; if(ox) S.translateX(ox*w);
+    for(const sx of [-1,1]){ const h=hand[sx], r0=sx*.24;
+      ikArm(u.arms[sx],_S.set(sx*.205,1.4,0),_Hh.set(lerp(r0,h[0],w),lerp(.86,h[1],w),lerp(.03,h[2],w)),_pole.set(pole[sx][0],pole[sx][1],pole[sx][2])); }
+    u.legs[0].rotation.set(lg[0][0]*w,0,lg[0][1]*w); u.legs[1].rotation.set(lg[1][0]*w,0,lg[1][1]*w);
+    u.head.rotation.set(hx*w,hy*w,hz*w);
+    if(w>.15){ u.gun.visible=false; if(u.armG) u.armG.visible=false; if(u.flM) u.flM.visible=false; }
   }
   const _q1=new THREE.Quaternion(), _q2=new THREE.Quaternion(), _m4=new THREE.Matrix4();
   /* the camera: out behind (or in front of) you, the mouse turns it round; walls pull it closer */
@@ -30604,7 +30773,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     const k=ease(T.emK), cam=T.cam;
     if(k<=.001){ if(T.emWas){ T.emWas=false; if(!T.oobWas) cam.layers.disable(2); cam.layers.enable(3); } return; }
     T.emWas=true; cam.layers.enable(2); if(k>.35) cam.layers.disable(3); else cam.layers.enable(3);
-    poseSelf(); if(T.emote) emoteFigure(T.self,T.emote.id,T.emote.t0);
+    poseSelf(); { const D=T.emote||T.emLast; if(D) emoteFigure(T.self,D.id,D.t0,k); }
     const P=T.p, tx=P.x, ty=1.08, tz=P.z, yaw=T.emYaw, pit=T.emPitch, cp=Math.cos(pit);
     const dx=-Math.sin(yaw)*cp, dy=Math.sin(pit), dz=-Math.cos(yaw)*cp;
     let d=2.7; const w=rayWall({x:tx,y:ty,z:tz},{x:-dx,y:-dy,z:-dz},d+.4); if(w) d=Math.max(.5,Math.min(d,w.t-.28));
