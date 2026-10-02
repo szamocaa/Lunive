@@ -3313,7 +3313,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.26.0 · BETA</span>
+    <span class="hub-version">VERSION 3.26.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3480,7 +3480,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.26.0</div></div>
+</svg><div class="set-ver">VERSION 3.26.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -22825,7 +22825,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.26.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.26.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -31377,7 +31377,8 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     M0.t+=dt; M0.fl=Math.max(0,M0.fl-dt*3); M0.hfl=Math.max(0,M0.hfl-dt*2.4);
     if(!M0.remote) monThink(dt);
     else monFollow(dt);
-    monMove(dt); if(!away){ monPose(dt); monSound(dt); }
+    monMove(dt); if(!away){ monPose(dt); monSound(dt); } monFade();
+    if(!T.mon) return;
     if(T.net&&T.net.M&&T.net.M.isHost){ T.monTx=(T.monTx||0)-dt; if(T.monTx<=0){ T.monTx=.12;
       netMs({k:'mo',x:+M0.x.toFixed(2),z:+M0.z.toFixed(2),y:+M0.yaw.toFixed(2),s:MSTATES.indexOf(M0.state),h:M0.hp,j:Math.round(M0.jaw*99),a:+(M0.atk||0).toFixed(2)}); } }
   }
@@ -31537,7 +31538,21 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     else monDamage(hit.head,false);
   }
   /* the host's word, in the guest's game */
+  /* once it's dead it lies there five seconds; then it fades into the floor and it's gone, for the rest of the game */
+  function monFade(){
+    const M0=T.mon; if(M0.state!=='dead'||M0.deadAt===undefined) return;
+    const since=M0.t-M0.deadAt; if(since<5) return;
+    if(!M0.fading){ M0.fading=[]; M0.g.traverse(o=>{ if(o.isMesh&&!M0.fading.includes(o.material)){ o.material.transparent=true; o.material.needsUpdate=true; M0.fading.push(o.material); } });
+      for(let i=0;i<3;i++) puff(M0.x+(Math.random()-.5)*.8,FL2+.25+i*.2,M0.z+(Math.random()-.5)*.8,0x1c1616,2.4);
+      SFX.tr.mBreath&&SFX.tr.mBreath(at3(M0.x,M0.z,.45)); }
+    const k=clamp((since-5)/2,0,1);
+    for(const m of M0.fading){ m.opacity=1-k; if(k>.5) m.depthWrite=false; }
+    M0.g.position.y=FL2-k*.3;
+    if(k>=1) monGone();
+  }
+  function monGone(){ const M0=T.mon; T.root.remove(M0.g); M0.g.traverse(o=>{ if(o.geometry&&!GEOSET.has(o.geometry)) o.geometry.dispose(); }); T.mon=null; T.monGone=true; }
   function monNet(e){
+    if(e.k==='mo'&&T.monGone) return;                                                     // it's gone here: whatever the other game still says
     if(e.k==='mo'){ if(!T.mon){ monSpawn(); T.mon.remote=true; T.mon.x=e.x; T.mon.z=e.z; T.mon.hp=e.h; }
       T.mon.rx={x:e.x,z:e.z,y:e.y,s:e.s,h:e.h,j:e.j,a:e.a}; }
     else if(e.k==='mh'){ if(T.mon&&!T.mon.remote) monDamage(!!e.hd,true); }
@@ -31737,7 +31752,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     /* for tests */
     _:{get T(){ return T; },give:giveFx,interact,teleport(x,z,yaw,pitch){ if(!T) return; T.phase='play'; T.introBlur=0; T.introTrail=0; T.p.x=x; T.p.z=z; T.p.y=EYE; if(yaw!==undefined) T.p.yaw=yaw; if(pitch!==undefined) T.p.pitch=pitch; },
       hq(){ T.noGov=true; T.rs=1; sizeTargets(); },
-      mon:{spawn:monSpawn,get m(){ return T.mon; },dmg:monDamage,ray:monRay,fyAt,lvlAt,noise:monNoise,path:monPath},
+      mon:{spawn:monSpawn,get m(){ return T.mon; },dmg:monDamage,ray:monRay,fyAt,lvlAt,noise:monNoise,path:monPath,net:monNet},
       look(yaw,pitch){ T.p.yaw=yaw; T.p.pitch=pitch; },spawn:spawnFigure,her:herSpawn,grid:()=>grid,
       take(kind,fx){ const it=T.items.find(i=>i.kind===kind&&!i.taken&&(fx===undefined||i.fx===fx||i.v===fx||i.d===fx)); if(it) toInventory(it); return !!it; },dreset(){ drugReset(); T.fx={}; },
       equip(kind,d){ const it=T.inv.find(i=>i.kind===kind&&(d===undefined||i.d===d)); if(it) equip(it); },salvia(st,ch){ startSalvia(); if(st&&T.sv){ T.sv.story=st; T.sv.chain[0]=st; } if(ch&&T.sv) T.sv.chain=[st||T.sv.story].concat(ch); },svNext:()=>{ if(T.sv){ T.sv.t=SV_LEN; } },
