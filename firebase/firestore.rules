@@ -30,14 +30,16 @@ service cloud.firestore {
     match /kyuchi/{uid} { allow read, write: if me(uid); }
     match /alias/{uid}  { allow read, write: if me(uid); }
 
-    // Account IDs: 9 digits, given once per account, never changed and never used again
+    // Account IDs: 9 digits, given once per account, never changed and never used again.
+    // #999999999 is the creator's alone.
     match /ids/{aid} {
       allow read: if true;
       allow create: if request.auth != null
         && aid.matches('[1-9][0-9]{8}')
         && request.resource.data.keys().hasOnly(['uid', 'at'])
         && request.resource.data.uid == request.auth.uid
-        && !exists(/databases/$(database)/documents/players/$(request.auth.uid));
+        && ((aid != '999999999' && !exists(/databases/$(database)/documents/players/$(request.auth.uid)))
+            || (aid == '999999999' && isCreator()));
     }
 
     // a player's public card: the leaderboard and profiles read it; only the creator can ban
