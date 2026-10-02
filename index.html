@@ -211,6 +211,8 @@ body.no-fs .fs-only{display:none !important;}
 .ms-t b{font-family:var(--ui);font-weight:700;font-size:18px;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ms-go{font-family:var(--ui);font-weight:700;font-size:10.5px;letter-spacing:.2em;color:var(--ink);background:var(--paper);padding:3px 10px;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);}
 .map-slab.dun{--a:#ff3d6a;--d:#3a0a1c;}
+.map-slab.locked{cursor:not-allowed;}
+#hub .map-slab.locked .ms-go{background:#ffd36a;color:#1a1408;}
 .play-slab{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:100%;min-height:96px;padding:6px 90px 10px 30px;border:0;cursor:pointer;
   background:var(--paper);color:var(--ink);clip-path:polygon(22px 0,100% 0,calc(100% - 22px) 100%,0 100%);box-shadow:inset 10px 0 0 var(--acc);overflow:hidden;}
 .play-slab b{font-family:var(--display);font-weight:400;font-size:clamp(56px,4.8vw,92px);line-height:.92;letter-spacing:.04em;}
@@ -2920,7 +2922,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
 
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.19.0 · BETA</span>
+    <span class="hub-version">VERSION 3.20.2 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3084,7 +3086,7 @@ small.st-lobby{color:#7dffaf;} small.st-queue{color:#ffd36a;} small.st-match{col
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.19.0</div></div>
+</svg><div class="set-ver">VERSION 3.20.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -13656,6 +13658,7 @@ function refreshHub(){
   // the mode you'll play (the map is drawn when the match starts)
   setText('mapName',M.name.toUpperCase());
   setText('mapMode',M.id==='truthOn'?'ONLINE · CO-OP · FIRST PERSON':M.id==='hideOn'?'ONLINE · RANDOM MAZE':M.id==='duel'?'ONLINE · 1V1':M.id==='duo'?'ONLINE · 2V2':M.id==='truth'?'EVENT · FIRST PERSON':M.id==='exec'?'3V3 · BEST OF 3':M.id==='hide'?'SOLO · RANDOM MAZE':'SOLO · RANDOM MAP');
+  { let lk=false; try{ lk=netFollower(); }catch(e){} const mp0=$el('mapPick'); mp0.classList.toggle('locked',lk); const gb=mp0.querySelector('.ms-go'); if(gb){ const t=lk?'LEADER':'CHANGE'; if(gb.textContent!==t) gb.textContent=t; } mp0.title=lk?'Your party leader picks the game mode':'Choose a game mode'; }
   if($el('mapIc').dataset.m!==M.id){ $el('mapIc').dataset.m=M.id; $el('mapIc').innerHTML=modeSvg(M.id); }
   const a=M.art, mp=$el('mapPick');
   mp.style.setProperty('--a',a[0]); mp.style.setProperty('--b',a[1]); mp.style.setProperty('--c',a[2]); mp.style.setProperty('--d',a[3]);
@@ -13726,6 +13729,7 @@ function renderMaps(cat){
   g.style.setProperty('--n',g.querySelectorAll('.mcard').length);
   requestAnimationFrame(placeModeCats);
   g.querySelectorAll('button.mcard').forEach(b=>{ wireRx(b); b.addEventListener('click',()=>{
+    if(netFollower()){ toast('Only your party leader can change the game mode'); SFX.error&&SFX.error(); return; }
     if(State.selectedMode===b.dataset.mode){ SFX.back(); showHub(); return; }
     State.selectedMode=b.dataset.mode; saveState(); SFX.toggle(true); renderMaps(MODE_CAT); refreshHub(); }); });
 }
@@ -13897,7 +13901,7 @@ document.querySelectorAll('[data-go]').forEach(b=>{
     else if(g==='road'){ show('road'); openRoad(); }
     else if(g==='music'){ show('music'); renderTracks(); }
     else if(g==='settings'){ show('settings'); }
-    else if(g==='maps'){ show('maps'); renderMaps(); }
+    else if(g==='maps'){ if(netFollower()){ toast('Only your party leader can change the game mode'); SFX.error&&SFX.error(); return; } show('maps'); renderMaps(); }
     else if(g==='shop'){ show('shop'); openShop(); }
     else if(g==='support'){ window.open('https://www.instagram.com/racksdoubled/','_blank'); claimLost(); }
     if(g!=='start'&&g!=='support') SFX.open();
@@ -22156,7 +22160,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.20.1';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.20.2';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -22362,7 +22366,7 @@ function netPrune(){
   NET.seenI.forEach((t,k)=>{ if(now-t>30000) NET.seenI.delete(k); });
   const nw=[...NET.others.values()].some(o=>o.v>NET_VER)||[...NET.peers.values()].some(p=>p.gv&&netVerCmp(p.gv,LUNIVE_VER)>0);
   if(nw!==NET.newer){ NET.newer=nw; ch=true; }
-  if(NET.party&&!NET.peers.has(NET.party.mate)&&now-(NET.party.at||0)>100000){ netSay((NET.party.info&&NET.party.info.n||'Your teammate')+' went offline',true); NET.party=null; ch=true; netBeat(true); }
+  if(NET.party&&!NET.peers.has(NET.party.mate)&&now-(NET.party.at||0)>100000){ netSay((NET.party.info&&NET.party.info.n||'Your teammate')+' went offline',true); NET.party=null; ch=true; netBeat(true); netModeBack(); }
   if(ch) netPaint();
 }
 function netSend(to,m){ if(!NET.mq) return false; m.f=NET.id; return NET.mq.pub(NET_P+'u/'+to,JSON.stringify(m)); }
@@ -22417,7 +22421,7 @@ function netJoin(code){
 }
 function netLeaveParty(quiet){
   const P=NET.party; if(!P) return;
-  netSend(P.mate,{k:'leave'}); NET.party=null; netBeat(true);
+  netSend(P.mate,{k:'leave'}); NET.party=null; netBeat(true); netModeBack();
   if(!quiet) netSay('You left the team');
   netPaint(); refreshHub();
 }
@@ -22444,7 +22448,7 @@ function netInbox(m){
       achvPop('TEAM','You joined '+who+"'s team",'Your leader starts the matches','');
       netPaint(); refreshHub(); break;
     case 'busy': if(NET.pending){ NET.pending=null; netSay(who+' is busy right now',true); netPaint(); } break;
-    case 'leave': if(NET.party&&NET.party.mate===m.f){ NET.party=null; netBeat(true); netSay(who+' left the team',true); netPaint(); refreshHub(); } break;
+    case 'leave': if(NET.party&&NET.party.mate===m.f){ NET.party=null; netBeat(true); netModeBack(); netSay(who+' left the team',true); netPaint(); refreshHub(); } break;
     case 'inv': netInvitePop(m); break;
     case 'go': if(NET.party&&NET.party.lead===NET.id&&NET.party.mate===m.f){ if(m.info) NET.party.info=m.info; netPartyStart(m.mode); } break;
     case 'pinit': if(NET.party&&NET.party.mate===m.f&&!NET.match) netSend(m.f,{k:'pinfo',ask:m.ask,info:netInfo()}); break;
@@ -22454,6 +22458,7 @@ function netInbox(m){
     case 'ping': netSend(m.f,{k:'pong'}); break;
     case 'pst': if(NET.party&&NET.party.mate===m.f){
       const was=NET.party.ms; NET.party.ms={r:!!m.r,sc:m.sc||'lobby',ch:m.ch,md:m.md,at:performance.now()}; NET.party.at=performance.now();
+      if(NET.party.lead===m.f) netFollowMode(m.md);
       if(m.r&&m.sc==='lobby'&&!(was&&was.r)){ SFX.toggle&&SFX.toggle(true); }
       netMateUI(); netPaintSoon(); netTryStart();
     } break;
@@ -22672,7 +22677,7 @@ MODE_ICONS.duo='<circle cx="6" cy="8" r="2.4"/><circle cx="11" cy="8" r="2.4"/><
 function netPlayingAs(M){
   const P=NET.party, mate=P?(NET.peers.get(P.mate)||P.info):null, n=mate&&mate.n?netEsc(mate.n):'';
   if(!State.online) return 'Online · <b style="color:#ffd36a">Turn on Online mode in Settings</b>';
-  if(P&&P.lead!==NET.id){ const lm=P.ms&&modeById(P.ms.md); return 'Your leader picks the mode'+(lm&&lm.online?' · <b>'+lm.name+'</b>':''); }
+  if(P&&P.lead!==NET.id){ const cm=curMode(); return 'Your leader picks the mode · <b>'+cm.name+'</b>'+(cm.online?'':' · a solo mode: they play it alone'); }
   if(M.id==='hideOn') return n?'Online · <b>Hide &amp; Seek</b> · with <b>'+n+'</b> and 8 bots · both ready to start':'Online · <b>Hide &amp; Seek</b> · with a real player and 8 bots · Enter to play';
   if(M.id==='truthOn') return n?'Online · <b>The Truth</b> · co-op with <b>'+n+'</b> · friendly fire · both ready to start':'Online · <b>The Truth</b> · co-op with a real player · friendly fire · Enter to play';
   if(M.id==='duel') return n?'Friendly 1v1 · vs <b>'+n+'</b> · +3 for a win · both ready to start':'Online · <b>1v1</b> · vs a real player · Enter to play';
@@ -23319,6 +23324,24 @@ function dgNetLeft(n){
     if(alive===0){ dgNetSend({k:'end',w:'all'}); dgNetEnd('all'); } }
 }
 
+/* ---------- in a team the leader picks the game mode, and the teammate's lobby follows it ---------- */
+document.querySelectorAll('.hub-version').forEach(e=>e.textContent='VERSION '+LUNIVE_VER+' · BETA'); document.querySelectorAll('.set-ver').forEach(e=>e.textContent='VERSION '+LUNIVE_VER);
+const netFollower=()=>!!(State.online&&NET.party&&NET.party.lead!==NET.id);
+function netFollowMode(md){
+  if(!netFollower()||!md||!MODES.some(M=>M.id===md)||State.selectedMode===md) return;
+  if(NET.ownMode===undefined) NET.ownMode=State.selectedMode;        // yours again when you leave the team
+  State.selectedMode=md; saveState();
+  if(NET.ready){ NET.ready=false; netPst(true); }                   // a new mode: ready up for it again
+  if(S.maps&&!S.maps.classList.contains('hidden')) showHub();
+  refreshHub(); netReadyUI();
+  netSay('Your leader picked '+modeById(md).name);
+}
+function netModeBack(){
+  if(NET.ownMode===undefined) return;
+  if(MODES.some(M=>M.id===NET.ownMode)) State.selectedMode=NET.ownMode;
+  NET.ownMode=undefined; saveState();
+  try{ refreshHub(); }catch(e){}
+}
 /* ---- 64e-laurent.js ---- */
 /* ==========================================================
    LAURENT — the local plug. Everybody knows him, everybody owes him.
