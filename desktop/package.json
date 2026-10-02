@@ -1,7 +1,7 @@
 {
   "name": "lunive",
   "productName": "Lunive",
-  "version": "3.27.1",
+  "version": "3.28.0",
   "description": "Lunive",
   "author": "szamocaa",
   "private": true,
@@ -22,6 +22,7 @@
     "copyright": "© szamocaa",
     "files": [
       "main.js",
+      "preload.js",
       "package.json",
       "app/**/*"
     ],
