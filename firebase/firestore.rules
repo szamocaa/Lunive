@@ -1,0 +1,71 @@
+rules_version = '2';
+// Lunive's Firestore rules: Kyuchi ID saves, Account IDs, the leaderboard, and the creator's tools.
+// Paste all of this into Firebase console -> Firestore Database -> Rules, and press Publish.
+// Put YOUR Kyuchi ID email (in small letters) where it says creator@example.com.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isCreator() {
+      return request.auth != null
+        && request.auth.token.get('email', '').lower() == 'creator@example.com';
+    }
+    function me(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    // what a player's public card may hold
+    function okCard(d) {
+      return d.n is string && d.n.size() <= 24
+        && d.tro is int && d.tro >= 0 && d.tro <= 10000000
+        && (!('pf' in d) || (d.pf is string && d.pf.size() <= 40))
+        && (!('fr' in d) || (d.fr is string && d.fr.size() <= 40))
+        && (!('nc' in d) || (d.nc is string && d.nc.size() <= 40))
+        && (!('ti' in d) || (d.ti is string && d.ti.size() <= 60))
+        && (!('adm' in d) || d.adm is bool)
+        && (!('v' in d) || (d.v is string && d.v.size() <= 16))
+        && (!('at' in d) || d.at is int);
+    }
+
+    // your save, and your username's sign-in: only you
+    match /kyuchi/{uid} { allow read, write: if me(uid); }
+    match /alias/{uid}  { allow read, write: if me(uid); }
+
+    // Account IDs: 9 digits, given once per account, never changed and never used again
+    match /ids/{aid} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && aid.matches('[1-9][0-9]{8}')
+        && request.resource.data.keys().hasOnly(['uid', 'at'])
+        && request.resource.data.uid == request.auth.uid
+        && !exists(/databases/$(database)/documents/players/$(request.auth.uid));
+    }
+
+    // a player's public card: the leaderboard and profiles read it; only the creator can ban
+    match /players/{uid} {
+      allow read: if true;
+      allow create: if me(uid)
+        && request.resource.data.keys().hasOnly(['aid', 'n', 'tro', 'pf', 'fr', 'nc', 'ti', 'adm', 'v', 'at'])
+        && request.resource.data.aid is string
+        && getAfter(/databases/$(database)/documents/ids/$(request.resource.data.aid)).data.uid == uid
+        && okCard(request.resource.data);
+      allow update: if me(uid)
+        && resource.data.get('banned', false) != true
+        && request.resource.data.keys().hasOnly(['aid', 'n', 'tro', 'pf', 'fr', 'nc', 'ti', 'adm', 'v', 'at', 'banned', 'why', 'bat'])
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['aid', 'banned', 'why', 'bat'])
+        && okCard(request.resource.data);
+      allow update, delete: if isCreator();
+      allow delete: if me(uid) && resource.data.get('banned', false) != true;
+
+      // letters from the creator, with gifts: only the creator sends them, only you open them
+      match /mail/{mid} {
+        allow read: if me(uid) || isCreator();
+        allow create, delete: if isCreator();
+        allow update: if isCreator()
+          || (me(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claimed'])
+              && request.resource.data.claimed == true);
+      }
+    }
+
+    // only the creator can read here: it's how the game knows it's you
+    match /admin/{doc} { allow read: if isCreator(); }
+  }
+}
