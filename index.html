@@ -3536,7 +3536,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.29.0 · BETA</span>
+    <span class="hub-version">VERSION 3.29.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3703,7 +3703,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.29.0</div></div>
+</svg><div class="set-ver">VERSION 3.29.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -23173,7 +23173,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.29.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.29.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -25081,8 +25081,9 @@ const Kyuchi=(function(){
    never changed and never given to anyone else (the database's own
    rules make sure of it). It shows in your profile, and in everyone's.
    Your public card (name, trophies, picture, frame, name colour and
-   title) is what the leaderboard reads: the top 100 by trophies.
-   Accounts that typed the ADMIN code aren't ranked.
+   title) is what the leaderboard reads: the top 100 by trophies, of the
+   players who have, or once had, at least one. Accounts that typed the
+   ADMIN code aren't ranked.
    The creator (the one account the database's rules name) can ban an
    Account ID, or send it a letter with gifts that lands in its mailbox.
    A banned account sees a wall instead of the game, and so does the
@@ -25092,7 +25093,7 @@ const KyCloud=(function(){
   const K=Kyuchi._;
   const ROOT=()=>'projects/'+(KYU_CFG.projectId||'mock')+'/databases/(default)/documents/';
   const DOCS=()=>K.FS().replace(/\/$/,'');
-  const BAN_KEY='lunive:ban', LB_KEY='lunive:lb', CARD=['n','tro','pf','fr','nc','ti','adm','v','at'];
+  const BAN_KEY='lunive:ban', LB_KEY='lunive:lb', CARD=['n','tro','best','pf','fr','nc','ti','adm','v','at'];
   const fmt=a=>{ const s=String(a||''); return /^\d{9}$/.test(s)?s.slice(0,3)+' '+s.slice(3,6)+' '+s.slice(6):s; };
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
   const ago=t=>{ const s=Math.max(0,(Date.now()-t)/1000); return s<45?'just now':s<3600?Math.round(s/60)+' min ago':s<86400?Math.round(s/3600)+' h ago':Math.round(s/86400)+' days ago'; };
@@ -25118,7 +25119,8 @@ const KyCloud=(function(){
     if(shopPfp(k)) return (State.shopPfps||[]).includes(k)?k:'';
     return ACHV_REWARDS[k]&&(State.achievementsDone||[]).includes(k)?k:''; }
   function card(){ const f=myFrame();
-    return {n:String(State.username||'Player').slice(0,24),tro:Math.max(0,Math.min(1e7,Math.round(+totalTrophies()||0))),pf:myPfp().slice(0,40),
+    const tro=Math.max(0,Math.min(1e7,Math.round(+totalTrophies()||0)));
+    return {n:String(State.username||'Player').slice(0,24),tro,best:Math.max(tro,Math.min(1e7,Math.round(+State.roadMax||0))),pf:myPfp().slice(0,40),
       fr:f?String(f.id).slice(0,40):'',nc:String(State.nameColor||'').slice(0,40),ti:String(State.equippedTitle||'').slice(0,60),
       adm:!!(State.adminTro||(State.redeemed||[]).includes('ADMIN')),v:String(LUNIVE_VER).slice(0,16),at:Date.now()}; }
   const sig=c=>CARD.filter(k=>k!=='at').map(k=>c[k]).join('|');
@@ -25245,10 +25247,11 @@ const KyCloud=(function(){
     if(!force&&lb&&Date.now()-lb.at<90000) return lb;
     let t=null; try{ if(Kyuchi.session) t=await tok(); }catch(e){}
     const r=await runQuery(t,{from:[{collectionId:'players'}],orderBy:[{field:{fieldPath:'tro'},direction:'DESCENDING'}],limit:130});
-    lb={at:Date.now(),rows:rowsOf(r).filter(o=>/^\d{9}$/.test(o.aid||'')&&!o.banned&&!o.adm).slice(0,100)};
+    lb={at:Date.now(),rows:rowsOf(r).filter(o=>/^\d{9}$/.test(o.aid||'')&&!o.banned&&!o.adm&&ranked(o)).slice(0,100)};
     try{ localStorage.setItem(LB_KEY,JSON.stringify(lb)); }catch(e){}
     return lb;
   }
+  const ranked=o=>(+o.tro||0)>=1||(+o.best||0)>=1;                      // a trophy now, or one once
   async function rankOf(tro){
     const r=await K.req(DOCS()+':runAggregationQuery',{method:'POST',headers:HJ(),body:JSON.stringify({structuredAggregationQuery:{structuredQuery:{from:[{collectionId:'players'}],
       where:{fieldFilter:{field:{fieldPath:'tro'},op:'GREATER_THAN',value:{integerValue:String(Math.max(0,tro|0))}}}},aggregations:[{alias:'n',count:{}}]}})});
@@ -25283,7 +25286,7 @@ const KyCloud=(function(){
     const pod=$el('lbPod'), list=$el('lbList'), info=$el('lbInfo'); if(!pod) return;
     const rows=lb&&lb.rows||[], s=Kyuchi.session, my=s?rows.findIndex(o=>o.uid===s.uid):-1;
     info.textContent=lbState==='loading'?'Loading…':lbState==='error'?'Can\'t reach it right now · showing the last one':lbState==='soon'?'':lb?'Updated '+ago(lb.at):'';
-    const empty=lbState==='loading'?'<i class="lb-spin"></i>Loading the leaderboard…':lbState==='soon'?'The leaderboard opens very soon · check back in a bit':lbState==='error'&&!rows.length?'Can\'t reach the leaderboard · check your connection':'No one is on it yet · be the first!';
+    const empty=lbState==='loading'?'<i class="lb-spin"></i>Loading the leaderboard…':lbState==='soon'?'The leaderboard opens very soon · check back in a bit':lbState==='error'&&!rows.length?'Can\'t reach the leaderboard · check your connection':'No one is on it yet · win a trophy and be the first!';
     if(!rows.length){ pod.innerHTML=''; pod.classList.add('hidden'); list.innerHTML=`<div class="lb-empty">${empty}</div>`; }
     else {
       pod.classList.remove('hidden');
@@ -25307,6 +25310,7 @@ const KyCloud=(function(){
       const j=$el('lbJoin'); wireRx(j); j.onclick=()=>{ Kyuchi.open('create'); SFX.open&&SFX.open(); }; return; }
     const c=card();
     if(c.adm){ el.className='lb-me out'; el.innerHTML=`<span class="lbm-t"><b>This account isn't ranked</b><small>Accounts with the ADMIN code don't go on the leaderboard</small></span>`; return; }
+    if(!ranked(c)){ el.className='lb-me out'; el.innerHTML=`<span class="lbm-t"><b>Win your first trophy</b><small>The leaderboard shows players with at least 1 trophy · ${s.aid?'your Account ID: '+fmt(s.aid):'your Account ID is on its way'}</small></span>`; return; }
     el.className='lb-me';
     const r=my>=0?my+1:meRank;
     el.innerHTML=`<span class="lbm-rank" id="lbmRank">${r?'#'+r:'—'}</span><span class="lbm-av">${av({pf:c.pf,fr:c.fr})}</span>

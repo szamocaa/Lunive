@@ -16,6 +16,7 @@ service cloud.firestore {
     function okCard(d) {
       return d.n is string && d.n.size() <= 24
         && d.tro is int && d.tro >= 0 && d.tro <= 10000000
+        && (!('best' in d) || (d.best is int && d.best >= 0 && d.best <= 10000000))
         && (!('pf' in d) || (d.pf is string && d.pf.size() <= 40))
         && (!('fr' in d) || (d.fr is string && d.fr.size() <= 40))
         && (!('nc' in d) || (d.nc is string && d.nc.size() <= 40))
@@ -43,13 +44,13 @@ service cloud.firestore {
     match /players/{uid} {
       allow read: if true;
       allow create: if me(uid)
-        && request.resource.data.keys().hasOnly(['aid', 'n', 'tro', 'pf', 'fr', 'nc', 'ti', 'adm', 'v', 'at'])
+        && request.resource.data.keys().hasOnly(['aid', 'n', 'tro', 'best', 'pf', 'fr', 'nc', 'ti', 'adm', 'v', 'at'])
         && request.resource.data.aid is string
         && getAfter(/databases/$(database)/documents/ids/$(request.resource.data.aid)).data.uid == uid
         && okCard(request.resource.data);
       allow update: if me(uid)
         && resource.data.get('banned', false) != true
-        && request.resource.data.keys().hasOnly(['aid', 'n', 'tro', 'pf', 'fr', 'nc', 'ti', 'adm', 'v', 'at', 'banned', 'why', 'bat'])
+        && request.resource.data.keys().hasOnly(['aid', 'n', 'tro', 'best', 'pf', 'fr', 'nc', 'ti', 'adm', 'v', 'at', 'banned', 'why', 'bat'])
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['aid', 'banned', 'why', 'bat'])
         && okCard(request.resource.data);
       allow update, delete: if isCreator();
