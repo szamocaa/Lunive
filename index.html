@@ -3543,7 +3543,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.30.2 · BETA</span>
+    <span class="hub-version">VERSION 3.30.3 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3710,7 +3710,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.30.2</div></div>
+</svg><div class="set-ver">VERSION 3.30.3</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -23004,11 +23004,7 @@ var MAILS=[{id:'native1',from:'Szamóca',role:'The creator',subject:'Native vers
   link:{href:'https://github.com/szamocaa/Lunive/releases/latest',label:'DOWNLOAD FOR WINDOWS & MAC'},
   sign:'- Szamóca',
   gifts:{crates:10,petBoxes:10,artBoxes:20,
-    arts:[{slot:'feather',rar:'beast',set:'aurora',lvl:20,main:'atkF',echo:[['cr',4.8],['cd',10.8],['atkP',5],['spd',2.2]]}]}},
-  {id:'welcome1',from:'Szamóca',role:'The creator',subject:'Hello everyone!',
-  body:['Hello everyone, if you have any ideas for the game, let me know!','Click the Support button, and feel free to text me.'],
-  sign:'- Szamóca',
-  gifts:{coins:100,crates:5,petBoxes:5,artBoxes:5,pfps:['x_daydream','x_porcelain','x_seraph']}}];
+    arts:[{slot:'feather',rar:'beast',set:'aurora',lvl:20,main:'atkF',echo:[['cr',4.8],['cd',10.8],['atkP',5],['spd',2.2]]}]}}];
 function mailAll(){ let L=[]; try{ L=KyCloud.letters(); }catch(e){} return L.concat(MAILS||[]); }
 function mailUnclaimed(){ return mailAll().filter(m=>!(State.mailClaimed||[]).includes(m.id)); }
 function refreshMailBtn(){
@@ -23193,7 +23189,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.30.2';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.30.3';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
