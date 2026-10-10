@@ -1,13 +1,16 @@
 rules_version = '2';
 // Lunive's Firestore rules: Kyuchi ID saves, Account IDs, the leaderboard, and the creator's tools.
 // Paste all of this into Firebase console -> Firestore Database -> Rules, and press Publish.
-// Put YOUR Kyuchi ID email (in small letters) where it says creator@example.com.
+// Nothing to change in it: the creator is whoever owns Account ID #999999999.
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // the creator: the account that owns #999999999. That ID was given once, to the creator,
+    // and can never be created again, changed or deleted.
     function isCreator() {
       return request.auth != null
-        && request.auth.token.get('email', '').lower() == 'creator@example.com';
+        && exists(/databases/$(database)/documents/ids/999999999)
+        && get(/databases/$(database)/documents/ids/999999999).data.uid == request.auth.uid;
     }
     function me(uid) {
       return request.auth != null && request.auth.uid == uid;
