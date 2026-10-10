@@ -1,3 +1,4 @@
+3.32.1: Maeya the sugar glider is now called Shiro.
 3.32.0: A whole new look! Real leaves, pines, palms and grass, natural stone, textured ground, and smooth characters with no outlines.
 3.31.0: Star has left the game (if you had her, her 1000 coins are back). Profiles on the leaderboard, a smoother leaderboard, the ADMIN code is gone, and the mailbox starts fresh.
 3.30.3: Leaderboard and #Account IDs are here! And "Owns The Game" is now the creator's own title, so it's gone from the Shop (if you bought it, your 40 coins are back).

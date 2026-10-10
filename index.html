@@ -3553,7 +3553,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.32.0 · BETA</span>
+    <span class="hub-version">VERSION 3.32.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3720,7 +3720,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.32.0</div></div>
+</svg><div class="set-ver">VERSION 3.32.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -13727,7 +13727,7 @@ const PETS=[
   {id:'ayesha',name:'Ayesha',rarity:'epic',kind:'Jellyfish',size:[.58,1.3],
    desc:'A jellyfish who drifts beside you through the air, glowing softly. The current goes where she goes.',
    abil:[['Current','While she is equipped you are 50% faster, all the time.']]},
-  {id:'maeya',name:'Maeya',rarity:'legendary',kind:'Sugar glider',size:[.46,1.0],
+  {id:'maeya',name:'Shiro',rarity:'legendary',kind:'Sugar glider',size:[.46,1.0],
    desc:'A cute sugar glider who is always flying right next to you, and keeps bringing you things.',
    abil:[['Gifts','Big speed boosts, health, and damage boosters, brought to you all match long.'],
      ['Ambush','Sometimes she attacks: 30% of an enemy\'s health in one go. Then she waits 10 seconds.']]},
@@ -13906,8 +13906,8 @@ function buildAyesha(){
   return petFinish(R);
 }
 
-/* Maeya: a sugar glider — a round head with huge eyes and huge ears, a gliding cape, a fluffy tail */
-function buildMaeya(){
+/* Shiro: a sugar glider — a round head with huge eyes and huge ears, a gliding cape, a fluffy tail */
+function buildShiro(){
   const R=petRoot('maeya'), ud=R.userData, rig=ud.rig; ud.fly=true;
   const FUR=0xcfcadd, FUR2=0xb4aec6, CREAM=0xfff5ea, STRIPE=0x7a7094, PINK=0xffb2c4;
   const bodyG=new THREE.Group(); bodyG.position.y=.2; rig.add(bodyG); ud.bodyG=bodyG;
@@ -13974,7 +13974,7 @@ function petFinish(R){
   const bb=new THREE.Box3().setFromObject(R); R.userData.h=Math.max(.1,bb.max.y-Math.min(0,bb.min.y));
   return R;
 }
-const PET_BUILD={nya:buildNya,reinna:buildReinna,ayesha:buildAyesha,maeya:buildMaeya,peach:buildPeach};
+const PET_BUILD={nya:buildNya,reinna:buildReinna,ayesha:buildAyesha,maeya:buildShiro,peach:buildPeach};
 function petBuild(id){ return (PET_BUILD[id]||buildNya)(); }
 
 /* ---------- a little life: blinking, tails, ears, legs, wings, tentacles ---------- */
@@ -14136,7 +14136,7 @@ const PetRun=(function(){
         if(A.t>=2.2){ P.act=null; M.position.y=0; }
         petAnim(M,now/1000,dt,{moving:A.t<1||A.t>1.6}); return;
       }
-      if(A.type==='strike'){                                  // Maeya: a swoop in, a hit, and back
+      if(A.type==='strike'){                                  // Shiro: a swoop in, a hit, and back
         const tp=A.target.mesh.position, out=k<.45, kk=out?k/.45:(k-.45)/.55;
         const fx=out?A.from.x:tp.x, fz=out?A.from.z:tp.z, gx=out?tp.x:tx, gz=out?tp.z:tz;
         R.position.x=fx+(gx-fx)*kk; R.position.z=fz+(gz-fz)*kk; M.position.y=fly+(out?-kk:-(1-kk))*.7;
@@ -14178,9 +14178,9 @@ const PetRun=(function(){
     }
     if(id==='maeya'){
       if(now>P.nextGift&&!P.act){ P.nextGift=now+rnd(8000,12000); const r=Math.random();
-        if(r<.34){ P.spdUntil=now+4000; P.spdK=1.7; popAt(o,'MAEYA · SPEED','heal'); }
+        if(r<.34){ P.spdUntil=now+4000; P.spdK=1.7; popAt(o,'SHIRO · SPEED','heal'); }
         else if(r<.67&&o.hp<o.maxHp){ heal(o,Math.round(o.maxHp*.25)); }
-        else { P.dmgUntil=now+6000; P.dmgK=1.4; popAt(o,'MAEYA · DAMAGE','ult'); }
+        else { P.dmgUntil=now+6000; P.dmgK=1.4; popAt(o,'SHIRO · DAMAGE','ult'); }
         SFX.squeak&&SFX.squeak(P.root.position); sparkle(o.mesh.position,[0xffd426,0xffffff,0xc9b8ff]); }
       if(now>P.nextStrike&&!P.act){
         const L=foes(o,now,9).sort((a,b)=>fd(a.mesh.position,o.mesh.position)-fd(b.mesh.position,o.mesh.position));
@@ -14256,9 +14256,9 @@ const PetRun=(function(){
     if(P.id==='ayesha') c+=ch('AYESHA · +50% SPEED');
     if(P.id==='peach') c+=ch('PEACH · +80% DAMAGE');
     if(P.hpBuff) c+=ch('NYA · +10% HEALTH '+s(P.hpBuff.until));
-    if(now<P.dmgUntil) c+=ch((P.id==='nya'?'NYA · +50%':'MAEYA · +40%')+' DAMAGE '+s(P.dmgUntil));
-    if(now<P.spdUntil) c+=ch('MAEYA · SPEED '+s(P.spdUntil));
-    if(P.id==='maeya') c+=now<P.nextStrike&&P.nextStrike-now>600?`<span class="buff-chip pet dim">MAEYA · AMBUSH ${Math.ceil((P.nextStrike-now)/1000)}s</span>`:ch('MAEYA · AMBUSH READY');
+    if(now<P.dmgUntil) c+=ch((P.id==='nya'?'NYA · +50%':'SHIRO · +40%')+' DAMAGE '+s(P.dmgUntil));
+    if(now<P.spdUntil) c+=ch('SHIRO · SPEED '+s(P.spdUntil));
+    if(P.id==='maeya') c+=now<P.nextStrike&&P.nextStrike-now>600?`<span class="buff-chip pet dim">SHIRO · AMBUSH ${Math.ceil((P.nextStrike-now)/1000)}s</span>`:ch('SHIRO · AMBUSH READY');
     return c;
   }
   return {begin,end,step,roundReset,dmgK,takenK,speedK,chips,get petHit(){ return petHit; },get on(){ return !!mine; },get state(){ return mine; },get all(){ return list; }};
@@ -17450,7 +17450,7 @@ function hurt(u,dmg,instant,src,dot){
     }
     if(u.st.def>0) dmg*=100/(100+u.st.def);
   }
-  if(src&&src!==u&&!instant&&!petHit) dmg*=PetRun.dmgK(src,now);                  // a pet's owner: Peach's +80%, Nya's and Maeya's boosts
+  if(src&&src!==u&&!instant&&!petHit) dmg*=PetRun.dmgK(src,now);                  // a pet's owner: Peach's +80%, Nya's and Shiro's boosts
   if(!instant) dmg*=PetRun.takenK(u);                                                      // Reinna: 40% less
   if(u.dmgReduce&&now<u.dmgReduce) dmg*=(u.dmgReduceK||.5);          // a super's damage cut, for bots as much as for you
   if(instant){ const had=Math.max(0,u.hp); u.hp=0; popDamage(u,had,src); }
@@ -18559,7 +18559,7 @@ function moveMul(u,now){
   if(u.slowUntil&&now<u.slowUntil) k*=u.slowK||.3;
   if(u.wade) k*=1-WADE_SLOW*u.wade;
   if(u.key==='wonderkid') k*=1+wonderPhase(u,now)*1.15;
-  k*=PetRun.speedK(u,now);                                       // Ayesha, and Maeya's speed gifts
+  k*=PetRun.speedK(u,now);                                       // Ayesha, and Shiro's speed gifts
   return k;
 }
 
@@ -22951,7 +22951,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.32.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.32.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
