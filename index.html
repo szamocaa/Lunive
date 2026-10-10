@@ -3553,7 +3553,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.31.0 · BETA</span>
+    <span class="hub-version">VERSION 3.32.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3720,7 +3720,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.31.0</div></div>
+</svg><div class="set-ver">VERSION 3.32.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -5909,7 +5909,7 @@ function gradY(geo,top,bot,pow){
 /* level of detail for figures: full in the menus, lighter in a match, where
    everyone is small on screen and there are fifteen of them. */
 let KIT_DETAIL=1;
-const KIT_LOW=.8;
+const KIT_LOW=1;
 /* the HD anime look: crisp painted faces, smooth heads, every hair lock,
    cel shading (CEL: 0 = soft painterly light, 1 = hard two-tone) and a thin
    ink outline round every part (outline: its width, 0 switches it off).
@@ -5918,7 +5918,9 @@ const KIT_LOW=.8;
    Now: a brawler toy on a PS2 budget. Big head, chunky hands and shoes,
    a head cut from a dozen facets you can see, flat-shaded bodies, faces
    drawn at a low texture size, and a bold two-tone light. */
-const KIT_STYLE={pix:1.6,doll:1,headWS:12,headHS:10,hair:.5,softTip:.5,shoe:1.38,hand:1.26,flat:.8,faceFlat:.4,cel:.72,outline:.0012,expo:.86};
+/* v3.32: all of that is gone — smooth round heads, every hair lock, crisp faces at full size,
+   soft natural light and no outline at all. */
+const KIT_STYLE={pix:0,doll:1,headWS:32,headHS:24,hair:1,softTip:.85,shoe:1.38,hand:1.26,flat:0,faceFlat:0,cel:0,outline:0,expo:.92};
 function kd(n,min){ const m=min||3, f=m<=5?m:Math.max(5,Math.round(m*.4)); return Math.max(f,Math.round(n*KIT_DETAIL*KIT_LOW)); }
 /* the stock shapes, cut down the same way */
 function kTorus(r,t,rs,ts,arc){ return new THREE.TorusGeometry(r,t,kd(rs||8,3),kd(ts||6,5),arc); }
@@ -6265,7 +6267,10 @@ function faceTex(o,closed){
   paintMouth(x,o,closed);
   if(o.marks) o.marks(x);
   x.restore();
-  const tex=new THREE.CanvasTexture(KIT_STYLE.pix?pixelFace(cv,KIT_STYLE.pix):cv);
+  let src=cv;
+  if(KIT_STYLE.pix) src=pixelFace(cv,KIT_STYLE.pix);
+  else if(KIT_DETAIL<1){ const h=document.createElement('canvas'); h.width=512; h.height=256; const hx=h.getContext('2d'); hx.imageSmoothingQuality='high'; hx.drawImage(cv,0,0,512,256); src=h; }
+  const tex=new THREE.CanvasTexture(src); tex.encoding=THREE.LinearEncoding;
   tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;
   if(KIT_STYLE.pix){ tex.magFilter=THREE.NearestFilter; tex.anisotropy=1; }     // big square texels up close, like an old console
   else tex.anisotropy=8;
@@ -9783,31 +9788,102 @@ const LP_MATS={};
    touching triangles) — the ground and the leaves read as real, not cut paper;
    detail: fine grain and grass streaks painted into the ground */
 const LP_KINDS={
-  solid:{}, rock:{smooth:.6}, ground:{noCast:true,smooth:1,detail:true}, dbl:{side:THREE.DoubleSide},
+  solid:{}, rock:{smooth:.75,rough:.92}, ground:{noCast:true,smooth:1,detail:true,rough:.96}, dbl:{side:THREE.DoubleSide},
   tall:{see:true}, tall2:{see:true,side:THREE.DoubleSide},
-  foliage:{wind:.035,see:true,side:THREE.DoubleSide,smooth:.9}, sway:{wind:.06,side:THREE.DoubleSide,noCast:true},
-  glow:{emissive:true,noCast:true}
+  foliage:{wind:.035,see:true,side:THREE.DoubleSide,smooth:.9,rough:.8}, sway:{wind:.06,side:THREE.DoubleSide,noCast:true,upN:true,rough:.75},
+  glow:{emissive:true,noCast:true},
+  /* real leaves and needles: little cut-out cards over the crowns, lit as if the crown were round */
+  leaf:{wind:.035,see:true,side:THREE.DoubleSide,tex:'leaf',rough:.72}, needle:{wind:.028,see:true,side:THREE.DoubleSide,tex:'needle',rough:.8},
+  frond:{wind:.04,see:true,side:THREE.DoubleSide,tex:'frond',rough:.7,upN:true}
 };
+/* nature's colours: the maps' palettes were drawn bright for a toy look. Ground, plants and stone come
+   down in brightness and saturation the way real ones are; whites (snow, pale stone) are left alone. */
+const LP_NAT=new Map(), _natC=new THREE.Color(), _natH={h:0,s:0,l:0};
+const LP_NAT_K={ground:[.8,.78],foliage:[.8,.74],leaf:[.82,.86],needle:[.85,1],frond:[.82,.86],sway:[.78,.7],rock:[.86,.9]};
+function lpNat(hex,kind){
+  if(kind==='glow') return hex;
+  const key=kind+hex; let v=LP_NAT.get(key); if(v!==undefined) return v;
+  const f=LP_NAT_K[kind]||[.93,.96];
+  _natC.setHex(hex).getHSL(_natH);
+  v=(_natH.l>.8&&_natH.s<.35)?hex:_natC.setHSL(_natH.h,_natH.s*f[0],_natH.l*f[1]).getHex();
+  LP_NAT.set(key,v); return v;
+}
+/* how much detail the world is built with: Performance mode and the low settings get rounder-than-before, not finer */
+function lpQ(){ return GFX.potato?.5:({low:.7,medium:.85,high:1,ultra:1.15})[GFX.q]||1; }
 /* `px` materials are lit per pixel with flat normals: for the dungeon,
    where a torch light has to fall across big wall faces */
 function lpMat(kind,px){
-  const key=kind+(px?'|px':'');
+  const lite=!!GFX.potato, key=kind+(px?'|px':'')+(lite?'|lite':'');
   if(LP_MATS[key]) return LP_MATS[key];
   const o=LP_KINDS[kind]||{};
   let m;
   if(o.emissive) m=new THREE.MeshBasicMaterial({vertexColors:true,toneMapped:false});
-  else if(px) m=new THREE.MeshPhongMaterial({vertexColors:true,flatShading:true,shininess:6,specular:0x0c0c0c,side:o.side||THREE.FrontSide});
-  else m=new THREE.MeshLambertMaterial({vertexColors:true,side:o.side||THREE.FrontSide});
+  else if(lite) m=px?new THREE.MeshPhongMaterial({vertexColors:true,flatShading:true,shininess:6,specular:0x0c0c0c,side:o.side||THREE.FrontSide})
+    :new THREE.MeshLambertMaterial({vertexColors:true,side:o.side||THREE.FrontSide});
+  /* real materials: rough, matte, lit per pixel (stone, bark, earth and leaves are all dielectric) */
+  else m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:o.rough===undefined?.86:o.rough,metalness:0,side:o.side||THREE.FrontSide,flatShading:!!px});
+  if(o.tex){ m.map=lpCardTex(o.tex); m.alphaTest=.4; }
   if(!o.emissive&&(o.wind||o.see)) lpEnhance(m,o,px);
   else if(o.detail&&!px) lpGroundDetail(m);
   m.userData.shared=true;
   return LP_MATS[key]=m;
 }
+/* the leaf and needle cards' shadows keep their cut-out (r128 doesn't do that by itself) */
+const LP_DEPTH={};
+function lpCardDepth(tex){ return LP_DEPTH[tex]||(LP_DEPTH[tex]=new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking,map:lpCardTex(tex),alphaTest:.4,side:THREE.DoubleSide})); }
+/* the textures on the cards, painted once: a twig of leaves, or a fir branch. Grey, so each tree tints its own. */
+const LP_CARD_TEX={};
+function lpCardTex(kind){
+  if(LP_CARD_TEX[kind]) return LP_CARD_TEX[kind];
+  const S=256, cv=document.createElement('canvas'); cv.width=cv.height=S; const x=cv.getContext('2d'), rnd=mulberry32(kind==='leaf'?41:73);
+  const g=v=>`rgb(${v|0},${v|0},${v|0})`;
+  if(kind==='leaf'){
+    // a twig from the bottom, leaves all along it and round its tip
+    x.strokeStyle=g(95); x.lineWidth=4; x.lineCap='round';
+    x.beginPath(); x.moveTo(S*.5,S*.98); x.quadraticCurveTo(S*.46,S*.55,S*.52,S*.16); x.stroke();
+    const leaf=(px,py,a,L,W,v)=>{ x.save(); x.translate(px,py); x.rotate(a);
+      x.fillStyle=g(v); x.beginPath(); x.moveTo(0,0); x.quadraticCurveTo(W,-L*.35,0,-L); x.quadraticCurveTo(-W,-L*.35,0,0); x.fill();
+      x.strokeStyle=g(Math.min(255,v+38)); x.lineWidth=1.3; x.beginPath(); x.moveTo(0,-1); x.lineTo(0,-L*.86); x.stroke();
+      x.fillStyle=g(v*.82); x.beginPath(); x.moveTo(0,0); x.quadraticCurveTo(-W,-L*.35,0,-L); x.quadraticCurveTo(-W*.35,-L*.4,0,0); x.fill();
+      x.restore(); };
+    for(let i=0;i<46;i++){
+      const t=rnd(), ang=(rnd()-.5)*Math.PI*2, r=Math.sqrt(rnd())*S*.4;
+      const px=S*.5+Math.cos(ang)*r*.95, py=S*.48+Math.sin(ang)*r;
+      const a=Math.atan2(py-S*.62,px-S*.5)+Math.PI/2+(rnd()-.5)*.9;
+      leaf(px,py,a,S*(.13+t*.08),S*(.045+rnd()*.025),165+rnd()*90);
+    }
+  } else if(kind==='frond'){
+    // a palm frond seen from above: the rib up the middle, long narrow leaflets swept toward the tip
+    x.strokeStyle=g(120); x.lineWidth=5; x.lineCap='round'; x.beginPath(); x.moveTo(S*.5,S); x.lineTo(S*.5,0); x.stroke();
+    for(let i=0;i<44;i++){ const t=i/44, y=S*(1-t*.98), L=S*.5*(.92-t*.18)*(.9+rnd()*.2);
+      for(const sd of [-1,1]){ const ex=S*.5+sd*L, ey=y-S*(.1+rnd()*.05), v=150+rnd()*95;
+        x.fillStyle=g(v); x.beginPath(); x.moveTo(S*.5,y); x.quadraticCurveTo(S*.5+sd*L*.5,y-S*.035,ex,ey);
+        x.quadraticCurveTo(S*.5+sd*L*.5,y+S*.012,S*.5,y+S*.022); x.fill(); } }
+  } else {
+    // a fir branch: a stem, side shoots, and needles packed along all of them
+    const shoot=(x0,y0,a,L,w)=>{ const x1=x0+Math.cos(a)*L, y1=y0+Math.sin(a)*L;
+      x.strokeStyle=g(80); x.lineWidth=w; x.lineCap='round'; x.beginPath(); x.moveTo(x0,y0); x.lineTo(x1,y1); x.stroke();
+      const n=Math.round(L/2.2);
+      for(let k=0;k<n;k++){ const t=k/n, px=x0+(x1-x0)*t, py=y0+(y1-y0)*t, nl=(1-t*.45)*S*.055*(.8+rnd()*.4);
+        for(const sd of [-1,1]){ const na=a+sd*(1.05+rnd()*.35); x.strokeStyle=g(185+rnd()*70); x.lineWidth=1.7;
+          x.beginPath(); x.moveTo(px,py); x.lineTo(px+Math.cos(na)*nl,py+Math.sin(na)*nl); x.stroke(); } }
+      return [x1,y1]; };
+    const base=[S*.5,S*.97], up=-Math.PI/2;
+    shoot(base[0],base[1],up,S*.9,4);
+    for(let i=0;i<9;i++){ const t=.12+i*.09, py=base[1]-S*.9*t, L=S*(.34-t*.22)*(.85+rnd()*.3);
+      for(const sd of [-1,1]) shoot(S*.5,py,up+sd*(.85+rnd()*.25),L,2.4); }
+  }
+  { const id=x.getImageData(0,0,S,S), d=id.data;
+    for(let i=0;i<d.length;i+=4){ const a=d[i+3]; if(a<250){ const k=a/255; d[i]=d[i]*k+178*(1-k); d[i+1]=d[i+1]*k+178*(1-k); d[i+2]=d[i+2]*k+178*(1-k); } }
+    x.putImageData(id,0,0); }
+  const t=new THREE.CanvasTexture(cv); t.encoding=THREE.sRGBEncoding; t.anisotropy=4; t._cached=true;
+  return LP_CARD_TEX[kind]=t;
+}
 /* wind in the leaves (a wave that rolls across the map, stronger higher
    up), and the dithered cut-out wherever a prop stands between the camera
    and your fighter */
 function lpEnhance(mat,o,px){
-  const wind=o.wind||0, see=!!o.see;
+  const wind=o.wind||0, see=!!o.see, nf=!!(o.tex||o.upN);
   mat.onBeforeCompile=sh=>{
     sh.uniforms.uTime=WORLD_UNI.uTime; sh.uniforms.uPlayer=WORLD_UNI.uPlayer; sh.uniforms.uCam=WORLD_UNI.uCam; sh.uniforms.uSee=WORLD_UNI.uSee;
     sh.vertexShader='uniform float uTime;\nattribute float aSway;\nvarying vec3 vSeeW;\n'+sh.vertexShader
@@ -9830,28 +9906,49 @@ function lpEnhance(mat,o,px){
         }
       }`:''}`);
   };
-  mat.customProgramCacheKey=()=>'lp'+wind+(see?'s':'')+(px?'p':'');
+  const ob=mat.onBeforeCompile;
+  if(nf) mat.onBeforeCompile=sh=>{ ob(sh); sh.fragmentShader=sh.fragmentShader.replace('#include <normal_fragment_begin>','#include <normal_fragment_begin>\n  #ifndef FLAT_SHADED\n  normal=normalize(vNormal); geometryNormal=normal;\n  #endif'); };
+  mat.customProgramCacheKey=()=>'lp'+wind+(see?'s':'')+(px?'p':'')+(nf?'n':'');
 }
 
 /* the ground up close: soil grain, darker and lighter patches, and fine streaks
    like grass blades, all from the world position */
+const GROUND_UNI={tGD:{value:null},tGN:{value:null},uGDk:{value:.6},uGDs:{value:.19}};
+/* which ground texture a map gets: from its main ground colour, unless it's named here */
+const GROUND_KIND={sahara:'sand',canyon:'sand',sandtemple:'sand',cove:'beach',glacier:'snow',frostkeep:'snow',autumn:'leaves',graveyard:'moss',grove:'moss',bamboo:'moss',
+  forge:'rock',inferno:'rock',crystal:'rock',cathedral:'rock',throne:'rock',rooftop:'rock',clockwork:'rock',gallows:'rock',neon:'rock',colosseum:'sand'};
+function lpGroundKind(id,hex){
+  let k=GROUND_KIND[id];
+  if(!k&&hex!==undefined){ const r=(hex>>16&255)/255, g=(hex>>8&255)/255, b=(hex&255)/255, l=(r+g+b)/3;
+    k=l>.8?'snow':g>r&&g>=b?'grass':r>=g&&g>b&&l>.5?'sand':'rock'; }
+  const T=groundTex(k||'grass'); GROUND_UNI.tGD.value=T.map; GROUND_UNI.tGN.value=T.nmap;
+  GROUND_UNI.uGDk.value=k==='snow'?.35:k==='sand'?.5:.62;
+}
 function lpGroundDetail(mat){
+  if(!GROUND_UNI.tGD.value) lpGroundKind('forest');
   mat.onBeforeCompile=sh=>{
+    Object.assign(sh.uniforms,GROUND_UNI);
     sh.vertexShader='varying vec3 vGW;\n'+sh.vertexShader.replace('#include <project_vertex>','#include <project_vertex>\n  vGW=(modelMatrix*vec4(transformed,1.0)).xyz;');
-    sh.fragmentShader=`varying vec3 vGW;
+    sh.fragmentShader=`varying vec3 vGW; uniform sampler2D tGD; uniform sampler2D tGN; uniform float uGDk; uniform float uGDs;
     float gHash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
     float gNoise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
       return mix(mix(gHash(i),gHash(i+vec2(1.0,0.0)),f.x),mix(gHash(i+vec2(0.0,1.0)),gHash(i+vec2(1.0,1.0)),f.x),f.y); }
     `+sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
       { vec2 q=vGW.xz;
-        float big=gNoise(q*.11)*.6+gNoise(q*.37)*.4;
+        float big=gNoise(q*.07)*.55+gNoise(q*.23)*.3+gNoise(q*.61)*.15;
         float fine=gNoise(q*2.3)*.55+gNoise(q*6.1)*.3+gNoise(q*17.0)*.15;
-        float streak=gNoise(vec2(q.x*9.0+q.y*2.0,q.y*1.2-q.x*.5));
-        float k=.84+.2*big+.14*(fine-.5)+.08*(streak-.5);
-        diffuseColor.rgb*=k;
-        diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.04,1.02,.9),smoothstep(.55,.8,big)*.5); }`);
+        // the texture at two scales, so no repeat shows
+        vec3 d1=texture2D(tGD,q*uGDs).rgb, d2=texture2D(tGD,q*uGDs*.37+vec2(.31,.17)).rgb;
+        float dl=dot(d1,vec3(.333))*.62+dot(d2,vec3(.333))*.38;
+        float k=.8+.28*big+.1*(fine-.5);
+        diffuseColor.rgb*=k*mix(1.0,dl*1.16,uGDk);
+        diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.05,1.02,.88),smoothstep(.55,.8,big)*.45);
+        diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(.86,.9,.84),smoothstep(.45,.2,big)*.4); }`)
+      .replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+      { vec3 tn=texture2D(tGN,vGW.xz*uGDs).xyz*2.0-1.0;
+        normal=normalize(normal+(viewMatrix*vec4(tn.x*uGDk*.9,0.0,tn.y*uGDk*.9,0.0)).xyz); }`);
   };
-  mat.customProgramCacheKey=()=>'lpGround';
+  mat.customProgramCacheKey=()=>'lpGround2';
 }
 /* per-vertex normals for a bucket of loose triangles: flat, or rounded off by
    `sm` — touching triangles share an averaged normal, and their colours blend */
@@ -9909,37 +10006,72 @@ function lpDent(geo,amt,seed,o){
   }
   return g;
 }
-function lpIco(r,detail){ return new THREE.IcosahedronGeometry(r,detail||0); }
-function lpCyl(rt,rb,h,seg,open){ const g=new THREE.CylinderGeometry(rt,rb,h,seg||6,1,!!open); g.translate(0,h/2,0); return g; }
-function lpCone(r,h,seg){ const g=new THREE.ConeGeometry(r,h,seg||6,1); g.translate(0,h/2,0); return g; }
+/* round things are round now: more sides (four or fewer stay square on purpose: pyramids, roofs, posts) */
+function lpSegs(seg){ seg=seg||6; return seg<5?seg:Math.min(24,Math.max(10,Math.round(seg*2.1*lpQ()))); }
+function lpIco(r,detail){ return new THREE.IcosahedronGeometry(r,Math.min(2,(detail||0)+1)); }
+function lpCyl(rt,rb,h,seg,open){ const g=new THREE.CylinderGeometry(rt,rb,h,lpSegs(seg),1,!!open); g.translate(0,h/2,0); return g; }
+function lpCone(r,h,seg){ const g=new THREE.ConeGeometry(r,h,lpSegs(seg),1); g.translate(0,h/2,0); return g; }
 function lpBox(w,h,d){ const g=new THREE.BoxGeometry(w,h,d); g.translate(0,h/2,0); return g; }
 
-/* ---------- the builder: collects flat-coloured triangles by material ---------- */
+/* ---------- the builder: collects the world's triangles by material ----------
+   Each corner keeps the shape's own normal (round things are lit round, boxes keep their edges)
+   and gets its own colour, with a soft grain from the world position instead of a shade per facet. */
+const _lpNM=new THREE.Matrix3();
 class LPBuilder{
   constructor(seed){ this.parts={}; this.rnd=mulberry32(seed||7); this.cols=[]; }
-  bucket(kind){ return this.parts[kind]||(this.parts[kind]={p:[],c:[],s:[]}); }
-  /* add a geometry, placed by `m` (a Matrix4), coloured per face by `col`
-     (a hex, or fn(centre, normal) -> hex). `vary` jitters each face's shade.
-     sway (0..1) marks how much the wind moves it (foliage only). */
+  bucket(kind){ return this.parts[kind]||(this.parts[kind]={p:[],c:[],s:[],n:[],uv:[]}); }
+  /* add a geometry, placed by `m` (a Matrix4), coloured by `col` (a hex, or fn(point, normal) -> hex).
+     `vary` is how much the colour wanders. sway (0..1) marks how much the wind moves it. */
   add(geo,m,col,o){
     o=o||{};
-    const kind=o.mat||'solid', B=this.bucket(kind), vary=o.vary===undefined?.07:o.vary;
-    const g=geo.index?geo.toNonIndexed():geo, P=g.attributes.position;
-    const a=new THREE.Vector3(), b=new THREE.Vector3(), c=new THREE.Vector3(), ctr=new THREE.Vector3(), n=new THREE.Vector3(), e1=new THREE.Vector3(), e2=new THREE.Vector3();
+    const kind=o.mat||'solid', B=this.bucket(kind), K=LP_KINDS[kind]||{}, vary=o.vary===undefined?.07:o.vary;
+    if(geo.index&&!geo.attributes.normal) geo.computeVertexNormals();
+    const g=geo.index?geo.toNonIndexed():geo, P=g.attributes.position, NA=g.attributes.normal, UV=g.attributes.uv;
+    if(m) _lpNM.getNormalMatrix(m);
+    const a=new THREE.Vector3(), b=new THREE.Vector3(), c=new THREE.Vector3(), n=new THREE.Vector3(), e1=new THREE.Vector3(), e2=new THREE.Vector3(), vn=new THREE.Vector3();
     const sw=o.sway||0, swH=o.swayH||1, baseY=o.swayBase===undefined?null:o.swayBase;
+    const jit=1+(this.rnd()-.5)*2*vary*.55, fnCol=typeof col==='function', hx=fnCol?0:col, upN=!!K.upN;
+    const grainF=1.7+this.rnd()*.6, gs=this.rnd()*50;
+    const V=[a,b,c];
     for(let i=0;i<P.count;i+=3){
       a.fromBufferAttribute(P,i); b.fromBufferAttribute(P,i+1); c.fromBufferAttribute(P,i+2);
       if(m){ a.applyMatrix4(m); b.applyMatrix4(m); c.applyMatrix4(m); }
       e1.subVectors(b,a); e2.subVectors(c,a); n.crossVectors(e1,e2);
       if(n.lengthSq()<1e-12) continue;
-      n.normalize(); ctr.copy(a).add(b).add(c).multiplyScalar(1/3);
-      const hex=typeof col==='function'?col(ctr,n,i/3):col;
-      const L=lpLin(hex), k=1+(this.rnd()-.5)*2*vary;
-      const r=L[0]*k, gg=L[1]*k, bb=L[2]*k;
-      for(const v of [a,b,c]){ B.p.push(v.x,v.y,v.z); B.c.push(r,gg,bb);
-        B.s.push(sw?Math.max(0,(v.y-(baseY===null?0:baseY))/swH)*sw:0); }
+      n.normalize();
+      for(let j=0;j<3;j++){
+        const v=V[j];
+        if(upN) vn.set(0,1,0);
+        else if(NA){ vn.fromBufferAttribute(NA,i+j); if(m) vn.applyMatrix3(_lpNM); vn.normalize(); if(vn.dot(n)<-.2&&K.side!==THREE.DoubleSide) vn.copy(n); }
+        else vn.copy(n);
+        const L=lpLin(lpNat(fnCol?col(v,vn,i/3):hx,kind));
+        const k=jit*(1+noise3(v.x*grainF+gs,v.y*grainF,v.z*grainF-gs)*vary*1.6);
+        B.p.push(v.x,v.y,v.z); B.c.push(L[0]*k,L[1]*k,L[2]*k); B.n.push(vn.x,vn.y,vn.z);
+        B.s.push(sw?Math.max(0,(v.y-(baseY===null?0:baseY))/swH)*sw:0);
+        if(K.tex) B.uv.push(UV?UV.getX(i+j):0,UV?UV.getY(i+j):0);
+      }
     }
     if(g!==geo) g.dispose();
+    return this;
+  }
+  /* leaf or needle cards: [{p:[x,y,z], f:[x,y,z] (which way the card faces), w, h, roll, col (hex), ctr:[x,y,z] (the crown's middle:
+     the card is lit as if it sat on a round crown), sway, swayH, swayBase}] */
+  cards(kind,list){
+    const B=this.bucket(kind), f=new THREE.Vector3(), r=new THREE.Vector3(), u=new THREE.Vector3(), up=new THREE.Vector3(0,1,0), q=new THREE.Vector3(), nn=new THREE.Vector3(), tmp=new THREE.Vector3();
+    for(const C of list){
+      f.fromArray(C.f).normalize();
+      r.crossVectors(Math.abs(f.y)>.95?tmp.set(1,0,0):up,f).normalize(); u.crossVectors(f,r);
+      const cs=Math.cos(C.roll||0), sn=Math.sin(C.roll||0);
+      const R=r.clone().multiplyScalar(cs).addScaledVector(u,sn), U=u.clone().multiplyScalar(cs).addScaledVector(r,-sn);
+      const hw=C.w/2, hh=C.h/2, L=lpLin(lpNat(C.col,kind)), k=.9+this.rnd()*.2;
+      const corners=[[-1,-1,0,0],[1,-1,1,0],[1,1,1,1],[-1,-1,0,0],[1,1,1,1],[-1,1,0,1]];
+      for(const [sx,sy,uu,vv] of corners){
+        q.fromArray(C.p).addScaledVector(R,sx*hw).addScaledVector(U,sy*hh);
+        nn.copy(q).sub(tmp.fromArray(C.ctr)).normalize().multiplyScalar(.8).addScaledVector(f,.2).normalize();
+        B.p.push(q.x,q.y,q.z); B.c.push(L[0]*k,L[1]*k,L[2]*k); B.n.push(nn.x,nn.y,nn.z); B.uv.push(uu,vv);
+        B.s.push(C.sway?Math.max(0,(q.y-(C.swayBase||0))/(C.swayH||1))*C.sway:0);
+      }
+    }
     return this;
   }
   /* bake to meshes, split into square chunks so the far ones can be culled */
@@ -9948,7 +10080,8 @@ class LPBuilder{
     const chunk=o.chunk||0, meshes=[];
     for(const kind in this.parts){
       const B=this.parts[kind]; if(!B.p.length) continue;
-      const NB=lpNormals(B.p,B.c,o.px?0:((LP_KINDS[kind]||{}).smooth||0));
+      const K=LP_KINDS[kind]||{}, hasUV=!!K.tex&&B.uv.length;
+      const NB=o.px?lpNormals(B.p,B.c,0):K.smooth?lpNormals(B.p,B.c,K.smooth):B.n;
       const groups=new Map();
       if(chunk){
         for(let t=0;t<B.p.length;t+=9){
@@ -9958,16 +10091,21 @@ class LPBuilder{
         }
       } else groups.set('all',null);
       groups.forEach(list=>{
-        let pos,col,sw,nrm;
-        if(!list){ pos=B.p; col=B.c; sw=B.s; nrm=NB; }
-        else { pos=[]; col=[]; sw=[]; nrm=[]; list.forEach(t=>{ for(let k=0;k<9;k++){ pos.push(B.p[t+k]); col.push(B.c[t+k]); nrm.push(NB[t+k]); } for(let k=0;k<3;k++) sw.push(B.s[t/3+k]); }); }
+        let pos,col,sw,nrm,uv;
+        if(!list){ pos=B.p; col=B.c; sw=B.s; nrm=NB; uv=B.uv; }
+        else { pos=[]; col=[]; sw=[]; nrm=[]; uv=[];
+          list.forEach(t=>{ for(let k=0;k<9;k++){ pos.push(B.p[t+k]); col.push(B.c[t+k]); nrm.push(NB[t+k]); } for(let k=0;k<3;k++) sw.push(B.s[t/3+k]);
+            if(hasUV) for(let k=0;k<6;k++) uv.push(B.uv[t/3*2+k]); }); }
         const g=new THREE.BufferGeometry();
         g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
         g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
         g.setAttribute('aSway',new THREE.Float32BufferAttribute(sw,1));
-        g.setAttribute('normal',new THREE.Float32BufferAttribute(nrm,3)); g.computeBoundingSphere();
+        g.setAttribute('normal',new THREE.Float32BufferAttribute(nrm,3));
+        if(hasUV) g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+        g.computeBoundingSphere();
         const mesh=new THREE.Mesh(g,lpMat(kind,o.px));
-        mesh.castShadow=o.cast!==false&&!(LP_KINDS[kind]||{}).noCast; mesh.receiveShadow=kind!=='glow';
+        mesh.castShadow=o.cast!==false&&!K.noCast; mesh.receiveShadow=kind!=='glow';
+        if(K.tex){ mesh.customDepthMaterial=lpCardDepth(K.tex); mesh.receiveShadow=false; }
         parent.add(mesh); meshes.push(mesh);
       });
     }
@@ -9975,6 +10113,33 @@ class LPBuilder{
     return meshes;
   }
 }
+/* cards over an ellipsoid crown (centre, radii): `n` of them, sized `sz`, in the crown's colours */
+function lpCrownCards(B,kind,cx,cy,cz,rx,ry,rz,n,sz,cols,rnd,sway){
+  const L=[], N=Math.max(3,Math.round(n*Math.min(1,lpQ()*(lpQ()<.6?.75:1))));
+  for(let i=0;i<N;i++){
+    let dx=rnd()*2-1, dy=rnd()*2-1+.25, dz=rnd()*2-1; const d=Math.hypot(dx,dy,dz)||1; dx/=d; dy/=d; dz/=d;
+    const rr=.6+rnd()*.46, px=cx+dx*rx*rr, py=cy+dy*ry*rr, pz=cz+dz*rz*rr;
+    const fx=dx+(rnd()-.5)*1.4, fy=dy+(rnd()-.5)*1.2+.3, fz=dz+(rnd()-.5)*1.4;
+    const w=sz*(.8+rnd()*.45), shade=dy<-.3?.72:dy<.2?.88:1;
+    const c=cols[Math.floor(rnd()*cols.length)];
+    L.push({p:[px,py,pz],f:[fx,fy,fz],w,h:w,roll:rnd()*6.28,col:shadeHex(c,shade),ctr:[cx,cy,cz],
+      sway:sway?sway.k:0,swayH:sway?sway.h:1,swayBase:sway?sway.base:0});
+  }
+  B.cards(kind,L);
+}
+/* fir branches round a cone tier: they spread out and droop, covering it */
+function lpConeCards(B,x,y,z,r,h,n,cols,rnd,sway){
+  const L=[], N=Math.max(4,Math.round(n*lpQ()));
+  for(let i=0;i<N;i++){
+    const a=i/N*Math.PI*2+rnd()*.5, t=.15+rnd()*.7, rr=r*(1-t)*(.75+rnd()*.35), py=y+h*t;
+    const ox=Math.cos(a), oz=Math.sin(a);
+    const w=r*(1-t*.6)*(1.05+rnd()*.4);
+    L.push({p:[x+ox*rr*.75,py,z+oz*rr*.75],f:[ox*.35,1,oz*.35],w,h:w*.9,roll:Math.atan2(oz,ox)+Math.PI/2+(rnd()-.5)*.5,
+      col:shadeHex(cols[i%cols.length],1.05+t*.3),ctr:[x,py-h*.2,z],sway:sway?sway.k:0,swayH:sway?sway.h:1,swayBase:sway?sway.base:0});
+  }
+  B.cards('needle',L);
+}
+function shadeHex(hex,k){ return (Math.min(255,((hex>>16)&255)*k|0)<<16)|(Math.min(255,((hex>>8)&255)*k|0)<<8)|Math.min(255,(hex&255)*k|0); }
 /* a matrix from position, rotation (y, or [x,y,z]) and scale (number or [x,y,z]) */
 function lpM(x,y,z,ry,s){
   const m=new THREE.Matrix4(), q=new THREE.Quaternion(), e=new THREE.Euler();
@@ -9991,9 +10156,19 @@ function lpShade(hex,n,k){ const f=Math.max(0,1+n.y*(k||.12));
 /* a cached dented unit shape, so repeated props don't redo the work */
 const LP_GEO={};
 function lpShape(key,fn){ return LP_GEO[key]||(LP_GEO[key]=fn()); }
-const lpBlob=k=>lpShape('blob'+(k%6),()=>lpDent(lpIco(1,1),.13,k%6+1));
-const lpBlob0=k=>lpShape('blob0'+(k%4),()=>lpDent(lpIco(1,0),.16,k%4+11));
-const lpRockG=k=>lpShape('rock'+(k%8),()=>lpDent(new THREE.DodecahedronGeometry(1,0),.22,k%8+21));
+const lpBlob=k=>lpShape('blob'+(k%6),()=>lpDent(new THREE.IcosahedronGeometry(1,lpQ()>=.85?2:1),.11,k%6+1));
+const lpBlob0=k=>lpShape('blob0'+(k%4),()=>lpDent(new THREE.IcosahedronGeometry(1,lpQ()<.6?0:1),.14,k%4+11));
+/* stone: a sphere broken up by noise at three sizes, flatter on top, settled into the ground */
+const lpRockG=k=>lpShape('rock'+(k%8),()=>{
+  const g=lpWeld(new THREE.IcosahedronGeometry(1,lpQ()>1?3:lpQ()<.6?1:2)), P=g.attributes.position, s=(k%8)*1.37+.5, v=new THREE.Vector3();
+  for(let i=0;i<P.count;i++){
+    v.fromBufferAttribute(P,i);
+    const d=noise3(v.x*1.2+s,v.y*1.2-s,v.z*1.2)*.42+noise3(v.x*2.8-s,v.y*2.8,v.z*2.8+s)*.2+noise3(v.x*6.4,v.y*6.4+s,v.z*6.4)*.07;
+    let r=1+d; if(v.y>.3) r*=1-(v.y-.3)*.3;
+    v.multiplyScalar(r); if(v.y<-.25) v.y=-.25+(v.y+.25)*.35;
+    P.setXYZ(i,v.x,v.y,v.z);
+  }
+  g.computeVertexNormals(); return g; });
 const lpSeed=(x,z)=>Math.abs(Math.floor(x*73.1+z*37.7))|0;
 /* a shape with hard edges: every face gets its own normal (for single meshes outside a builder) */
 function lpFacet(geo){ const g=geo.index?geo.toNonIndexed():geo.clone(); g.computeVertexNormals(); return g; }
@@ -10010,12 +10185,14 @@ const LPP={
     const tr=lpShape('trunk'+(k%4),()=>lpDent(lpCyl(.55,1,1,6),.05,k%4,{keepBottom:true}));
     B.add(tr,lpM(x,y0,z,[.06*(rnd()-.5),rnd()*6,.06*(rnd()-.5)],[.26*s,h,.26*s]),(c,n)=>{
       if(o.birch&&((c.y*6)|0)%3===0) return 0x3a3530; return lpShade(bark,n,.2); },{mat:'tall'});
-    const nb=o.blobs||4;
+    const nb=o.blobs||4, sw={k:1,h:h+2,base:y0+h*.6};
     for(let i=0;i<nb;i++){
       const a=i/nb*Math.PI*2+rnd()*.8, rr=i?.62*s:0, cy=h+(i?-.1:.45)*s, r=(i?.95:1.3)*s*(o.crown||1)*(.88+rnd()*.25);
-      const lc=leaves[i%leaves.length], ld=leaves[(i+1)%leaves.length];
-      B.add(lpBlob(k+i),lpM(x+Math.cos(a)*rr,y0+cy,z+Math.sin(a)*rr,rnd()*6,[r,r*.84,r]),(c,n)=>lpShade(n.y<-.35?ld:lc,n,.24),
-        {mat:'foliage',sway:1,swayH:h+2,swayBase:y0+h*.6});
+      const lc=leaves[i%leaves.length], ld=leaves[(i+1)%leaves.length], bx=x+Math.cos(a)*rr, bz=z+Math.sin(a)*rr;
+      // the crown's inside: a dark mass, so you never see through it; leaves cover it
+      B.add(lpBlob(k+i),lpM(bx,y0+cy,bz,rnd()*6,[r*.76,r*.64,r*.76]),(c,n)=>shadeHex(lpShade(n.y<-.35?ld:lc,n,.24),.78),
+        {mat:'foliage',sway:1,swayH:h+2,swayBase:y0+h*.6,vary:.05});
+      lpCrownCards(B,'leaf',bx,y0+cy,bz,r,r*.84,r,32,r*1.02,[lc,ld,leaves[(i+2)%leaves.length]],rnd,sw);
     }
     return [{x,z,r:.45*s,h:6}];
   },
@@ -10027,8 +10204,10 @@ const LPP={
     for(let i=0;i<tiers;i++){
       const t=i/tiers, r=(1.25-t*.78)*s*(o.wide||1), ch=(h*.42)*(1-t*.2), y=y0+h*.2+t*h*.6;
       const g=lpShape('pcone'+((k+i)%4),()=>lpDent(lpCone(1,1,7),.05,(k+i)%4+30));
-      B.add(g,lpM(x,y,z,rnd()*6,[r,ch,r]),(c,n)=>{ if(o.snow&&n.y>.42) return n.y>.62?0xf6f9fc:0xdce8f2; return lpShade(i%2?light:dark,n,.28); },
-        {mat:'foliage',sway:.7,swayH:h,swayBase:y0+h*.3});
+      // an inner cone (dark), then the branches over it
+      B.add(g,lpM(x,y,z,rnd()*6,[r*.8,ch*.95,r*.8]),(c,n)=>{ if(o.snow&&n.y>.42) return n.y>.62?0xf6f9fc:0xdce8f2; return shadeHex(lpShade(i%2?light:dark,n,.28),.6); },
+        {mat:'foliage',sway:.7,swayH:h,swayBase:y0+h*.3,vary:.05});
+      lpConeCards(B,x,y,z,r,ch,14+tiers*2-i*2,o.snow?[0xe8f0f6,i%2?light:dark,0xdce8f2]:[dark,light,i%2?light:dark],rnd,{k:.7,h,base:y0+h*.3});
     }
     return [{x,z,r:.42*s,h:6}];
   },
@@ -10051,17 +10230,19 @@ const LPP={
     const nf=o.fronds||7;
     for(let i=0;i<nf;i++){
       const a=i/nf*Math.PI*2+rnd()*.3, L=(1.8+rnd()*.4)*s, droop=.6+rnd()*.2;
-      const pts=[]; for(let j=0;j<=4;j++){ const t=j/4; pts.push([Math.cos(a)*L*t,(.25-Math.pow(t,1.7)*droop*1.1)*s,Math.sin(a)*L*t]); }
-      const sx=-Math.sin(a), sz=Math.cos(a), pos=[];
-      for(let j=0;j<4;j++){
-        const w0=(j===0?.06:.34*(1-j/5))*s, w1=(.34*(1-(j+1)/5))*s;
-        const p0=pts[j], p1=pts[j+1], mid1=[p1[0],p1[1]+.06*s,p1[2]];
-        const A=[p0[0]+sx*w0,p0[1],p0[2]+sz*w0], Bq=[p0[0]-sx*w0,p0[1],p0[2]-sz*w0];
-        const C=[p1[0]+sx*w1,p1[1]-.04*s,p1[2]+sz*w1], D=[p1[0]-sx*w1,p1[1]-.04*s,p1[2]-sz*w1];
-        pos.push(...A,...mid1,...C, ...Bq,...D,...mid1, ...A,...Bq,...mid1);
+      const NS=7, pts=[]; for(let j=0;j<=NS;j++){ const t=j/NS; pts.push([Math.cos(a)*L*t,(.25-Math.pow(t,1.7)*droop*1.1)*s,Math.sin(a)*L*t]); }
+      const sx=-Math.sin(a), sz=Math.cos(a), pos=[], uv=[], fold=.08*s;
+      const W=t=>(.1+.9*Math.sin(Math.min(1,t*1.2)*Math.PI*.85))*.46*s*(1-t*.35);
+      for(let j=0;j<NS;j++){
+        const t0=j/NS, t1=(j+1)/NS, w0=W(t0), w1=W(t1), p0=pts[j], p1=pts[j+1];
+        // the leaflets fall away either side of the rib: a shallow V
+        const A=[p0[0]+sx*w0,p0[1]-fold*(t0+.3),p0[2]+sz*w0], Bq=[p0[0]-sx*w0,p0[1]-fold*(t0+.3),p0[2]-sz*w0];
+        const C=[p1[0]+sx*w1,p1[1]-fold*(t1+.3),p1[2]+sz*w1], D=[p1[0]-sx*w1,p1[1]-fold*(t1+.3),p1[2]-sz*w1];
+        pos.push(...A,...p0,...p1, ...A,...p1,...C, ...p0,...Bq,...D, ...p0,...D,...p1);
+        uv.push(0,t0,.5,t0,.5,t1, 0,t0,.5,t1,0,t1, .5,t0,1,t0,1,t1, .5,t0,1,t1,.5,t1);
       }
-      const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-      B.add(g,lpM(px,py,pz),(c,n)=>lpShade(i%2?(o.leafA||0x3f9a3a):(o.leafB||0x5ab448),n,.18),{mat:'foliage',sway:1,swayH:2,swayBase:py-1.2});
+      const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+      B.add(g,lpM(px,py,pz),i%2?(o.leafA||0x3f9a3a):(o.leafB||0x5ab448),{mat:'frond',sway:1,swayH:2,swayBase:py-1.2,vary:.1});
     }
     for(let i=0;i<3;i++){ const a=i/3*6.28+.4; B.add(lpIco(.13*s,0),lpM(px+Math.cos(a)*.17*s,py-.14*s,pz+Math.sin(a)*.17*s),o.nut||0x6a4a24,{mat:'tall'}); }
     return [{x,z,r:.42*s,h:6}];
@@ -10083,9 +10264,11 @@ const LPP={
     for(let i=0;i<n;i++){
       const a=i/n*Math.PI*2+rnd()*.6, rr=i?(.5+rnd()*.2)*s:0, r=(i?.55:.78)*s*(.86+rnd()*.28);
       const c1=cols[i%cols.length], c2=cols[(i+1)%cols.length];
-      B.add(lpBlob(k+i),lpM(x+Math.cos(a)*rr,y0+r*.72,z+Math.sin(a)*rr,rnd()*6,[r,r*.86,r]),(c,nn)=>{
+      const bx=x+Math.cos(a)*rr, bz=z+Math.sin(a)*rr;
+      B.add(lpBlob(k+i),lpM(bx,y0+r*.72,bz,rnd()*6,[r*.88,r*.76,r*.88]),(c,nn)=>{
         if(o.snow&&nn.y>.5) return 0xf4f8fc;
-        return lpShade(nn.y>.25?c1:c2,nn,.24); },{mat:'foliage',sway:.45,swayH:1.6,swayBase:y0});
+        return shadeHex(lpShade(nn.y>.25?c1:c2,nn,.24),.7); },{mat:'foliage',sway:.45,swayH:1.6,swayBase:y0,vary:.05});
+      lpCrownCards(B,'leaf',bx,y0+r*.72,bz,r,r*.86,r,o.snow?8:12,r*.85,o.snow?[0xf4f8fc,c1,c2]:[c1,c2,cols[(i+2)%cols.length]],rnd,{k:.45,h:1.6,base:y0});
     }
     // a few berries dotted over the leaves
     if(o.berries) for(let i=0;i<6;i++){ const a=rnd()*Math.PI*2, rr=(.3+rnd()*.7)*s;
@@ -10596,7 +10779,7 @@ function lpGrassField(G,o){
     const y0=hs[i], y1=hs[i+1], w0=ws[i], w1=ws[i+1], b0=y0*y0*.12, b1=y1*y1*.12;
     const q=[[-w0,y0,b0],[w0,y0,b0],[w1,y1,b1],[-w1,y1,b1]];
     const tri=i<2?[[0,1,2],[0,2,3]]:[[0,1,2]];
-    tri.forEach(t=>t.forEach(k=>{ pos.push(...q[k]); const v=.72+.28*q[k][1]; col.push(v,v,v); }));
+    tri.forEach(t=>t.forEach(k=>{ pos.push(...q[k]); const v=.4+.6*Math.pow(q[k][1],.8); col.push(v,v,v); }));
   }
   const geo=new THREE.BufferGeometry();
   geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
@@ -10616,7 +10799,7 @@ function lpGrassField(G,o){
   };
   mat.customProgramCacheKey=()=>'lpGrass';
   const M=new THREE.Matrix4(), Q=new THREE.Quaternion(), E=new THREE.Euler(), Sv=new THREE.Vector3(), Pv=new THREE.Vector3();
-  const cols=o.cols.map(h=>new THREE.Color(h));
+  const cols=o.cols.map(h=>new THREE.Color(lpNat(h,'sway')).convertSRGBToLinear());     // instance colours are linear (they were read as sRGB: far too pale)
   /* the blades go into tiles, one draw each, so only the tiles on screen are drawn
      (the whole field in one draw was drawn in full every frame, most of it off screen) */
   const TILE=o.tile||14, tiles=new Map();
@@ -10658,6 +10841,7 @@ function grassCull(list,x,z,on){
 }
 /* ---------- an outdoor map ---------- */
 function buildWorld(id,parent,o){
+  try{ const Bz=BIOMES[id]; lpGroundKind(id,Bz&&Bz.gcol?Bz.gcol[0]:undefined); }catch(e){}
   if(BIOMES[id]&&BIOMES[id].hide) return buildDungeon(parent,Object.assign({},o,{id}));
   if(id==='gallows') return buildGallows(parent,o);
   if(ARENA_THEMES[id]) return buildArena(parent,id);
@@ -12342,11 +12526,11 @@ function mazeSight(a,b){
    pace the frames; bloom and motion blur are post effects in a match and in
    The Truth. All of it is saved with your settings. */
 const GFX_Q={
-  potato:{density:.18,pr:1,   shadow:512, kit:.3},        // Performance mode (it overrides whichever quality is picked)
-  low:   {density:.35,pr:1,   shadow:1024,kit:.38},
-  medium:{density:.65,pr:1.25,shadow:1024,kit:.5},
-  high:  {density:1,  pr:1.5, shadow:1536,kit:.6},
-  ultra: {density:1,  pr:2,   shadow:2048,kit:.78}
+  potato:{density:.18,pr:1,   shadow:512, kit:.4},        // Performance mode (it overrides whichever quality is picked)
+  low:   {density:.35,pr:1,   shadow:1024,kit:.55},
+  medium:{density:.65,pr:1.25,shadow:1024,kit:.7},
+  high:  {density:1,  pr:1.5, shadow:2048,kit:.85},
+  ultra: {density:1,  pr:2,   shadow:3072,kit:1}
 };
 const FIXED_RES=/fixedres/.test(location.hash);        // #fixedres pins the resolution (for screenshots)
 const GFX={q:'high',density:1,auto:!FIXED_RES,rs:1,rsAuto:true,fps:0,vsync:true,bloom:true,mblur:0,potato:false};
@@ -12658,11 +12842,7 @@ void main(){
   if(uHero>0.0){
     vec2 px1=uPr/uRes;
     float sh=texture2D(tHero,uv-vec2(0.0,-7.0)*px1).a;
-    col=mix(col,col*.55,sh*(1.0-h.a)*.5*uHero);       // a soft drop shadow under the outline
-    float o=0.0;
-    for(int i=0;i<8;i++){ float a=float(i)*.7854; vec2 d=vec2(cos(a),sin(a));
-      o=max(o,texture2D(tHero,uv+d*3.6*px1).a); o=max(o,texture2D(tHero,uv+d*1.8*px1).a); }
-    col=mix(col,vec3(.004,.006,.03),clamp(o-h.a,0.0,1.0)*uHero);
+    col=mix(col,col*.82,sh*(1.0-h.a)*.25*uHero);      // only the faintest contact shade: no outline any more
   }
   col=col*(1.0-h.a)+h.rgb;
   gl_FragColor=vec4(col,1.0);
@@ -12921,6 +13101,7 @@ const Lobby=(function(){
   }
   /* ---------- the floating island ---------- */
   function makeIsland(id){
+    try{ const Bz=BIOMES[id]; lpGroundKind(id,Bz&&Bz.gcol?Bz.gcol[0]:undefined); }catch(e){}
     const B0=BIOMES[id], g=new THREE.Group(), R0=6.6, gc=B0.gcol, dun=id==='dungeon', gl=id==='gallows';
     const B=new LPBuilder(id.length*31+5);
     const rimK=a=>1+.09*noise2(Math.cos(a)*1.3+5,Math.sin(a)*1.3)+.04*noise2(Math.cos(a)*4,Math.sin(a)*4+2);
@@ -16352,8 +16533,8 @@ function startGame(ch){
   renderer.toneMappingExposure=L.exposure;
   scene.fog=new THREE.FogExp2(new THREE.Color(L.fog.col),L.fog.d);
   scene.background=new THREE.Color(L.fog.col);
-  scene.add(new THREE.HemisphereLight(LC(L.hemi.sky),LC(L.hemi.gnd),L.hemi.i));
-  sunLight=new THREE.DirectionalLight(LC(L.sun.col),L.sun.i);
+  scene.add(new THREE.HemisphereLight(LC(L.hemi.sky),LC(L.hemi.gnd),L.hemi.i*(GFX.potato?1:.8)));
+  sunLight=new THREE.DirectionalLight(LC(L.sun.col),L.sun.i*(GFX.potato?1:1.08));
   sunLight.castShadow=!world.hide;
   sunLight.shadow.mapSize.setScalar(gfxQ().shadow);
   const sc2=sunLight.shadow.camera; sc2.left=-26; sc2.right=26; sc2.top=26; sc2.bottom=-26; sc2.near=1; sc2.far=140;
@@ -22770,7 +22951,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.31.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.32.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
