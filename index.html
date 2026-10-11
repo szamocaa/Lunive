@@ -1467,7 +1467,9 @@ body.potato .rank-badge *,body.potato .rank-badge *::before,body.potato .rank-ba
 .hero-rank .rank-badge{width:46px;height:46px;} .hero-rank .rank-badge b{font-size:22px;}
 .hr-t{display:grid;gap:4px;min-width:122px;}
 .hr-t b{font:400 19px/1 var(--display);letter-spacing:.06em;color:#fff;display:flex;align-items:center;gap:8px;}
-.hr-t b em{font:700 10px/1 var(--ui);font-style:normal;letter-spacing:.24em;color:#0a0a10;background:var(--hr-a);padding:3px 6px 3px 8px;border-radius:4px;}
+.hero-rank,.hero-rank *{text-shadow:none;}
+.hr-t b{text-shadow:0 2px 8px rgba(0,0,0,.55);}
+.hr-t b em{font:800 11px/1 var(--ui);font-style:normal;letter-spacing:.16em;color:#2a1600;padding:4px 7px 4px 9px;border-radius:5px;background:linear-gradient(90deg,#ffd36a,#fff4c4,#ffb02e,#ffd36a) 0 0/300% 100%;box-shadow:0 0 0 1px rgba(255,236,170,.6),0 0 14px rgba(255,200,80,.45);animation:ftSweep 3.2s linear infinite;}
 .hr-t span{font:700 12.5px var(--ui);letter-spacing:.04em;color:#f2f3fa;display:flex;align-items:center;gap:4px;}
 .hr-t span small{font-size:12px;color:#9aa0b8;font-weight:700;}
 .hr-t .tro-ic{width:15px;height:15px;}
@@ -3703,7 +3705,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.35.0 · BETA</span>
+    <span class="hub-version">VERSION 3.35.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3870,7 +3872,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.35.0</div></div>
+</svg><div class="set-ver">VERSION 3.35.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -23215,7 +23217,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.35.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.35.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -23550,6 +23552,7 @@ function netPartyStart(mode){
   const ask='a'+Math.random().toString(36).slice(2,8);
   NET.partyAsk={ask,mode,at:performance.now()};
   netSend(P.mate,{k:'pinit',ask,mode});
+  const again=()=>{ if(NET.partyAsk&&NET.partyAsk.ask===ask&&NET.party===P){ netSend(P.mate,{k:'pinit',ask,mode}); setTimeout(again,800); } }; setTimeout(again,800);
   netQueueUI('party',mode);
   setTimeout(()=>{ if(NET.partyAsk&&NET.partyAsk.ask===ask){ NET.partyAsk=null; netQueueUI(false); netSay('Your teammate didn\'t answer',true); } },6000);
 }
@@ -23564,7 +23567,7 @@ function netQueue(mode){
 }
 function netQWant(){
   const Q=NET.queue; if(!Q||!NET.mq) return; const now=performance.now();
-  if(now-Q.wantAt>1400){ Q.wantAt=now; NET.mq.pub(NET_P+'q/'+Q.mode,JSON.stringify({k:'want',f:NET.id,tr:totalTrophies()})); }
+  if(now-Q.wantAt>1000){ Q.wantAt=now; NET.mq.pub(NET_P+'q/'+Q.mode,JSON.stringify({k:'want',f:NET.id,tr:totalTrophies()})); }
 }
 function netQueueMsg(m){
   const Q=NET.queue; if(!Q) return;
@@ -23578,23 +23581,28 @@ function netQPair(){
   const to=ids[i+1]; if(!to) return;
   const mid='m'+Math.random().toString(36).slice(2,10);
   Q.prop={to,mid,at:now};
-  netSend(to,{k:'prop',mode:Q.mode,mid,info:netInfo()});
-  setTimeout(()=>{ if(NET.queue===Q&&Q.prop&&Q.prop.mid===mid){ Q.skip.set(to,performance.now()+5000); Q.prop=null; } },3000);
+  const offer=()=>{ if(NET.queue!==Q||!Q.prop||Q.prop.mid!==mid) return;
+    if(performance.now()-Q.prop.at>6500){ Q.skip.set(to,performance.now()+2500); Q.prop=null; return; }     // no answer at all: try someone else for a moment
+    netSend(to,{k:'prop',mode:Q.mode,mid,info:netInfo()}); setTimeout(offer,750); };
+  offer();
 }
 function netQueueInbox(m){
   const Q=NET.queue, now=performance.now();
   if(m.k==='prop'){
+    if(NET.match&&NET.match.mid===m.mid) return;                                    // already in it: their copy was just late
+    if(Q&&Q.acc&&Q.acc.mid===m.mid&&Q.acc.host===m.f){ netSend(m.f,{k:'acc',mid:m.mid,info:netInfo()}); return; }   // the same offer again: our yes got lost, say it again
     if(!Q||Q.mode!==m.mode||NET.match||Q.acc||(Q.prop&&m.f>NET.id)){ netSend(m.f,{k:'no',mid:m.mid}); return; }
     if(Q.prop){ netSend(Q.prop.to,{k:'nvm',mid:Q.prop.mid}); Q.prop=null; }
-    Q.acc={host:m.f,mid:m.mid,at:now};
+    Q.acc={host:m.f,mid:m.mid,at:now}; (Q.accHist||(Q.accHist=new Map())).set(m.mid,m.f);
     netSend(m.f,{k:'acc',mid:m.mid,info:netInfo()});
-    setTimeout(()=>{ if(NET.queue===Q&&Q.acc&&Q.acc.mid===m.mid){ Q.acc=null; Q.skip.set(m.f,performance.now()+5000); } },5000);
+    setTimeout(()=>{ if(NET.queue===Q&&Q.acc&&Q.acc.mid===m.mid){ Q.acc=null; Q.skip.set(m.f,performance.now()+2500); } },9000);
   } else if(m.k==='acc'){
+    if(NET.match&&NET.match.isHost&&NET.match.mid===m.mid&&NET.match.otherId===m.f){ netSend(m.f,NET.match.cfg); return; }   // a second yes: the match is on, send it again
     if(!Q||!Q.prop||Q.prop.mid!==m.mid){ netSend(m.f,{k:'nvm',mid:m.mid}); return; }
     const mode=Q.mode; netQueueStop(true);
     netHostStart({mode,mid:m.mid,guest:m.f,guestInfo:m.info,friendly:false,party:false});
   } else if(m.k==='no'||m.k==='nvm'){
-    if(Q&&Q.prop&&Q.prop.mid===m.mid){ Q.skip.set(m.f,now+4000); Q.prop=null; }
+    if(Q&&Q.prop&&Q.prop.mid===m.mid){ Q.skip.set(m.f,now+2000); Q.prop=null; }
     if(Q&&Q.acc&&Q.acc.mid===m.mid) Q.acc=null;
   }
 }
@@ -23764,10 +23772,13 @@ function netHostStart(o){
   }
   netSend(o.guest,cfg);
   netBeginMatch(cfg);
+  const M0=NET.match; let tries=0;
+  const again=()=>{ const M=NET.match; if(!M||M!==M0||M.heard||M.over||M.left||++tries>16) return; netSend(o.guest,cfg); setTimeout(again,700); };
+  setTimeout(again,700);
 }
 function netGotStart(m){
   if(NET.match||gameOn||runStarting) return;
-  const okQ=NET.queue&&NET.queue.acc&&NET.queue.acc.mid===m.mid&&NET.queue.acc.host===m.f;
+  const Q=NET.queue, okQ=Q&&((Q.acc&&Q.acc.mid===m.mid&&Q.acc.host===m.f)||(Q.accHist&&Q.accHist.get(m.mid)===m.f));   // (a yes that timed out on our side still counts)
   const okP=NET.party&&NET.party.lead===m.f&&m.party;
   if(!okQ&&!okP) return;
   if(NET.queue) netQueueStop(true);
@@ -23784,7 +23795,7 @@ function netBeginMatch(cfg){
   const opp=cfg.P[other];
   netQueueUI('found',netFoundLine(cfg,opp));
   SFX.reveal&&SFX.reveal('epic');
-  NET_TIMEOUT(()=>{ netQueueUI(false); netLoad(); },1100);
+  NET_TIMEOUT(()=>{ netQueueUI(false); netLoad(); },700);
 }
 /* the loading screen, then into the match */
 function netLoad(){
@@ -23808,7 +23819,7 @@ function netLoad(){
   const tt=setInterval(()=>{ ti=(ti+1)%tips.length; tipEl.textContent=tips[ti]; },1400);
   (function step(t){
     if(!start) start=t;
-    const p=Math.min(1,(t-start)/2200);
+    const p=Math.min(1,(t-start)/1500);
     pctEl.textContent=Math.round(p*100)+'%'; fill.style.width=(p*100)+'%';
     if(p<1) requestAnimationFrame(step);
     else { clearInterval(tt); ldGo(); NET_TIMEOUT(()=>{ runStarting=false; if(NET.match!==M){ showHub(); return; } show('game'); startGame(c); },260); }
@@ -23910,7 +23921,7 @@ function netClock(M,now,ts){
 }
 function netMatchMsg(m){
   const M=NET.match; if(!M||m.f!==M.otherId) return;
-  const now=performance.now(); M.seenAt=now;
+  const now=performance.now(); M.seenAt=now; M.heard=true;
   if(m.k==='bye'){ if(!M.over) netOtherLeft(); return; }
   if(m.k!=='m') return;
   netClock(M,now,m.ts);
