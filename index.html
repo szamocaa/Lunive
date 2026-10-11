@@ -1336,18 +1336,83 @@ body.dg-seeker #ultBar{background:linear-gradient(90deg,#ff9bb0,#ff3a5a) !import
 .tro-ic{width:18px;height:18px;flex:0 0 auto;vertical-align:-3px;filter:drop-shadow(0 1px 0 rgba(0,0,0,.35));}
 .tro-chip{cursor:pointer;border:0;font:inherit;color:inherit;}
 .tro-chip .tro-ic{width:20px;height:20px;}
-.rank-badge{--a:#e0a066;--b:#8a4e24;--ink:#2a1206;display:inline-flex;align-items:center;justify-content:center;position:relative;width:30px;height:30px;flex:0 0 auto;
-  clip-path:polygon(50% 0,100% 22%,100% 74%,50% 100%,0 74%,0 22%);background:linear-gradient(160deg,var(--a),var(--b));vertical-align:middle;}
-.rank-badge::before{content:'';position:absolute;inset:3px;clip-path:inherit;background:linear-gradient(160deg,rgba(255,255,255,.35),rgba(0,0,0,.12) 60%);}
-.rank-badge b{position:relative;font-family:var(--display);font-weight:400;font-size:15px;line-height:1;color:var(--ink);text-shadow:0 1px 0 rgba(255,255,255,.35);}
-.rank-badge.t-blue{--a:#8fe0ff;--b:#2a6ad8;--ink:#06142a;}
-.rank-badge.t-red{--a:#ff7a8a;--b:#a8142a;--ink:#fff;}
-.rank-badge.t-red b{text-shadow:0 1px 0 rgba(0,0,0,.4);}
-.rank-badge.t-black{--a:#5a5a6a;--b:#08080c;--ink:#fff;box-shadow:none;}
-.rank-badge.t-black::after{content:'';position:absolute;inset:0;clip-path:inherit;background:linear-gradient(115deg,transparent 35%,rgba(255,80,110,.45) 50%,transparent 65%) 0 0/250% 100%;animation:holo 3.2s ease-in-out infinite;}
-.rank-badge.t-black b{text-shadow:0 0 6px rgba(255,90,120,.7);}
+.rank-badge{--a:#e0a066;--b:#8a4e24;--c:#ffe2c2;--ink:#2a1206;--shape:polygon(50% 0,100% 22%,100% 74%,50% 100%,0 74%,0 22%);
+  display:inline-flex;align-items:center;justify-content:center;position:relative;width:30px;height:30px;flex:0 0 auto;vertical-align:middle;isolation:isolate;}
+.rank-badge>i{position:absolute;pointer-events:none;display:block;}
+.rank-badge .rb-gem{inset:0;z-index:1;clip-path:var(--shape);background:linear-gradient(160deg,var(--c),var(--a) 34%,var(--b) 92%);}
+.rank-badge .rb-gem::before{content:'';position:absolute;inset:0;background:conic-gradient(from 22deg,rgba(255,255,255,.36) 0 60deg,rgba(0,0,0,.16) 60deg 120deg,rgba(255,255,255,.12) 120deg 180deg,rgba(0,0,0,.3) 180deg 240deg,rgba(255,255,255,.2) 240deg 300deg,rgba(0,0,0,.08) 300deg);}
+.rank-badge .rb-gem::after{content:'';position:absolute;inset:17%;clip-path:var(--shape);background:linear-gradient(165deg,var(--a),var(--b));box-shadow:inset 0 1px 0 rgba(255,255,255,.4);opacity:.92;}
+.rank-badge .rb-shine{inset:0;z-index:2;clip-path:var(--shape);overflow:hidden;}
+.rank-badge .rb-shine::before{content:'';position:absolute;top:-30%;bottom:-30%;left:0;width:42%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(-160%) skewX(-14deg);animation:rbShine 3.6s cubic-bezier(.5,0,.3,1) infinite;animation-delay:var(--dl,0s);}
+@keyframes rbShine{0%,58%{transform:translateX(-160%) skewX(-14deg);}86%,100%{transform:translateX(340%) skewX(-14deg);}}
+.rank-badge .rb-aura,.rank-badge .rb-glow,.rank-badge .rb-sp{display:none;}
+.rank-badge.t-bronze .rb-glow{display:block;--g:rgba(255,170,100,.38);inset:-22%;}
+.rank-badge .rb-aura{inset:-24%;z-index:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 8%,var(--a) 17%,transparent 30% 42%,var(--c) 52%,transparent 64% 76%,var(--a) 88%,transparent);
+  -webkit-mask:radial-gradient(closest-side,transparent 70%,#000 74%,#000 86%,transparent 92%);mask:radial-gradient(closest-side,transparent 70%,#000 74%,#000 86%,transparent 92%);animation:rbSpin 5.5s linear infinite;}
+.rank-badge .rb-glow{inset:-34%;z-index:0;border-radius:50%;background:radial-gradient(closest-side,var(--g,rgba(255,255,255,.5)),transparent 72%);animation:rbBreathe 2.6s ease-in-out infinite;animation-delay:var(--dl,0s);}
+.rank-badge .rb-sp{inset:-16%;z-index:4;animation:rbSpin 3.4s linear infinite reverse;}
+.rank-badge .rb-sp::before,.rank-badge .rb-sp::after{content:'';position:absolute;left:45%;width:11%;height:11%;border-radius:50%;background:#fff;box-shadow:0 0 4px 1px var(--a),0 0 9px 2px var(--a);}
+.rank-badge .rb-sp::before{top:0;animation:rbTw 1.3s ease-in-out infinite;} .rank-badge .rb-sp::after{bottom:0;animation:rbTw 1.3s ease-in-out .65s infinite;}
+@keyframes rbSpin{to{transform:rotate(1turn);}}
+@keyframes rbBreathe{0%,100%{opacity:.4;transform:scale(.88);}50%{opacity:1;transform:scale(1.06);}}
+@keyframes rbTw{0%,100%{opacity:.25;transform:scale(.6);}50%{opacity:1;transform:scale(1.25);}}
+.rank-badge b{position:relative;z-index:3;font-family:var(--display);font-weight:400;font-size:15px;line-height:1;color:var(--ink);text-shadow:0 1px 0 rgba(255,255,255,.4);}
+/* blue: a shield, and a halo turning round it */
+.rank-badge.t-blue{--a:#8fe0ff;--b:#2a6ad8;--c:#e6f9ff;--ink:#06142a;--shape:polygon(50% 0,100% 11%,97% 58%,50% 100%,3% 58%,0 11%);}
+.rank-badge.t-blue .rb-aura{display:block;opacity:.8;}
+/* red: a crest, a halo and a slow ember glow */
+.rank-badge.t-red{--a:#ff7a8a;--b:#a8142a;--c:#ffd6dc;--ink:#fff;--g:rgba(255,70,100,.55);--shape:polygon(50% 0,80% 13%,100% 45%,84% 84%,50% 100%,16% 84%,0 45%,20% 13%);}
+.rank-badge.t-red .rb-aura,.rank-badge.t-red .rb-glow{display:block;}
+.rank-badge.t-red b{text-shadow:0 1px 0 rgba(0,0,0,.45),0 0 8px rgba(255,120,140,.6);}
+/* green: an emerald cut, a halo, a glow and two sparks going round */
+.rank-badge.t-green{--a:#72f5a8;--b:#0b7a44;--c:#dcffe9;--ink:#03200f;--g:rgba(60,240,140,.55);--shape:polygon(29% 0,71% 0,100% 29%,100% 71%,71% 100%,29% 100%,0 71%,0 29%);}
+.rank-badge.t-green .rb-aura,.rank-badge.t-green .rb-glow,.rank-badge.t-green .rb-sp{display:block;}
+.rank-badge.t-green b{text-shadow:0 1px 0 rgba(255,255,255,.5),0 0 8px rgba(160,255,200,.7);}
+/* black: a star cut in smoked glass, a red-violet halo, sparks, a sheen and a flicker */
+.rank-badge.t-black{--a:#6a6a7c;--b:#08080c;--c:#ff6a8a;--ink:#fff;--g:rgba(255,50,110,.5);
+  --shape:polygon(50% 0,62% 19%,85% 15%,81% 38%,100% 50%,81% 62%,85% 85%,62% 81%,50% 100%,38% 81%,15% 85%,19% 62%,0 50%,19% 38%,15% 15%,38% 19%);}
+.rank-badge.t-black .rb-gem{background:linear-gradient(160deg,#9a9ab0,#3a3a48 34%,#08080c 90%);}
+.rank-badge.t-black .rb-gem::after{background:linear-gradient(165deg,#2a2a36,#050508);}
+.rank-badge.t-black .rb-aura{display:block;background:conic-gradient(from 0deg,transparent 0 8%,#ff3a6a 17%,transparent 30% 42%,#9a5aff 52%,transparent 64% 76%,#ff3a6a 88%,transparent);animation-duration:3.8s;}
+.rank-badge.t-black .rb-glow,.rank-badge.t-black .rb-sp{display:block;}
+.rank-badge.t-black .rb-sp::before,.rank-badge.t-black .rb-sp::after{box-shadow:0 0 4px 1px #ff3a6a,0 0 9px 2px #9a5aff;}
+.rank-badge.t-black .rb-shine::before{background:linear-gradient(100deg,transparent,rgba(255,80,130,.75),rgba(150,110,255,.6),transparent);}
+.rank-badge.t-black b{text-shadow:0 0 6px rgba(255,90,130,.85);animation:rbGlitch 3.1s steps(1) infinite;animation-delay:var(--dl,0s);}
+@keyframes rbGlitch{0%,84%,100%{text-shadow:0 0 6px rgba(255,90,130,.85);transform:none;}87%{text-shadow:-2px 0 #ff2a6a,2px 0 #6af0ff;transform:translateX(1px);}90%{text-shadow:2px 0 #ff2a6a,-2px 0 #6af0ff;transform:translateX(-1px);}93%{text-shadow:0 0 6px rgba(255,90,130,.85);transform:none;}}
 .rank-badge.pop{animation:rankPop .8s cubic-bezier(.2,1.8,.3,1) .35s both;}
 @keyframes rankPop{0%{scale:.3;}60%{scale:1.3;}100%{scale:1;}}
+body.potato .rank-badge *,body.potato .rank-badge *::before,body.potato .rank-badge *::after,body.potato .hero-rank *,body.potato .hero-rank::before{animation:none !important;}
+@media (prefers-reduced-motion:reduce){ .rank-badge *,.rank-badge *::before,.rank-badge *::after,.hero-rank *,.hero-rank::before,.hero-rank{animation:none !important;} }
+/* the lobby: your rank on a plate under your pedestal */
+.hero-rank{--hr-a:#e0a066;--hr-b:#8a4e24;--hr-g:rgba(224,160,102,.45);position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:flex;align-items:center;gap:12px;
+  padding:7px 18px 7px 9px;border-radius:999px;background:linear-gradient(180deg,rgba(16,18,30,.84),rgba(8,9,16,.92));box-shadow:0 12px 30px -12px rgba(0,0,0,.7),0 0 28px -8px var(--hr-g);
+  translate:-50% 0;opacity:0;transition:opacity .3s;}
+.hero-rank.on{opacity:1;}
+.hero-rank::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.5px;background:linear-gradient(90deg,rgba(255,255,255,.08),var(--hr-a),rgba(255,255,255,.08) 40%,rgba(255,255,255,.08) 60%,var(--hr-a),rgba(255,255,255,.08)) 0 0/200% 100%;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:hrRun 3.2s linear infinite;}
+@keyframes hrRun{to{background-position:-200% 0;}}
+.hero-rank.pop{animation:hrPop .6s cubic-bezier(.2,1.7,.3,1);}
+@keyframes hrPop{0%{scale:.55;}100%{scale:1;}}
+.hero-rank .rank-badge{width:46px;height:46px;} .hero-rank .rank-badge b{font-size:22px;}
+.hr-t{display:grid;gap:4px;min-width:122px;}
+.hr-t b{font:400 19px/1 var(--display);letter-spacing:.06em;color:#fff;display:flex;align-items:center;gap:8px;}
+.hr-t b em{font:700 10px/1 var(--ui);font-style:normal;letter-spacing:.24em;color:#0a0a10;background:var(--hr-a);padding:3px 6px 3px 8px;border-radius:4px;}
+.hr-t span{font:700 12.5px var(--ui);letter-spacing:.04em;color:#f2f3fa;display:flex;align-items:center;gap:4px;}
+.hr-t span small{font-size:12px;color:#9aa0b8;font-weight:700;}
+.hr-t .tro-ic{width:15px;height:15px;}
+.hr-bar{display:block;height:5px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;}
+.hr-bar>i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--hr-b),var(--hr-a));position:relative;overflow:hidden;}
+.hr-bar>i::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);transform:translateX(-100%);animation:hrSheen 2.6s ease-in-out infinite;}
+@keyframes hrSheen{55%,100%{transform:translateX(100%);}}
+.hero-rank.t-blue{--hr-a:#8fe0ff;--hr-b:#2a6ad8;--hr-g:rgba(110,200,255,.5);}
+.hero-rank.t-red{--hr-a:#ff7a8a;--hr-b:#a8142a;--hr-g:rgba(255,80,110,.5);}
+.hero-rank.t-green{--hr-a:#72f5a8;--hr-b:#0b7a44;--hr-g:rgba(60,240,140,.5);}
+.hero-rank.t-black{--hr-a:#ff4a7a;--hr-b:#1a1a24;--hr-g:rgba(255,50,110,.45);}
+.hero-rank.t-black .hr-bar>i{background:linear-gradient(90deg,#14141c,#6a5aff,#ff4a7a);}
+/* your teammate's rank, on their name tag */
+.mate-tag .mt-name{display:flex;align-items:center;gap:7px;}
+.mt-rk:empty{display:none;} .mt-rk{display:inline-flex;}
+.mt-rk .rank-badge{width:22px;height:22px;} .mt-rk .rank-badge b{font-size:11px;}
 #hplRank .rank-badge{width:26px;height:26px;margin:0 2px;} #hplRank .rank-badge b{font-size:13px;}
 .ht-wins .tro-ic{width:14px;height:14px;margin-right:3px;vertical-align:-2px;}
 /* character select: a badge on each card you own, the rank on the info card */
@@ -1360,7 +1425,7 @@ body.dg-seeker #ultBar{background:linear-gradient(90deg,#ff9bb0,#ff3a5a) !import
 .icr-t .tro-ic{width:14px;height:14px;margin-right:3px;}
 .icr-bar{grid-column:1 / -1;display:block;height:6px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden;}
 .icr-bar>i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#8a4e24,#e0a066);transition:width .5s cubic-bezier(.2,.9,.3,1);}
-.icr-bar.t-blue>i{background:linear-gradient(90deg,#2a6ad8,#8fe0ff);} .icr-bar.t-red>i{background:linear-gradient(90deg,#a8142a,#ff7a8a);} .icr-bar.t-black>i{background:linear-gradient(90deg,#08080c,#6a6a7a,#ff5a7a);}
+.icr-bar.t-blue>i{background:linear-gradient(90deg,#2a6ad8,#8fe0ff);} .icr-bar.t-red>i{background:linear-gradient(90deg,#a8142a,#ff7a8a);} .icr-bar.t-black>i{background:linear-gradient(90deg,#08080c,#6a6a7a,#ff5a7a);} .icr-bar.t-green>i{background:linear-gradient(90deg,#0b7a44,#72f5a8);}
 .icr-d{grid-column:1 / -1;font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;color:#ff9bb0;}
 .icr-d.d2{color:#ff5a7a;text-shadow:0 0 8px rgba(255,60,90,.5);}
 /* the result card: trophies won or lost, and the rank */
@@ -3475,8 +3540,9 @@ body.in-game #hub .em-chip{display:none;}
      stands on the left in full colour. -->
 <div class="on-pop" id="onQueue"></div><div class="on-pop" id="onJoin"></div><div class="on-pop" id="onProfile"></div><div id="onInvite"></div>
 <div id="hub" class="screen hidden">
-  <div class="mate-tag" id="mateTag" aria-live="polite"><b class="mt-name"></b><span class="mt-st"></span></div>
+  <div class="mate-tag" id="mateTag" aria-live="polite"><b class="mt-name"><span class="mt-rk"></span><span class="mt-nm"></span></b><span class="mt-st"></span></div>
   <div class="mate-tag mt-me" id="meTag"><span class="mt-st">Ready</span></div>
+  <div class="hero-rank" id="heroRank" aria-hidden="true"></div>
   <div class="lb-fx" aria-hidden="true"><div class="lb-aura"></div><div class="lb-floor"></div><i class="lb-sp" style="left:17.8%;--d:14.5s;--w:-10.2s;--x:1px;--z:1.27"></i><i class="lb-sp" style="left:97.0%;--d:12.8s;--w:-15.4s;--x:-37px;--z:1.00"></i><i class="lb-sp" style="left:24.7%;--d:9.0s;--w:-5.9s;--x:14px;--z:0.94"></i><i class="lb-sp" style="left:15.9%;--d:15.0s;--w:-14.7s;--x:28px;--z:0.63"></i><i class="lb-sp" style="left:97.8%;--d:14.9s;--w:-14.0s;--x:18px;--z:0.95"></i><i class="lb-sp" style="left:93.8%;--d:13.3s;--w:-11.1s;--x:23px;--z:1.36"></i><i class="lb-sp" style="left:37.4%;--d:10.2s;--w:-13.1s;--x:-45px;--z:1.25"></i><i class="lb-sp" style="left:3.9%;--d:10.3s;--w:-11.7s;--x:-9px;--z:0.99"></i><i class="lb-sp" style="left:19.9%;--d:9.3s;--w:-13.9s;--x:-30px;--z:0.66"></i><i class="lb-sp" style="left:20.9%;--d:14.4s;--w:-12.8s;--x:24px;--z:1.20"></i><i class="lb-sp" style="left:75.2%;--d:13.6s;--w:-11.7s;--x:-45px;--z:1.05"></i><i class="lb-sp" style="left:55.7%;--d:12.1s;--w:-5.5s;--x:-42px;--z:1.31"></i><i class="lb-sp" style="left:41.3%;--d:11.9s;--w:-7.2s;--x:-11px;--z:0.85"></i><i class="lb-sp" style="left:48.5%;--d:11.1s;--w:-13.3s;--x:-40px;--z:1.17"></i><i class="lb-sp" style="left:97.3%;--d:13.0s;--w:-7.9s;--x:10px;--z:1.08"></i><i class="lb-sp" style="left:52.1%;--d:13.6s;--w:-5.1s;--x:19px;--z:0.69"></i><i class="lb-sp" style="left:66.3%;--d:14.0s;--w:-13.3s;--x:-18px;--z:0.88"></i><i class="lb-sp" style="left:59.3%;--d:11.5s;--w:-1.7s;--x:-52px;--z:1.34"></i></div>
   <div class="deco" aria-hidden="true">
     <i class="tri t1"></i><i class="tri t2"></i><i class="tri t3"></i>
@@ -3561,7 +3627,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.33.2 · BETA</span>
+    <span class="hub-version">VERSION 3.34.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3728,7 +3794,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.33.2</div></div>
+</svg><div class="set-ver">VERSION 3.34.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -4045,7 +4111,7 @@ const State = {
   shopSalt: 0,             // every player gets their own deals
   shopPfps: [],            // profile pictures bought in the shop
   matches: 0,
-  trophies: {},            // per character, 0 to 500
+  trophies: {},            // per character: 500 is rank 50, past it they keep counting, and never drop back under 500
   roadClaimed: [],         // Trophy Road rewards taken (by their trophy mark)
   roadMax: 0,              // the most trophies ever held in all: rewards stay unlocked below it
   freeCrates: 0,           // crates from the Trophy Road, opened before any coins are spent
@@ -13298,7 +13364,7 @@ const Lobby=(function(){
     if(opts&&opts.pop){ popT=0; hero.scale.setScalar(.01); burstAt(null,24,[0xffffff,0xffd6f2,0xc9e8ff]); }
   }
   /* ---------- online: your teammate, on a pedestal of their own beside you ---------- */
-  let mate=null, mateKey=null, matePed=null, MR=null, mateUnit={}, matePopT=-1, mateReady=0, mateSt='', tagEl, meTagEl, teamRdy=false;
+  let mate=null, mateKey=null, matePed=null, MR=null, mateUnit={}, matePopT=-1, mateReady=0, mateSt='', tagEl, meTagEl, rankEl, emChipEl, rankFloorT=-1e9, rankFloor=1e9, teamRdy=false;
   function setMate(key,st){
     if(!R) init();
     key=key&&byKey(key)?key:null;
@@ -13366,6 +13432,22 @@ const Lobby=(function(){
     if(meTagEl){ let p=null;
       if(teamRdy&&mode==='hub'&&hero&&hero.visible){ _v1.set(pedestal.position.x,pedestal.position.y+.12,pedestal.position.z+1.3).project(cam); if(_v1.z<1) p={x:(_v1.x*.5+.5)*innerWidth,y:(-_v1.y*.5+.5)*innerHeight}; }
       meTagEl.classList.toggle('on',!!p); if(p) meTagEl.style.transform='translate3d('+p.x.toFixed(1)+'px,'+p.y.toFixed(1)+'px,0)'; }
+    // your rank, on a plate under your pedestal (it pops when it changes)
+    if(rankEl===undefined) rankEl=document.getElementById('heroRank');
+    if(rankEl){ let p=null;
+      if(mode==='hub'&&heroKey&&State.unlocked.includes(heroKey)&&hero&&hero.visible&&!stage&&!(chest&&chest.visible)){
+        const P=pedestal.position; _v1.set(P.x,P.y,P.z).project(cam);                  // centred under the pedestal, just below its lowest edge on screen
+        if(_v1.z<1){ let lo=-1; for(let i=0;i<12;i++){ const a=i/12*Math.PI*2; _v2.set(P.x+Math.sin(a)*1.26,P.y-.03,P.z+Math.cos(a)*1.26).project(cam); lo=Math.max(lo,-_v2.y); }
+          p={x:(_v1.x*.5+.5)*innerWidth,y:(lo*.5+.5)*innerHeight}; } }
+      if(p){ const sig=heroKey+':'+charTrophies(heroKey);
+        if(rankEl.dataset.sig!==sig){ const was=rankEl.dataset.sig; rankEl.dataset.sig=sig; rankEl.innerHTML=heroRankHTML(heroKey);
+          rankEl.className='hero-rank on t-'+rankTier(charRank(heroKey)); if(was){ void rankEl.offsetWidth; rankEl.classList.add('pop'); } }
+        const below=meTagEl&&meTagEl.classList.contains('on')&&meTagEl.classList.contains('has')?44:0;
+        if(now-rankFloorT>500){ rankFloorT=now;                                            // never over the EMOTE button (measured twice a second)
+          if(emChipEl===undefined) emChipEl=document.getElementById('emChip');
+          const er=emChipEl&&emChipEl.offsetParent?emChipEl.getBoundingClientRect():null; rankFloor=(er&&er.height?er.top:innerHeight-56)-(rankEl.offsetHeight||62)-10; }
+        rankEl.style.transform='translate3d('+p.x.toFixed(1)+'px,'+Math.min(rankFloor,p.y-6+below).toFixed(1)+'px,0)'; }
+      rankEl.classList.toggle('on',!!p); }
   }
   function showChest(v){
     if(!R) init();
@@ -15700,7 +15782,7 @@ function pvRender(){
     <div class="pvt-st${pvHide('w')?' is-priv':''}"><span>WINS${pvHide('w')?PV_LOCK:''}</span><b>${wins.toLocaleString('en-US')}</b></div>
     <div class="pvt-st${pvHide('m')?' is-priv':''}"><span>MATCHES${pvHide('m')?PV_LOCK:''}</span><b>${(State.matches||0).toLocaleString('en-US')}</b></div>
     <div class="pvt-st${pvHide('c')?' is-priv':''}"><span>CHARACTERS${pvHide('c')?PV_LOCK:''}</span><b>${own.length}<em>/ ${CHARACTERS.length}</em></b></div>
-    <div class="pvt-st${pvHide('r')?' is-priv':''}"><span>BEST RANK${pvHide('r')?PV_LOCK:''}</span><b><span class="rank-badge t-${rankTier(best)}"><b>${best}</b></span></b></div>`;
+    <div class="pvt-st${pvHide('r')?' is-priv':''}"><span>BEST RANK${pvHide('r')?PV_LOCK:''}</span><b>${rankBadgeR(best)}</b></div>`;
   pvPrivRender();
   // the artifacts you have on
   const eq=artEquippedList(), st=artPlayerStats(), sc=artSetCounts(eq);
@@ -15761,7 +15843,7 @@ function opfPrivTiles(p){
   const pv=typeof p.pv==='string'?p.pv:'', n=v=>v==null?'—':(+v||0).toLocaleString('en-US');
   return [['w','WINS',n(p.w)],['m','MATCHES',n(p.m)],
     ['c','CHARACTERS',p.cc==null?'—':(p.cc||0)+'<em>/ '+(p.ct||CHARACTERS.length)+'</em>'],
-    ['r','BEST RANK',p.br==null?'—':`<span class="rank-badge t-${rankTier(p.br||1)}"><b>${p.br||1}</b></span>`]]
+    ['r','BEST RANK',p.br==null?'—':`${rankBadgeR(p.br||1)}`]]
     .map(([k,l,v],i)=>privTile(l,v,pv.includes(k),i)).join('');
 }
 /* your Profile: the four, each a switch between PUBLIC and PRIVATE, showing what others will see */
@@ -15773,7 +15855,7 @@ function pvPrivSet(k,v){
 function pvPrivRender(){
   const box=$el('pvPriv'); if(!box) return;
   const own=CHARACTERS.filter(c=>State.unlocked.includes(c.key)).length, br=bestRank();
-  const val={w:myWins().toLocaleString('en-US'),m:(State.matches||0).toLocaleString('en-US'),c:own+'<em>/ '+CHARACTERS.length+'</em>',r:`<span class="rank-badge t-${rankTier(br)}"><b>${br}</b></span>`};
+  const val={w:myWins().toLocaleString('en-US'),m:(State.matches||0).toLocaleString('en-US'),c:own+'<em>/ '+CHARACTERS.length+'</em>',r:`${rankBadgeR(br)}`};
   box.innerHTML=PRIV_KEYS.map((P,i)=>{ const h=pvHide(P.k);
     return `<button class="pvp${h?' hid':''} rx" data-pk="${P.k}" title="${h?'Private · others see a ?':'Public · others see it'} · click to change">
       ${privTile(P.name,val[P.k],h,i)}<span class="pvp-sw"><i class="pvp-dot"></i><b>${h?'PRIVATE':'PUBLIC'}</b></span></button>`; }).join('');
@@ -16036,24 +16118,35 @@ function beginRun(){
 
 /* ---- 46-trophies.js ---- */
 /* ==========================================================
-   TROPHIES — every character has its own, from 0 to 500. Ten trophies
-   is a rank: rank 1 to start with, rank 50 at 500. The ranks come in four
-   colours: bronze (1–9), blue (10–19), red (20–29) and black (30–50).
+   TROPHIES — every character has its own. Ten trophies is a rank: rank 1
+   to start with, rank 50 at 500. Past 500 they keep counting (it stays
+   rank 50), and a character that has reached 500 never drops back under it.
+   The ranks come in five colours: bronze (1–9), blue (10–19), red (20–29),
+   green (30–39) and black (40–50).
    Matches pay in trophies (Last Standing by place, Execution by the
-   result) and a bad one takes some away, never below zero. The higher
+   result) and a bad one takes some away, never below zero (or below 500). The higher
    the rank, the fewer a win is worth (25, 15, 10, then 5) and the harder
    the bots: rough from rank 20, only for pros from rank 40.
    All of a player's trophies together climb the Trophy Road.
    ========================================================== */
 const TROPHY={CAP:500,ROAD:5000,STEP:20,BEASTS:[250,500,750,1000]};
-function charTrophies(k){ return Math.max(0,Math.min(TROPHY.CAP,Math.round((State.trophies||{})[k]||0))); }
+function charTrophies(k){ return Math.max(0,Math.round(+(State.trophies||{})[k]||0)); }
 function totalTrophies(){ const T=State.trophies||{}; return Object.keys(T).reduce((s,k)=>s+charTrophies(k),0); }
 function trophyRank(t){ return t>=TROPHY.CAP?50:Math.min(49,1+Math.floor(t/10)); }
 function charRank(k){ return trophyRank(charTrophies(k)); }
-function rankTier(r){ return r>=30?'black':r>=20?'red':r>=10?'blue':'bronze'; }
+function rankTier(r){ return r>=40?'black':r>=30?'green':r>=20?'red':r>=10?'blue':'bronze'; }
 /* how far into its rank a count is (0..1), and what the next rank needs */
 function rankProgress(t){ const r=trophyRank(t); if(r>=50) return {r,k:1,next:null}; const lo=(r-1)*10, hi=r>=49?TROPHY.CAP:r*10; return {r,k:Math.max(0,Math.min(1,(t-lo)/(hi-lo))),next:hi}; }
-function rankBadge(k,cls){ const r=charRank(k); return `<span class="rank-badge t-${rankTier(r)}${cls?' '+cls:''}" title="Rank ${r}"><b>${r}</b></span>`; }
+/* a rank badge: a cut gem in the tier's colour with a light running over it; the higher tiers wear more
+   (blue: a turning halo, red: a glow, green: sparks, black: a star cut, a red-violet halo and a flicker) */
+function rankBadgeR(r,cls){ r=Math.max(1,Math.min(50,Math.round(+r||1)));
+  return `<span class="rank-badge t-${rankTier(r)}${cls?' '+cls:''}" style="--dl:-${(r*.37%3.6).toFixed(2)}s" title="Rank ${r}"><i class="rb-glow"></i><i class="rb-aura"></i><i class="rb-gem"></i><i class="rb-shine"></i><i class="rb-sp"></i><b>${r}</b></span>`; }
+function rankBadge(k,cls){ return rankBadgeR(charRank(k),cls); }
+/* the plate under your character in the lobby: the badge, the rank, and the trophies toward the next one */
+function heroRankHTML(k){
+  const t=charTrophies(k), pr=rankProgress(t);
+  return rankBadgeR(pr.r)+`<div class="hr-t"><b>RANK ${pr.r}${pr.r>=50?'<em>MAX</em>':''}</b><span>${TROPHY_SVG}${t.toLocaleString('en-US')}${pr.next?'<small> / '+pr.next+'</small>':''}</span><i class="hr-bar"><i style="width:${(pr.k*100).toFixed(1)}%"></i></i></div>`;
+}
 const TROPHY_SVG='<svg class="tro-ic" viewBox="0 0 24 24"><path d="M7 3h10v5.2a5 5 0 0 1-10 0z" fill="url(#troG)" stroke="#fff4c8" stroke-width=".8"/><path d="M7 5H4.2a3.2 3.2 0 0 0 3.4 4.2M17 5h2.8a3.2 3.2 0 0 1-3.4 4.2" fill="none" stroke="#ffcf4a" stroke-width="1.7"/><path d="M10.4 13.2h3.2v3h-3.2z" fill="#ffb02a"/><path d="M7.6 20.4h8.8l-1-3.6H8.6z" fill="#ffb02a" stroke="#fff4c8" stroke-width=".6"/></svg>';
 /* Last Standing, ten players: what each place is worth, by rank */
 const LS_TROPHIES=[
@@ -16068,7 +16161,7 @@ function execDelta(r,won){ const b=trophyBracket(r); return won?[20,12,8,4][b]:[
 /* add (or take) trophies; returns what really changed, and remembers the best total for the road */
 function addTrophies(k,d){
   if(!State.trophies) State.trophies={};
-  const t0=charTrophies(k), t1=Math.max(0,Math.min(TROPHY.CAP,t0+d));
+  const t0=charTrophies(k), t1=Math.max(t0>=TROPHY.CAP?TROPHY.CAP:0,t0+d);        // rank 50 is kept: never back under 500
   State.trophies[k]=t1;
   State.roadMax=Math.max(State.roadMax||0,totalTrophies());
   return t1-t0;
@@ -16513,7 +16606,7 @@ function removeShot(p){
 const CAM_PITCH=48*Math.PI/180, CAM_BACK=90;      // how steeply it looks down, and how far back along its line of sight it stands
 let MATCH_CAM=null, CINE_CAM=null;
 /* r: metres of map shown each way from you (north and south; east and west follow the screen's shape) */
-function camView(){ const p=MATCH_CAM&&MATCH_CAM.aspect<1; return isDungeon()?{P:60*Math.PI/180,r:0}:{P:CAM_PITCH,r:p?13:10}; }
+function camView(){ const p=MATCH_CAM&&MATCH_CAM.aspect<1; return isDungeon()?{P:60*Math.PI/180,r:0}:{P:CAM_PITCH,r:p?11:8.5}; }
 function camFair(){ const L=camView(); return {P:L.P,v:L.r*Math.sin(L.P)}; }   // v: half the screen's height, in metres
 function camSize(v){ const C=MATCH_CAM; if(!C) return; const w=v*(C.aspect||1);
   if(Math.abs(C.top-v)>1e-4||Math.abs(C.right-w)>1e-4){ C.left=-w; C.right=w; C.top=v; C.bottom=-v; C.updateProjectionMatrix(); } }
@@ -18186,7 +18279,7 @@ function finish(won,title){
     const t0=charTrophies(pUnit.key), r0=trophyRank(t0);
     const want=NET.match?netTrophyDelta(r0,!!won):ex?execDelta(r0,!!won):lsDelta(r0,won?1:pUnit.place||10);
     const got=addTrophies(pUnit.key,want), t1=charTrophies(pUnit.key);
-    tro={got,t1,r0,r1:trophyRank(t1),place:ex?null:(won?1:pUnit.place)};
+    tro={got,t1,r0,r1:trophyRank(t1),place:ex?null:(won?1:pUnit.place),kept:want<0&&got>want&&t0>=TROPHY.CAP};
   }
   State.matches=(State.matches||0)+1;
   saveState();
@@ -18205,7 +18298,7 @@ function finish(won,title){
   else {
     const up=tro.r1>tro.r0, sign=tro.got>0?'+':tro.got<0?'−':'±';
     rc.innerHTML=`<span class="rc-tro ${tro.got>0?'up':tro.got<0?'down':''}">${TROPHY_SVG}<b>${sign}${Math.abs(tro.got)}</b></span>`+
-      `<span class="rc-rank">${rankBadge(pUnit.key,up?'pop':'')}<em>${up?'RANK UP! ':''}${pUnit.name.toUpperCase()} · ${tro.t1} / 500</em></span>`+
+      `<span class="rc-rank">${rankBadge(pUnit.key,up?'pop':'')}<em>${up?'RANK UP! ':''}${pUnit.name.toUpperCase()} · ${tro.t1>=TROPHY.CAP?tro.t1.toLocaleString('en-US')+(tro.kept?' · RANK 50 KEPT':''):tro.t1+' / '+rankProgress(tro.t1).next}</em></span>`+
       (tro.place?`<small>${ordinal(tro.place).toUpperCase()} OF 10</small>`:'');
     if(up) setTimeout(()=>SFX.win(),450);
   }
@@ -18954,7 +19047,7 @@ function dungeonSetup(ch){
   if(!you) dgMapInit();
   camPlace(player.position.x,player.position.z,58.4*Math.PI/180,16,.9); camSnap(player.position.x,player.position.z);
 }
-function dungeonCam(){ const s=DG&&DG.seeker.isPlayer, r=MATCH_CAM&&MATCH_CAM.aspect<1?(s?12.5:10.5):(s?10:8.5), P=camView().P;
+function dungeonCam(){ const s=DG&&DG.seeker.isPlayer, r=MATCH_CAM&&MATCH_CAM.aspect<1?(s?11:9.5):(s?9:7.5), P=camView().P;
   return {P,v:r*Math.sin(P)}; }
 /* who's who, for a moment before the count */
 function dgRoleCard(){
@@ -22996,7 +23089,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.33.2';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.34.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -23490,7 +23583,7 @@ function netProfile(id){
       <div><span>PETS</span><b>${p.pc||0}<em>/ ${p.pt||PETS.length}</em></b></div>
     </div>
     <div class="opf-sec">PLAYING AS</div>
-    <div class="opf-char">${ch?`<img alt="" data-key="${ch.key}"><b>${ch.name}</b><span class="rank-badge t-${rankTier(p.cr||1)}"><b>${p.cr||1}</b></span>`:'—'}</div>
+    <div class="opf-char">${ch?`<img alt="" data-key="${ch.key}"><b>${ch.name}</b>${rankBadgeR(p.cr||1)}`:'—'}</div>
     <div class="opf-sec">ARTIFACTS</div>
     <div class="opf-slots">${slots}</div>
     <div class="opf-sets">${sets}</div>
@@ -23992,8 +24085,10 @@ function netMateUI(){
     el.classList.toggle('has',!!key);
     if(key){
       el.dataset.st=st;
-      const nm=el.querySelector('.mt-name'), sp=el.querySelector('.mt-st'), name=card&&card.n||'Teammate', txt=mateStTxt(st,ms);
+      const nm=el.querySelector('.mt-nm'), sp=el.querySelector('.mt-st'), name=card&&card.n||'Teammate', txt=mateStTxt(st,ms);
       if(nm.textContent!==name) nm.textContent=name;
+      const rk=el.querySelector('.mt-rk'), cr=card&&card.ch===key?Math.round(+card.cr||0):0, rs=cr>0?String(cr):'';     // their rank with the character they're showing
+      if(rk&&rk.dataset.r!==rs){ rk.dataset.r=rs; rk.innerHTML=rs?rankBadgeR(cr):''; }
       if(sp.textContent!==txt) sp.textContent=txt;
     }
   }
@@ -25326,7 +25421,7 @@ const KyCloud=(function(){
     return `
       <div class="opf-stats six"><div><span>TROPHIES</span><b>${TROPHY_SVG}${(+o.tro||0).toLocaleString('en-US')}</b></div>${opfPrivTiles(p)}<div><span>PETS</span><b>${+p.pc||0}<em>/ ${+p.pt||PETS.length}</em></b></div></div>
       <div class="opf-sec">PLAYING AS</div>
-      <div class="opf-char">${ch?`<img alt="" data-key="${ch.key}"><b>${ch.name}</b><span class="rank-badge t-${rankTier(+p.cr||1)}"><b>${+p.cr||1}</b></span>`:'—'}</div>
+      <div class="opf-char">${ch?`<img alt="" data-key="${ch.key}"><b>${ch.name}</b>${rankBadgeR(+p.cr||1)}`:'—'}</div>
       <div class="opf-sec">ARTIFACTS</div>
       <div class="opf-slots">${slots}</div><div class="opf-sets">${sets}</div>
       <div class="opf-as"><span>HP <b>${as[0]}</b></span><span>ATK <b>${as[1]}</b></span><span>CRIT <b>${as[2]}%</b></span><span>CRIT DMG <b>${as[3]}%</b></span></div>`;
