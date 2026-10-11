@@ -1,13 +1,16 @@
 rules_version = '2';
 // Lunive's Firestore rules: Kyuchi ID saves, Account IDs, the leaderboard, and the creator's tools.
 // Paste all of this into Firebase console -> Firestore Database -> Rules, and press Publish.
-// Put YOUR Kyuchi ID email (in small letters) where it says creator@example.com.
+// Nothing to change in it: the creator is whoever owns Account ID #999999999.
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // the creator: the account that owns #999999999. That ID was given once, to the creator,
+    // and can never be created again, changed or deleted.
     function isCreator() {
       return request.auth != null
-        && request.auth.token.get('email', '').lower() == 'creator@example.com';
+        && exists(/databases/$(database)/documents/ids/999999999)
+        && get(/databases/$(database)/documents/ids/999999999).data.uid == request.auth.uid;
     }
     function me(uid) {
       return request.auth != null && request.auth.uid == uid;
@@ -82,6 +85,17 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['t', 'a', 'at'])
         && request.resource.data.t is string && request.resource.data.t.size() > 0 && request.resource.data.t.size() <= 30
         && request.resource.data.a is string && request.resource.data.a.matches('[1-9][0-9]{8}');
+      allow delete: if isCreator();
+    }
+
+    // the creator's custom pictures: anyone can see them, only the creator adds or removes them
+    match /cpf/{id} {
+      allow read: if true;
+      allow create: if isCreator() && id.matches('c_[a-z0-9]{4,24}')
+        && request.resource.data.keys().hasOnly(['d', 'n', 'at'])
+        && request.resource.data.d is string && request.resource.data.d.size() <= 820000
+        && request.resource.data.d.matches('data:image/(png|jpeg|gif|webp);base64,[A-Za-z0-9+/=]+')
+        && request.resource.data.n is string && request.resource.data.n.size() <= 30;
       allow delete: if isCreator();
     }
 
