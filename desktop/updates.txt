@@ -1,3 +1,4 @@
+3.33.2: A new flat match camera. You are always in the exact middle, you see exactly as far north, south, east and west as anyone who can see you, and no more holes in hair, flickering ground or wobbly camera.
 3.33.1: In matches you are back in the middle of the screen. The camera now films from further away with a longer lens, so you still see nearly as far behind you as ahead.
 3.33.0: Characters keep their hands while dancing, smoother dances, a lively lobby (waves, stretches, hops, spins and more), and a fair match camera that sees just as far behind you as ahead.
 3.32.1: Maeya the sugar glider is now called Shiro.

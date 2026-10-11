@@ -3561,7 +3561,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.33.1 · BETA</span>
+    <span class="hub-version">VERSION 3.33.2 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3728,7 +3728,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.33.1</div></div>
+</svg><div class="set-ver">VERSION 3.33.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -9401,7 +9401,7 @@ function noise3(x,y,z){ return (noise2(x+z*.73,y-z*.41)+noise2(y*1.13+z,x*.87-z*
 function sstep(a,b,x){ const t=Math.min(1,Math.max(0,(x-a)/(b-a))); return t*t*(3-2*t); }
 
 /* ---------- shared uniforms for the world's shaders ---------- */
-const PT_K={value:1};                        // how much bigger the motes are drawn (the match camera's long lens)
+const PT_K={value:1};                        // how big the motes are drawn under the match's flat camera
 const WORLD_UNI={uTime:{value:0},uPlayer:{value:new THREE.Vector3()},uCam:{value:new THREE.Vector3(0,50,50)},uSee:{value:0}};
 /* Foliage and tall props get two extras through onBeforeCompile: a wind
    sway that grows with height, and a dithered cut-out wherever they stand
@@ -9762,7 +9762,7 @@ function makeParticles(o){
   geo.setAttribute('color',new THREE.BufferAttribute(cols,3));
   const mat=new THREE.PointsMaterial({size:o.size||.12,map:spriteTex(o.sprite||'dot'),transparent:true,depthWrite:false,vertexColors:true,
     opacity:o.opacity||.9,blending:o.additive?THREE.AdditiveBlending:THREE.NormalBlending,sizeAttenuation:true});
-  mat.onBeforeCompile=sh=>{ sh.uniforms.uPtK=PT_K; sh.vertexShader='uniform float uPtK;\n'+sh.vertexShader.replace('#include <fog_vertex>','#include <fog_vertex>\n\tgl_PointSize*=uPtK;'); };
+  mat.onBeforeCompile=sh=>{ sh.uniforms.uPtK=PT_K; sh.vertexShader='uniform float uPtK;\n'+sh.vertexShader.replace('#include <fog_vertex>','#include <fog_vertex>\n\tif(!isPerspectiveMatrix(projectionMatrix)) gl_PointSize*=scale;\n\tgl_PointSize*=uPtK;'); };
   const pts=new THREE.Points(geo,mat); pts.frustumCulled=false;
   pts.userData.update=(dt,t,cx,cz)=>{
     pts.position.set(cx,0,cz);
@@ -16505,36 +16505,37 @@ function removeShot(p){
 
 /* ---- 51-game-b.js ---- */
 /* ---------- setting up a match ---------- */
-/* on a tall phone screen the camera rises so you still see around you */
-/* A wide lens close to you bends the view: the screen showed about 24 m above you and only 5 m below, so whoever
-   was south of you saw you first. Aiming south of you evened that out but pushed you to the top of the screen.
-   Now the camera sits far back with a long lens (like a sports broadcast): the view hardly bends, so you stand in
-   the middle of the screen, everyone is seen from the same easy angle, and it sees nearly as far behind you as
-   ahead (9 m south, about 11.5 m north). Hide & Seek looks down steeper, into the maze's corridors. */
-const CAM_PITCH=48*Math.PI/180;
-function camLens(){ const p=camera&&camera.aspect<1;               // r: metres of map shown south of you
-  return isDungeon()?{fov:p?18:14,P:60*Math.PI/180}:{fov:p?14:10,r:p?13:9,P:CAM_PITCH}; }
-/* P: how steeply it looks down; the camera sits on the line through the middle of your body (a hair above the
-   screen's centre), as far back as it takes to show r metres south of you */
-function camRig(P,fov,r){
-  const a=fov/2*Math.PI/180, sP=Math.sin(P), cP=Math.cos(P), sa=Math.sin(a)/Math.sin(P+a), t=.02*Math.tan(a), yb=.8;
-  const D=(yb*(cP+t*sP)+r*(sP-t*cP))/(t*(1-sa*cP)+sa*sP), l=r-D*sa;   // D: from the camera to the point it aims at; l: that point, south of you
-  return {h:D*sP,b:l+D*cP,l};
-}
-function camFair(){ const L=camLens(); return camRig(L.P,L.fov,L.r); }
-function camLensTo(f){ if(camera&&Math.abs(camera.fov-f)>.001){ camera.fov=f; camera.updateProjectionMatrix(); } }
-/* from that high up the haze and the floating motes would act as if everything were far away:
-   both are drawn as if the camera stood at the old distance */
+/* The match camera is flat (orthographic), like a board-game view from above: nothing shrinks with distance, so you
+   stand dead in the middle of the screen and it shows exactly as much of the map south of you as north, and as much
+   west as east. Whoever is on your screen has you on theirs too. (A real lens had to choose: either you sat high up
+   on the screen, or it saw further ahead than behind; and from far away it lost depth precision, which showed as
+   rings in the hair and flicker on the ground.) Hide & Seek looks down steeper, into the maze's corridors. */
+const CAM_PITCH=48*Math.PI/180, CAM_BACK=90;      // how steeply it looks down, and how far back along its line of sight it stands
+let MATCH_CAM=null, CINE_CAM=null;
+/* r: metres of map shown each way from you (north and south; east and west follow the screen's shape) */
+function camView(){ const p=MATCH_CAM&&MATCH_CAM.aspect<1; return isDungeon()?{P:60*Math.PI/180,r:0}:{P:CAM_PITCH,r:p?13:10}; }
+function camFair(){ const L=camView(); return {P:L.P,v:L.r*Math.sin(L.P)}; }   // v: half the screen's height, in metres
+function camSize(v){ const C=MATCH_CAM; if(!C) return; const w=v*(C.aspect||1);
+  if(Math.abs(C.top-v)>1e-4||Math.abs(C.right-w)>1e-4){ C.left=-w; C.right=w; C.top=v; C.bottom=-v; C.updateProjectionMatrix(); } }
+/* look straight at the ground point (x,z): from pitch P, turned a radians round it, showing v metres above and below */
+function camPlace(x,z,P,v,a){ const C=MATCH_CAM; if(!C) return; const c=Math.cos(P)*CAM_BACK, y=a||0;
+  C.position.set(x+Math.sin(y)*c,Math.sin(P)*CAM_BACK,z+Math.cos(y)*c); C.lookAt(x,0,z); camSize(v); }
+/* the point it follows glides after you (it never turns, so the picture only slides) */
+const camFoc=new THREE.Vector3(); let camFocOn=false;
+function camFollow(F,dt){ if(!camFocOn){ camFoc.set(F.x,0,F.z); camFocOn=true; }
+  else { const k=1-Math.exp(-Math.min(.1,dt)*12); camFoc.x+=(F.x-camFoc.x)*k; camFoc.z+=(F.z-camFoc.z)*k; } return camFoc; }
+function camSnap(x,z){ camFoc.set(x,0,z); camFocOn=true; }
+/* Full Control's cuts need a real lens, close in */
+function cineCam(){ if(!CINE_CAM) CINE_CAM=new THREE.PerspectiveCamera(42,1,.1,400);
+  const a=(MATCH_CAM&&MATCH_CAM.aspect)||1; if(CINE_CAM.aspect!==a){ CINE_CAM.aspect=a; CINE_CAM.updateProjectionMatrix(); } return CINE_CAM; }
+/* the haze and the floating motes are drawn as if the camera stood about 17 m away, as it used to */
 function matchRender(){
   const f=scene.fog, d=f?f.density:0;
   if(f) f.density=d*Math.min(1,13/Math.max(1,camera.position.y));
-  PT_K.value=Math.max(1,Math.tan(28*Math.PI/180)/Math.tan(camera.fov/2*Math.PI/180));
+  PT_K.value=camera.isOrthographicCamera?.53/Math.max(.1,camera.top):1;
   PostFX.render(renderer,scene,camera);
   if(f) f.density=d; PT_K.value=1;
 }
-function camH(){ return camFair().h; }
-function camB(){ return camFair().b; }
-function camL(){ return camFair().l; }
 /* the map picked in the lobby */
 let matchMapId=null;                // drawn from the mode's pool when a match starts
 function currentMapId(){ return matchMapId&&MAP_LIST.includes(matchMapId)?matchMapId:lobbyMapId(); }
@@ -16570,7 +16571,7 @@ function startGame(ch){
   }
   Perf.game.reset(); PostFX.reset(); Perf.game.onTier=applyGameTier; hudReset(); clearKillFeed(); hudEl('dashLine')._ready=undefined; hudEl('ultBar')._full=undefined;
   scene=new THREE.Scene();
-  camera=new THREE.PerspectiveCamera(56,innerWidth/innerHeight,.5,400);   // far up: a nearer near plane keeps the ground marks crisp
+  camera=MATCH_CAM=new THREE.OrthographicCamera(-1,1,1,-1,1,CAM_BACK+120); camera.aspect=innerWidth/innerHeight; camFocOn=false;
   if(!gameResizeOn){ gameResizeOn=true; addEventListener('resize',gameResize); }
   gameResize();
 
@@ -16638,8 +16639,7 @@ function startGame(ch){
     u.mesh.position.y=u.isPlayer?18:16+Math.random()*10; u.mesh.visible=false; });
   intro={t:0,shake:0}; matchStart=0;
   if(!NET.match) PetRun.begin();                       // no pets online
-  camera.position.set(player.position.x+Math.sin(.9)*26,46,player.position.z+Math.cos(.9)*26);
-  camera.lookAt(player.position.x,0,player.position.z);
+  camPlace(player.position.x,player.position.z,60.5*Math.PI/180,24,.9); camSnap(player.position.x,player.position.z);
   gameOn=true; clockLast=performance.now();
   hud();
   Touch.start(ch);
@@ -16688,7 +16688,7 @@ let gameResizeOn=false;
 function gameResize(){
   if(!renderer||!camera) return;
   renderer.setPixelRatio(gfxPR()*Perf.game.scale);
-  renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.fov=camLens().fov; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight); if(MATCH_CAM){ MATCH_CAM.aspect=innerWidth/innerHeight; camSize(MATCH_CAM.top); }
 }
 /* --- input --- */
 function onKey(e){
@@ -17653,11 +17653,9 @@ function runIntro(dt,t){
   // face the camera's way once down
   if(pUnit.landed){ let da=Math.PI-player.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); player.rotation.y+=da*Math.min(1,dt*4); }
   const k0=I.round?1:Math.min(1,I.t/2.2), k=k0<.5?4*k0*k0*k0:1-Math.pow(-2*k0+2,3)/2;
-  const CF=camFair(), a=(1-k)*.9, dist=26+(CF.b-26)*k, h=46+(CF.h-46)*k;
-  camLensTo(48+(camLens().fov-48)*k);
-  camera.position.set(player.position.x+Math.sin(a)*dist,h,player.position.z+Math.cos(a)*dist);
+  const CF=camFair(), a=(1-k)*.9, P0=60.5*Math.PI/180;          // starts wide and high, swings round and settles in
+  camPlace(player.position.x,player.position.z,P0+(CF.P-P0)*k,24+(CF.v-24)*k,a); camSnap(player.position.x,player.position.z);
   if(I.shake>0){ camera.position.x+=(Math.random()-.5)*I.shake; camera.position.y+=(Math.random()-.5)*I.shake; I.shake=Math.max(0,I.shake-dt*1.6); }
-  camera.lookAt(player.position.x,0,player.position.z+camL()*k);
   WORLD_UNI.uCam.value.copy(camera.position); WORLD_UNI.uPlayer.value.copy(player.position); WORLD_UNI.uSee.value=k>.9?1:0;
   /* 3, 2, 1 once everyone is down, then GO! and the fight starts */
   if(isExec()&&!I.rb&&I.t>=(I.round?.1:1.6)){ I.rb=true; banner('ROUND '+execState.round); SFX.ready(); }
@@ -17780,10 +17778,9 @@ function loop(t){
   } else Touch.tick();
 
   const dk=1-.36*KiraFx.k;                                    // Lights Out pulls the camera in close
-  const CF=camFair(); camera.position.lerp(new THREE.Vector3(F.x,CF.h*dk,F.z+CF.b*dk),Math.min(1,dt*4));
+  const CF=camFair(), cf=camFollow(F,dt); camPlace(cf.x,cf.z,CF.P,CF.v*dk);
   if(camShake>0){ camera.position.x+=(Math.random()-.5)*camShake; camera.position.y+=(Math.random()-.5)*camShake*.6; camShake=Math.max(0,camShake-dt*1.8); }
   if(KiraFx.k>0){ camera.position.x+=Math.sin(now/170)*.06*KiraFx.k; camera.position.y+=Math.sin(now/230)*.05*KiraFx.k; }   // an uneasy sway
-  camera.lookAt(F.x,0,F.z+CF.l*dk);
   RyUlt.cam(now);                                            // Full Control takes the camera for the cuts
   WORLD_UNI.uCam.value.copy(camera.position); WORLD_UNI.uPlayer.value.copy(F); WORLD_UNI.uSee.value=1;
 
@@ -18955,11 +18952,10 @@ function dungeonSetup(ch){
     'WASD move · Shift sprint · Hide in straw heaps and behind drapes · B emote';
   document.getElementById('mapLabel').textContent=W.name;
   if(!you) dgMapInit();
-  camera.position.set(player.position.x+Math.sin(.9)*16,26,player.position.z+Math.cos(.9)*16);
-  camera.lookAt(player.position.x,0,player.position.z);
+  camPlace(player.position.x,player.position.z,58.4*Math.PI/180,16,.9); camSnap(player.position.x,player.position.z);
 }
-function dungeonCam(){ const s=DG&&DG.seeker.isPlayer, r=camera&&camera.aspect<1?(s?12.5:10.5):(s?10:8.5);
-  const L=camLens(); return camRig(L.P,L.fov,r); }
+function dungeonCam(){ const s=DG&&DG.seeker.isPlayer, r=MATCH_CAM&&MATCH_CAM.aspect<1?(s?12.5:10.5):(s?10:8.5), P=camView().P;
+  return {P,v:r*Math.sin(P)}; }
 /* who's who, for a moment before the count */
 function dgRoleCard(){
   const you=DG.seeker.isPlayer, el=document.createElement('div'); el.className='dg-role'+(you?' seek':'');
@@ -18980,10 +18976,8 @@ function dungeonLoop(t){
   if(DG.phase==='intro'){
     if(!DG.roleShown&&DG.t>.25){ DG.roleShown=true; dgRoleCard(); }
     const k0=Math.min(1,DG.t/2.2), k=k0<.5?4*k0*k0*k0:1-Math.pow(-2*k0+2,3)/2;
-    const a=(1-k)*.9, dist=16+(C.b-16)*k, h=26+(C.h-26)*k;
-    camLensTo(48+(camLens().fov-48)*k);
-    camera.position.set(player.position.x+Math.sin(a)*dist,h,player.position.z+Math.cos(a)*dist);
-    camera.lookAt(player.position.x,0,player.position.z+C.l*k);
+    const a=(1-k)*.9, P0=58.4*Math.PI/180;
+    camPlace(player.position.x,player.position.z,P0+(C.P-P0)*k,16+(C.v-16)*k,a); camSnap(player.position.x,player.position.z);
     const steps=[[2.9,3],[3.7,2],[4.5,1]];
     steps.forEach(([at,n],i)=>{ if(DG.t>=at&&DG.count<=i){ DG.count=i+1; countBanner(String(n)); SFX.count(n); } });
     if(DG.t>=5.3&&DG.count<=3){ DG.count=4; if(youSeek) missionStat('hsSeek'); countBanner(youSeek?'COUNT!':'HIDE!','go hide'); SFX.countGo(true); DG.phase='hide'; DG.hideEnd=now+DGM.HIDE*1000; matchStart=now; if(DG.net&&DG.net.host) dgNetSend({k:'hide'});
@@ -18992,8 +18986,8 @@ function dungeonLoop(t){
     if(youSeek) dgCageStep(dt);
     dgPlayer(dt,now);
     const F=dgFocus();
-    camera.position.lerp(new THREE.Vector3(F.x,C.h,F.z+C.b),Math.min(1,dt*4));
-    camera.lookAt(F.x,0,F.z+C.l);
+    const cf=camFollow(F,dt); camPlace(cf.x,cf.z,C.P,C.v);
+    if(camShake>0) camera.position.x+=(Math.random()-.5)*camShake;
   }
   // online the maker calls the release and the end (the other game only steps in if the maker went quiet)
   const guest=!!(DG.net&&!DG.net.host);
@@ -20488,7 +20482,7 @@ function execResetRound(){
   zoneR=GALLOWS_R; matchStart=0; zoneWall.visible=zoneShade.visible=false;
   units.forEach(u=>{ u.landed=true; u.mesh.visible=true; });
   intro={t:0,shake:0,round:true};
-  camera.position.set(player.position.x,camH(),player.position.z+camB());
+  camPlace(player.position.x,player.position.z,camFair().P,camFair().v); camSnap(player.position.x,player.position.z);
   hud();
 }
 /* the scoreboard: who's still up on each side, and the rounds won */
@@ -21779,7 +21773,7 @@ void main(){
 
 /* ---------- Full Control ---------- */
 const RyUlt=(function(){
-  let S=null, el=null, lastCam=0, fov0=0;
+  let S=null, el=null, lastCam=0;
   const P=()=>S&&S.u.mesh.position;
   function build(){
     if(el) return;
@@ -21898,7 +21892,7 @@ const RyUlt=(function(){
     const ud=u.mesh&&u.mesh.userData; if(ud){ if(ud.katanaBack) ud.katanaBack.visible=true; if(ud.katanaHand) ud.katanaHand.visible=false; }
     if(S.target&&S.target.alive){ S.target.stunUntil=Math.min(S.target.stunUntil||0,now+400); S.target.rootUntil=0; }
     TIME_K=1; PFX_CYBER.dark=0;
-    if(camera&&fov0){ camera.fov=fov0; camera.updateProjectionMatrix(); fov0=0; }
+    if(MATCH_CAM) camera=MATCH_CAM;
     if(el) el.className=''; document.getElementById('game-screen').classList.remove('ry-cine');
     S=null;
   }
@@ -21947,20 +21941,18 @@ const RyUlt=(function(){
     const rdt=Math.min(.05,(now-(lastCam||now))/1000); lastCam=now;
     const cine=S&&S.cine&&(S.phase==='mash'||S.phase==='final')&&watch()&&camera;
     if(!cine){
-      if(fov0&&camera){ if(!S){ camera.fov=fov0; camera.updateProjectionMatrix(); fov0=0; }
-        else if(S.phase==='out'){ camera.fov+=(fov0-camera.fov)*Math.min(1,rdt*7); camera.updateProjectionMatrix(); } }   // easing back out to the normal view
+      if(MATCH_CAM&&camera!==MATCH_CAM) camera=MATCH_CAM;               // back to the match view
       if(S&&S.cine&&S.phase==='out') hideTags();
       return; }
     hideTags();                                                         // name tags would fill the screen this close
-    if(!fov0) fov0=camera.fov;
+    camera=cineCam();
     const t=S.target.mesh.position;
-    if(!S.camP){ const d=V3(t.x-S.u.mesh.position.x,0,t.z-S.u.mesh.position.z); S.camA=Math.atan2(d.x,d.z)+Math.PI/2*(Math.random()<.5?1:-1); S.camT0=now; S.camP=camera.position.clone(); }
+    if(!S.camP){ const d=V3(t.x-S.u.mesh.position.x,0,t.z-S.u.mesh.position.z); S.camA=Math.atan2(d.x,d.z)+Math.PI/2*(Math.random()<.5?1:-1); S.camT0=now; S.camP=V3(t.x,9,t.z+8); }
     const a=S.camA+(now-S.camT0)/4200, R=5.4;
     S.camP.lerp(V3(t.x+Math.sin(a)*R,2.7,t.z+Math.cos(a)*R),Math.min(1,rdt*4.5));
     camera.position.copy(S.camP);
     if(S.shake>0){ camera.position.x+=(Math.random()-.5)*S.shake; camera.position.y+=(Math.random()-.5)*S.shake*.6; S.shake=Math.max(0,S.shake-rdt*2.2); }
     camera.lookAt(t.x,.85,t.z);
-    const fw=42; if(Math.abs(camera.fov-fw)>.05){ camera.fov+=(fw-camera.fov)*Math.min(1,rdt*6); camera.updateProjectionMatrix(); }
     camera.updateMatrixWorld();
     const v=t.clone().setY(CHEST_Y).project(camera); PFX_CYBER.cx=v.x*.5+.5; PFX_CYBER.cy=v.y*.5+.5; PFX_CYBER.rad=.4;   // the light stays on the two of them
   }
@@ -23004,7 +22996,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.33.1';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.33.2';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
