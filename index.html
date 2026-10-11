@@ -3561,7 +3561,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip" id="emChip" title="Emote (B)"><span class="emc-ic">♪</span><b>EMOTE</b><kbd>B</kbd></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.33.0 · BETA</span>
+    <span class="hub-version">VERSION 3.33.1 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -3728,7 +3728,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.33.0</div></div>
+</svg><div class="set-ver">VERSION 3.33.1</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -9401,6 +9401,7 @@ function noise3(x,y,z){ return (noise2(x+z*.73,y-z*.41)+noise2(y*1.13+z,x*.87-z*
 function sstep(a,b,x){ const t=Math.min(1,Math.max(0,(x-a)/(b-a))); return t*t*(3-2*t); }
 
 /* ---------- shared uniforms for the world's shaders ---------- */
+const PT_K={value:1};                        // how much bigger the motes are drawn (the match camera's long lens)
 const WORLD_UNI={uTime:{value:0},uPlayer:{value:new THREE.Vector3()},uCam:{value:new THREE.Vector3(0,50,50)},uSee:{value:0}};
 /* Foliage and tall props get two extras through onBeforeCompile: a wind
    sway that grows with height, and a dithered cut-out wherever they stand
@@ -9761,6 +9762,7 @@ function makeParticles(o){
   geo.setAttribute('color',new THREE.BufferAttribute(cols,3));
   const mat=new THREE.PointsMaterial({size:o.size||.12,map:spriteTex(o.sprite||'dot'),transparent:true,depthWrite:false,vertexColors:true,
     opacity:o.opacity||.9,blending:o.additive?THREE.AdditiveBlending:THREE.NormalBlending,sizeAttenuation:true});
+  mat.onBeforeCompile=sh=>{ sh.uniforms.uPtK=PT_K; sh.vertexShader='uniform float uPtK;\n'+sh.vertexShader.replace('#include <fog_vertex>','#include <fog_vertex>\n\tgl_PointSize*=uPtK;'); };
   const pts=new THREE.Points(geo,mat); pts.frustumCulled=false;
   pts.userData.update=(dt,t,cx,cz)=>{
     pts.position.set(cx,0,cz);
@@ -16504,15 +16506,31 @@ function removeShot(p){
 /* ---- 51-game-b.js ---- */
 /* ---------- setting up a match ---------- */
 /* on a tall phone screen the camera rises so you still see around you */
-/* The camera behind you used to tilt 43°: about 24 m of the map showed above you on screen and only
-   about 5 m below, so whoever was south of you saw you long before you saw them. Now it looks down
-   steeper, and aims a little south of you, so the screen reaches exactly as far south as north. */
-const CAM_PITCH=57*Math.PI/180;
-function camFair(){
-  const H=camera&&camera.aspect<1?14.6:12.85, a=((camera&&camera.fov)||56)/2*Math.PI/180;
-  const far=H/Math.tan(CAM_PITCH-a), near=CAM_PITCH+a<Math.PI/2?H/Math.tan(CAM_PITCH+a):-H*Math.tan(CAM_PITCH+a-Math.PI/2);
-  const back=(far+near)/2;                                   // the point that has as much ground beyond it as before it
-  return {h:H,b:back,l:back-H/Math.tan(CAM_PITCH)};           // l: how far south of you the camera aims
+/* A wide lens close to you bends the view: the screen showed about 24 m above you and only 5 m below, so whoever
+   was south of you saw you first. Aiming south of you evened that out but pushed you to the top of the screen.
+   Now the camera sits far back with a long lens (like a sports broadcast): the view hardly bends, so you stand in
+   the middle of the screen, everyone is seen from the same easy angle, and it sees nearly as far behind you as
+   ahead (9 m south, about 11.5 m north). Hide & Seek looks down steeper, into the maze's corridors. */
+const CAM_PITCH=48*Math.PI/180;
+function camLens(){ const p=camera&&camera.aspect<1;               // r: metres of map shown south of you
+  return isDungeon()?{fov:p?18:14,P:60*Math.PI/180}:{fov:p?14:10,r:p?13:9,P:CAM_PITCH}; }
+/* P: how steeply it looks down; the camera sits on the line through the middle of your body (a hair above the
+   screen's centre), as far back as it takes to show r metres south of you */
+function camRig(P,fov,r){
+  const a=fov/2*Math.PI/180, sP=Math.sin(P), cP=Math.cos(P), sa=Math.sin(a)/Math.sin(P+a), t=.02*Math.tan(a), yb=.8;
+  const D=(yb*(cP+t*sP)+r*(sP-t*cP))/(t*(1-sa*cP)+sa*sP), l=r-D*sa;   // D: from the camera to the point it aims at; l: that point, south of you
+  return {h:D*sP,b:l+D*cP,l};
+}
+function camFair(){ const L=camLens(); return camRig(L.P,L.fov,L.r); }
+function camLensTo(f){ if(camera&&Math.abs(camera.fov-f)>.001){ camera.fov=f; camera.updateProjectionMatrix(); } }
+/* from that high up the haze and the floating motes would act as if everything were far away:
+   both are drawn as if the camera stood at the old distance */
+function matchRender(){
+  const f=scene.fog, d=f?f.density:0;
+  if(f) f.density=d*Math.min(1,13/Math.max(1,camera.position.y));
+  PT_K.value=Math.max(1,Math.tan(28*Math.PI/180)/Math.tan(camera.fov/2*Math.PI/180));
+  PostFX.render(renderer,scene,camera);
+  if(f) f.density=d; PT_K.value=1;
 }
 function camH(){ return camFair().h; }
 function camB(){ return camFair().b; }
@@ -16552,7 +16570,7 @@ function startGame(ch){
   }
   Perf.game.reset(); PostFX.reset(); Perf.game.onTier=applyGameTier; hudReset(); clearKillFeed(); hudEl('dashLine')._ready=undefined; hudEl('ultBar')._full=undefined;
   scene=new THREE.Scene();
-  camera=new THREE.PerspectiveCamera(56,innerWidth/innerHeight,.1,320);
+  camera=new THREE.PerspectiveCamera(56,innerWidth/innerHeight,.5,400);   // far up: a nearer near plane keeps the ground marks crisp
   if(!gameResizeOn){ gameResizeOn=true; addEventListener('resize',gameResize); }
   gameResize();
 
@@ -16670,7 +16688,7 @@ let gameResizeOn=false;
 function gameResize(){
   if(!renderer||!camera) return;
   renderer.setPixelRatio(gfxPR()*Perf.game.scale);
-  renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.fov=camera.aspect<1?64:56; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.fov=camLens().fov; camera.updateProjectionMatrix();
 }
 /* --- input --- */
 function onKey(e){
@@ -17635,7 +17653,8 @@ function runIntro(dt,t){
   // face the camera's way once down
   if(pUnit.landed){ let da=Math.PI-player.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); player.rotation.y+=da*Math.min(1,dt*4); }
   const k0=I.round?1:Math.min(1,I.t/2.2), k=k0<.5?4*k0*k0*k0:1-Math.pow(-2*k0+2,3)/2;
-  const a=(1-k)*.9, dist=26+(camB()-26)*k, h=46+(camH()-46)*k;
+  const CF=camFair(), a=(1-k)*.9, dist=26+(CF.b-26)*k, h=46+(CF.h-46)*k;
+  camLensTo(48+(camLens().fov-48)*k);
   camera.position.set(player.position.x+Math.sin(a)*dist,h,player.position.z+Math.cos(a)*dist);
   if(I.shake>0){ camera.position.x+=(Math.random()-.5)*I.shake; camera.position.y+=(Math.random()-.5)*I.shake; I.shake=Math.max(0,I.shake-dt*1.6); }
   camera.lookAt(player.position.x,0,player.position.z+camL()*k);
@@ -17651,7 +17670,7 @@ function runIntro(dt,t){
   }
   hud();
   charLightsFor(camera,world.charEnv);
-  shadowTick(); PostFX.render(renderer,scene,camera);
+  shadowTick(); matchRender();
   raf=Frame.req(loop);
 }
 /* --- loop --- */
@@ -17890,7 +17909,7 @@ function loop(t){
   KiraFx.step(now,dt); Blizzard.step(now,dt); C10.step(now,dt); CyberFx.step(now,dt); RyUlt.step(now,dt); updateDecals(now);
   emoteStep(now,dt);
   charLightsFor(camera,Blizzard.env(KiraFx.env(world.charEnv)));
-  shadowTick(); PostFX.render(renderer,scene,camera);
+  shadowTick(); matchRender();
   raf=Frame.req(loop);
 }
 
@@ -18939,9 +18958,8 @@ function dungeonSetup(ch){
   camera.position.set(player.position.x+Math.sin(.9)*16,26,player.position.z+Math.cos(.9)*16);
   camera.lookAt(player.position.x,0,player.position.z);
 }
-function dungeonCam(){ const s=DG&&DG.seeker.isPlayer, H=camera&&camera.aspect<1?(s?18:15.5):(s?14.5:12.2), P=63*Math.PI/180, a=((camera&&camera.fov)||56)/2*Math.PI/180;
-  const far=H/Math.tan(P-a), near=P+a<Math.PI/2?H/Math.tan(P+a):-H*Math.tan(P+a-Math.PI/2), b=(far+near)/2;
-  return {h:H,b,l:b-H/Math.tan(P)}; }
+function dungeonCam(){ const s=DG&&DG.seeker.isPlayer, r=camera&&camera.aspect<1?(s?12.5:10.5):(s?10:8.5);
+  const L=camLens(); return camRig(L.P,L.fov,r); }
 /* who's who, for a moment before the count */
 function dgRoleCard(){
   const you=DG.seeker.isPlayer, el=document.createElement('div'); el.className='dg-role'+(you?' seek':'');
@@ -18963,6 +18981,7 @@ function dungeonLoop(t){
     if(!DG.roleShown&&DG.t>.25){ DG.roleShown=true; dgRoleCard(); }
     const k0=Math.min(1,DG.t/2.2), k=k0<.5?4*k0*k0*k0:1-Math.pow(-2*k0+2,3)/2;
     const a=(1-k)*.9, dist=16+(C.b-16)*k, h=26+(C.h-26)*k;
+    camLensTo(48+(camLens().fov-48)*k);
     camera.position.set(player.position.x+Math.sin(a)*dist,h,player.position.z+Math.cos(a)*dist);
     camera.lookAt(player.position.x,0,player.position.z+C.l*k);
     const steps=[[2.9,3],[3.7,2],[4.5,1]];
@@ -18999,7 +19018,7 @@ function dungeonLoop(t){
   updatePops();
   emoteStep(now,dt);
   charLightsFor(camera,world.charEnv);
-  shadowTick(); PostFX.render(renderer,scene,camera);
+  shadowTick(); matchRender();
   if(gameOn) raf=Frame.req(loop);
 }
 /* the count is done: the cage drops */
@@ -22985,7 +23004,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.33.0';
+const NET_VER=5, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.33.1';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
