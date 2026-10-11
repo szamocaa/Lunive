@@ -1,3 +1,4 @@
+3.35.1: Online matchmaking is much faster and no longer gets stuck when the connection is slow. Rank 50 shows a clean MAX tag.
 3.35.0: Dances keep everyone in one piece (Crisis dances too), a new artifact set Racer Shades (+20% / +60% move speed), sounds and a squeeze on every button, and a brand new loading screen.
 3.34.0: New animated rank badges (and your rank under your character in the lobby), a new green rank for 30–39 with black from 40, trophies keep counting past 500 and you never drop back under 500, and a closer match camera.
 3.33.2: A new flat match camera. You are always in the exact middle, you see exactly as far north, south, east and west as anyone who can see you, and no more holes in hair, flickering ground or wobbly camera.
