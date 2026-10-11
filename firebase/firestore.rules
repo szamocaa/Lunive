@@ -88,6 +88,17 @@ service cloud.firestore {
       allow delete: if isCreator();
     }
 
+    // the creator's custom pictures: anyone can see them, only the creator adds or removes them
+    match /cpf/{id} {
+      allow read: if true;
+      allow create: if isCreator() && id.matches('c_[a-z0-9]{4,24}')
+        && request.resource.data.keys().hasOnly(['d', 'n', 'at'])
+        && request.resource.data.d is string && request.resource.data.d.size() <= 820000
+        && request.resource.data.d.matches('data:image/(png|jpeg|gif|webp);base64,[A-Za-z0-9+/=]+')
+        && request.resource.data.n is string && request.resource.data.n.size() <= 30;
+      allow delete: if isCreator();
+    }
+
     // only the creator can read here: it's how the game knows it's you
     match /admin/{doc} { allow read: if isCreator(); }
   }
