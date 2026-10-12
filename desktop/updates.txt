@@ -1,3 +1,4 @@
+3.36.0: Skins for all 25 characters (150 rubies each, bought in the Skins tab of Characters), rubies from 3 daily missions (30 a day), Online is always on with a Kyuchi ID, add friends by their 9-digit Account ID, hide yourself from friends, and emotes are gone.
 3.35.1: Online matchmaking is much faster and no longer gets stuck when the connection is slow. Rank 50 shows a clean MAX tag.
 3.35.0: Dances keep everyone in one piece (Crisis dances too), a new artifact set Racer Shades (+20% / +60% move speed), sounds and a squeeze on every button, and a brand new loading screen.
 3.34.0: New animated rank badges (and your rank under your character in the lobby), a new green rank for 30–39 with black from 40, trophies keep counting past 500 and you never drop back under 500, and a closer match camera.
