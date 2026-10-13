@@ -3991,6 +3991,17 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
 .pv-av:hover .pf-host.pf-round:not(.framed){box-shadow:0 0 0 3px var(--acc),0 18px 36px -14px rgba(0,0,0,.8),0 0 26px color-mix(in srgb,var(--acc) 40%,transparent) !important;}
 .pfp-grid.pf-circ .pfp-tile{border-radius:50%;}
 .pfp-grid.pf-circ .pfp-tile img{border-radius:50%;}
+
+/* the Shogun's storm, on the screen: a cold dark edge, and the white of a strike close by */
+.sg-storm::before{background:radial-gradient(ellipse at 50% 46%,transparent 34%,rgba(6,9,20,.62) 100%),rgba(14,20,38,.12) !important;}
+.sg-flash{background:radial-gradient(ellipse at 50% 38%,rgba(236,238,255,.5),rgba(160,165,255,.16) 58%,transparent) !important;}
+.sg-flash.go{animation:sgFlash2 .42s linear !important;}
+@keyframes sgFlash2{0%{opacity:.85;}9%{opacity:.12;}18%{opacity:.75;}28%{opacity:.08;}40%{opacity:.4;}100%{opacity:0;}}
+
+/* the currency chips never layer onto each other: a flat coin flip, and each chip in its own layer */
+@keyframes coinFlip{0%,82%,100%{transform:none;}88%{transform:scale(-1.15,1.15);}94%{transform:scale(1,1);}}
+#hub .res{isolation:isolate;}
+#hub .res > .chip{isolation:isolate;will-change:transform;flex-shrink:0;white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -4134,7 +4145,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
   <button class="em-chip sk-chip" id="emChip" title="Skins · a new look for your character"><span class="emc-ic"><svg class="ruby-ic" viewBox="0 0 24 24"><path d="M7 3.5h10l4.5 5.2L12 21 2.5 8.7z" fill="url(#rubyG)" stroke="#ffd2dc" stroke-width=".9" stroke-linejoin="round"/><path d="M2.5 8.7h19M7 3.5l2.4 5.2L12 21l2.6-12.3L17 3.5M9.4 8.7 12 3.5l2.6 5.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round"/></svg></span><b>SKINS</b></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.39.1 · BETA</span>
+    <span class="hub-version">VERSION 3.39.2 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -4301,7 +4312,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.39.1</div></div>
+</svg><div class="set-ver">VERSION 3.39.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -4505,7 +4516,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
 <div id="game-screen" class="hidden" style="position:fixed;inset:0;">
   <canvas id="gameCanvas" style="position:absolute;inset:0;width:100%;height:100%;display:block;"></canvas>
   <div class="vignette"></div>
-  <div class="sg-storm" id="sgStorm"><i class="sg-rain"></i><i class="sg-rain b"></i><i class="sg-wind"></i><i class="sg-flash"></i></div>
+  <div class="sg-storm" id="sgStorm"><i class="sg-flash"></i></div>
   <div class="kill-feed" id="killFeed"></div>
   <div class="hud-pill" id="alivePill" style="position:absolute;top:14px;left:14px;">
     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.6-4.2 3.8-6.5 7.5-6.5s6.9 2.3 7.5 6.5"/></svg>
@@ -5813,6 +5824,14 @@ const SFX=(function(){
     flight(pos){ if(!on()) return; const a=where(pos); if(!a) return; const b=bus(pos?a:null); for(let i=0;i<3;i++) noise(b,{hz:500,hz2:1400,q:.8,dur:.16,peak:.16,delay:i*.14}); tone(b,{type:'sawtooth',f:70,f1:110,dur:.6,peak:.1,cut:600,drive:true,send:.3}); },
     fanDown(pos){ if(!on()) return; const a=where(pos,.8); if(!a) return; const b=bus(a);
       tone(b,{type:'triangle',f:800,f1:300,dur:.18,peak:.08}); noise(b,{hz:700,q:1.2,dur:.3,peak:.05,atk:.05}); },
+    rain(go){ if(!ctx) return; const t=ctx.currentTime;
+      if(this._rn){ const r=this._rn; this._rn=null; r.g.gain.cancelScheduledValues(t); r.g.gain.setTargetAtTime(0,t,.45); setTimeout(()=>{ try{ r.s.stop(); }catch(e){} },2400); }
+      if(!go) return;
+      const s=ctx.createBufferSource(); s.buffer=noiseBuf; s.loop=true;
+      const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=650;
+      const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=5200;
+      const g=ctx.createGain(); g.gain.value=0; s.connect(hp); hp.connect(lp); lp.connect(g); g.connect(dry);
+      s.start(t,Math.random()); g.gain.setTargetAtTime(.07,t,.6); this._rn={s,g}; },
     storm(){ if(!on()||!ok('st',900)) return; const b=bus(null);
       tone(b,{f:70,f1:60,dur:.5,peak:.22,atk:.02}); noise(b,{ft:'lowpass',hz:500,dur:.4,peak:.1}); tone(b,{type:'sawtooth',f:140,dur:.3,peak:.035,cut:500}); },
     dropWhoosh(){ if(!on()) return; const b=bus(null); noise(b,{hz:300,hz2:2000,q:.7,dur:1.6,peak:.2,atk:1.0,send:.3}); tone(b,{f:110,f1:220,dur:1.6,peak:.05,atk:1.2}); },
@@ -15914,48 +15933,102 @@ function buildMiko(){
     ud.tail.push(G); }
   return petFinish(R);
 }
-/* The Shogun that has Faded away: a shadow of a woman in a long kimono and an open robe, a braid to her hem,
-   a bow at her back, violet eyes, a glowing polearm, and a soft violet light around her */
+/* The Shogun that has Faded away: a slender shadow of a woman. A long kimono that fades into the dark at her feet,
+   an open haori, an obi tied in a bow at her back, hair to her waist with a braid, a violet flower pin,
+   glowing violet eyes, and a naginata held upright at her side */
 function buildShogun(){
-  const R=new THREE.Group(), body=new THREE.Group(); R.add(body); const u={body,braid:[],sleeves:[],eyes:[]}; R.userData=u;
-  const SH=0x1e1432, SH2=0x2e1f4a, SKIN=0x4a3d62, HAIR=0x1b1030, TRIM=0x7a48d6, GLOW=0xdcb8ff;
-  const P=(par,geo,h,x,y,z,o)=>pp(par,geo,h,x,y,z,Object.assign({rim:1.5,spec:.1,shin:16},o||{}));
-  const lathe=(pts,a0,al)=>new THREE.LatheGeometry(pts.map(q=>new THREE.Vector2(q[0],q[1])),kd(26,10),a0||0,al||Math.PI*2);
-  P(body,lathe([[0,.03],[.25,.03],[.27,.06],[.21,.2],[.15,.37],[.105,.5],[.09,.56],[0,.57]]),SH,0,0,0);                 // the kimono
-  const robe=P(body,lathe([[.27,.07],[.285,.11],[.225,.26],[.16,.42],[.13,.58],[.135,.68],[.07,.75]],.55,Math.PI*2-1.1),SH2,0,0,0);
-  robe.material.side=THREE.DoubleSide;                                                                                  // an outer robe, open at the front
-  P(body,kTorus(.272,.016,6,28),TRIM,0,.08,0,{emis:.7}).rotation.x=Math.PI/2;                                            // its violet hem
-  P(body,ellipsoid(.112,.135,.082,18,12),SH,0,.69,0);                                                                   // chest
-  [-1,1].forEach(s=>{ const v=P(body,new THREE.BoxGeometry(.018,.17,.012),TRIM,s*.035,.71,.075,{emis:.6}); v.rotation.z=s*.38; });   // the collar's V
-  P(body,kCyl(.108,.108,.06,18),TRIM,0,.53,0,{emis:.4});                                                                 // obi
-  [-1,1].forEach(s=>{ const w=P(body,ellipsoid(.075,.05,.03,12,8),SH2,s*.07,.56,-.115); w.rotation.z=s*.5; });          // a bow at her back
-  P(body,sphere(.03,10,8),TRIM,0,.55,-.11,{emis:.5});
-  P(body,ellipsoid(.04,.05,.035,10,8),SKIN,0,.82,0);                                                                    // neck
-  [-1,1].forEach(s=>{ const g=new THREE.Group(); g.position.set(s*.13,.77,0); g.rotation.set(s>0?-.35:0,0,s*.22); body.add(g);
-    P(g,lathe([[.035,0],[.06,-.06],[.085,-.18],[.09,-.27],[0,-.28]]),SH2,0,0,0);                                          // long hanging sleeves
-    P(g,kTorus(.088,.01,5,18),TRIM,0,-.268,0,{emis:.6}).rotation.x=Math.PI/2;
-    P(g,sphere(.026,10,8),SKIN,0,-.29,.02);
-    u.sleeves.push(g); });
-  const head=new THREE.Group(); head.position.set(0,.93,0); body.add(head); u.head=head;
-  P(head,sphere(.083,20,16),SKIN,0,0,0);
-  P(head,ellipsoid(.1,.088,.1,20,14),HAIR,0,.028,-.016);                                                                // her hair
-  P(head,ellipsoid(.1,.05,.035,16,8),HAIR,0,.045,.066);                                                                 // a straight fringe
-  [-1,1].forEach(s=>P(head,ellipsoid(.028,.12,.03,10,8),HAIR,s*.083,-.06,.035));                                        // long side locks
-  [-1,1].forEach(s=>u.eyes.push(noLine(P(head,ellipsoid(.018,.008,.006,10,6),GLOW,s*.032,-.004,.08,{emis:2.2,rim:0}))));
-  const bb=new THREE.Group(); bb.position.set(0,-.02,-.09); bb.rotation.x=Math.PI*.94; head.add(bb);
-  u.braid=petChain(bb,9,.07,.034,.02,i=>i%2?0x2c1a48:HAIR,i=>i?.035:.16);                                               // the braid, nearly to her hem
-  const fl=new THREE.Group(); fl.position.set(.075,.07,.03); fl.rotation.y=.6; head.add(fl);
-  for(let i=0;i<5;i++){ const a=i/5*Math.PI*2, pt=noLine(P(fl,ellipsoid(.018,.009,.008,8,6),0x9a62f0,Math.cos(a)*.018,Math.sin(a)*.018,0,{emis:1.2})); pt.rotation.z=a; }
-  const w=new THREE.Group(); w.position.set(.2,.52,.1); w.rotation.set(.3,0,-.5); body.add(w); u.blade=w;              // her polearm
-  P(w,kCyl(.009,.009,.78,8),0x2c1c42,0,0,0);
-  P(w,kTorus(.026,.008,6,14),TRIM,0,.37,0,{emis:.8}).rotation.x=Math.PI/2;
-  const bl=noLine(P(w,new THREE.ConeGeometry(.034,.32,kd(8,4)),GLOW,0,.55,0,{emis:2,rim:.2})); bl.scale.z=.25; u.edge=bl;
+  const R=new THREE.Group(), body=new THREE.Group(); R.add(body); const u={body,braid:[],sleeves:[],eyes:[],motes:[]}; R.userData=u;
+  const K1=0x150f28, K2=0x342561, HAO=0x261c48, OBI=0x4e2e98, TRIM=0xa27cff, CORD=0xd8c2ff, SKIN=0xc4b2e4, HAIR=0x1a1030, HAIR2=0x2b1b4c,
+        EYE=0xf2dcff, INK=0x120a1e, GLOW=0xe6d2ff, PETAL=0xc9a6ff;
+  const P=(par,geo,h,x,y,z,o)=>pp(par,geo,h,x,y,z,Object.assign({rim:1.4,spec:.12,shin:18},o||{}));
+  const lathe=(pts,a0,al)=>new THREE.LatheGeometry(pts.map(q=>new THREE.Vector2(q[0],q[1])),kd(32,12),a0||0,al||Math.PI*2);
+  const seg=(par,a,b,r0,r1,h,o)=>{ const d=new THREE.Vector3().subVectors(b,a), L=d.length(), m=P(par,kCyl(r1,r0,L,14),h,0,0,0,o);
+    m.position.copy(a).addScaledVector(d,.5); m.quaternion.setFromUnitVectors(V3(0,1,0),d.normalize()); return m; };
+  // ---- the kimono: a slim column, a little flare at the hem, fading into the dark at her feet
+  const KP=[[0,0],[.13,0],[.132,.01],[.118,.06],[.101,.18],[.095,.3],[.092,.4],[.083,.49],[.072,.53],[0,.535]];
+  const kg=lathe(KP); gradY(kg,K2,K1,.8); part(body,kg,PM(0xffffff,{rim:1.4,spec:.12,shin:18}),0,0,0);
+  const kr=y=>{ for(let i=1;i<KP.length;i++) if(y<=KP[i][1]) return KP[i-1][0]+(KP[i][0]-KP[i-1][0])*(y-KP[i-1][1])/(KP[i][1]-KP[i-1][1]); return .077; };
+  noLine(P(body,kTorus(.131,.0045,6,40),TRIM,0,.01,0,{emis:.8})).rotation.x=Math.PI/2;                  // the hem
+  noLine(P(body,kTorus(.112,.0022,5,40),TRIM,0,.075,0,{emis:.6})).rotation.x=Math.PI/2;
+  { const s=P(body,new THREE.BoxGeometry(.006,.52,.004),TRIM,.016,.27,0,{emis:.75}); s.position.z=(kr(.27)+.001); s.rotation.set(-.07,0,-.035); noLine(s); }   // where it wraps
+  for(let i=0;i<9;i++){ const a=-1.2+i*.3+(i%2)*.1, y=.05+((i*37)%5)*.045, r=kr(y)+.002;                   // sakura petals at the hem
+    const m=noLine(P(body,ellipsoid(.009,.005,.002,8,6),PETAL,Math.sin(a)*r,y,Math.cos(a)*r,{emis:.9,rim:.3})); m.rotation.y=a; m.rotation.z=i*1.3; }
+  // ---- the obi, its cord, and a bow at her back
+  P(body,kCyl(.074,.08,.075,24),OBI,0,.565,0,{spec:.3});
+  noLine(P(body,kTorus(.079,.004,6,32),CORD,0,.556,0,{emis:.7})).rotation.x=Math.PI/2;
+  noLine(P(body,sphere(.009,8,6),CORD,0,.556,.079,{emis:.8}));
+  [-1,1].forEach(s=>{ const w=P(body,ellipsoid(.05,.032,.016,14,10),OBI,s*.042,.592,-.088); w.rotation.set(0,s*.25,s*.38);
+    const t=P(body,ellipsoid(.02,.075,.007,10,8),OBI,s*.02,.5,-.092); t.rotation.z=s*.12; });
+  P(body,sphere(.018,10,8),CORD,0,.586,-.09,{emis:.5});
+  // ---- her waist and chest, the crossed collar
+  P(body,ellipsoid(.064,.1,.052,22,16),K2,0,.67,0);
+  [-1,1].forEach(s=>P(body,ellipsoid(.028,.026,.02,12,10),K2,s*.029,.675,.038));
+  [-1,1].forEach(s=>{ const c=noLine(P(body,new THREE.BoxGeometry(.012,.13,.006),0xe4d8ff,s*.022,.7,.052,{emis:.25})); c.rotation.set(-.32,0,s*.45);
+    const o=noLine(P(body,new THREE.BoxGeometry(.008,.14,.007),TRIM,s*.03,.7,.05,{emis:.7})); o.rotation.set(-.32,0,s*.45); });
+  [-1,1].forEach(s=>P(body,ellipsoid(.032,.024,.03,12,8),K2,s*.066,.748,0));
+  P(body,kCyl(.018,.021,.05,12),0x9c8bc4,0,.785,0);
+  // ---- the haori, open at the front, long to her calves, a violet trim
+  const hp=[[.074,.762],[.096,.73],[.098,.62],[.104,.5],[.116,.38],[.13,.26],[.142,.15],[.152,.065]];
+  const hg=P(body,lathe(hp,.78,Math.PI*2-1.56),HAO,0,0,0,{rim:1.2,spec:.08}); hg.material=hg.material.clone(); hg.material.side=THREE.DoubleSide;
+  { const t=noLine(P(body,kTorus(.152,.004,6,40,Math.PI*2-1.56),TRIM,0,.065,0,{emis:.75})); t.rotation.set(Math.PI/2,0,Math.PI/2+.78); }
+  [-1,1].forEach(s=>{ const a=V3(Math.sin(s*.78)*.076,.76,Math.cos(s*.78)*.076), b=V3(Math.sin(s*.78)*.152,.065,Math.cos(s*.78)*.152);
+    noLine(seg(body,a,b,.004,.004,TRIM,{emis:.75})); });
+  // ---- arms in long hanging sleeves; her right hand holds the naginata
+  [-1,1].forEach(s=>{ const g=new THREE.Group(); g.position.set(s*.075,.745,0); body.add(g);
+    const el=s>0?V3(.04,-.15,.03):V3(.03,-.16,-.005);
+    seg(g,V3(0,0,0),el,.026,.034,HAO);
+    const pg=new THREE.Group(); pg.position.copy(el); g.add(pg); u.sleeves.push(pg);                        // the long sleeve, swaying
+    const pch=P(pg,ellipsoid(.05,.15,.019,16,12),HAO,s*.016,-.11,-.012); pch.rotation.z=s*.07;
+    noLine(P(pg,ellipsoid(.05,.0045,.02,14,6),TRIM,s*.026,-.255,-.012,{emis:.7}));
+    const hand=s>0?V3(.065,-.21,.085):V3(.028,-.23,.03);
+    seg(g,el,hand,.02,.016,HAO); P(g,sphere(.015,10,8),SKIN,hand.x,hand.y,hand.z);
+    if(s>0) u.hand=hand.clone().add(g.position); });
+  // ---- her head
+  const head=new THREE.Group(); head.position.set(0,.85,.006); head.rotation.set(.05,-.2,.07); body.add(head); u.head=head; body.rotation.y=.1;
+  const FS={rim:.55,spec:.18,shin:30};
+  { const fg=ellipsoid(.052,.066,.055,24,18), p=fg.attributes.position;                                    // a soft oval face, narrowing to the chin
+    for(let i=0;i<p.count;i++){ const y=p.getY(i); if(y<0){ const k=1-.28*Math.pow(-y/.066,1.6); p.setX(i,p.getX(i)*k); p.setZ(i,p.getZ(i)*(1-.1*Math.pow(-y/.066,2))); } }
+    fg.computeVertexNormals(); P(head,fg,SKIN,0,0,0,FS); }
+  // eyes: half-lidded and calm, a violet iris that glows under a dark lash, a flick at the outer corner
+  [-1,1].forEach(s=>{ const e=new THREE.Group(); e.position.set(s*.0205,-.002,.05); e.rotation.set(-.04,s*.33,-s*.08); head.add(e); u.eyes.push(e);
+    noLine(P(e,ellipsoid(.0158,.0078,.004,14,10),0xf6f2ff,0,-.001,0,{rim:.1,emis:.15}));
+    { const ig=ellipsoid(.0086,.0088,.003,12,10); gradY(ig,0x4a1e8a,0xc890ff,1); noLine(part(e,ig,PM(0xffffff,{emis:1.2,rim:0}),0,-.0015,.0022)); }
+    noLine(P(e,ellipsoid(.0036,.0052,.002,8,6),0x1c0a30,0,-.0015,.0034,{rim:0}));
+    noLine(P(e,sphere(.0018,6,5),0xffffff,-s*.003,.001,.0042,{emis:1.2,rim:0}));
+    const lid=noLine(P(e,ellipsoid(.0168,.0042,.0045,14,8),SKIN,0,.0052,.0006,FS));                           // the lid, low over the iris
+    const l=noLine(P(e,new THREE.TorusGeometry(.0164,.0021,5,18,Math.PI*.86),INK,0,.0004,.0024,{rim:.1})); l.rotation.z=Math.PI*.07; l.scale.y=.5;
+    const fk=noLine(P(e,ellipsoid(.0075,.0017,.0016,8,5),INK,s*.0175,.0022,.0022,{rim:.1})); fk.rotation.z=s*.38;
+    const b=noLine(P(head,ellipsoid(.012,.0015,.002,8,6),HAIR,s*.021,.019,.051,{rim:.1})); b.rotation.z=-s*.1; });
+  noLine(P(head,sphere(.0021,6,5),TRIM,-.03,-.015,.05,{emis:1.2,rim:0}));                                 // a beauty mark under her eye
+  noLine(P(head,ellipsoid(.0072,.0021,.002,8,6),0x9a5a9e,0,-.041,.0505,{rim:.1,emis:.15}));                 // her lips
+  // her hair, a hime cut: a fringe cut straight across her brow, straight locks beside her face, long straight hair, a braid
+  const HS={spec:.75,shin:70,rim:1.05};
+  const shell=P(head,new THREE.SphereGeometry(.0605,kd(36,14),kd(18,8),0,Math.PI*2,0,1.74),HAIR,0,.008,-.003,HS);
+  shell.material=shell.material.clone(); shell.material.side=THREE.DoubleSide; shell.scale.set(1.04,1.06,1.06); shell.rotation.x=-.42;
+  [-1,1].forEach(s=>{ const l=P(head,ellipsoid(.015,.062,.011,10,10),HAIR,s*.051,-.034,.026,HS); l.rotation.set(-.06,s*.42,s*.04); });
+  P(head,ellipsoid(.06,.25,.027,20,16),HAIR,0,-.2,-.046,HS);
+  const bb=new THREE.Group(); bb.position.set(0,-.1,-.072); bb.rotation.x=Math.PI*.97; head.add(bb);
+  u.braid=petChain(bb,9,.058,.021,.012,i=>i%2?HAIR2:HAIR,i=>i?.028:.08);
+  { const tip=u.braid[u.braid.length-1]; noLine(P(tip,ellipsoid(.012,.025,.012,8,6),TRIM,0,.07,0,{emis:.8})); }
+  // the flower pin, and two beads hanging from it
+  const fl=new THREE.Group(); fl.position.set(.05,.045,.02); fl.rotation.set(0,.7,.2); head.add(fl);
+  for(let i=0;i<5;i++){ const a=i/5*Math.PI*2, pt=noLine(P(fl,ellipsoid(.014,.007,.004,8,6),0x9a62f0,Math.cos(a)*.013,Math.sin(a)*.013,0,{emis:1.1})); pt.rotation.z=a; }
+  noLine(P(fl,sphere(.005,8,6),CORD,0,0,.003,{emis:1.2}));
+  [.025,.045].forEach((y,i)=>noLine(P(fl,sphere(.004,6,5),CORD,.004+i*.006,-y,0,{emis:1})));
+  // ---- the naginata: a slender dark pole, a ring, a curved glowing blade
+  const w=new THREE.Group(); w.position.copy(u.hand); w.rotation.set(.06,0,-.08); body.add(w); u.blade=w;
+  P(w,kCyl(.0058,.0058,1.02,8),0x231736,0,.12,0);
+  noLine(P(w,kTorus(.009,.003,6,14),CORD,0,.6,0,{emis:.8})).rotation.x=Math.PI/2;
+  noLine(P(w,ellipsoid(.008,.03,.006,8,6),TRIM,0,.56,.0,{emis:.8}));
+  const bl=noLine(P(w,new THREE.ConeGeometry(.02,.24,kd(10,5)),GLOW,.004,.74,0,{emis:2.1,rim:.2})); bl.scale.z=.22; bl.rotation.z=-.08; u.edge=bl;
   addOutlines(R);
-  // her light: a soft violet glow behind, a ring at her hem
-  const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:0xa070ff,transparent:true,opacity:.55,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending,fog:false}));
-  gl.scale.set(1.15,1.3,1); gl.position.set(0,.6,-.05); R.add(gl); u.glow=gl;
-  const rg=new THREE.Mesh(new THREE.RingGeometry(.22,.34,36),new THREE.MeshBasicMaterial({color:0xb886ff,transparent:true,opacity:.45,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
-  rg.rotation.x=-Math.PI/2; rg.position.y=.01; R.add(rg); u.ring=rg;
+  // ---- her light: a faint violet glow behind, mist at her feet, motes drifting up
+  const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:0x8a60ff,transparent:true,opacity:.32,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending,fog:false}));
+  gl.scale.set(.75,1.25,1); gl.position.set(0,.6,-.06); R.add(gl); u.glow=gl;
+  const rg=new THREE.Mesh(new THREE.CircleGeometry(.42,40),new THREE.MeshBasicMaterial({map:glowTex(),color:0x6a44e0,transparent:true,opacity:.32,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false}));
+  rg.rotation.x=-Math.PI/2; rg.position.y=.012; R.add(rg); u.ring=rg;
+  for(let i=0;i<12;i++){ const m=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:i%3?0xb48cff:0xf0e0ff,transparent:true,opacity:0,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending,fog:false}));
+    const a=i/12*Math.PI*2; m.userData={x:Math.cos(a)*(.12+(i%4)*.04),z:Math.sin(a)*(.1+(i%3)*.04),p:i/12}; m.scale.setScalar(.035+(i%3)*.012); R.add(m); u.motes.push(m); }
   R.updateMatrixWorld(true); u.h=1.03;
   return R;
 }
@@ -15970,37 +16043,58 @@ function petBuild(id){ return (PET_BUILD[id]||buildNya)(); }
 
 /* ---------- a little life: blinking, tails, ears, legs, wings, tentacles ---------- */
 function petAnim(m,t,dt,st){
-  const ud=m.userData, mv=!!(st&&st.moving); t+=ud.ph;
+  const ud=m.userData, mv=!!(st&&st.moving), id=ud.id; t+=ud.ph;
+  // how far into a walk she is (eased in and out, so she never snaps), and where she is in her stride
+  const wk=ud.wk=(ud.wk||0)+((mv?1:0)-(ud.wk||0))*Math.min(1,dt*7);
+  const spd=st&&st.sp?Math.min(1.5,Math.max(.85,st.sp/8)):1;
+  ud.wph=(ud.wph||0)+dt*(id==='peach'?12.6:12.5)*(.55+.45*wk)*spd;
+  const w=ud.wph, sw=Math.sin(w);
+  const base=(o,k)=>{ const u=o.userData; if(u[k+'0']===undefined) u[k+'0']=k==='y'?o.position.y:o.rotation[k.slice(1)]; return u[k+'0']; };
   ud.blinkT=(ud.blinkT===undefined?1+Math.random()*3:ud.blinkT)-dt;
   let bk=1; if(ud.blinkT<0){ const k=-ud.blinkT/.16; bk=Math.max(.08,Math.abs(1-2*Math.min(1,k))); if(ud.blinkT<-.16) ud.blinkT=1.8+Math.random()*3.6; }
   ud.eyes.forEach(e=>e.scale.y=bk);
-  if(ud.body) ud.body.scale.y=1+Math.sin(t*2.6)*.025;
-  if(ud.head) ud.head.rotation.z=Math.sin(t*.8)*.07+(mv?Math.sin(t*9)*.03:0);
-  ud.tail.forEach((g,i)=>{ g.rotation.z=Math.sin(t*(mv?7:2.4)-i*.7)*(mv?.24:.15); g.rotation.x=g.userData.rx+Math.sin(t*1.8-i*.5)*.07; });
-  ud.ears.forEach((e,i)=>{ const tw=Math.max(0,Math.sin(t*.9+i*2.1)-.93)*6; e.rotation.z=e.userData.rz+Math.sin(t*1.3+i)*.04+(i?-1:1)*tw*.25; });
-  const id=ud.id;
+  if(ud.body) ud.body.scale.y=1+Math.sin(t*2.6)*.025*(1-wk);
+  if(ud.head){ ud.head.rotation.z=Math.sin(t*.8)*.07*(1-.6*wk)+sw*.05*wk;                                   // her head sways, and nods with each step
+    ud.head.rotation.x=base(ud.head,'rx')-Math.sin(w*2)*.06*wk; }
+  ud.tail.forEach((g,i)=>{ g.rotation.z=Math.sin(t*2.4-i*.7)*.15*(1-wk)+Math.sin(w-i*.55)*.26*wk; g.rotation.x=g.userData.rx+Math.sin(t*1.8-i*.5)*.07-(i?0:.12*wk); });
+  ud.ears.forEach((e,i)=>{ const tw=Math.max(0,Math.sin(t*.9+i*2.1)-.93)*6*(1-wk); e.rotation.z=e.userData.rz+Math.sin(t*1.3+i)*.04+(i?-1:1)*tw*.25;
+    e.rotation.x=base(e,'rx')-.2*wk+Math.sin(w*2+i)*.05*wk; });                                              // laid back a little when she runs
   if(id==='peach'){
-    ud.rig.position.y=mv?Math.abs(Math.sin(t*9))*.09:0; ud.rig.rotation.x=mv?-.08:0;
+    // hops: up and over, a squash as she lands, a stretch as she leaves, ears streaming, feet tucked
+    const hp=(w/(Math.PI*2))%1, up=Math.sin(hp*Math.PI), land=Math.max(0,1-Math.min(hp,1-hp)*7);
+    ud.rig.position.y=up*.11*wk; ud.rig.rotation.x=-Math.cos(hp*Math.PI)*.12*wk;
+    if(ud.body){ ud.body.scale.y=(ud.body.scale.y||1)*(1-.13*land*wk+.06*up*wk); ud.body.scale.x=ud.body.scale.z=1+.08*land*wk; }
+    ud.ears.forEach(e=>{ e.rotation.x=base(e,'rx')-(.15+.35*Math.cos(hp*Math.PI))*wk; });
+    ud.legs.forEach(g=>g.rotation.x=base(g,'rx')-up*.7*wk);
     if(ud.nose) ud.nose.scale.set(1,1+Math.max(0,Math.sin(t*14))*.35*(Math.sin(t*.7)>.6?1:0),1);
-    if(ud.carrot) ud.carrot.rotation.z=-.7+Math.sin(t*2)*.08;
-    ud.legs.forEach(g=>g.rotation.x=mv?-Math.abs(Math.sin(t*9))*.5:0);
+    if(ud.carrot) ud.carrot.rotation.z=-.7+Math.sin(t*2)*.08+up*.2*wk;
   } else if(ud.legs.length===4){
-    ud.legs.forEach((g,i)=>{ const p=(i===0||i===3)?0:Math.PI; g.rotation.x=mv?Math.sin(t*12+p)*.55:g.rotation.x*.8; });
-    ud.rig.position.y=mv?Math.abs(Math.sin(t*12))*.012:0;
+    // a trot: legs in diagonal pairs, each foot lifting as it swings through, the body bobbing twice a stride and rolling a little
+    ud.legs.forEach((g,i)=>{ const ph=w+((i===0||i===3)?0:Math.PI);
+      g.rotation.x=base(g,'rx')+Math.sin(ph)*.62*wk; g.position.y=base(g,'y')+Math.max(0,-Math.cos(ph))*.024*wk; });
+    ud.rig.position.y=Math.abs(Math.cos(w))*.02*wk;
+    ud.rig.rotation.x=(.03+Math.sin(w*2)*.022)*wk;
+    ud.rig.rotation.z=sw*(id==='nya'?.07:.035)*wk;
   }
-  if(ud.bell&&id==='nya') ud.bell.rotation.z=Math.sin(t*(mv?9:3))*.22;
+  if(ud.bell&&id==='nya') ud.bell.rotation.z=Math.sin(t*3)*.22*(1-wk)+Math.sin(w*2)*.32*wk;
+  if(ud.bell&&id==='miko') ud.bell.rotation.x=base(ud.bell,'rx')+Math.sin(w*2)*.25*wk;
   if(ud.halo){ ud.halo.rotation.y+=dt*1.4; ud.halo.position.y=.33+Math.sin(t*2)*.012; }
   if(id==='ayesha'){
-    const s=Math.sin(t*2.6); ud.bell.scale.set(1+s*.05,1-s*.07,1+s*.05); ud.rig.position.y=Math.sin(t*1.3)*.02;
+    // she swims: tipped into the way she's going, pulsing harder, her tentacles streaming behind
+    ud.pp=(ud.pp||0)+dt*(2.6+3.2*wk); const s=Math.sin(ud.pp);
+    ud.bell.scale.set(1+s*(.05+.04*wk),1-s*(.07+.05*wk),1+s*(.05+.04*wk)); ud.rig.position.y=Math.sin(t*1.3)*.02*(1-wk)+s*.02*wk;
+    ud.rig.rotation.x=.3*wk;
     if(ud.core) ud.core.scale.setScalar(1+Math.sin(t*3.1)*.08);
-    ud.tent.forEach((ch,i)=>ch.forEach((g,j)=>{ g.rotation.x=g.userData.rx+Math.sin(t*2.6-j*.8+i*1.3)*.2; g.rotation.z=Math.sin(t*1.9-j*.6+i)*.12; }));
+    ud.tent.forEach((ch,i)=>ch.forEach((g,j)=>{ g.rotation.x=g.userData.rx+Math.sin(ud.pp-j*.8+i*1.3)*(.2+.1*wk)-(j?.16:.3)*wk; g.rotation.z=Math.sin(t*1.9-j*.6+i)*.12*(1-.5*wk); }));
   }
   if(id==='maeya'){
-    const f=Math.sin(t*(mv?9:4));
-    ud.wings.forEach(w=>w.rotation.z=-w.userData.s*(.38+f*.14));
-    ud.bodyG.rotation.z=Math.sin(t*1.3)*.1; ud.bodyG.rotation.x=mv?.2:Math.sin(t*1.1)*.05;
+    // she flies: faster wingbeats, leaning into it, banking a little
+    ud.fp=(ud.fp||0)+dt*(4+6*wk); const f=Math.sin(ud.fp);
+    ud.wings.forEach(w2=>w2.rotation.z=-w2.userData.s*(.38+f*(.14+.08*wk)));
+    ud.bodyG.rotation.z=Math.sin(t*1.3)*.1*(1-wk)+Math.sin(t*2.1)*.08*wk; ud.bodyG.rotation.x=Math.sin(t*1.1)*.05*(1-wk)+.28*wk;
+    ud.rig.position.y=-f*.012*wk;
   }
-  if(id==='reinna') ud.wings.forEach((w,i)=>w.rotation.z=w.userData.rz+(i?-1:1)*Math.sin(t*(mv?10:3.2))*.22);
+  if(id==='reinna'){ ud.fp=(ud.fp||0)+dt*(3.2+6.8*wk); ud.wings.forEach((w2,i)=>w2.rotation.z=w2.userData.rz+(i?-1:1)*Math.sin(ud.fp)*(.22+.1*wk)); }
 }
 
 /* ---------- portraits, for the cards ---------- */
@@ -16098,7 +16192,7 @@ const PetRun=(function(){
   function petHurt(tg,d){ petHit=true; try{ hurt(tg,d,false,P.owner); } finally{ petHit=false; } }
   function sparkle(pos,cols){ try{ shardBurst(pos.clone().setY(pos.y+.6),cols,10,1.4,520); }catch(e){} }
 
-  function step(dt,now){ for(const I of list){ P=I; stepOne(dt,now); if(I.id==='miko') mikoAlways(dt,now); } P=null; stepBolts(dt); }
+  function step(dt,now){ for(const I of list){ P=I; stepOne(dt,now); if(I.id==='miko') mikoAlways(dt,now); } P=null; stepBolts(dt); stepSlashes(dt); }
   function stepOne(dt,now){
     if(!P||!P.root) return;
     const o=P.bot?P.owner:pUnit; if(!P.bot&&o!==P.owner){ P.owner=o; P.shown=false; }
@@ -16140,15 +16234,17 @@ const PetRun=(function(){
         petAnim(M,now/1000,dt,{moving:true}); return;
       }
     }
+    if(P.id==='miko'&&P.formUntil){ shogunHunt(o,now,dt,tx,tz); petAnim(M,now/1000,dt,{moving:false}); stepCarrots(dt,now); return; }
     const dx=tx-R.position.x, dz=tz-R.position.z, d=Math.hypot(dx,dz);
-    if(d>11){ puff(R.position.clone(),0xffd6f2); R.position.set(tx,0,tz); }
+    if(P.ret&&d<.8) P.ret=false;
+    if(d>(P.ret?45:11)){ puff(R.position.clone(),0xffd6f2); R.position.set(tx,0,tz); P.ret=false; }
     else if(d>.12){
       const sp=Math.min(18,Math.max(5.5,d*4.2)), st=Math.min(d,sp*dt);
       R.position.x+=dx/d*st; R.position.z+=dz/d*st; moving=d>.35;
       const ta=Math.atan2(dx,dz); let da=ta-M.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); M.rotation.y+=da*Math.min(1,dt*10);
     } else { let da=P.hd-M.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); M.rotation.y+=da*Math.min(1,dt*3); }
     M.position.y=fly?fly+Math.sin(now/1000*(P.id==='maeya'?2.2:1.5))*(P.id==='maeya'?.08:.12):0;
-    petAnim(M,now/1000,dt,{moving});
+    petAnim(M,now/1000,dt,{moving,sp:Math.min(18,Math.max(5.5,d*4.2))});
     if(P.aura){ P.aura.visible=true; P.aura.position.set(op.x,0,op.z); const u=P.aura.userData, pl=.5+.5*Math.sin(now/600);
       u.ring.rotation.z=now/2600; u.ring.material.opacity=.18+.12*pl; u.disc.material.opacity=.05+.04*pl; u.ring.scale.setScalar(1+.04*pl); }
     stepCarrots(dt,now);
@@ -16231,8 +16327,39 @@ const PetRun=(function(){
      a storm breaks, and every bolt has a 30% chance to find an enemy near you: 50 damage */
   const MIKO={CD:15000,FORM:10000,BOLT:[900,1400],HIT:.3,DMG:50,R:14,H:2.7};
   let storm=null; const bolts=[];
+  /* the Shogun hunts: she glides to the enemy nearest her (within 15 of you) and cuts at them, 10 every half second.
+     When she fades back into Miko, the fox runs home to you */
+  const HUNT={CHASE:15,REACH:1.5,SPD:7.5,TICK:.5,DMG:10};
+  const slashes=[];
+  function slashFx(p,yaw){
+    const m=new THREE.Mesh(new THREE.RingGeometry(.5,.74,26,1,-Math.PI/2-1.15,2.3),new THREE.MeshBasicMaterial({color:0xd6c0ff,transparent:true,opacity:.95,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,fog:false}));
+    m.rotation.order='YXZ'; m.rotation.set(-Math.PI/2+.45*(Math.random()<.5?1:-1),yaw,0);
+    m.position.set(p.x-Math.sin(yaw)*.62,1.05,p.z-Math.cos(yaw)*.62); scene.add(m); slashes.push({m,t:0});
+    try{ shardBurst(V3(p.x,.9,p.z),[0xe6d6ff,0xa77cff,0x6a44e0],7,1.6,300); }catch(e){}
+  }
+  function stepSlashes(dt){
+    for(let i=slashes.length-1;i>=0;i--){ const S=slashes[i]; S.t+=dt; S.m.material.opacity=Math.max(0,.95*(1-S.t/.22)); S.m.scale.setScalar(1+S.t*.9);
+      if(S.t>.22){ drop(S.m); S.m.geometry.dispose(); S.m.material.dispose(); slashes.splice(i,1); } }
+  }
+  function shogunHunt(o,now,dt,tx,tz){
+    const R=P.root, M=P.mesh, op=o.mesh.position;
+    let tg=P.sgTg;
+    if(!tg||!tg.alive||now>=P.sgPick||fd(tg.mesh.position,op)>HUNT.CHASE+3){
+      let best=null, bd=1e9; foes(o,now,HUNT.CHASE,op).forEach(u=>{ const d=fd(u.mesh.position,R.position); if(d<bd){ bd=d; best=u; } });
+      tg=P.sgTg=best; P.sgPick=now+350; }
+    let gx=tx, gz=tz, near=false, face=null;
+    if(tg){ const p=tg.mesh.position, dx=p.x-R.position.x, dz=p.z-R.position.z, d=Math.hypot(dx,dz)||1e-3; face=Math.atan2(dx,dz);
+      if(d>HUNT.REACH){ gx=p.x-dx/d*HUNT.REACH*.85; gz=p.z-dz/d*HUNT.REACH*.85; } else { gx=R.position.x; gz=R.position.z; near=true; } }
+    const dx=gx-R.position.x, dz=gz-R.position.z, d=Math.hypot(dx,dz);
+    if(d>.04){ const st=Math.min(d,HUNT.SPD*dt); R.position.x+=dx/d*st; R.position.z+=dz/d*st; if(face===null&&d>.3) face=Math.atan2(dx,dz); }
+    if(face===null) face=P.hd;
+    let da=face-M.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); M.rotation.y+=da*Math.min(1,dt*9);
+    if(near){ P.sgCut=(P.sgCut||0)+dt;
+      if(P.sgCut>=HUNT.TICK){ P.sgCut-=HUNT.TICK; petHurt(tg,HUNT.DMG); P.sgSwing=1; slashFx(tg.mesh.position,M.rotation.y); SFX.whoosh&&SFX.whoosh(tg.mesh.position); } }
+    else P.sgCut=Math.min(P.sgCut||0,HUNT.TICK*.6);
+  }
   function shogunStart(o,now){
-    P.formUntil=now+MIKO.FORM; P.nextBolt=now+600; P.sgT=0;
+    P.formUntil=now+MIKO.FORM; P.nextBolt=now+600; P.sgT=0; P.sgTg=null; P.sgPick=0; P.sgCut=HUNT.TICK*.6; P.sgSwing=0; P.ret=false;
     if(!P.sg){ P.sg=buildShogun(); P.sg.traverse(m=>{ if(m.isMesh&&!m.userData.outline) m.castShadow=true; }); P.root.add(P.sg); }
     P.sg.visible=true; P.sg.scale.setScalar(.01); P.mesh.visible=false;
     puff(P.root.position.clone().setY(.8),0x3a1a5e); puff(P.root.position.clone().setY(1.6),0x8a4fe0);
@@ -16242,7 +16369,7 @@ const PetRun=(function(){
   }
   function shogunEnd(quiet){
     if(!P||P.id!=='miko') return;
-    const was=!!P.formUntil; P.formUntil=0;
+    const was=!!P.formUntil; P.formUntil=0; if(was) P.ret=true; P.sgTg=null;
     if(P.sg) P.sg.visible=false; if(P.mesh) P.mesh.visible=true;
     if(was&&!quiet&&P.root) puff(P.root.position.clone().setY(.6),0x8a4fe0);
     stormEnd();
@@ -16260,8 +16387,11 @@ const PetRun=(function(){
     u.braid.forEach((g,i)=>{ g.rotation.z=Math.sin(t*3.2-i*.6)*.16+.12; g.rotation.x=g.userData.rx+Math.sin(t*2.1-i*.5)*.05; });
     u.sleeves.forEach((g,i)=>g.rotation.x=Math.sin(t*2.6+i)*.12-.05);
     if(u.edge) u.edge.scale.y=1+Math.sin(t*14)*.06;
+    P.sgSwing=Math.max(0,(P.sgSwing||0)-dt*3.4); const sw=P.sgSwing>0?Math.sin((1-P.sgSwing)*Math.PI):0;
+    if(u.blade){ u.blade.rotation.x=.06-sw*1.25; u.blade.rotation.z=-.08+sw*.5; } if(u.body) u.body.rotation.y=.1+sw*.45;
     if(u.glow) u.glow.material.opacity=.42+Math.sin(t*3.1)*.14; if(u.ring){ u.ring.rotation.z=t*.8; u.ring.material.opacity=.32+Math.sin(t*2.4)*.12; }
     u.eyes.forEach(m=>m.scale.y=Math.sin(t*.9)>.96?.15:1);
+    if(u.motes) u.motes.forEach((m,i)=>{ const ph=(t*.32+m.userData.p)%1; m.position.set(m.userData.x+Math.sin(t*1.2+i)*.03,.06+ph*1.05,m.userData.z+Math.cos(t*1.1+i)*.03); m.material.opacity=Math.sin(ph*Math.PI)*.85; });
     stormStep(dt,now,P.formUntil-now);
   }
   function strike(o,now){
@@ -16275,47 +16405,173 @@ const PetRun=(function(){
       bolt(op.x+Math.cos(a)*r,op.z+Math.sin(a)*r); SFX.boomBig&&SFX.boomBig(V3(op.x+Math.cos(a)*r,0,op.z+Math.sin(a)*r));
     }
   }
-  /* a bolt from the sky: a jagged white core in a violet glow, and a scorch on the ground */
-  function bolt(x,z){
-    const g=new THREE.Group(), N=9, top=V3(x+(Math.random()-.5)*3,17,z+(Math.random()-.5)*3), pts=[];
-    for(let i=0;i<=N;i++){ const k=i/N, j=i&&i<N?1:0; pts.push(V3(top.x+(x-top.x)*k+(Math.random()-.5)*1.2*j,top.y*(1-k)+.05,top.z+(z-top.z)*k+(Math.random()-.5)*1.2*j)); }
-    const core=new THREE.MeshBasicMaterial({color:0xf6f0ff,transparent:true,opacity:1,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false,fog:false});
-    const glow=new THREE.MeshBasicMaterial({color:0x9a5aff,transparent:true,opacity:.6,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false,fog:false});
-    for(let i=0;i<N;i++){ const a=pts[i], b=pts[i+1], d=b.clone().sub(a), L=d.length(), mid=a.clone().addScaledVector(d,.5), dir=d.normalize();
-      [[.05,core],[.2,glow]].forEach(([r,m])=>{ const c=new THREE.Mesh(new THREE.CylinderGeometry(r,r,L,6,1,true),m); c.position.copy(mid); c.quaternion.setFromUnitVectors(V3(0,1,0),dir); g.add(c); }); }
-    const sc=new THREE.Mesh(new THREE.RingGeometry(.35,.75,28),new THREE.MeshBasicMaterial({color:0xb886ff,transparent:true,opacity:.42,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
-    sc.rotation.x=-Math.PI/2; sc.position.set(x,.06,z); g.add(sc);
-    scene.add(g); bolts.push({g,t:0,core,glow,sc});
-    try{ shardBurst(V3(x,.4,z),[0xf6f0ff,0xb886ff,0x8a4fe0],8,1.6,420); }catch(e){}
-    const f=document.querySelector('#sgStorm .sg-flash'); if(f){ f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
+  /* ---------- the storm ----------
+     Rain: thin streaks falling at the wind's slant, each one somewhere new every time it falls, splashing as rings on the ground.
+     The air goes dark and cold; lightning branches down, flickers with its return strokes, lights the whole arena
+     for an instant and leaves a scorch. Far off, the clouds flash on their own */
+  const RAIN_VS=`attribute vec4 aSeed; attribute float aEnd;
+    uniform float uTime,uR,uH,uLen; uniform vec2 uC,uWind; varying float vEnd; varying float vY;
+    float h1(float n){ return fract(sin(n)*43758.5453); }
+    void main(){
+      float sp=.82+aSeed.w*.36, cyc=uTime*sp*1.5+aSeed.z, k=fract(cyc), id=floor(cyc);
+      float ox=(h1(aSeed.x*91.7+id*13.1)*2.-1.)*uR, oz=(h1(aSeed.y*57.3+id*7.7)*2.-1.)*uR;
+      vec2 c=uC+vec2(mod(ox-uC.x+uR,2.*uR)-uR,mod(oz-uC.y+uR,2.*uR)-uR);
+      float fall=uH*k, y=uH-fall;
+      vec3 vel=normalize(vec3(uWind.x,-21.,uWind.y));
+      vec3 head=vec3(c.x-uWind.x*(uH-fall)/21.,y,c.y-uWind.y*(uH-fall)/21.);
+      vec3 p=head-vel*uLen*(.75+aSeed.w*.5)*aEnd;
+      vEnd=aEnd; vY=p.y;
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
+    }`;
+  const RAIN_FS=`uniform vec3 uCol; uniform float uOp; varying float vEnd; varying float vY;
+    void main(){ float a=uOp*(1.-vEnd*.85)*smoothstep(0.,.5,vY); gl_FragColor=vec4(uCol,a); }`;
+  const SPL_VS=`attribute vec4 aSeed; attribute vec2 aCorner;
+    uniform float uTime,uR; uniform vec2 uC; varying vec2 vUv; varying float vK;
+    float h1(float n){ return fract(sin(n)*43758.5453); }
+    void main(){
+      float cyc=uTime*(1.7+aSeed.w*.9)+aSeed.z, k=fract(cyc), id=floor(cyc);
+      float ox=(h1(aSeed.x*91.7+id*13.1)*2.-1.)*uR, oz=(h1(aSeed.y*57.3+id*7.7)*2.-1.)*uR;
+      vec2 c=uC+vec2(mod(ox-uC.x+uR,2.*uR)-uR,mod(oz-uC.y+uR,2.*uR)-uR);
+      float s=.04+k*.2*(.7+aSeed.w*.6);
+      vUv=aCorner; vK=k;
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(c.x+aCorner.x*s,.035,c.y+aCorner.y*s,1.);
+    }`;
+  const SPL_FS=`uniform vec3 uCol; uniform float uOp; varying vec2 vUv; varying float vK;
+    void main(){ float r=length(vUv); float ring=smoothstep(.62,.86,r)*smoothstep(1.,.88,r)+step(r,.25)*(1.-smoothstep(0.,.2,vK))*.8;
+      float a=uOp*ring*(1.-vK)*(1.-vK); if(a<.004) discard; gl_FragColor=vec4(uCol,a); }`;
+  let RAINM=null;
+  function rainMeshes(){
+    if(RAINM) return RAINM;
+    const lowQ=GFX.potato||gfxQ().kit<.6, N=GFX.potato?900:lowQ?1800:3200, NS=GFX.potato?110:lowQ?200:340;
+    const g=new THREE.BufferGeometry(), sd=new Float32Array(N*8), en=new Float32Array(N*2);
+    for(let i=0;i<N;i++){ const s=[Math.random(),Math.random(),Math.random(),Math.random()]; sd.set(s,i*8); sd.set(s,i*8+4); en[i*2]=0; en[i*2+1]=1; }
+    g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*6),3)); g.setAttribute('aSeed',new THREE.BufferAttribute(sd,4)); g.setAttribute('aEnd',new THREE.BufferAttribute(en,1));
+    const rain=new THREE.LineSegments(g,new THREE.ShaderMaterial({vertexShader:RAIN_VS,fragmentShader:RAIN_FS,transparent:true,depthWrite:false,
+      uniforms:{uTime:{value:0},uR:{value:20},uH:{value:13},uLen:{value:1.25},uC:{value:new THREE.Vector2()},uWind:{value:new THREE.Vector2(3,1)},uCol:{value:new THREE.Color(0xb9c4dc)},uOp:{value:0}}}));
+    rain.frustumCulled=false; rain.renderOrder=3;
+    const q=new THREE.BufferGeometry(), qs=new Float32Array(NS*16), qc=new Float32Array(NS*8), idx=[];
+    for(let i=0;i<NS;i++){ const s=[Math.random(),Math.random(),Math.random(),Math.random()]; for(let k=0;k<4;k++) qs.set(s,i*16+k*4);
+      qc.set([-1,-1,1,-1,1,1,-1,1],i*8); const o=i*4; idx.push(o,o+1,o+2,o,o+2,o+3); }
+    q.setAttribute('position',new THREE.BufferAttribute(new Float32Array(NS*12),3)); q.setAttribute('aSeed',new THREE.BufferAttribute(qs,4)); q.setAttribute('aCorner',new THREE.BufferAttribute(qc,2)); q.setIndex(idx);
+    const spl=new THREE.Mesh(q,new THREE.ShaderMaterial({vertexShader:SPL_VS,fragmentShader:SPL_FS,transparent:true,depthWrite:false,
+      uniforms:{uTime:{value:0},uR:{value:13},uC:{value:new THREE.Vector2()},uCol:{value:new THREE.Color(0xd4dcef)},uOp:{value:0}}}));
+    spl.frustumCulled=false; spl.renderOrder=2;
+    return RAINM={rain,spl};
+  }
+  // the bolt's look: soft-edged ribbons turned to the camera, a scorch with burnt streaks
+  let STX=null;
+  function stormTex(){
+    if(STX) return STX;
+    const mk=(w,h,fn)=>{ const c=document.createElement('canvas'); c.width=w; c.height=h; fn(c.getContext('2d'),w,h); return new THREE.CanvasTexture(c); };
+    const band=s=>mk(64,4,(x,w,h)=>{ const g=x.createLinearGradient(0,0,w,0);
+      for(let i=0;i<=16;i++){ const v=i/16; g.addColorStop(v,'rgba(255,255,255,'+Math.exp(-Math.pow((v-.5)/s,2)).toFixed(3)+')'); } x.fillStyle=g; x.fillRect(0,0,w,h); });
+    STX={core:band(.2),glow:band(.32),scorch:mk(128,128,(x,w)=>{
+      const g=x.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2); g.addColorStop(0,'rgba(10,8,14,.9)'); g.addColorStop(.3,'rgba(16,12,22,.62)'); g.addColorStop(.62,'rgba(22,18,30,.2)'); g.addColorStop(1,'rgba(0,0,0,0)');
+      x.fillStyle=g; x.fillRect(0,0,w,w); x.strokeStyle='rgba(6,4,10,.55)'; x.lineCap='round';
+      for(let i=0;i<13;i++){ const a=i/13*Math.PI*2+Math.random()*.4, r=w*(.22+Math.random()*.24); x.lineWidth=1+Math.random()*2.2; x.beginPath(); x.moveTo(w/2,w/2);
+        let px=w/2, py=w/2; for(let k=1;k<=4;k++){ const rr=r*k/4, aa=a+(Math.random()-.5)*.35; px=w/2+Math.cos(aa)*rr; py=w/2+Math.sin(aa)*rr; x.lineTo(px,py); } x.stroke(); } })};
+    return STX;
+  }
+  function boltSegs(x,z,far){
+    const top=V3(x+(Math.random()-.5)*7,far?30:24,z+(Math.random()-.5)*7), out=[];
+    const walk=(a,b,disp,depth,w,list)=>{ if(!depth){ list.push({a,b,w}); return; } const L=a.distanceTo(b), m=a.clone().lerp(b,.5);
+      m.x+=(Math.random()-.5)*disp*L; m.z+=(Math.random()-.5)*disp*L; m.y+=(Math.random()-.5)*disp*L*.18;
+      walk(a,m,disp*.94,depth-1,w,list); walk(m,b,disp*.94,depth-1,w,list); };
+    const main=[]; walk(top,V3(x,0,z),.44,6,far?.16:.085,main); out.push(...main);
+    const nb=2+Math.floor(Math.random()*4);
+    for(let i=0;i<nb;i++){ const s=main[6+Math.floor(Math.random()*40)], a=s.b.clone(), h=a.y*(.22+Math.random()*.3);
+      const br=[]; walk(a,a.clone().add(V3((Math.random()-.5)*h,-h,(Math.random()-.5)*h)),.5,4,1,br);
+      br.forEach((g,j)=>g.w=(far?.07:.042)*(1-j/br.length*.85)); out.push(...br); }
+    return out;
+  }
+  function ribbon(segs,cam,wk){
+    const n=segs.length, pos=new Float32Array(n*12), uv=new Float32Array(n*8), idx=[], d=V3(), m=V3(), s=V3();
+    segs.forEach((g,i)=>{ d.subVectors(g.b,g.a); m.addVectors(g.a,g.b).multiplyScalar(.5).sub(cam); s.crossVectors(d,m).normalize().multiplyScalar(g.w*wk*.5);
+      [[g.a,-1],[g.a,1],[g.b,1],[g.b,-1]].forEach(([p,sg],k)=>{ pos[i*12+k*3]=p.x+s.x*sg; pos[i*12+k*3+1]=p.y+s.y*sg; pos[i*12+k*3+2]=p.z+s.z*sg; uv[i*8+k*2]=sg<0?0:1; uv[i*8+k*2+1]=k<2?0:1; });
+      const o=i*4; idx.push(o,o+1,o+2,o,o+2,o+3); });
+    const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.BufferAttribute(pos,3)); geo.setAttribute('uv',new THREE.BufferAttribute(uv,2)); geo.setIndex(idx); return geo;
+  }
+  // how a strike flickers: the first stroke, a dark gap, the return strokes, then nothing
+  const PAT_HIT=[[0,1],[.04,.18],[.075,.95],[.12,.12],[.17,.62],[.23,.06],[.42,0]], PAT_SHEET=[[0,0],[.05,1],[.11,.25],[.19,.8],[.42,0]];
+  const patV=(P,t)=>{ for(let i=1;i<P.length;i++) if(t<P[i][0]){ const [t0,a]=P[i-1],[t1,b]=P[i]; return a+(b-a)*(t-t0)/(t1-t0); } return 0; };
+  const scorches=[]; let flashes=[], stF=0;
+  function flashGo(amp,pat){ flashes.push({t:0,amp,pat}); }
+  function bolt(x,z,far){
+    const X=stormTex(), cam=(camera&&camera.position)||V3(0,20,20), segs=boltSegs(x,z,far), g=new THREE.Group();
+    const core=new THREE.MeshBasicMaterial({map:X.core,color:0xf6f4ff,transparent:true,opacity:1,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false,fog:false,side:THREE.DoubleSide});
+    const glow=new THREE.MeshBasicMaterial({map:X.glow,color:0x8c7cff,transparent:true,opacity:.55,toneMapped:false,blending:THREE.AdditiveBlending,depthWrite:false,fog:false,side:THREE.DoubleSide});
+    g.add(new THREE.Mesh(ribbon(segs,cam,8),glow)); g.add(new THREE.Mesh(ribbon(segs,cam,1),core));
+    let hit=null;
+    if(!far){
+      hit=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),color:0xe4dcff,transparent:true,opacity:1,depthWrite:false,toneMapped:false,blending:THREE.AdditiveBlending,fog:false}));
+      hit.position.set(x,.5,z); hit.scale.setScalar(5); g.add(hit);
+      const sc=new THREE.Mesh(new THREE.PlaneGeometry(1.7,1.7),new THREE.MeshBasicMaterial({map:X.scorch,transparent:true,opacity:1,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2}));
+      sc.rotation.set(-Math.PI/2,0,Math.random()*6.3); sc.position.set(x,.025,z); scene.add(sc); scorches.push({m:sc,t:0});
+      try{ shardBurst(V3(x,.3,z),[0xf6f0ff,0xc8b8ff,0x8a6aff],12,2.2,380); }catch(e){}
+      const f=document.querySelector('#sgStorm .sg-flash'); if(f){ f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
+    }
+    scene.add(g); bolts.push({g,t:0,core,glow,hit});
+    flashGo(far?.45:1,PAT_HIT);
   }
   function stepBolts(dt){
-    for(let i=bolts.length-1;i>=0;i--){ const B=bolts[i]; B.t+=dt; const k=B.t/.32;
-      B.core.opacity=k<1?(Math.random()<.25?.25:1)*(1-k*.6):0; B.glow.opacity=k<1?.6*(1-k):0; B.sc.material.opacity=Math.max(0,.42*(1-B.t/.6)); B.sc.scale.setScalar(1+B.t*1.4);
-      if(B.t>.95){ drop(B.g); B.g.traverse(m=>{ if(m.isMesh){ m.geometry.dispose(); } }); B.core.dispose(); B.glow.dispose(); B.sc.material.dispose(); bolts.splice(i,1); } }
+    for(let i=bolts.length-1;i>=0;i--){ const B=bolts[i]; B.t+=dt; const v=patV(PAT_HIT,B.t);
+      B.core.opacity=v; B.glow.opacity=.55*v; if(B.hit){ B.hit.material.opacity=Math.max(0,1-B.t/.3); B.hit.scale.setScalar(5+B.t*4); }
+      if(B.t>.45){ drop(B.g); B.g.traverse(m=>{ if(m.isMesh||m.isSprite){ m.geometry&&m.geometry.dispose(); } }); B.core.dispose(); B.glow.dispose(); if(B.hit) B.hit.material.dispose(); bolts.splice(i,1); } }
+    for(let i=scorches.length-1;i>=0;i--){ const S=scorches[i]; S.t+=dt; S.m.material.opacity=Math.max(0,Math.min(1,(5-S.t)/2));
+      if(S.t>5){ drop(S.m); S.m.geometry.dispose(); S.m.material.dispose(); scorches.splice(i,1); } }
+    stF=0; for(let i=flashes.length-1;i>=0;i--){ const F=flashes[i]; F.t+=dt; stF=Math.max(stF,F.amp*patV(F.pat,F.t)); if(F.t>.5) flashes.splice(i,1); }
   }
-  /* the storm: darker air, violet haze, rain and wind on the screen, motes blown across the arena */
+  const STORM_FOG=new THREE.Color(0x141a27), FLASH_C=new THREE.Color(0xc4c8ff), _wc=new THREE.Color();
+  const stEnv={dir:new THREE.Vector3(),light:new THREE.Color(),sky:new THREE.Color(),gnd:new THREE.Color(),rim:new THREE.Color(),expo:1};
+  const ST_SKY=LC(0x2e3852), ST_RIM=LC(0x7c86b8);
   function stormStart(){
     if(storm) return;
-    storm={t:0,fog0:scene.fog?scene.fog.color.clone():null,
-      parts:makeParticles({n:320,colors:[0xd8ccff,0xffffff,0xb89cff],size:.08,vx:11,vy:-.3,vz:2,sway:.8,box:[46,9,46],y0:.2,additive:true,sprite:'mote',opacity:.75})};
-    scene.add(storm.parts);
+    const M=rainMeshes(), hemi=scene.children.find(o=>o.isHemisphereLight)||null;
+    storm={t:0,k:0,t0:performance.now(),hemi,hemiI:hemi?hemi.intensity:0,sunI:sunLight?sunLight.intensity:0,nextSheet:performance.now()+900+Math.random()*1500,
+      mist:makeParticles({n:GFX.potato?90:180,colors:[0xc6cede,0xe6eaf4],size:.06,vx:9,vy:-.8,vz:2.6,sway:.6,box:[44,5,44],y0:.15,additive:true,sprite:'mote',opacity:.3})};
+    scene.add(M.rain); scene.add(M.spl); scene.add(storm.mist);
     const el=document.getElementById('sgStorm'); if(el) el.classList.add('on');
-    SFX.storm&&SFX.storm();
+    SFX.storm&&SFX.storm(); SFX.rain&&SFX.rain(true);
   }
   function stormStep(dt,now,left){
-    if(!storm) return; storm.t+=dt;
-    const k=Math.min(1,storm.t/.8)*Math.min(1,Math.max(0,left)/700);
-    if(scene.fog&&storm.fog0) scene.fog.color.copy(storm.fog0).lerp(_stormC,k*.65);
-    if(player) storm.parts.userData.update(dt,now/1000,player.position.x,player.position.z);
-    storm.parts.material.opacity=.75*k;
+    if(!storm) return; storm.t=(now-storm.t0)/1000;
+    const k=storm.k=Math.min(1,storm.t/.9)*Math.min(1,Math.max(0,left)/800), M=RAINM, t=storm.t;
+    const F=typeof camFocus==='function'?camFocus():(player?player.position:V3());
+    M.rain.material.uniforms.uTime.value=t; M.rain.material.uniforms.uC.value.set(F.x,F.z); M.rain.material.uniforms.uOp.value=.42*k+.25*stF*k;
+    M.rain.material.uniforms.uWind.value.set(3.4+1.8*Math.sin(t*.7)+.9*Math.sin(t*2.3),1.3+.7*Math.sin(t*.45));      // gusts
+    M.spl.material.uniforms.uTime.value=t; M.spl.material.uniforms.uC.value.set(F.x,F.z); M.spl.material.uniforms.uOp.value=.5*k;
+    storm.mist.userData.update(dt,now/1000,F.x,F.z); storm.mist.material.opacity=.3*k;
+    if(now>=storm.nextSheet&&left>900){ storm.nextSheet=now+2200+Math.random()*3400;                       // the clouds flash far off
+      flashGo(.32+Math.random()*.3,PAT_SHEET); if(Math.random()<.45){ const a=Math.random()*6.28, r=24+Math.random()*10; bolt(F.x+Math.cos(a)*r,F.z+Math.sin(a)*r,true); }
+      if(Math.random()<.5) setTimeout(()=>{ SFX.storm&&SFX.storm(); },500+Math.random()*900); }
+    // the air: darker and colder, lit up for an instant by every flash
+    if(world&&world.light&&scene&&scene.fog&&renderer){ const L=world.light, f=stF*k;
+      renderer.toneMappingExposure=L.exposure*(1-.4*k)*(1+1.4*f);
+      scene.fog.color.set(L.fog.col).lerp(STORM_FOG,.85*k).lerp(FLASH_C,.45*f); scene.fog.density=L.fog.d+(L.fog.d*.7+.011)*k;
+      if(scene.background&&scene.background.isColor) scene.background.copy(scene.fog.color); }
+    if(sunLight) sunLight.intensity=storm.sunI*(1-.68*k)+storm.sunI*1.3*stF*k;
+    if(storm.hemi) storm.hemi.intensity=storm.hemiI*(1-.3*k)+.9*stF*k;
   }
-  const _stormC=new THREE.Color(0x231a3c);
+  /* the characters' light, under the storm */
+  function env(base){
+    if(!storm||!storm.k||!base) return base;
+    const k=storm.k, f=stF*k; stEnv.dir.copy(base.dir); stEnv.expo=base.expo||1;
+    stEnv.light.copy(base.light).multiplyScalar(1-.55*k).lerp(FLASH_C,.7*f);
+    stEnv.sky.copy(base.sky).lerp(ST_SKY,.55*k).lerp(FLASH_C,.5*f);
+    stEnv.gnd.copy(base.gnd).multiplyScalar(1-.45*k);
+    stEnv.rim.copy(base.rim).lerp(ST_RIM,.6*k);
+    return stEnv;
+  }
   function stormEnd(){
     if(!storm) return;
-    if(scene&&scene.fog&&storm.fog0) scene.fog.color.copy(storm.fog0);
-    drop(storm.parts); storm.parts.geometry.dispose(); storm.parts.material.dispose(); storm=null;
+    const L=world&&world.light;
+    if(L&&scene&&scene.fog&&renderer){ renderer.toneMappingExposure=L.exposure; scene.fog.color.set(L.fog.col); scene.fog.density=L.fog.d;
+      if(scene.background&&scene.background.isColor) scene.background.set(L.fog.col); }
+    if(sunLight) sunLight.intensity=storm.sunI; if(storm.hemi) storm.hemi.intensity=storm.hemiI;
+    if(RAINM){ drop(RAINM.rain); drop(RAINM.spl); }
+    drop(storm.mist); storm.mist.geometry.dispose(); storm.mist.material.dispose(); storm=null; flashes=[]; stF=0;
     const el=document.getElementById('sgStorm'); if(el) el.classList.remove('on');
+    SFX.rain&&SFX.rain(false);
   }
   /* what she adds to your damage, your speed, and takes off the damage you get */
   function own(u){ if(!u) return null; for(const I of list) if(I.owner===u) return I; return null; }
@@ -16351,7 +16607,7 @@ const PetRun=(function(){
     if(P.id==='maeya') c+=now<P.nextStrike&&P.nextStrike-now>600?`<span class="buff-chip pet dim">SHIRO · AMBUSH ${Math.ceil((P.nextStrike-now)/1000)}s</span>`:ch('SHIRO · AMBUSH READY');
     return c;
   }
-  return {begin,end,step,roundReset,dmgK,takenK,speedK,cdK,chips,get petHit(){ return petHit; },get on(){ return !!mine; },get state(){ return mine; },get all(){ return list; }};
+  return {begin,end,step,roundReset,dmgK,takenK,speedK,cdK,chips,env,get petHit(){ return petHit; },get on(){ return !!mine; },get state(){ return mine; },get all(){ return list; }};
 })();
 
 
@@ -20045,7 +20301,7 @@ function loop(t){
   updatePops();
   KiraFx.step(now,dt); Blizzard.step(now,dt); C10.step(now,dt); CyberFx.step(now,dt); RyUlt.step(now,dt); updateDecals(now);
   emoteStep(now,dt);
-  charLightsFor(camera,Blizzard.env(KiraFx.env(world.charEnv)));
+  charLightsFor(camera,Blizzard.env(KiraFx.env(PetRun.env(world.charEnv))));
   shadowTick(); matchRender();
   raf=Frame.req(loop);
 }
@@ -25214,7 +25470,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.39.1';
+const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.39.2';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -25962,6 +26218,18 @@ function frSend(aid,o){
 }
 function frCancel(aid){ const me=myAid(); State.friendOut=frOut().filter(r=>r.a!==aid); saveState(); if(me) frPub(FR_T('fr',aid,me),null); SFX.back&&SFX.back(); frPaint(); netPaintSoon(); }
 /* ---------- the Friends window ---------- */
+function frInspect(open){
+  const fp=$el('frPop'), lc=$el('lbCard'), op=$el('onProfile');
+  if(lc&&lc.parentElement!==document.body) document.body.appendChild(lc);                      // the card can show from anywhere, not only the leaderboard
+  if(fp) fp.classList.remove('on');
+  const W=[op,lc].filter(Boolean); let seen=false, done=false;
+  const back=()=>{ if(done) return; done=true; mo.disconnect(); clearTimeout(tm); const hub=$el('hub'); if(hub&&!hub.classList.contains('hidden')) openFriends(); };
+  const mo=new MutationObserver(()=>{ const any=W.some(w=>w.classList.contains('on')); if(any) seen=true; else if(seen) back(); });
+  W.forEach(w=>mo.observe(w,{attributes:true,attributeFilter:['class']}));
+  const tm=setTimeout(()=>{ if(!seen) back(); },7000);                                             // their profile couldn't load: back to your friends
+  let r; try{ r=open(); }catch(e){}
+  Promise.resolve(r).catch(()=>{}).then(()=>setTimeout(()=>{ if(!seen) back(); },250));                // it never opened (offline, or not found)
+}
 function openFriends(){ frPaint(true); $el('frPop').classList.add('on'); SFX.open&&SFX.open(); }
 function closeFriends(){ $el('frPop').classList.remove('on'); }
 function frPaint(force){
@@ -25993,7 +26261,7 @@ function frPaint(force){
   el.querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>{ State.friendReq=b.dataset.req; saveState(); frPaint(); SFX.toggle&&SFX.toggle(true);
     if(State.friendReq==='auto') frIn().slice().forEach(r=>frAnswer(r.a,true,true)); });
   el.querySelectorAll('.fr-row[data-aid]').forEach(b=>b.onclick=e=>{ if(e.target.closest('button')) return; const st=friendState(b.dataset.aid);
-    if(st.on) netProfile(st.p.id); else { try{ KyCloud.showAid(b.dataset.aid); }catch(_){} } SFX.open&&SFX.open(); });
+    frInspect(()=>st.on?netProfile(st.p.id):KyCloud.showAid(b.dataset.aid)); SFX.open&&SFX.open(); });
   const ad=$el('frAdd'); wireRx(ad); ad.onclick=()=>{ netAddFriendPop(); };
   const mi=$el('frMyId'); if(mi){ wireRx(mi); mi.onclick=()=>{ try{ navigator.clipboard.writeText(KyCloud.fmt(me)); toast('Your Account ID is copied',2000); }catch(e){} SFX.press&&SFX.press(); }; }
 }
@@ -26006,9 +26274,11 @@ function netOldHTML(){
 function netPlace(){
   const el=$el('onPanel'), m=$el('mailBtn'), dm=$el('dmPanel'); if(!el||!m||!m.offsetHeight) return;
   const top=m.offsetTop+m.offsetHeight+14, sup=$el('hub').querySelector('.support-btn,#supportBtn'), lim=(sup&&sup.offsetTop?sup.offsetTop:innerHeight-60)-14;
-  let bot=lim; const minP=innerHeight<700?108:150;
-  if(dm&&dm.offsetHeight){ const h=dm.offsetHeight, up=innerHeight<700?14:38, dt=Math.max(top+minP+10,lim-h-up); dm.style.top=dt+'px'; bot=dt-10; }
-  el.style.top=top+'px'; el.style.maxHeight=Math.max(minP,bot-top)+'px';
+  const minP=innerHeight<700?108:150;
+  el.style.top=top+'px'; el.style.maxHeight='none';
+  const nat=el.offsetHeight;
+  if(dm&&dm.offsetHeight){ const h=dm.offsetHeight, ph=Math.max(Math.min(minP,nat),Math.min(nat,lim-h-10-top)); el.style.maxHeight=ph+'px'; dm.style.top=(top+ph+10)+'px'; }
+  else el.style.maxHeight=Math.max(minP,lim-top)+'px';
 }
 window.addEventListener('resize',()=>netPlace());
 /* typing in a friend's code */
