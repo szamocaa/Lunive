@@ -1699,6 +1699,13 @@ body.truth-touch #tpBtn{display:block;}
 #truthCo.down b:before{background:#ff4a3a;box-shadow:0 0 6px #ff4a3a;}
 #truthCo.gone b:before{background:#5a5a5a;box-shadow:none;}
 #truthCo small{display:block;margin:4px 0 0 16px;font-size:11px;opacity:.72;}
+#truthCo2{position:absolute;left:20px;top:58px;color:rgba(232,228,216,.78);letter-spacing:.18em;text-shadow:0 0 6px #000;opacity:0;transition:opacity .6s;}
+#truthCo2.on{opacity:1;}
+#truthCo2 b{display:block;font-size:13px;color:#e8e4d8;text-transform:uppercase;}
+#truthCo2 b:before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#7dc8ff;margin-right:9px;box-shadow:0 0 6px #7dc8ff;vertical-align:1px;}
+#truthCo2.down b:before{background:#ff4a3a;box-shadow:0 0 6px #ff4a3a;}
+#truthCo2.gone b:before{background:#5a5a5a;box-shadow:none;}
+#truthCo2 small{display:block;margin:4px 0 0 16px;font-size:11px;opacity:.72;}
 #truthHp{position:absolute;left:20px;bottom:20px;width:170px;height:4px;background:rgba(0,0,0,.5);box-shadow:0 0 0 1px rgba(232,228,216,.12);opacity:0;transition:opacity .5s;}
 #truthHp.on{opacity:1;}
 #truthHp i{display:block;height:100%;width:100%;background:#d8d2c4;transition:width .2s;}
@@ -3108,6 +3115,15 @@ body.online-on #hub .news{display:none;}
 .op-join:active{transform:translateY(2px);box-shadow:0 1px 0 #1b8a4a;}
 .op-party{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:12px;background:linear-gradient(90deg,rgba(90,160,255,.2),rgba(90,160,255,.05));border:1px solid rgba(120,180,255,.35);}
 .op-party .op-t small{font:700 9px var(--ui);letter-spacing:.18em;color:#9cc8ff;}
+.op-party.trio{flex-direction:column;align-items:stretch;gap:6px;padding:7px 9px 8px;}
+.op-party.trio .op-ph{display:flex;align-items:center;gap:8px;}
+.op-party.trio .op-ph small{font:700 9px var(--ui);letter-spacing:.18em;color:#9cc8ff;}
+.op-party.trio .op-leave{padding:4px 9px;}
+.op-pm{display:flex;align-items:center;gap:8px;min-width:0;}
+#hub .on-panel .op-pm .op-av,.op-pm .op-av{width:24px;height:24px;border-radius:6px;}
+.op-pm b{font:700 12.5px var(--ui);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.op-pm .op-ld{font:800 8px var(--ui);font-style:normal;letter-spacing:.14em;color:#ffd36a;border:1px solid rgba(255,211,106,.45);border-radius:999px;padding:1px 5px;flex:none;}
+.op-party .op-pm .op-pst{margin:0 0 0 auto;flex:none;}
 .op-leave{margin-left:auto;border:1px solid rgba(255,120,140,.4);background:rgba(255,60,90,.1);color:#ffb3c1;border-radius:999px;padding:5px 10px;font:700 10px var(--ui);letter-spacing:.14em;cursor:pointer;}
 .op-wait{font:600 11px var(--ui);color:#ffe3a1;letter-spacing:.06em;}
 .op-list{flex:1;min-height:40px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin-right:-6px;padding-right:6px;}
@@ -4056,6 +4072,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
 <div class="on-pop" id="onQueue"></div><div class="on-pop" id="onJoin"></div><div class="on-pop" id="onProfile"></div><div id="onInvite"></div>
 <div id="hub" class="screen hidden">
   <div class="mate-tag" id="mateTag" aria-live="polite"><b class="mt-name"><span class="mt-rk"></span><span class="mt-nm"></span></b><span class="mt-st"></span></div>
+  <div class="mate-tag" id="mateTag2" aria-live="polite"><b class="mt-name"><span class="mt-rk"></span><span class="mt-nm"></span></b><span class="mt-st"></span></div>
   <div class="mate-tag mt-me" id="meTag"><span class="mt-st">Ready</span></div>
   <div class="hero-rank" id="heroRank" aria-hidden="true"></div>
   <div class="lb-fx" aria-hidden="true"><div class="lb-aura"></div><div class="lb-floor"></div><i class="lb-sp" style="left:17.8%;--d:14.5s;--w:-10.2s;--x:1px;--z:1.27"></i><i class="lb-sp" style="left:97.0%;--d:12.8s;--w:-15.4s;--x:-37px;--z:1.00"></i><i class="lb-sp" style="left:24.7%;--d:9.0s;--w:-5.9s;--x:14px;--z:0.94"></i><i class="lb-sp" style="left:15.9%;--d:15.0s;--w:-14.7s;--x:28px;--z:0.63"></i><i class="lb-sp" style="left:97.8%;--d:14.9s;--w:-14.0s;--x:18px;--z:0.95"></i><i class="lb-sp" style="left:93.8%;--d:13.3s;--w:-11.1s;--x:23px;--z:1.36"></i><i class="lb-sp" style="left:37.4%;--d:10.2s;--w:-13.1s;--x:-45px;--z:1.25"></i><i class="lb-sp" style="left:3.9%;--d:10.3s;--w:-11.7s;--x:-9px;--z:0.99"></i><i class="lb-sp" style="left:19.9%;--d:9.3s;--w:-13.9s;--x:-30px;--z:0.66"></i><i class="lb-sp" style="left:20.9%;--d:14.4s;--w:-12.8s;--x:24px;--z:1.20"></i><i class="lb-sp" style="left:75.2%;--d:13.6s;--w:-11.7s;--x:-45px;--z:1.05"></i><i class="lb-sp" style="left:55.7%;--d:12.1s;--w:-5.5s;--x:-42px;--z:1.31"></i><i class="lb-sp" style="left:41.3%;--d:11.9s;--w:-7.2s;--x:-11px;--z:0.85"></i><i class="lb-sp" style="left:48.5%;--d:11.1s;--w:-13.3s;--x:-40px;--z:1.17"></i><i class="lb-sp" style="left:97.3%;--d:13.0s;--w:-7.9s;--x:10px;--z:1.08"></i><i class="lb-sp" style="left:52.1%;--d:13.6s;--w:-5.1s;--x:19px;--z:0.69"></i><i class="lb-sp" style="left:66.3%;--d:14.0s;--w:-13.3s;--x:-18px;--z:0.88"></i><i class="lb-sp" style="left:59.3%;--d:11.5s;--w:-1.7s;--x:-52px;--z:1.34"></i></div>
@@ -4145,7 +4162,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
   <button class="em-chip sk-chip" id="emChip" title="Skins · a new look for your character"><span class="emc-ic"><svg class="ruby-ic" viewBox="0 0 24 24"><path d="M7 3.5h10l4.5 5.2L12 21 2.5 8.7z" fill="url(#rubyG)" stroke="#ffd2dc" stroke-width=".9" stroke-linejoin="round"/><path d="M2.5 8.7h19M7 3.5l2.4 5.2L12 21l2.6-12.3L17 3.5M9.4 8.7 12 3.5l2.6 5.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round"/></svg></span><b>SKINS</b></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.39.2 · BETA</span>
+    <span class="hub-version">VERSION 3.40.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -4312,7 +4329,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.39.2</div></div>
+</svg><div class="set-ver">VERSION 3.40.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -14456,9 +14473,10 @@ const Lobby=(function(){
     load: {pos:[5.5,5.2,17.5], look:[0,.6,0]},
     pets: {pos:[0,1.62,4.5],   look:[0,1.02,0]},
     petshow:{pos:[0,1.7,4.7],  look:[0,1.08,0]},
-    duo:  {pos:[.2,2.55,8.2],  look:[.1,1.3,0]}          // in a team: stepped back, so the two of you fit side by side
+    duo:  {pos:[.2,2.55,8.2],  look:[.1,1.3,0]},         // in a team: stepped back, so the two of you fit side by side
+    trio: {pos:[0,2.8,10.2],   look:[0,1.32,0]}          // three of you: further back, you in the middle
   };
-  const ME_X=-1.25, MATE_X=1.3, MATE_Z=-.3;
+  const ME_X=-1.25, MATE_X=1.3, MATE_Z=-.3, TRI_X=2.4, TRI_Z=-.55;
   const PED_TOP=.47;
   function setMode(m){
     const wasPanel=mode==='panel';
@@ -14471,7 +14489,7 @@ const Lobby=(function(){
   /* where the camera sits for this screen: in the lobby it steps back on a tall phone (the character
      has to fit between the panels) and a little on a short one (room above the head for the bubble) */
   function applyFrame(){
-    const f=(mode==='hub'&&mateKey?FRAMES.duo:FRAMES[mode])||FRAMES.hub; tgtPos.fromArray(f.pos); tgtLook.fromArray(f.look);
+    const f=(mode==='hub'&&mateKey?(mate2Key?FRAMES.trio:FRAMES.duo):FRAMES[mode])||FRAMES.hub; tgtPos.fromArray(f.pos); tgtLook.fromArray(f.look);
     if(mode==='hub'&&cam){ const k=cam.aspect<1?1.85:innerHeight<500?1.25:1; if(k!==1){ tgtPos.sub(tgtLook).multiplyScalar(k).add(tgtLook); if(cam.aspect<1) tgtLook.y-=1.6; } }
   }
   /* on a portrait phone the menus cover the top and bottom, so the picture
@@ -15095,6 +15113,7 @@ void main(){
     if(opts&&opts.pop){ popT=0; hero.scale.setScalar(.01); burstAt(null,24,[0xffffff,0xffd6f2,0xc9e8ff]); }
   }
   /* ---------- online: your teammate, on a pedestal of their own beside you ---------- */
+  let mate2=null, mate2Key=null, mate2Skin='', mate2Ped=null, MR2=null, mate2Unit={}, mate2PopT=-1, mate2Ready=0, mate2St='', tag2El;
   let mateSkin='', mate=null, mateKey=null, matePed=null, MR=null, mateUnit={}, matePopT=-1, mateReady=0, mateSt='', tagEl, meTagEl, rankEl, emChipEl, rankFloorT=-1e9, rankFloor=1e9, teamRdy=false;
   function setMate(key,st,sk){
     if(!R) init();
@@ -15117,6 +15136,28 @@ void main(){
     mate.position.y=PED_TOP-.12; mate.rotation.y=-.35; mate.scale.setScalar(.01); matePed.add(mate); mateUnit={}; matePopT=0;
     if(mode==='hub') burstAt(V3(MATE_X,1.4,MATE_Z),26,[0xffffff,0xc9e8ff,0x8fe6ff]);
   }
+  /* a team of three: the second teammate, on your other side */
+  function setMate2(key,st,sk){
+    if(!R) init();
+    key=key&&byKey(key)?key:null; sk=key&&skinDef(key,sk)?sk:'';
+    mate2St=st||'';
+    if(key===mate2Key&&sk===mate2Skin) return;
+    mate2Skin=sk;
+    const had=!!mate2Key;
+    if(mate2){ mate2Ped.remove(mate2); disposeModel(mate2); mate2=null; }
+    mate2Key=key;
+    if(had!==!!key) applyFrame();
+    if(!key) return;
+    if(!mate2Ped){
+      const sv=[magic,magicRim,orbit,glowPool];
+      mate2Ped=makePedestal(); MR2={magic,magicRim,orbit,glowPool}; [magic,magicRim,orbit,glowPool]=sv;
+      MR2.magic.material.color.set(0xffa8e4); mate2Ped.visible=false; scene.add(mate2Ped);
+    }
+    mate2=buildChar(key,sk);
+    mate2.traverse(o=>{ if(o.isMesh&&!o.userData.isShadow&&!o.userData.flame) o.castShadow=true; if(o.userData&&o.userData.isShadow) o.visible=false; o.layers.enable(1); });
+    mate2.position.y=PED_TOP-.12; mate2.rotation.y=.35; mate2.scale.setScalar(.01); mate2Ped.add(mate2); mate2Unit={}; mate2PopT=0;
+    if(mode==='hub') burstAt(V3(-TRI_X,1.4,TRI_Z),26,[0xffffff,0xffd6f2,0xffa8e4]);
+  }
   function headOf(m){
     const hd=m&&m.userData.head; if(!hd||!cam) return null;
     hd.getWorldPosition(_v1); _v1.y+=HEAD_R*1.9*HEAD_K+.32;
@@ -15125,14 +15166,15 @@ void main(){
   }
   function stepMate(dt,now){
     // your pedestal steps aside while a teammate is here (only in the lobby: the other screens frame you alone)
-    const duo=!!mate&&mode==='hub';
-    pedestal.position.x+=((duo?ME_X:0)-pedestal.position.x)*Math.min(1,dt*4);
+    const duo=!!mate&&mode==='hub', tri=duo&&!!mate2;
+    pedestal.position.x+=((duo&&!tri?ME_X:0)-pedestal.position.x)*Math.min(1,dt*4);
     if(Math.abs(pedestal.position.x)<.002&&!duo) pedestal.position.x=0;
     if(matePed){
       const on=duo&&!stage&&!(chest&&chest.visible);
-      matePed.visible=on;
+      const was=matePed.visible; matePed.visible=on;
       if(on){
-        matePed.position.set(MATE_X,pedestal.position.y,MATE_Z);
+        { const tx=tri?TRI_X:MATE_X, tz=tri?TRI_Z:MATE_Z, k=was?Math.min(1,dt*4):1;           // it steps out to the side when a third one comes
+          matePed.position.set(matePed.position.x+(tx-matePed.position.x)*k,pedestal.position.y,matePed.position.z+(tz-matePed.position.z)*k); }
         if(matePed.userData.ring) matePed.userData.ring.material.color.setHSL((t*.05+.5)%1,.75,.82);
         if(MR.glowPool) MR.glowPool.material.opacity=.16+Math.sin(t*1.6+1)*.05;
         if(MR.magic){ MR.magic.rotation.z+=dt*.22; MR.magic.material.opacity=.62+Math.sin(t*1.4+1)*.14+mateReady*.25; }
@@ -15158,8 +15200,38 @@ void main(){
         if(matePopT>=0){ matePopT+=dt/.55; const k=matePopT<1?1-Math.pow(1-matePopT,3)*Math.cos(matePopT*9)*.9:1; m.scale.setScalar(Math.max(.01,k)); if(matePopT>=1){ matePopT=-1; m.scale.setScalar(1); } }
       }
     }
+    if(mate2Ped){
+      const on=tri&&!stage&&!(chest&&chest.visible);
+      mate2Ped.visible=on;
+      if(on){
+        mate2Ped.position.set(-TRI_X,pedestal.position.y,TRI_Z);
+        if(mate2Ped.userData.ring) mate2Ped.userData.ring.material.color.setHSL((t*.05+.9)%1,.75,.82);
+        if(MR2.glowPool) MR2.glowPool.material.opacity=.16+Math.sin(t*1.6+2)*.05;
+        if(MR2.magic){ MR2.magic.rotation.z-=dt*.22; MR2.magic.material.opacity=.62+Math.sin(t*1.4+2)*.14+mate2Ready*.25; }
+        if(MR2.magicRim){ MR2.magicRim.material.map.offset.x+=dt*.05; MR2.magicRim.material.opacity=.38+Math.sin(t*2.1+2)*.12; }
+        if(MR2.orbit) MR2.orbit.forEach(o=>{ const u=o.userData; u.a-=dt*u.sp; o.position.set(Math.cos(u.a)*u.r,.35+u.y+Math.sin(t*1.3+u.a)*.12,Math.sin(u.a)*u.r); o.material.opacity=.55+.4*Math.sin(t*3+u.a*2); });
+        const m=mate2, ud=m.userData, A=ud.arms, hd=ud.head;
+        mate2Ready+=((mate2St==='ready'?1:0)-mate2Ready)*Math.min(1,dt*6);
+        const face=(.35+Math.sin(t*.5+2.6)*.06)*(1-mate2Ready);              // turned a little toward you, from the other side
+        m.rotation.y+=(face-m.rotation.y)*Math.min(1,dt*3);
+        animateWalk(m,mate2Unit,dt,false);
+        animateFlair(m,now,1);
+        if(ud.halo) ud.halo.rotation.y+=dt*1.2;
+        if(hd){ const ty=mate2St==='chars'?Math.sin(t*1.8+1)*.6:.2+Math.sin(t*.41+1)*.15; hd.rotation.y+=(ty-hd.rotation.y)*Math.min(1,dt*4);
+          const tx=mate2St==='chars'?.12+Math.sin(t*.9+1)*.05:0; hd.rotation.x+=(tx-hd.rotation.x)*Math.min(1,dt*4); }
+        if(mate2Ready>.01){
+          if(A){ A[0].rotation.z-=.35*mate2Ready; A[1].rotation.z+=.35*mate2Ready; A[0].rotation.x-=.25*mate2Ready; A[1].rotation.x-=.25*mate2Ready; }
+          if(ud.body) ud.body.position.y+=Math.abs(Math.sin(t*7+2))*.035*mate2Ready;
+          if(mate2Ped.userData.ring) mate2Ped.userData.ring.material.color.setHSL(.38,.9,.62+.1*mate2Ready);
+        }
+        if(ud.skinIdle) ud.skinIdle(ud,t,dt,m,mate2Ready,face);
+        if(mate2PopT>=0){ mate2PopT+=dt/.55; const k=mate2PopT<1?1-Math.pow(1-mate2PopT,3)*Math.cos(mate2PopT*9)*.9:1; m.scale.setScalar(Math.max(.01,k)); if(mate2PopT>=1){ mate2PopT=-1; m.scale.setScalar(1); } }
+      }
+    }
     // the tags: their name and what they're doing, and your READY
-    if(tagEl===undefined){ tagEl=document.getElementById('mateTag'); meTagEl=document.getElementById('meTag'); }
+    if(tagEl===undefined){ tagEl=document.getElementById('mateTag'); meTagEl=document.getElementById('meTag'); tag2El=document.getElementById('mateTag2'); }
+    if(tag2El){ const p=tri&&mate2Ped&&mate2Ped.visible&&mate2.scale.x>.4?headOf(mate2):null;
+      tag2El.classList.toggle('on',!!p); if(p) tag2El.style.transform='translate3d('+p.x.toFixed(1)+'px,'+p.y.toFixed(1)+'px,0)'; }
     if(tagEl){ const p=duo&&matePed&&matePed.visible&&mate.scale.x>.4?headOf(mate):null;
       tagEl.classList.toggle('on',!!p); if(p) tagEl.style.transform='translate3d('+p.x.toFixed(1)+'px,'+p.y.toFixed(1)+'px,0)'; }
     if(meTagEl){ let p=null;
@@ -15542,7 +15614,7 @@ void main(){
     PS.remove(m); disposeModel(m);
     return PCACHE[key]=url;
   }
-  return {dance,mateDance,danceId:()=>HD.emote?HD.emote.id:0,mateDanceId:()=>MD.emote?MD.emote.id:0,setMate,teamReady(v){ teamRdy=!!v; },get mateKey(){ return mateKey; },get mateShown(){ return !!(matePed&&matePed.visible); },
+  return {dance,mateDance,danceId:()=>HD.emote?HD.emote.id:0,mateDanceId:()=>MD.emote?MD.emote.id:0,setMate,setMate2,teamReady(v){ teamRdy=!!v; },get mateKey(){ return mateKey; },get mateShown(){ return !!(matePed&&matePed.visible); },
     init,start,stop,snap,setMode,setSlow(f){ slow=+f||0; },showcase,endShowcase,setIsland,setSky,setWeather:(w,instant)=>naruSet(w,instant),get weather(){ return naru?naru.wx:''; },setHero,showChest,openChest,portrait,setPet,petStage,petPoke,chestStyle,get petKey(){ return petKey; },get stageKey(){ return stageKey; },cachedPortrait,burstAt,setAccent,headScreen,react,get heroKey(){return heroKey;},get mode(){return mode;},get running(){return running;},resize,
     get info(){ return R?{mem:Object.assign({},R.info.memory),calls:R.info.render.calls,tris:R.info.render.triangles,progs:R.info.programs?R.info.programs.length:0}:null; }};
 })();
@@ -16855,7 +16927,7 @@ function renderMaps(cat){
       <span class="mc-art"><i class="mc-hill h1"></i><i class="mc-hill h2"></i>${modeSvg(M.id)}</span>
       <span class="mc-body"><span class="mc-mode">${M.tag}</span>${M.isNew?'<span class="mc-new">NEW</span>':''}${M.event?'<span class="mc-ev">LIMITED</span>':''}
       <b class="mc-name">${M.name}</b>
-      <span class="mc-maps">${M.id==='truthOn'?'Co-op · First person · Friendly fire':M.event?'Solo · First person · Whitmore Hill':maps.length>1?'Random map · '+maps.length+' maps':'Map · '+maps[0]}</span>${M.online&&!netOn()?'<span class="mc-off">'+(netWhy()==='lim'?'Online is being limited':'Needs a Kyuchi ID')+'</span>':''}</span>
+      <span class="mc-maps">${M.id==='truthOn'?'Co-op · up to 3 players · Friendly fire':M.event?'Solo · First person · Whitmore Hill':maps.length>1?'Random map · '+maps.length+' maps':'Map · '+maps[0]}</span>${M.online&&!netOn()?'<span class="mc-off">'+(netWhy()==='lim'?'Online is being limited':'Needs a Kyuchi ID')+'</span>':''}</span>
       <span class="mc-sel">${sel?'SELECTED':'SELECT'}</span></button>`; }).join('')+
     (C.soon||[]).map(M=>{ const a=M.art; return `<div class="mcard b3 soon${M.id==='truth'?' truth':''}" style="--a:${a[0]};--b:${a[1]};--c:${a[2]};--d:${a[3]}">
       <span class="mc-art"><i class="mc-hill h1"></i><i class="mc-hill h2"></i>${modeSvg(M.id)}</span>
@@ -16865,6 +16937,7 @@ function renderMaps(cat){
   requestAnimationFrame(placeModeCats);
   g.querySelectorAll('button.mcard').forEach(b=>{ wireRx(b); b.addEventListener('click',()=>{
     if(netFollower()){ toast('Only your party leader can change the game mode'); SFX.error&&SFX.error(); return; }
+    { const md=modeById(b.dataset.mode); if(netOn()&&netTeamSize()>2&&md&&md.online&&md.id!=='truthOn'){ toast(md.name+' is for two players · Sanatorium Online takes all three of you',3200); SFX.error&&SFX.error(); return; } }
     if(State.selectedMode===b.dataset.mode){ SFX.back(); showHub(); return; }
     State.selectedMode=b.dataset.mode; saveState(); SFX.toggle(true); renderMaps(MODE_CAT); refreshHub(); }); });
 }
@@ -25470,7 +25543,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.39.2';
+const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.40.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -25689,7 +25762,9 @@ function netPrune(){
   NET.seenI.forEach((t,k)=>{ if(now-t>30000) NET.seenI.delete(k); });
   const nw=[...NET.others.values()].some(o=>o.v>NET_VER)||[...NET.peers.values()].some(p=>p.gv&&netVerCmp(p.gv,LUNIVE_VER)>0);
   if(nw!==NET.newer){ NET.newer=nw; ch=true; }
-  if(NET.party&&!NET.peers.has(NET.party.mate)&&now-(NET.party.at||0)>100000){ netSay((NET.party.info&&NET.party.info.n||'Your teammate')+' went offline',true); NET.party=null; ch=true; netBeat(true); netModeBack(); }
+  if(NET.party){ const P=NET.party;
+    for(const x of P.mem.slice()) if(!NET.peers.has(x.id)&&now-(x.at||0)>100000){ netSay((x.info&&x.info.n||'Your teammate')+' went offline',true); netPDrop(x.id); ch=true; if(NET.party!==P) break; }
+    if(ch) try{ netMateUI(); }catch(e){} }
   if(ch) netPaint();
 }
 function netSend(to,m){ if(!NET.mq) return false; m.f=NET.id; return NET.mq.pub(NET_P+'u/'+to,JSON.stringify(m)); }
@@ -25717,7 +25792,7 @@ function netOnMsg(topic,msg,retained){
     if(p.dv) for(const [oid,o] of NET.peers) if(oid!==id&&o.dv===p.dv){ if((o.t||0)>(p.t||0)) return; NET.peers.delete(oid); }   // the same player twice: the newer card wins
     p.seen=performance.now(); if(p.ti===CREATOR_TITLE&&p.ai!=='999999999') p.ti=''; if(!xtOk(p.ti,p.ai)) p.ti=''; NET.peers.set(id,p);
     if(p.gv&&netVerCmp(p.gv,LUNIVE_VER)>0&&!NET.newer){ NET.newer=true; }
-    if(NET.party&&NET.party.mate===id){ NET.party.info=p; NET.party.at=p.seen; }
+    { const x=netPM(id); if(x){ x.info=p; x.at=p.seen; } }
     netPaintSoon(); return;
   }
   let m; try{ m=JSON.parse(msg); }catch(e){ return; }
@@ -25726,6 +25801,53 @@ function netOnMsg(topic,msg,retained){
   if(topic.startsWith(NET_P+'q/')){ netQueueMsg(m); return; }
   if(NET.match&&topic===NET.match.topic){ netMatchMsg(m); return; }
   netInbox(m);
+}
+
+/* ---------- a team: a leader and up to two more ----------
+   Sanatorium Online takes all three of you; 1v1, 2v2 and Hide & Seek stay two-player.
+   Everyone keeps the others in mem (a teammate: the leader first); the leader says who's in. */
+const NET_TEAM_MAX=3;
+function netNewParty(lead,mem){
+  const P={lead,mem:mem||[],at:performance.now()};
+  // the first of the others (for a teammate, the leader) is "your teammate" wherever only one fits
+  Object.defineProperties(P,{mate:{get(){ return this.mem[0]?this.mem[0].id:null; }},info:{get(){ return this.mem[0]?this.mem[0].info:null; }},ms:{get(){ return this.mem[0]?this.mem[0].ms:null; }}});
+  return P;
+}
+const netPM=id=>NET.party&&id?NET.party.mem.find(x=>x.id===id)||null:null;
+const netTeamSize=()=>NET.party?NET.party.mem.length+1:1;
+const netCardOf=x=>x?(NET.peers.get(x.id)||x.info||{}):{};
+const netCanInvite=()=>!NET.party||(NET.party.lead===NET.id&&NET.party.mem.length<NET_TEAM_MAX-1);
+const netAnd=L=>L.length>1?L.slice(0,-1).join(', ')+' and '+L[L.length-1]:L[0]||'';
+const netTeamNames=()=>netAnd(NET.party?NET.party.mem.map(x=>netCardOf(x).n||'your teammate'):[]);
+function netPSend(m){ if(NET.party) NET.party.mem.forEach(x=>netSend(x.id,Object.assign({},m))); }
+/* the leader tells everyone who's in */
+function netRosterL(){ const P=NET.party; return [{id:NET.id,info:netInfo()}].concat(P?P.mem.map(x=>({id:x.id,info:x.info})):[]); }
+function netRoster(){ const P=NET.party; if(!P||P.lead!==NET.id) return; const L=netRosterL(); P.mem.forEach(x=>netSend(x.id,{k:'roster',L})); }
+/* the team as the leader says it is (the ones you already knew keep what you knew) */
+function netSetRoster(L){
+  const P=NET.party; if(!P||!Array.isArray(L)) return;
+  const keep=new Map(P.mem.map(x=>[x.id,x])), now=performance.now();
+  const mem=L.filter(e=>e&&e.id&&e.id!==NET.id).slice(0,NET_TEAM_MAX-1).map(e=>{ const o=keep.get(e.id); if(o){ if(e.info&&!NET.peers.has(e.id)) o.info=e.info; return o; } return {id:e.id,info:e.info||{},ms:null,at:now}; });
+  if(!mem.some(x=>x.id===P.lead)) return;
+  mem.sort((a,b)=>(b.id===P.lead)-(a.id===P.lead));
+  P.mem=mem;
+}
+/* someone is out of the team: without its leader (or with nobody left) it's over */
+function netPDrop(id){
+  const P=NET.party; if(!P) return false;
+  const i=P.mem.findIndex(x=>x.id===id); if(i<0) return false;
+  if(id===P.lead||P.mem.length<=1){ NET.party=null; NET.partyAsk=null; netBeat(true); netModeBack(); }
+  else { P.mem.splice(i,1); if(P.lead===NET.id) netRoster(); }
+  return true;
+}
+/* three of you: the leader's online mode becomes Sanatorium Online (the only one that takes three) */
+function netTrioMode(){
+  const P=NET.party; if(!P||P.lead!==NET.id||netTeamSize()<3) return;
+  const cm=curMode(); if(!cm.online||cm.id==='truthOn') return;
+  State.selectedMode='truthOn'; saveState(); NET.ready=false;
+  try{ if(S.maps&&!S.maps.classList.contains('hidden')) renderMaps(); }catch(e){}
+  refreshHub(); netPst(true); netReadyUI();
+  netSay('Three of you: Sanatorium Online');
 }
 
 /* ---------- teams: a 7-digit code ---------- */
@@ -25740,52 +25862,64 @@ function netJoin(code){
   const p=[...NET.peers.values()].find(x=>x.cd===code), m={k:'join',code,info:netInfo()};
   if(p) netSend(p.id,m); else { m.f=NET.id; NET.mq.pub(NET_P+'c/'+code,JSON.stringify(m)); }
   const pend=NET.pending={code,at:performance.now()};
-  setTimeout(()=>{ if(NET.pending===pend){ NET.pending=null; netSay('No one with that code is online right now',true); netPaint(); } },7000);
+  setTimeout(()=>{ if(NET.pending===pend){ NET.pending=null; netPaint(); netSay('No one with that code is online right now',true); } },7000);
   netSay('Joining '+code+'…'); netPaint();
 }
 function netLeaveParty(quiet){
   const P=NET.party; if(!P) return;
-  netSend(P.mate,{k:'leave'}); NET.party=null; netBeat(true); netModeBack();
+  netPSend({k:'leave'}); NET.party=null; NET.partyAsk=null; netBeat(true); netModeBack();
   if(!quiet) netSay('You left the team');
   netPaint(); refreshHub();
 }
 function netInvite(id){
   const p=NET.peers.get(id); if(!p) return;
-  if(NET.party) return netSay('You already have a teammate',true);
+  if(NET.party&&NET.party.lead!==NET.id) return netSay('Only your team\'s leader can invite',true);
+  if(netPM(id)) return netSay(p.n+' is already in your team',true);
+  if(!netCanInvite()) return netSay('Your team is full · 3 players',true);
   netSend(id,{k:'inv',code:State.teamCode,info:netInfo()});
   netSay('Invite sent to '+p.n);
 }
 function netInbox(m){
   const who=m.info&&m.info.n||((NET.peers.get(m.f)||{}).n)||'Someone';
   switch(m.k){
-    case 'join':
+    case 'join': {
       if(m.code&&m.code!==State.teamCode) return;
-      if(NET.party&&NET.party.mate===m.f){ netSend(m.f,{k:'joined',info:netInfo()}); return; }
-      if(NET.party||NET.match||NET.queue){ netSend(m.f,{k:'busy'}); return; }
-      NET.party={lead:NET.id,mate:m.f,info:m.info,at:performance.now()};
-      netSend(m.f,{k:'joined',info:netInfo()}); netBeat(true); NET.ready=false; netPst(true); netMateUI();
-      achvPop('TEAM',who+' joined your team','Pick an Online mode: 1v1, 2v2, Hide & Seek or Sanatorium Online','');
-      netPaint(); refreshHub(); break;
+      if(netPM(m.f)){ if(NET.party.lead===NET.id){ netSend(m.f,{k:'joined',info:netInfo(),L:netRosterL()}); netRoster(); } return; }
+      if(NET.match||NET.queue||(NET.party&&NET.party.lead!==NET.id)){ netSend(m.f,{k:'busy'}); return; }
+      if(NET.party&&NET.party.mem.length>=NET_TEAM_MAX-1){ netSend(m.f,{k:'full'}); return; }
+      const first=!NET.party; if(first) NET.party=netNewParty(NET.id,[]);
+      NET.party.mem.push({id:m.f,info:m.info||{},ms:null,at:performance.now()});
+      netSend(m.f,{k:'joined',info:netInfo(),L:netRosterL()}); netRoster(); netBeat(true); if(first) NET.ready=false; netPst(true); netMateUI();
+      const three=netTeamSize()>2;
+      achvPop('TEAM',who+' joined your team',three?'A team of three · Sanatorium Online takes all of you':'Pick an Online mode: 1v1, 2v2, Hide & Seek or Sanatorium Online','');
+      if(three) netTrioMode();
+      netPaint(); refreshHub(); break; }
     case 'joined':
       if(!NET.pending) return;
-      NET.pending=null; NET.party={lead:m.f,mate:m.f,info:m.info,at:performance.now()}; netBeat(true); NET.ready=false; netPst(true); netMateUI();
-      achvPop('TEAM','You joined '+who+"'s team",'Your leader starts the matches','');
+      NET.pending=null; NET.party=netNewParty(m.f,[{id:m.f,info:m.info||{},ms:null,at:performance.now()}]); if(m.L) netSetRoster(m.L);
+      netBeat(true); NET.ready=false; netPst(true); netMateUI();
+      achvPop('TEAM','You joined '+who+"'s team",netTeamSize()>2?'A team of three · your leader starts the matches':'Your leader starts the matches','');
       netPaint(); refreshHub(); break;
-    case 'busy': if(NET.pending){ NET.pending=null; netSay(who+' is busy right now',true); netPaint(); } break;
-    case 'leave': if(NET.party&&NET.party.mate===m.f){ NET.party=null; netBeat(true); netModeBack(); netSay(who+' left the team',true); netPaint(); refreshHub(); } break;
+    case 'roster': if(NET.party&&NET.party.lead===m.f){ netSetRoster(m.L); netPst(true); netMateUI(); netPaint(); refreshHub(); } break;
+    case 'busy': if(NET.pending){ NET.pending=null; netPaint(); netSay(who+' is busy right now',true); } break;
+    case 'full': if(NET.pending){ NET.pending=null; netPaint(); netSay(who+'\'s team is full · 3 players',true); } break;
+    case 'leave': if(netPM(m.f)){ netPDrop(m.f); netSay(who+' left the team',true); netMateUI(); netPaint(); refreshHub(); netTryStart(); } break;
     case 'inv': netInvitePop(m); break;
-    case 'go': if(NET.party&&NET.party.lead===NET.id&&NET.party.mate===m.f){ if(m.info) NET.party.info=m.info; netPartyStart(m.mode); } break;
-    case 'pinit': if(NET.party&&NET.party.mate===m.f&&!NET.match) netSend(m.f,{k:'pinfo',ask:m.ask,info:netInfo()}); break;
-    case 'pinfo': if(NET.party&&NET.partyAsk&&NET.partyAsk.ask===m.ask){ const A=NET.partyAsk; NET.partyAsk=null; netHostStart({mode:A.mode,guest:m.f,guestInfo:m.info,friendly:A.mode==='duel',party:true}); } break;
+    case 'go': { const x=netPM(m.f); if(x&&NET.party.lead===NET.id){ if(m.info) x.info=m.info; netPartyStart(m.mode); } } break;
+    case 'pinit': if(NET.party&&NET.party.lead===m.f&&!NET.match) netSend(m.f,{k:'pinfo',ask:m.ask,info:netInfo()}); break;
+    case 'pinfo': { const A=NET.partyAsk, P=NET.party; if(!P||!A||A.ask!==m.ask||!netPM(m.f)) break;
+      A.got[m.f]=m.info||{};
+      const ids=P.mem.map(x=>x.id); if(!ids.every(id=>A.got[id])) break;              // everyone has to answer
+      NET.partyAsk=null; netHostStart({mode:A.mode,guests:ids.map(id=>({id,info:A.got[id]})),friendly:A.mode==='duel',party:true}); } break;
     case 'prop': case 'acc': case 'no': case 'nvm': netQueueInbox(m); break;
     case 'start': netGotStart(m); break;
     case 'ping': netSend(m.f,{k:'pong'}); break;
-    case 'pst': if(NET.party&&NET.party.mate===m.f){
-      const was=NET.party.ms; NET.party.ms={r:!!m.r,sc:m.sc||'lobby',ch:m.ch,sk:String(m.sk||''),md:m.md,em:0,at:performance.now()}; NET.party.at=performance.now();
+    case 'pst': { const x=netPM(m.f); if(x){
+      const was=x.ms; x.ms={r:!!m.r,sc:m.sc||'lobby',ch:m.ch,sk:String(m.sk||''),md:m.md,em:0,at:performance.now()}; x.at=performance.now();
       if(NET.party.lead===m.f) netFollowMode(m.md);
       if(m.r&&m.sc==='lobby'&&!(was&&was.r)){ SFX.toggle&&SFX.toggle(true); }
       netMateUI(); netPaintSoon(); netTryStart();
-    } break;
+    } } break;
     case 'pong': { let x=NET.twins.get(m.f); if(!x){ x={t:0,live:0}; NET.twins.set(m.f,x); } clearTimeout(x.t); x.t=0; x.live=performance.now()+30000; break; }   // late or not: that tab is open
   }
 }
@@ -25818,11 +25952,12 @@ function netPlay(mode){
 function netPartyStart(mode){
   const P=NET.party; if(!P||NET.match) return;
   const ask='a'+Math.random().toString(36).slice(2,8);
-  NET.partyAsk={ask,mode,at:performance.now()};
-  netSend(P.mate,{k:'pinit',ask,mode});
-  const again=()=>{ if(NET.partyAsk&&NET.partyAsk.ask===ask&&NET.party===P){ netSend(P.mate,{k:'pinit',ask,mode}); setTimeout(again,800); } }; setTimeout(again,800);
+  const A=NET.partyAsk={ask,mode,at:performance.now(),got:{}};
+  const ask1=()=>P.mem.forEach(x=>{ if(!A.got[x.id]) netSend(x.id,{k:'pinit',ask,mode}); });
+  ask1();
+  const again=()=>{ if(NET.partyAsk===A&&NET.party===P){ ask1(); setTimeout(again,800); } }; setTimeout(again,800);
   netQueueUI('party',mode);
-  setTimeout(()=>{ if(NET.partyAsk&&NET.partyAsk.ask===ask){ NET.partyAsk=null; netQueueUI(false); netSay('Your teammate didn\'t answer',true); } },6000);
+  setTimeout(()=>{ if(NET.partyAsk===A){ NET.partyAsk=null; netQueueUI(false); netSay(P.mem.length>1?'Your teammates didn\'t all answer':'Your teammate didn\'t answer',true); } },6000);
 }
 
 /* ---------- matchmaking: everyone searching says so; the lower id of each pair makes the offer ---------- */
@@ -25889,7 +26024,7 @@ function netQueueUI(on,mode){
   const secs=Q?Math.floor((performance.now()-Q.since)/1000):0, n=NET.peers.size+1;
   const TX=ON_TXT[md]||ON_TXT.duo;
   const head=on==='party'?'STARTING':on==='found'?'MATCH FOUND':TX.find;
-  const sub=on==='party'?TX.party:on==='found'?netEsc(mode||''):TX.sub;
+  const sub=on==='party'?(netTeamSize()>2?TX.party.replace('your teammate','your teammates'):TX.party):on==='found'?netEsc(mode||''):TX.sub;
   if(!el.classList.contains('on')||el.dataset.k!==head){
     el.dataset.k=head;
     el.innerHTML=`<div class="oq-card"><div class="oq-ring"><i></i><i></i><b id="oqTime">0:00</b></div>
@@ -25907,7 +26042,7 @@ function netQueueUI(on,mode){
 /* ---------- the lobby panel ---------- */
 let netPaintT=0;
 function netPaintSoon(){ if(netPaintT) return; netPaintT=setTimeout(()=>{ netPaintT=0; netPaint(); },250); }
-function netSay(t,bad){ const el=$el('opMsg'); if(el){ el.textContent=t; el.classList.toggle('bad',!!bad); el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),3200); } else toast(t); }
+function netSay(t,bad){ NET.say={t,bad,at:performance.now()}; const el=$el('opMsg'); if(el){ el.textContent=t; el.classList.toggle('bad',!!bad); el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),3200); } else toast(t); }
 const NET_ST={lobby:'In the lobby',queue:'Searching',party:'In a team',match:'In a match'};
 const NET_EYE='<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const NET_EYE_OFF='<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.3-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
@@ -25931,21 +26066,24 @@ function netPaint(){
     if(li){ wireRx(li); li.onclick=()=>{ Kyuchi.open('login'); SFX.open&&SFX.open(); }; }
     netPlace(); return;
   }
-  const P=NET.party, mate=P?(NET.peers.get(P.mate)||P.info):null, hid=!!State.netHide;
+  const P=NET.party, hid=!!State.netHide;
   const stTxt=NET.st==='online'?(hid?'ONLINE · HIDDEN':'ONLINE'):NET.st==='connecting'?'CONNECTING…':'OFFLINE';
   const fr=friendsList(), rows=fr.map(aid=>Object.assign({aid},friendState(aid))).sort((a,b)=>(b.on-a.on)||friendName(a.aid).localeCompare(friendName(b.aid)));
   const nOn=rows.filter(r=>r.on).length, myAid=(Kyuchi.session&&Kyuchi.session.aid)||'';
   const frow=r=>{ const p=r.p, c=friendCache(r.aid);
     return `<div class="op-row op-fr${r.on?' on':''}" data-aid="${r.aid}" title="${r.on?'Their profile':'Their profile · offline'}"><span class="op-avw"><span class="op-av">${framedHTML(netAvatar(p?p.pf:c.pf),frameById(p?p.fr:c.fr))}</span><i class="op-fdot"></i></span>
       <span class="op-t"><b${p?nameStyle(p.nc):''}>${netEsc(friendName(r.aid))}</b><small class="st-${r.on?p.s:'off'}">${r.on?(NET_ST[p.s]||'Online'):'Offline'}</small></span>
-      ${r.on&&!P&&p.s==='lobby'?`<button class="op-inv rx" data-inv="${p.id}">INVITE</button>`:''}<button class="op-rm" data-rm="${r.aid}" title="Remove from your friends" aria-label="Remove">×</button></div>`; };
+      ${r.on&&netCanInvite()&&!netPM(p.id)&&p.s==='lobby'?`<button class="op-inv rx" data-inv="${p.id}">INVITE</button>`:''}<button class="op-rm" data-rm="${r.aid}" title="Remove from your friends" aria-label="Remove">×</button></div>`; };
   el.innerHTML=`<div class="op-head"><i class="op-dot ${NET.st}${hid?' hid':''}"></i><b>${stTxt}</b>
       <button class="op-hide rx${hid?' on':''}" id="opHide" title="${hid?'Hidden: nobody sees that you\'re online · click to show yourself':'Your friends see you online · click to hide'}">${hid?NET_EYE_OFF:NET_EYE}<span>${hid?'HIDDEN':'VISIBLE'}</span></button></div>
     ${NET.newer?'<div class="op-upd"><span><b>NEW VERSION OUT</b>Players on it can\'t see you until you reload</span><button class="op-reload rx" id="opReload">RELOAD</button></div>':''}
     <div class="op-code"><span>YOUR TEAM CODE</span><b id="opCode" title="Click to copy">${(State.teamCode||'').replace(/(\d{3})(\d{4})/,'$1 $2')}</b>
       <button class="op-join rx" id="opJoin">JOIN A TEAM</button></div>
-    ${P?`<div class="op-party"><span class="op-av">${framedHTML(netAvatar(mate&&mate.pf),frameById(mate&&mate.fr))}</span>
-      <span class="op-t"><small>${P.lead===NET.id?'YOUR TEAMMATE':'YOUR LEADER'}</small><b${nameStyle(mate&&mate.nc)}>${netEsc(mate&&mate.n||'…')}</b><em class="op-pst" data-st="${netMateStatus()}">${PST_TXT[netMateStatus()]}</em></span><button class="op-leave rx" id="opLeave">LEAVE</button></div>`:''}
+    ${!P?'':P.mem.length>1?`<div class="op-party trio"><div class="op-ph"><small>TEAM OF 3${P.lead===NET.id?' · YOU LEAD':''}</small><button class="op-leave rx" id="opLeave">LEAVE</button></div>${P.mem.map(x=>{ const mate=netCardOf(x), st=netMateStatus(x);
+      return `<div class="op-pm"><span class="op-av">${framedHTML(netAvatar(mate&&mate.pf),frameById(mate&&mate.fr))}</span><b${nameStyle(mate&&mate.nc)}>${netEsc(mate&&mate.n||'…')}</b>${x.id===P.lead?'<i class="op-ld">LEADER</i>':''}<em class="op-pst" data-id="${x.id}" data-st="${st}">${PST_TXT[st]}</em></div>`; }).join('')}</div>`
+    :(()=>{ const x=P.mem[0], mate=netCardOf(x), st=netMateStatus(x);
+      return `<div class="op-party"><span class="op-av">${framedHTML(netAvatar(mate&&mate.pf),frameById(mate&&mate.fr))}</span>
+      <span class="op-t"><small>${P.lead===NET.id?'YOUR TEAMMATE':'YOUR LEADER'}</small><b${nameStyle(mate&&mate.nc)}>${netEsc(mate&&mate.n||'…')}</b><em class="op-pst" data-id="${x.id}" data-st="${st}">${PST_TXT[st]}</em></span><button class="op-leave rx" id="opLeave">LEAVE</button></div>`; })()}
     ${NET.pending?'<div class="op-wait">Joining '+NET.pending.code+'…</div>':''}
     <div class="op-fh"><em>${fr.length?nOn+' / '+fr.length+' online':''}</em><button class="op-frs rx" id="opFrs" title="Your friends, who's online, and requests">FRIENDS${frIn().length?'<i>'+frIn().length+'</i>':''}</button><button class="op-add rx" id="opAdd" title="Send a friend request by Account ID">+ ADD</button></div>
     <div class="op-msg" id="opMsg"></div>`;
@@ -25957,6 +26095,7 @@ function netPaint(){
   const fb=$el('opFrs'); wireRx(fb); fb.onclick=()=>openFriends();
   frPaint();
   const hd=$el('opHide'); wireRx(hd); hd.onclick=()=>{ netSetHide(!State.netHide); SFX.toggle&&SFX.toggle(!!State.netHide); };
+  { const sy=NET.say, om=$el('opMsg'), ag=sy?performance.now()-sy.at:1e9; if(om&&ag<3200){ om.textContent=sy.t; om.classList.toggle('bad',!!sy.bad); om.classList.add('on'); om._t=setTimeout(()=>om.classList.remove('on'),3200-ag); } }
   const mi=$el('opMyId'); if(mi) mi.onclick=()=>{ try{ navigator.clipboard.writeText(KyCloud.fmt(myAid)); netSay('Your Account ID is copied'); }catch(e){ netSay('Your Account ID: '+KyCloud.fmt(myAid)); } SFX.press&&SFX.press(); };
   const j=$el('opJoin'); wireRx(j); j.onclick=()=>{ netJoinPop(); SFX.open(); };
   const c=$el('opCode'); c.onclick=()=>{ try{ navigator.clipboard.writeText(State.teamCode); netSay('Team code copied'); }catch(e){ netSay('Your code: '+State.teamCode); } SFX.press(); };
@@ -26125,7 +26264,7 @@ function friendState(aid){
   const p=friendCardOf(aid); if(!p) return {on:false,p:null};
   // what they look like is kept, so an offline friend still has their name and picture
   const c=friendCache(aid); if(c.n!==p.n||c.pf!==(p.pf||'')||c.fr!==(p.fr||'')){ if(!State.friendInfo||typeof State.friendInfo!=='object') State.friendInfo={}; State.friendInfo[aid]={n:p.n,pf:p.pf||'',fr:p.fr||''}; saveState(); }
-  if(p.hd&&!(NET.party&&NET.party.mate===p.id)) return {on:false,p:null};       // hidden: offline to everyone (but their teammate)
+  if(p.hd&&!netPM(p.id)) return {on:false,p:null};       // hidden: offline to everyone (but their teammate)
   return {on:true,p};
 }
 function friendRemove(aid){
@@ -26238,7 +26377,7 @@ function frPaint(force){
   const avOf=(pf,fr)=>`<span class="fr-av">${framedHTML(netAvatar(pf),frameById(fr))}</span>`;
   const row=r=>{ const p=r.p, c=friendCache(r.aid);
     return `<div class="fr-row${r.on?' on':''}" data-aid="${r.aid}">${avOf(p?p.pf:c.pf,p?p.fr:c.fr)}<span class="fr-t"><b${p?nameStyle(p.nc):''}>${netEsc(friendName(r.aid))}</b><small class="st-${r.on?p.s:'off'}">${r.on?(NET_ST[p.s]||'Online'):'Offline'}</small></span>
-      ${r.on&&!P&&p.s==='lobby'?`<button class="fr-b go rx" data-inv="${p.id}">INVITE</button>`:r.on&&P&&P.mate===p.id?'<span class="fr-tag">YOUR TEAM</span>':''}<button class="fr-x" data-rm="${r.aid}" title="Remove from your friends" aria-label="Remove">×</button></div>`; };
+      ${r.on&&netPM(p.id)?'<span class="fr-tag">YOUR TEAM</span>':r.on&&netCanInvite()&&p.s==='lobby'?`<button class="fr-b go rx" data-inv="${p.id}">INVITE</button>`:''}<button class="fr-x" data-rm="${r.aid}" title="Remove from your friends" aria-label="Remove">×</button></div>`; };
   const inR=frIn().map(r=>`<div class="fr-row req">${avOf(r.pf,r.fr)}<span class="fr-t"><b>${netEsc(r.n||'Player')}</b><small>${KyCloud.fmt(r.a)} · wants to be your friend</small></span>
       <button class="fr-b go rx" data-acc="${r.a}">ACCEPT</button><button class="fr-b rx" data-dec="${r.a}">DECLINE</button></div>`).join('');
   const outR=frOut().map(r=>`<div class="fr-row sent">${avOf(r.pf,r.fr)}<span class="fr-t"><b>${netEsc(r.n||friendName(r.a))}</b><small>${KyCloud.fmt(r.a)} · waiting for an answer</small></span><button class="fr-b rx" data-can="${r.a}">CANCEL</button></div>`).join('');
@@ -26318,7 +26457,7 @@ function netProfile(id){
     <div class="opf-slots">${slots}</div>
     <div class="opf-sets">${sets}</div>
     <div class="opf-as"><span>HP <b>${as[0]}</b></span><span>ATK <b>${as[1]}</b></span><span>CRIT <b>${as[2]}%</b></span><span>CRIT DMG <b>${as[3]}%</b></span></div>
-    ${!NET.party&&p.s!=='match'?`<button class="opf-inv rx" id="opfInv">INVITE TO YOUR TEAM</button>`:''}
+    ${netCanInvite()&&!netPM(p.id)&&p.s!=='match'?`<button class="opf-inv rx" id="opfInv">INVITE TO YOUR TEAM</button>`:''}
   </div>`;
   if(p.ti) el.querySelector('.opf-title').appendChild(t);
   el.querySelectorAll('img[data-key]').forEach(im=>{ const u=Lobby.cachedPortrait(im.dataset.key); im.src=u||Lobby.portrait(im.dataset.key); });
@@ -26335,11 +26474,12 @@ document.getElementById('hideSwitch').addEventListener('click',()=>{ netSetHide(
 MODE_ICONS.duel='<circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M2 20c.6-4 2.6-6 5-6s4.4 2 5 6M12 20c.6-4 2.6-6 5-6s4.4 2 5 6"/><path d="M11 3l2 2-2 2"/>';
 MODE_ICONS.duo='<circle cx="6" cy="8" r="2.4"/><circle cx="11" cy="8" r="2.4"/><circle cx="18" cy="6" r="2.2"/><path d="M2 19c.5-3 2-4.6 4-4.6s3.5 1.6 4 4.6M8 19c.5-3 2-4.6 4-4.6s3.5 1.6 4 4.6M15 15c.6-2.4 1.6-3.6 3-3.6s2.6 1.2 3 3.6"/>';
 function netPlayingAs(M){
-  const P=NET.party, mate=P?(NET.peers.get(P.mate)||P.info):null, n=mate&&mate.n?netEsc(mate.n):'';
+  const P=NET.party, n=P?netEsc(netTeamNames()):'', all=netTeamSize()>2?'all ready to start':'both ready to start';
   { const why=netWhy(); if(why) return 'Online · <b style="color:#ffd36a">'+(why==='lim'?'Online is being limited':'Needs a Kyuchi ID · make one in Settings')+'</b>'; }
   if(P&&P.lead!==NET.id){ const cm=curMode(); return 'Your leader picks the mode · <b>'+cm.name+'</b>'+(cm.online?'':' · a solo mode: they play it alone'); }
+  if(n&&netTeamSize()>2&&M.id!=='truthOn') return '<b>'+M.name+'</b> is for two · pick <b>Sanatorium Online</b> to play with <b>'+n+'</b>';
   if(M.id==='hideOn') return n?'Online · <b>Hide &amp; Seek</b> · with <b>'+n+'</b> and 8 bots · both ready to start':'Online · <b>Hide &amp; Seek</b> · with a real player and 8 bots · Enter to play';
-  if(M.id==='truthOn') return n?'<b>Sanatorium Online</b> · co-op with <b>'+n+'</b> · friendly fire · both ready to start':'<b>Sanatorium Online</b> · co-op with a real player · friendly fire · Enter to play';
+  if(M.id==='truthOn') return n?'<b>Sanatorium Online</b> · co-op with <b>'+n+'</b> · friendly fire · '+all:'<b>Sanatorium Online</b> · co-op with a real player · friendly fire · Enter to play';
   if(M.id==='duel') return n?'Friendly 1v1 · vs <b>'+n+'</b> · +3 for a win · both ready to start':'Online · <b>1v1</b> · vs a real player · Enter to play';
   return n?'Online · <b>2v2</b> · with <b>'+n+'</b> vs 2 bots · both ready to start':'Online · <b>2v2</b> · with a real player vs 2 bots · Enter to play';
 }
@@ -26351,10 +26491,12 @@ const NET_TIMEOUT=window.setTimeout.bind(window);
 function netHostStart(o){
   if(NET.match||gameOn||runStarting) return;
   const M=modeById(o.mode), pool=M.maps, map=pool[Math.floor(Math.random()*pool.length)];
-  const me=netInfo(), g=o.guestInfo||{};
-  const cfg={k:'start',mid:o.mid||('m'+Math.random().toString(36).slice(2,10)),mode:o.mode,map,host:NET.id,guest:o.guest,friendly:!!o.friendly,party:!!o.party,
+  const me=netInfo(), G=(o.guests||[{id:o.guest,info:o.guestInfo}]).slice(0,o.mode==='truthOn'?NET_TEAM_MAX-1:1);
+  const gp=x=>{ const g=x.info||{}; return {id:x.id,n:g.n||'Player',ch:byKey(g.ch)?g.ch:'vael',hp:(g.as&&g.as[0])||100,pf:g.pf,fr:g.fr,sk:byKey(g.ch)&&skinDef(g.ch,g.sk)?g.sk:''}; };
+  const cfg={k:'start',mid:o.mid||('m'+Math.random().toString(36).slice(2,10)),mode:o.mode,map,host:NET.id,guest:G[0].id,friendly:!!o.friendly,party:!!o.party,
     P:{h:{id:NET.id,n:me.n,ch:State.selectedChar,hp:artPlayerStats().hp,pf:me.pf,fr:me.fr,sk:mySkin(State.selectedChar)},
-       g:{id:o.guest,n:g.n||'Player',ch:byKey(g.ch)?g.ch:'vael',hp:(g.as&&g.as[0])||100,pf:g.pf,fr:g.fr,sk:byKey(g.ch)&&skinDef(g.ch,g.sk)?g.sk:''}},bots:[]};
+       g:gp(G[0])},bots:[]};
+  if(G[1]){ cfg.P.g2=gp(G[1]); cfg.guests=G.map(x=>x.id); }                 // a third: Sanatorium Online
   if(o.mode==='duo'){
     const used=[cfg.P.h.ch,cfg.P.g.ch], pool2=CHARACTERS.filter(c=>c.rarity!=='celestial'&&!used.includes(c.key)).sort(()=>Math.random()-.5), names=botNamePool(4);
     cfg.bots=[0,1].map(i=>({ch:pool2[i].key,n:names.pop()||('Bot'+(i+1))}));
@@ -26366,10 +26508,10 @@ function netHostStart(o){
     cfg.bots=pool3.slice(0,8).map((c,i)=>({ch:c.key,n:names.pop()||('Bot'+(i+1))}));
     const r=Math.random(); cfg.si=r<.25?0:r<.5?1:2+Math.floor(Math.random()*cfg.bots.length);
   }
-  netSend(o.guest,cfg);
+  G.forEach(x=>netSend(x.id,cfg));
   netBeginMatch(cfg);
   const M0=NET.match; let tries=0;
-  const again=()=>{ const M=NET.match; if(!M||M!==M0||M.heard||M.over||M.left||++tries>16) return; netSend(o.guest,cfg); setTimeout(again,700); };
+  const again=()=>{ const M=NET.match; if(!M||M!==M0||M.over||M.left||++tries>16) return; const W=G.filter(x=>!M.heardBy.has(x.id)); if(!W.length) return; W.forEach(x=>netSend(x.id,cfg)); setTimeout(again,700); };
   setTimeout(again,700);
 }
 function netGotStart(m){
@@ -26381,10 +26523,12 @@ function netGotStart(m){
   netBeginMatch(m);
 }
 function netBeginMatch(cfg){
-  const isHost=cfg.host===NET.id, me=isHost?'h':'g', other=isHost?'g':'h';
-  const M=NET.match={cfg,mid:cfg.mid,mode:cfg.mode,isHost,me,other,otherId:isHost?cfg.guest:cfg.host,topic:NET_P+'m/'+cfg.mid,
-    seenAt:performance.now(),sentAt:0,stAt:0,flushAt:0,out:[],evq:[],kaT:0,fx:[],dot:new Map(),dotAt:0,units:{},over:false,left:false,abort:false};
-  NET.partyAsk=null; NET.ready=false; if(NET.party&&NET.party.ms) NET.party.ms.r=false; NET.pstKey='';
+  const isHost=cfg.host===NET.id, keys=['h','g','g2'].filter(k=>cfg.P[k]);
+  const me=isHost?'h':keys.find(k=>k!=='h'&&cfg.P[k].id===NET.id)||'g', others=keys.filter(k=>k!==me), other=others[0];
+  const t0=performance.now(), seenBy={}; others.forEach(k=>seenBy[cfg.P[k].id]=t0);
+  const M=NET.match={cfg,mid:cfg.mid,mode:cfg.mode,isHost,me,other,others,otherId:cfg.P[other].id,otherIds:others.map(k=>cfg.P[k].id),topic:NET_P+'m/'+cfg.mid,
+    seenAt:t0,seenBy,heardBy:new Set(),clk:{},sentAt:0,stAt:0,flushAt:0,out:[],evq:[],kaT:0,fx:[],dot:new Map(),dotAt:0,units:{},over:false,left:false,abort:false};
+  NET.partyAsk=null; NET.ready=false; if(NET.party) NET.party.mem.forEach(x=>{ if(x.ms) x.ms.r=false; }); NET.pstKey='';
   if(NET.mq) NET.mq.sub(M.topic);
   M.kaT=setInterval(()=>{ if(NET.match===M&&!M.over) netMs({k:'ka'}); },1000);     // still here (a hidden tab draws no frames)
   netBeat(true); netPaint();
@@ -26516,11 +26660,12 @@ function netClock(M,now,ts){
   M.D=M.D===undefined?want:M.D+(want-M.D)*(want>M.D?.2:.04);     // more delay at once when it's needed, less slowly
 }
 function netMatchMsg(m){
-  const M=NET.match; if(!M||m.f!==M.otherId) return;
-  const now=performance.now(); M.seenAt=now; M.heard=true;
-  if(m.k==='bye'){ if(!M.over) netOtherLeft(); return; }
+  const M=NET.match; if(!M||!M.otherIds.includes(m.f)) return;
+  const now=performance.now(); M.seenAt=now; M.heard=true; M.seenBy[m.f]=now; M.heardBy.add(m.f);
+  if(m.k==='bye'){ if(!M.over) netOtherLeft(m.f,true); return; }
   if(m.k!=='m') return;
-  netClock(M,now,m.ts);
+  if(m.f===M.otherId) netClock(M,now,m.ts);
+  netClock(M.clk[m.f]||(M.clk[m.f]={}),now,m.ts);                     // and one clock for each of them
   if(M.mode==='hideOn'||M.mode==='truthOn'){ netMsg2(M,m,now); return; }
   const S=execState;
   if(m.s&&S&&gameOn&&m.r===S.round) m.s.forEach(a=>{ const u=M.units[a[0]]; if(u&&u.puppet&&u.alive) netApplyState(u,a,now,m.ts); });
@@ -26695,11 +26840,18 @@ function netRoundGate(winner){
   return false;
 }
 /* the other player went quiet (or left) */
-function netOtherLeft(){
+function netOtherLeft(id,bye){
   const M=NET.match; if(!M||M.over||M.left) return;
+  if(M.others.length>1){                                                // one of two others: the rest of you carry on
+    id=id||M.otherId; const G=M.goneIds||(M.goneIds=new Set()); if(G.has(id)) return; G.add(id);
+    const k=M.others.find(k=>M.cfg.P[k].id===id), n=k?M.cfg.P[k].n:'Your partner';
+    if(G.size>=M.others.length) M.left=true;
+    try{ Truth.netLeft(n,id,bye); }catch(e){}
+    return;
+  }
   M.left=true;
   const n=M.cfg.P[M.other].n;
-  if(M.mode==='truthOn'){ try{ Truth.netLeft(n); }catch(e){} return; }
+  if(M.mode==='truthOn'){ try{ Truth.netLeft(n,M.otherId,bye); }catch(e){} return; }
   if(M.mode==='hideOn'){ dgNetLeft(n); return; }
   if(M.mode==='duel'){ M.leftMsg=n+' left the match.'; toast(n+' left — you win'); finish(true,'VICTORY!'); return; }
   if(!M.isHost){ M.abort=true; M.leftMsg='The match ended: '+n+' left.'; finish(false,'MATCH ENDED'); return; }
@@ -26773,13 +26925,16 @@ function netPst(force){
   if(NET.ready&&(sc!=='lobby'||!netTeamPlay())){ NET.ready=false; netReadyUI(); }    // leaving the lobby takes your ready back
   const st={r:!!NET.ready,sc,ch:State.selectedChar,sk:mySkin(State.selectedChar),md:State.selectedMode,em:0};
   const key=JSON.stringify(st); if(!force&&key===NET.pstKey) return; NET.pstKey=key;
-  netSend(P.mate,Object.assign({k:'pst'},st));
+  netPSend(Object.assign({k:'pst'},st));
 }
-function netMateStatus(){ const P=NET.party, m=P&&P.ms; if(!m) return 'lobby'; return m.r&&m.sc==='lobby'?'ready':(m.sc||'lobby'); }
+/* what a teammate is doing (the first one, if you don't say which) */
+function netMateStatus(x){ const P=NET.party; x=x||(P&&P.mem[0]); const m=x&&x.ms; if(!m) return 'lobby'; return m.r&&m.sc==='lobby'?'ready':(m.sc||'lobby'); }
+const netAllReady=()=>!!NET.party&&NET.party.mem.every(x=>netMateStatus(x)==='ready');
 /* the leader starts as soon as you both are ready */
 function netTryStart(){
   const P=NET.party; if(!P||P.lead!==NET.id||!NET.ready||NET.match||NET.partyAsk||NET.queue) return;
-  if(!(P.ms&&P.ms.r&&P.ms.sc==='lobby')||!curMode().online) return;
+  if(!netAllReady()||!curMode().online) return;
+  if(netTeamSize()>2&&curMode().id!=='truthOn') return;                // three of you: only Sanatorium Online takes everyone
   netPartyStart(curMode().id);
 }
 /* READY / unready */
@@ -26796,12 +26951,13 @@ function netReadyUI(){
   b.classList.toggle('team',team); b.classList.toggle('is-ready',rd);
   const lb=b.querySelector('b'); if(lb){ const t=team?(rd?'READY ✓':'READY'):'PLAY'; if(lb.textContent!==t) lb.textContent=t; }
   if(team){
-    const card=P?(NET.peers.get(P.mate)||P.info):null, n=card&&card.n||'your teammate', ms=netMateStatus();
-    setText('playSub',rd?(ms==='ready'?'Both ready · starting…':'Waiting for '+n+'…'):'Press when you\'re ready');
+    const wait=P?P.mem.filter(x=>netMateStatus(x)!=='ready').map(x=>netCardOf(x).n||'your teammate'):[];
+    const bad=P&&P.lead===NET.id&&netTeamSize()>2&&curMode().online&&curMode().id!=='truthOn';
+    setText('playSub',bad?'Three of you · pick Sanatorium Online':rd?(!wait.length?(netTeamSize()>2?'All ready · starting…':'Both ready · starting…'):'Waiting for '+netAnd(wait)+'…'):'Press when you\'re ready');
   }
   // the leader on a mode of their own: a hint that the team plays the online ones
-  if(P&&P.lead===NET.id&&netOn()&&!curMode().online){ const card=NET.peers.get(P.mate)||P.info, as=$el('playingAs');
-    if(as) as.innerHTML='Solo · or pick an <b>Online</b> mode to play with <b>'+netEsc(card&&card.n||'your teammate')+'</b>'; }
+  if(P&&P.lead===NET.id&&netOn()&&!curMode().online){ const as=$el('playingAs');
+    if(as) as.innerHTML=netTeamSize()>2?'Solo · or pick <b>Sanatorium Online</b> to play with <b>'+netEsc(netTeamNames())+'</b>':'Solo · or pick an <b>Online</b> mode to play with <b>'+netEsc(netTeamNames()||'your teammate')+'</b>'; }
   try{ Lobby.teamReady(rd); }catch(e){}
   const me=$el('meTag'); if(me) me.classList.toggle('has',rd);
 }
@@ -26825,8 +26981,17 @@ function netMateUI(){
       if(sp.textContent!==txt) sp.textContent=txt;
     }
   }
-  const ps=document.querySelector('#onPanel .op-pst');                 // the panel's line too, at once
-  if(ps&&P){ ps.dataset.st=st; const txt=mateStTxt(st,ms); if(ps.textContent!==txt) ps.textContent=txt; }
+  if(P) document.querySelectorAll('#onPanel .op-pst').forEach(ps=>{ const x=netPM(ps.dataset.id); if(!x) return;     // the panel's lines too, at once
+    const s2=netMateStatus(x), txt=mateStTxt(s2,x.ms); ps.dataset.st=s2; if(ps.textContent!==txt) ps.textContent=txt; });
+  { const x=P&&P.mem[1], card2=x?netCardOf(x):null, ms2=x&&x.ms, key2=x&&netOn()?((ms2&&ms2.ch)||(card2&&card2.ch)||'vael'):null, st2=x?netMateStatus(x):'';
+    try{ Lobby.setMate2(key2,st2,(ms2&&ms2.ch?ms2.sk:(card2&&card2.sk))||''); }catch(e){}
+    const el2=$el('mateTag2');
+    if(el2){ el2.classList.toggle('has',!!key2);
+      if(key2){ el2.dataset.st=st2; const nm=el2.querySelector('.mt-nm'), sp=el2.querySelector('.mt-st'), name=card2&&card2.n||'Teammate', txt=mateStTxt(st2,ms2);
+        if(nm.textContent!==name) nm.textContent=name;
+        const rk=el2.querySelector('.mt-rk'), cr=card2&&card2.ch===key2?Math.round(+card2.cr||0):0, rs=cr>0?String(cr):'';
+        if(rk&&rk.dataset.r!==rs){ rk.dataset.r=rs; rk.innerHTML=rs?rankBadgeR(cr):''; }
+        if(sp.textContent!==txt) sp.textContent=txt; } } }
   netReadyUI();
 }
 
@@ -26849,7 +27014,7 @@ const ON_TXT={
   hideOn:{find:'FINDING A PLAYER',sub:'Hide & Seek · you, a real player and 8 bots',party:'Hide & Seek with your teammate and 8 bots'},
   truthOn:{find:'FINDING A PARTNER',sub:'Sanatorium Online · co-op with a real player',party:'Sanatorium Online with your teammate'}};
 function netFoundLine(cfg,opp){
-  const n=opp&&opp.n||'Player';
+  const n=cfg.mode==='truthOn'?netAnd(['h','g','g2'].filter(k=>cfg.P[k]&&cfg.P[k].id!==NET.id).map(k=>cfg.P[k].n||'Player')):opp&&opp.n||'Player';
   return cfg.mode==='duel'?(cfg.friendly?'Friendly 1v1 · vs ':'1v1 · vs ')+n:cfg.mode==='hideOn'?'Hide & Seek · with '+n+' and 8 bots':cfg.mode==='truthOn'?'Sanatorium Online · with '+n:'2v2 · with '+n+' · vs 2 bots';
 }
 /* the two new modes have their own messages; the clock is the same one */
@@ -26860,13 +27025,13 @@ function netMsg2(M,m,now){
 /* The Truth online: the same few lines, then the dark — with someone else in it */
 function netTruthLoad(M){
   runStarting=true;
-  const opp=M.cfg.P[M.other];
+  const nm=netAnd(M.others.map(k=>M.cfg.P[k].n||'Player')), two=M.others.length>1;
   const ls=$el('loading-screen'); ls.classList.remove('dun'); ls.classList.add('truth');
   document.querySelector('.load-eyebrow').textContent='ONLINE · CO-OP';
   $el('loadTitle').textContent='Sanatorium Online';
-  $el('loadSub').textContent='With '+opp.n+' · First person · Friendly fire';
+  $el('loadSub').textContent='With '+nm+' · First person · Friendly fire';
   show('loading'); Music.stop(); SFX.init();
-  const lines=['Whitmore Hill Sanatorium. Closed in 2000.',opp.n+' is in here with you.','Your guns can hurt each other.','Don\'t let them give you the blue one.'];
+  const lines=['Whitmore Hill Sanatorium. Closed in 2000.',nm+(two?' are':' is')+' in here with you.','Your guns can hurt each other.','Don\'t let them give you the blue one.'];
   const tipEl=$el('loadTip'), pctEl=$el('loadPct'), fill=$el('loadFill');
   let start=null, ti=0; tipEl.textContent=lines[0];
   const tt=setInterval(()=>{ ti=(ti+1)%lines.length; tipEl.textContent=lines[ti]; },1500);
@@ -30027,7 +30192,8 @@ const Truth=(function(){
 
     /* ---- 107 ---- */
     bed(b,9.3,8.1,0,{bare:true});
-    table(b,11.8,8.2,0,.5,.36,.8,'steel');
+    { let three=false; try{ const M=NET.match; three=!!(M&&M.mode==='truthOn'&&M.others&&M.others.length>1); }catch(e){}
+      T.trio=three; if(three) bed(b,11.6,8.1,0,{bare:true}); else table(b,11.8,8.2,0,.5,.36,.8,'steel'); }
     ivStand(b,10.4,7.45,0);
     chair(b,12.3,10.8,-2.4);
     fixture(10.5,9.6,'dying');
@@ -31682,7 +31848,7 @@ void main(){ vec3 d=normalize(vD); float y=max(d.y,0.), sd=max(dot(d,uSun),0.), 
 
     /* the needles: one milky in 108, the rest shuffled every time */
     const fxs=['heavy','blur','halluc','vertigo','numb','rush','mirror','bright','deaf','dark','lethal','halluc'].sort(()=>Math.random()-.5);
-    [[11.8,.8,8.2,true],[24.92,.775,9.35,true],[31.58,.9,9.52,true],[40.55,.9,10.2,false],[11.6,.6,25.55,false],[19.9,1.012,19.5,false],
+    [[11.8,T.trio?.735:.8,8.2,true],[24.92,.775,9.35,true],[31.58,.9,9.52,true],[40.55,.9,10.2,false],[11.6,.6,25.55,false],[19.9,1.012,19.5,false],
      [47.75,.975,17.8,false],[47.35,.95,34.9,true],[55.4,.01,32.5,false],[36.95,.775,17.85,true],[53.3,.01,20.4,false],[54.8,.01,36.6,false]].forEach(([x,y,z,t],i)=>addNeedle(x,y,z,fxs[i],t));
     /* vials: most of them poison */
     const vs=['poison','poison','poison','water','sleep','sweet'].sort(()=>Math.random()-.5);
@@ -34500,62 +34666,70 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   const TN_DMG={pistol:34,smg:16,ak:24,rifle:120};
   const TN_LOOT=new Set(['pistol','smg','ak','rifle','drug','needle','vial','blotter','flashlight']);
   const TN_AWAY=/^(suck|cut|scare|erase|garden|never)$/;
+  /* where each of you wakes up: the host in 108, the others in 107 (a third bed there when there are three of you) */
+  const TN_BED={h:{x:3.3,z:7.6},g:{x:9.3,z:7.6},g2:{x:11.6,z:7.6}};
+  /* T.net is you, online: your health, your shots, the tracker switch. T.net.P is everyone else in the building with you:
+     one each, with their own body, light, name, and their own clock */
   function tnInit(){
     const M=typeof NET!=='undefined'&&NET.match; if(!M||M.mode!=='truthOn') return;
-    const o=M.cfg.P[M.other]||{};
-    T.net={M,name:o.n||'Your partner',hp:100,hurtAt:-99,hurtK:0,buf:[],evq:[],pv:null,cur:null,gone:false,quit:false,
-      bodyAt:{x:3.3,z:7.6},lastShot:-1e9,stepT:0,legPh:0,lastKey:'',stTxt:'',hpShown:-1,
-      mateBed:{x:M.isHost?9.3:3.3,z:9.0}};
-    T.home=M.isHost?{x:3.3,z:7.6}:{x:9.3,z:7.6}; T.p.x=T.home.x; T.p.z=T.home.z; T.net.bodyAt={x:T.home.x,z:T.home.z};
-    tnMate(); tnUI();
+    T.home=TN_BED[M.me]||TN_BED.g; T.p.x=T.home.x; T.p.z=T.home.z;
+    T.net={M,hp:100,hurtAt:-99,hurtK:0,lastShot:-1e9,hpShown:-1,P:[],bodyAt:{x:T.home.x,z:T.home.z}};
+    (M.others||[M.other]).forEach((key,i)=>{ const o=M.cfg.P[key]||{}, b=TN_BED[key]||TN_BED.g;
+      const Q={i,key,id:o.id,name:o.n||'Your partner',buf:[],evq:[],pv:null,cur:null,gone:false,iHit:false,stepT:0,legPh:0,stTxt:'',
+        bed:{x:b.x,z:9.0},clk:((M.clk||(M.clk={}))[o.id])||(M.clk[o.id]={})};
+      T.net.P.push(Q); tnMate(Q); });
+    tnUI();
     netTruthShot=tnShotHook;
   }
+  const tnQ=id=>T&&T.net?T.net.P.find(Q=>Q.id===id)||null:null;
+  const tnLive=()=>T&&T.net?T.net.P.filter(Q=>!Q.gone):[];
+  const tnNames=L=>{ L=L.map(Q=>Q.name); return L.length>1?L.slice(0,-1).join(', ')+' and '+L[L.length-1]:L[0]||''; };
   /* their body: the same patient as yours in the mirror, in a red cap, with a name over it */
-  function tnMate(){
-    const N=T.net, m=buildSelf(), u=m.userData;
+  function tnMate(Q){
+    const m=buildSelf(), u=m.userData;
     m.traverse(o=>{ o.layers.set(0); if(o.isMesh) o.castShadow=true; });
-    m.rotation.order='YXZ'; u.cap.visible=true; u.gown.color.copy(LCc(0xb8c2ae));
+    m.rotation.order='YXZ'; u.cap.visible=true; u.gown.color.copy(LCc(Q.i?0xaeb8c6:0xb8c2ae));
     // a flashlight of their own, off until they turn it on
-    const fl=new THREE.Group(), body=stdMat({color:0x1c1d20,roughness:.45,metalness:.6}), lens=new THREE.MeshBasicMaterial({color:0xfff2d0,toneMapped:false}); T.mats._mLens=lens;
+    const fl=new THREE.Group(), body=stdMat({color:0x1c1d20,roughness:.45,metalness:.6}), lens=new THREE.MeshBasicMaterial({color:0xfff2d0,toneMapped:false}); T.mats['_mLens'+Q.i]=lens; Q.lens=lens;
     for(const [mm,z,s,l] of [[body,0,.017,.16],[body,-.075,.026,.045],[lens,-.098,.022,.004]]){ const me=new THREE.Mesh(GEO.cyl,mm); me.position.z=z; me.scale.set(s,l,s); me.rotation.x=Math.PI/2; fl.add(me); }
     fl.position.set(-.2,1.04,.36); fl.rotation.y=Math.PI; fl.visible=false; m.add(fl); u.flM=fl;
-    const L=new THREE.SpotLight(0xfff2e0,0,22,.5,.65,1.4); L.position.set(-.2,1.08,.46); m.add(L); L.target.position.set(-.2,1.06,6.4); m.add(L.target); N.light=L;
+    const L=new THREE.SpotLight(0xfff2e0,0,22,.5,.65,1.4); L.position.set(-.2,1.08,.46); m.add(L); L.target.position.set(-.2,1.06,6.4); m.add(L.target); Q.light=L;
     // their name, over their head
     const cv=document.createElement('canvas'); cv.width=256; cv.height=64; const x=cv.getContext('2d');
     x.font='bold 28px "Courier New",monospace'; x.textAlign='center'; x.textBaseline='middle';
-    const nm=String(N.name).slice(0,16).toUpperCase(); x.shadowColor='rgba(0,0,0,.9)'; x.shadowBlur=6; x.fillStyle='#e8e4d8'; x.fillText(nm,128,34);
-    const sm=new THREE.SpriteMaterial({map:mkTex(cv,{clamp:true}),transparent:true,depthWrite:false,fog:false,toneMapped:false,opacity:.8}); T.mats._mTag=sm;
-    const tag=new THREE.Sprite(sm); tag.scale.set(1.0,.25,1); tag.position.y=2.05; m.add(tag); N.tag=tag;
-    m.visible=false; N.mate=m;
+    const nm=String(Q.name).slice(0,16).toUpperCase(); x.shadowColor='rgba(0,0,0,.9)'; x.shadowBlur=6; x.fillStyle='#e8e4d8'; x.fillText(nm,128,34);
+    const sm=new THREE.SpriteMaterial({map:mkTex(cv,{clamp:true}),transparent:true,depthWrite:false,fog:false,toneMapped:false,opacity:.8}); T.mats['_mTag'+Q.i]=sm;
+    const tag=new THREE.Sprite(sm); tag.scale.set(1.0,.25,1); tag.position.y=2.05; m.add(tag); Q.tag=tag;
+    m.visible=false; Q.mate=m;
   }
-  /* the teammate tracker (top left: their name, how far away they are). The party leader (or, matched with a stranger, the host) can switch it off, for both of you */
+  /* the teammate tracker (top left: each name, how far away they are). The party leader (or, matched with strangers, the host) can switch it off, for all of you */
   function tnLead(){ const N=T&&T.net; if(!N) return false; try{ if(NET.party) return NET.party.lead===NET.id; }catch(e){} return !!(N.M&&N.M.isHost); }
   function tnCoBtn(){ const b=$t('tpCo'); if(!b) return; const N=T&&T.net; b.classList.toggle('show',!!N); if(!N) return; const lead=tnLead();
     b.classList.toggle('off',!!N.coOff); b.classList.toggle('locked',!lead); b.querySelector('em').textContent=N.coOff?'OFF':'ON';
-    b.querySelector('small').textContent=lead?'for both of you':'only your party leader can change this'; }
-  function tnCoApply(){ const N=T.net, el=$t('truthCo'); if(el) el.classList.toggle('on',!N.coOff); tnCoBtn(); }
+    b.querySelector('small').textContent=lead?(N.P.length>1?'for all of you':'for both of you'):'only your party leader can change this'; }
+  function tnCoApply(){ const N=T.net; N.P.forEach(Q=>{ const el=$t(Q.i?'truthCo2':'truthCo'); if(el) el.classList.toggle('on',!N.coOff); }); tnCoBtn(); }
   function tnCoSet(off){ const N=T&&T.net; if(!N||!tnLead()) return; N.coOff=!!off; try{ State.truthCoOff=!!off; saveState(); }catch(e){}
     netMs({k:'co',v:off?1:0}); N.coSentAt=performance.now(); tnCoApply(); }
   function tnUI(){
     const ui=$t('truthUI');
     const mk=(id,html)=>{ let el=document.getElementById(id); if(!el){ el=document.createElement('div'); el.id=id; el.innerHTML=html||''; ui.appendChild(el); } return el; };
-    const co=mk('truthCo','<b></b><small></small>'); co.querySelector('b').textContent=T.net.name; co.className='on';
+    T.net.P.forEach(Q=>{ const co=mk(Q.i?'truthCo2':'truthCo','<b></b><small></small>'); co.querySelector('b').textContent=Q.name; co.className='on'; Q.el=co; });
     if(tnLead()){ let off=false; try{ off=!!State.truthCoOff; }catch(e){} T.net.coOff=off; } tnCoApply();
     mk('truthHp','<i></i>'); mk('truthHurt');
   }
   function tnStop(){
     const N=T.net; if(!N) return;
     const M=N.M;
-    if(typeof NET!=='undefined'&&NET.match===M){ if(!N.quit&&!N.gone) netMs({k:'out'}); netStopMatch(); }
+    if(typeof NET!=='undefined'&&NET.match===M){ if(!N.quit&&tnLive().length) netMs({k:'out'}); netStopMatch(); }
     netTruthShot=null;
-    ['truthCo','truthHp','truthHurt'].forEach(id=>{ const el=document.getElementById(id); if(el) el.remove(); }); { const b=document.getElementById('tpCo'); if(b) b.classList.remove('show'); }
+    ['truthCo','truthCo2','truthHp','truthHurt'].forEach(id=>{ const el=document.getElementById(id); if(el) el.remove(); }); { const b=document.getElementById('tpCo'); if(b) b.classList.remove('show'); }
     T.net=null;
   }
 
   /* ---------- what you say: where you are, what you hold, what you're doing ---------- */
   function tnTick(dt){
     const N=T.net; if(!N) return; const M=N.M;
-    if(NET.match!==M){ tnMateStep(dt,performance.now()); return; }
+    if(NET.match!==M){ N.P.forEach(Q=>tnMateStep(Q,dt,performance.now())); return; }
     const now=performance.now(), P=T.p;
     const away=!!(T.inDream||T.inTape||T.inSalvia||TN_AWAY.test(T.phase));
     if(!away&&T.phase==='play') N.bodyAt={x:P.x,z:P.z};
@@ -34568,40 +34742,49 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     const key=st.join(',');
     if(NET.mq&&((key!==N.lastKey&&now-M.stAt>=50)||now-M.stAt>=250)){ M.stAt=now; N.lastKey=key; netFlush(M,now,[st]); }
     else if(NET.mq&&M.out.length&&now-M.flushAt>=33) netFlush(M,now,null);
-    // what they did, on the even clock
-    if(N.evq.length){ const rt=M.off===undefined?Infinity:now-M.off-M.D;
-      while(N.evq.length){ const e=N.evq[0]; if(e.ts>rt&&now-e.at<450) break; N.evq.shift(); try{ tnEvent(e.x); }catch(err){ console.warn(err); } } }
-    if(!M.over&&!M.left&&now-M.seenAt>12000) netOtherLeft();
+    for(const Q of N.P){
+      // what they did, on their own even clock
+      if(Q.evq.length){ const C=Q.clk, rt=C.off===undefined?Infinity:now-C.off-C.D;
+        while(Q.evq.length){ const e=Q.evq[0]; if(e.ts>rt&&now-e.at<450) break; Q.evq.shift(); try{ tnEvent(e.x,Q); }catch(err){ console.warn(err); } } }
+      // nothing from them for 12 seconds (45 while they may still be on their way in): they're gone
+      if(!Q.gone&&!M.over){ const seen=(M.seenBy&&M.seenBy[Q.id])||M.seenAt; if(now-seen>(Q.heard?12000:45000)) netOtherLeft(Q.id); }
+    }
     // you heal, slowly, once nobody's shooting
     if(N.hp<100&&T.t-N.hurtAt>5&&T.phase!=='dead') N.hp=Math.min(100,N.hp+12*dt);
     N.hurtK=Math.max(0,N.hurtK-dt*.7);
     if(tnLead()&&now-(N.coSentAt||0)>4000){ N.coSentAt=now; netMs({k:'co',v:N.coOff?1:0}); }
-    tnMateStep(dt,now); tnHud();
+    N.P.forEach(Q=>tnMateStep(Q,dt,now)); tnHud();
   }
   function tnMsg(m,now){
-    if(!T||!T.net) return; const N=T.net;
-    if(m.s) m.s.forEach(a=>{ const s={t:m.ts,x:a[0],z:a[1],y:a[2],yaw:a[3],pitch:a[4],f:a[5],k:a[6]||'',em:a[7]||0}, B=N.buf, last=B[B.length-1];
-      if(!last||m.ts>last.t){ if(last){ const dt=(m.ts-last.t)/1000; N.pv=(s.f&1)&&dt>0&&dt<.6?{x:(s.x-last.x)/dt,z:(s.z-last.z)/dt}:null; } B.push(s); if(B.length>40) B.shift(); } });
-    if(m.l) m.l.forEach(x=>N.evq.push({x,ts:m.ts,at:now}));
+    if(!T||!T.net) return; const Q=tnQ(m.f)||(T.net.P.length===1?T.net.P[0]:null); if(!Q) return;
+    if(m.s){ Q.heard=true;
+      // they only went quiet (a long load, a stall): they're back
+      if(Q.gone&&Q.quiet){ Q.gone=false; Q.quiet=false; const M=T.net.M; if(M.goneIds) M.goneIds.delete(Q.id); M.left=false; Q.rx=undefined; hint(Q.name+' is back.'); } }
+    if(m.s) m.s.forEach(a=>{ const s={t:m.ts,x:a[0],z:a[1],y:a[2],yaw:a[3],pitch:a[4],f:a[5],k:a[6]||'',em:a[7]||0}, B=Q.buf, last=B[B.length-1];
+      if(!last||m.ts>last.t){ if(last){ const dt=(m.ts-last.t)/1000; Q.pv=(s.f&1)&&dt>0&&dt<.6?{x:(s.x-last.x)/dt,z:(s.z-last.z)/dt}:null; } B.push(s); if(B.length>40) B.shift(); } });
+    if(m.l) m.l.forEach(x=>Q.evq.push({x,ts:m.ts,at:now}));
   }
-  function tnEvent(e){
+  /* is this one meant for you (a hit, the monster's bite)? Older games don't say: then it is */
+  const tnMine=e=>!e.to||e.to===NET.id;
+  function tnEvent(e,Q){
     const N=T.net; if(!N) return;
     switch(e.k){
-      case 'sh': tnRemoteShot(e); if(e.o) monNoise(e.o[0],e.o[2],26); break;
-      case 'mo': case 'mh': case 'mk': monNet(e); break;
-      case 'hit': tnHurt(e); break;
+      case 'sh': tnRemoteShot(e,Q); if(e.o) monNoise(e.o[0],e.o[2],26); break;
+      case 'mo': case 'mh': case 'mk': if(e.k==='mk'&&!tnMine(e)) break; if(e.k==='mh') e.by=Q.id; monNet(e); break;
+      case 'hit': if(tnMine(e)) tnHurt(e,Q); break;
       case 'tk': { const it=T.items.find(i=>i.kind===e.kd&&!i.taken&&Math.abs(i.home.x-e.x)<.3&&Math.abs(i.home.z-e.z)<.3&&Math.abs(i.home.y-e.y)<.3);
-        if(it){ it.taken=true; it.obj.visible=false; it.mateHas=true; if(T.target===it){ T.target=null; prompt(false); } } break; }
-      case 'dn': if(!T.inDream&&!T.inTape&&!T.inSalvia) hint(e.c==='mate'&&N.iHit?'You killed '+N.name+'.':N.name+' went down.'); N.iHit=false; break;
-      case 'wk': tnFree(); break;
+        if(it){ it.taken=true; it.obj.visible=false; it.mateHas=Q.id; if(T.target===it){ T.target=null; prompt(false); } } break; }
+      case 'dn': if(!T.inDream&&!T.inTape&&!T.inSalvia) hint(e.c==='mate'&&Q.iHit?'You killed '+Q.name+'.':Q.name+' went down.'); Q.iHit=false; break;
+      case 'wk': tnFree(Q); break;
       case 'co': if(!tnLead()){ N.coOff=!!e.v; tnCoApply(); } break;
-      case 'out': if(!N.gone){ N.gone=true; tnFree(); hint(N.name+' is gone. You are on your own now.'); } break;
+      case 'out': if(!Q.gone){ Q.gone=true; tnFree(Q); hint(Q.name+' is gone.'+(tnLive().length?'':' You are on your own now.')); } break;
     }
   }
   /* what they were holding goes back where it was (they woke up again, or they're gone) */
-  function tnFree(){ for(const it of T.items) if(it.mateHas){ it.mateHas=false; it.taken=false; it.obj.visible=true; if(it.n0!==undefined) it.n=it.n0; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; } }
-  function tnLeft(n){ if(!T||!T.net) return; const N=T.net; if(N.gone) return; N.gone=true; tnFree(); hint((n||N.name)+' left. You are on your own now.'); }
-  /* you picked something up: it's gone from their building too */
+  function tnFree(Q){ for(const it of T.items) if(it.mateHas&&(!Q||it.mateHas===Q.id||it.mateHas===true)){ it.mateHas=false; it.taken=false; it.obj.visible=true; if(it.n0!==undefined) it.n=it.n0; it.x=it.home.x; it.y=it.home.y; it.z=it.home.z; } }
+  function tnLeft(n,id,bye){ if(!T||!T.net) return; const Q=(id&&tnQ(id))||T.net.P.find(q=>!q.gone&&(!n||q.name===n))||T.net.P.find(q=>!q.gone); if(!Q||Q.gone) return;
+    Q.gone=true; Q.quiet=!bye; tnFree(Q); hint((n||Q.name)+' left.'+(tnLive().length?'':' You are on your own now.')); }
+  /* you picked something up: it's gone from their buildings too */
   function tnTake(it){ if(!T.net||!TN_LOOT.has(it.kind)||isSalvia(it)||it.final||!it.home) return; netMs({k:'tk',kd:it.kind,x:+it.home.x.toFixed(2),y:+it.home.y.toFixed(2),z:+it.home.z.toFixed(2)}); }
   function tnDown(cause){ if(T&&T.net) netMs({k:'dn',c:cause}); }
   function tnWake(){ if(!T.net) return; T.net.hp=100; T.net.hurtK=0; T.net.hurtHint=0; netMs({k:'wk'}); }
@@ -34609,96 +34792,100 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   /* ---------- shots ---------- */
   const r2=v=>+v.toFixed(2);
   function tnShot(kind,o,hx,hy,hz,n){ const N=T.net; N.lastShot=performance.now(); netMs({k:'sh',w:kind,o:[r2(o.x),r2(o.y),r2(o.z)],e:[r2(hx),r2(hy),r2(hz)],n:n||0}); }
-  /* a ray against them: standing, a body-sized column; lying, a low one where they lie */
+  /* a ray against them: standing, a body-sized column; lying, a low one where they lie. The nearest one it meets is the one it hits */
   function tnShotHook(o,d,bt,cb){
-    const N=T.net; if(!N||N.gone||!N.mate||!N.mate.visible||!N.cur) return;
-    const m=N.mate, s=N.cur; let t;
-    if(s.f&(8|16)||(s.f&32&&s.y<1.1)){ m.updateMatrixWorld(); const c=m.localToWorld(_t1.set(0,.8,0)); N.hitFy=fyAt(c.x,c.z); t=rayCyl(o,d,c.x,c.z,.42,N.hitFy,c.y+.3); }
-    else { const fy=fyAt(m.position.x,m.position.z); N.hitFy=fy; t=rayCyl(o,d,m.position.x,m.position.z,.28,fy,fy+(s.f&128?1.32:1.78)); }
-    if(t!==null&&t<bt){ N.hitStand=!(s.f&(8|16))&&!(s.f&32&&s.y<1.1); cb(t); }
+    const N=T.net; if(!N) return; let best=null, bT=bt;
+    for(const Q of N.P){
+      if(Q.gone||!Q.mate||!Q.mate.visible||!Q.cur) continue;
+      const m=Q.mate, s=Q.cur; let t, fy, stand;
+      if(s.f&(8|16)||(s.f&32&&s.y<1.1)){ m.updateMatrixWorld(); const c=m.localToWorld(_t1.set(0,.8,0)); fy=fyAt(c.x,c.z); t=rayCyl(o,d,c.x,c.z,.42,fy,c.y+.3); stand=false; }
+      else { fy=fyAt(m.position.x,m.position.z); t=rayCyl(o,d,m.position.x,m.position.z,.28,fy,fy+(s.f&128?1.32:1.78)); stand=!(s.f&32&&s.y<1.1); }
+      if(t!==null&&t<bT){ bT=t; best={Q,fy,stand}; }
+    }
+    if(best){ N.hitQ=best.Q; best.Q.hitFy=best.fy; best.Q.hitStand=best.stand; cb(bT); }
   }
   function tnHit(kind,hy){
-    const N=T.net, hs=N.hitStand&&hy-(N.hitFy||0)>(N.cur&&N.cur.f&128?1.0:1.45), d=Math.round((TN_DMG[kind]||20)*(hs?2:1));
-    N.iHit=true; netMs({k:'hit',d,w:kind,hs:hs?1:0});
+    const N=T.net, Q=N.hitQ; if(!Q) return;
+    const hs=Q.hitStand&&hy-(Q.hitFy||0)>(Q.cur&&Q.cur.f&128?1.0:1.45), d=Math.round((TN_DMG[kind]||20)*(hs?2:1));
+    Q.iHit=true; netMs({k:'hit',d,w:kind,hs:hs?1:0,to:Q.id});
     const el=document.getElementById('truthDot'); if(el){ el.style.background=hs?'#ff2a1a':'#e86a4a'; el.style.transform='scale(2.2)'; clearTimeout(N.hmT); N.hmT=setTimeout(()=>{ el.style.background=''; el.style.transform=''; },150); }
     SFX.tr.tick&&SFX.tr.tick();
   }
-  function tnHurt(e){
+  function tnHurt(e,Q){
     const N=T.net; if(!N) return;
     if(T.inDream||T.inTape||T.inSalvia||!/^(play|wake|collapse)$/.test(T.phase)) return;
     N.hp-=e.d; N.hurtAt=T.t; N.hurtK=Math.min(1,N.hurtK+.45+e.d/120);
     T.heartKick=1; T.pulse=Math.max(T.pulse||0,.5); SFX.tr.gasp&&SFX.tr.gasp();
     T.p.yaw+=(Math.random()-.5)*.06; T.p.pitch=clamp(T.p.pitch+.03,-1.4,1.4);
-    if(N.hp<=0){ N.hp=0; die('mate'); setTimeout(()=>{ if(T&&T.net) hint(N.name+' shot you.'); },900); }
-    else if(!N.hurtHint){ N.hurtHint=1; hint(N.name+' is shooting at you.'); }
+    if(N.hp<=0){ N.hp=0; die('mate'); setTimeout(()=>{ if(T&&T.net) hint(Q.name+' shot you.'); },900); }
+    else if(N.hurtHint!==Q.id){ N.hurtHint=Q.id; hint(Q.name+' is shooting at you.'); }
   }
-  function tnRemoteShot(e){
-    const N=T.net, A=ARMS[e.w]; if(!A) return;
+  function tnRemoteShot(e,Q){
+    const A=ARMS[e.w]; if(!A) return;
     if(T.inDream||T.inTape||T.inSalvia) return;
     const o=e.o, h=e.e;
     if(SFX.tr[A.snd]) SFX.tr[A.snd](at3(o[0],o[2],1.5));
-    N.mFlashT=.06; tnTracer(o,h);
+    Q.mFlashT=.06; tnTracer(o,h,Q);
     if(e.n){ bulletHole({x:h[0],y:h[1],z:h[2],n:e.n}); puff(h[0],h[1],h[2],0xb8b0a0,e.w==='rifle'?1.6:1); }
   }
-  function tnTracer(o,h){
-    const N=T.net;
-    if(!N.trc){ const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3));
-      const m=new THREE.LineBasicMaterial({color:0xffd8a0,transparent:true,opacity:.55,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,fog:false}); T.mats._trc=m;
-      N.trc=new THREE.Line(g,m); N.trc.frustumCulled=false; T.root.add(N.trc); }
-    const p=N.trc.geometry.attributes.position; p.setXYZ(0,o[0],o[1]-.12,o[2]); p.setXYZ(1,h[0],h[1],h[2]); p.needsUpdate=true; N.trc.visible=true; N.trcT=.05;
+  function tnTracer(o,h,Q){
+    if(!Q.trc){ const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3));
+      const m=new THREE.LineBasicMaterial({color:0xffd8a0,transparent:true,opacity:.55,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,fog:false}); T.mats['_trc'+Q.i]=m;
+      Q.trc=new THREE.Line(g,m); Q.trc.frustumCulled=false; T.root.add(Q.trc); }
+    const p=Q.trc.geometry.attributes.position; p.setXYZ(0,o[0],o[1]-.12,o[2]); p.setXYZ(1,h[0],h[1],h[2]); p.needsUpdate=true; Q.trc.visible=true; Q.trcT=.05;
   }
 
   /* ---------- them, drawn ---------- */
-  function tnInterp(now){
-    const N=T.net, B=N.buf, M=N.M; if(!B.length) return null;
-    if(M.off===undefined) return B[B.length-1];
-    const rt=now-M.off-M.D;
+  function tnInterp(Q,now){
+    const B=Q.buf, C=Q.clk; if(!B.length) return null;
+    if(C.off===undefined) return B[B.length-1];
+    const rt=now-C.off-C.D;
     while(B.length>1&&B[1].t<=rt) B.shift();
     const a=B[0], b=B[1];
     if(b&&rt>a.t){ const k=(rt-a.t)/Math.max(1,b.t-a.t); if((b.x-a.x)*(b.x-a.x)+(b.z-a.z)*(b.z-a.z)>9) return k<.5?a:b;
       return {x:a.x+(b.x-a.x)*k,z:a.z+(b.z-a.z)*k,y:a.y+(b.y-a.y)*k,yaw:netAng(a.yaw,b.yaw,k),pitch:a.pitch+(b.pitch-a.pitch)*k,f:b.f,k:b.k,em:b.em}; }
-    if(!b&&rt>a.t&&(a.f&1)&&N.pv&&rt-a.t<300){ const ex=Math.min(rt-a.t,220)/1000; return Object.assign({},a,{x:a.x+N.pv.x*ex,z:a.z+N.pv.z*ex}); }
+    if(!b&&rt>a.t&&(a.f&1)&&Q.pv&&rt-a.t<300){ const ex=Math.min(rt-a.t,220)/1000; return Object.assign({},a,{x:a.x+Q.pv.x*ex,z:a.z+Q.pv.z*ex}); }
     return a;
   }
-  function tnMateStep(dt,now){
-    const N=T.net, m=N&&N.mate; if(!m) return;
-    if(N.trc&&N.trc.visible){ N.trcT-=dt; if(N.trcT<=0) N.trc.visible=false; }
-    if(N.gone){ m.visible=false; N.light.intensity=0; return; }
-    const s0=tnInterp(now); if(!s0){ m.visible=false; N.light.intensity=0; return; }
+  function tnMateStep(Q,dt,now){
+    const m=Q.mate; if(!m) return;
+    if(Q.trc&&Q.trc.visible){ Q.trcT-=dt; if(Q.trcT<=0) Q.trc.visible=false; }
+    if(Q.gone){ m.visible=false; Q.light.intensity=0; return; }
+    const s0=tnInterp(Q,now); if(!s0){ m.visible=false; Q.light.intensity=0; return; }
     // a soft edge on every correction; a jump (a new bed, a fall) is taken at once
-    if(N.rx===undefined||(s0.x-N.rx)*(s0.x-N.rx)+(s0.z-N.rz)*(s0.z-N.rz)>4){ N.rx=s0.x; N.rz=s0.z; }
-    else { const kk=1-Math.exp(-dt*30); N.rx+=(s0.x-N.rx)*kk; N.rz+=(s0.z-N.rz)*kk; }
-    const s=Object.assign({},s0,{x:N.rx,z:N.rz}); N.cur=s;
+    if(Q.rx===undefined||(s0.x-Q.rx)*(s0.x-Q.rx)+(s0.z-Q.rz)*(s0.z-Q.rz)>4){ Q.rx=s0.x; Q.rz=s0.z; }
+    else { const kk=1-Math.exp(-dt*30); Q.rx+=(s0.x-Q.rx)*kk; Q.rz+=(s0.z-Q.rz)*kk; }
+    const s=Object.assign({},s0,{x:Q.rx,z:Q.rz}); Q.cur=s;
     const P=T.p, d=Math.hypot(s.x-P.x,s.z-P.z), away=T.inDream||T.inTape||T.inSalvia;
     m.visible=!away&&d<48;
-    if(!m.visible){ N.light.intensity=0; return; }
-    tnPose(dt,s);
+    if(!m.visible){ Q.light.intensity=0; return; }
+    tnPose(Q,dt,s);
     const lie=!!(s.f&(8|16))||(!!(s.f&32)&&s.y<1.1), lit=!!(s.f&4)&&!lie;
-    N.mFlashT=Math.max(0,(N.mFlashT||0)-dt);
-    N.light.color.setHex(N.mFlashT>0?0xffb060:0xfff2e0);
-    N.light.intensity=N.mFlashT>0?7:lit?2.4:0; N.light.angle=N.mFlashT>0&&!lit?1.1:.5;
-    T.mats._mLens.color.setScalar(lit?2.5:.06);
-    N.light.target.position.set(-.2,1.06+Math.tan(clamp(s.pitch,-1.2,1.2))*6,6.4);
+    Q.mFlashT=Math.max(0,(Q.mFlashT||0)-dt);
+    Q.light.color.setHex(Q.mFlashT>0?0xffb060:0xfff2e0);
+    Q.light.intensity=Q.mFlashT>0?7:lit?2.4:0; Q.light.angle=Q.mFlashT>0&&!lit?1.1:.5;
+    Q.lens.color.setScalar(lit?2.5:.06);
+    Q.light.target.position.set(-.2,1.06+Math.tan(clamp(s.pitch,-1.2,1.2))*6,6.4);
     // their feet, and the doors they walk through
-    if((s.f&1)&&!lie){ N.stepT-=dt; if(N.stepT<=0){ N.stepT=s.f&2?.34:.5; const kc=cellAt(Math.floor(s.x),Math.floor(s.z));
+    if((s.f&1)&&!lie){ Q.stepT-=dt; if(Q.stepT<=0){ Q.stepT=s.f&2?.34:.5; const kc=cellAt(Math.floor(s.x),Math.floor(s.z));
         const surf=kc==='o'?'wood':(kc==='t'||kc==='f'||kc==='p'||kc==='x'||kc==='b')?'tile':(kc==='q'||kc==='k'||kc==='s')?'soft':'lino';
         SFX.tr.step(surf,s.f&2?1:.7,at3(s.x,s.z,.85)); }
       const q={x:s.x,z:s.z}; for(const dr of T.doors) if(Math.abs(q.x-dr.hx)<1.4&&Math.abs(q.z-dr.hz)<1.4) pushDoor(q,dr); }
-    else N.stepT=.12;
-    N.tag.material.opacity=clamp(1.25-d/16,0,.82);
+    else Q.stepT=.12;
+    Q.tag.material.opacity=clamp(1.25-d/16,0,.82);
   }
-  function tnPose(dt,s){
-    const N=T.net, m=N.mate, u=m.userData, k=s.k||'', lie=!!(s.f&(8|16))||(!!(s.f&32)&&s.y<1.1);
-    N.tag.visible=!lie;
+  function tnPose(Q,dt,s){
+    const m=Q.mate, u=m.userData, k=s.k||'', lie=!!(s.f&(8|16))||(!!(s.f&32)&&s.y<1.1);
+    Q.tag.visible=!lie;
     if(lie){
-      if((s.f&32)&&!(s.f&16)){ const b=N.mateBed; m.position.set(b.x,.6,b.z); m.rotation.set(-Math.PI/2,0,0); }        // in their bed
+      if((s.f&32)&&!(s.f&16)){ const b=Q.bed; m.position.set(b.x,.6,b.z); m.rotation.set(-Math.PI/2,0,0); }        // in their bed
       else { m.position.set(s.x,fyAt(s.x,s.z)+.1,s.z); m.rotation.set(-Math.PI/2,s.yaw+Math.PI,0); }                                     // on the floor where they fell
       u.head.rotation.set(0,0,0); u.legs[0].rotation.x=u.legs[1].rotation.x=0;
       ikArm(u.arms[1],_S.set(.205,1.4,0),_Hh.set(.3,.92,.02),_pole.set(.2,0,-1)); ikArm(u.arms[-1],_S.set(-.205,1.4,0),_Hh.set(-.3,.92,.02),_pole.set(-.2,0,-1));
       tnHeld(m,'',null); return;
     }
-    const walk=s.f&1?(s.f&2?1:.75):0; N.legPh+=dt*(s.f&2?11:7.5)*(walk>0?1:0); const sw=Math.sin(N.legPh);
-    N.ck=(N.ck||0)+((s.f&128?1:0)-(N.ck||0))*Math.min(1,dt*9); const ck=N.ck;
+    const walk=s.f&1?(s.f&2?1:.75):0; Q.legPh+=dt*(s.f&2?11:7.5)*(walk>0?1:0); const sw=Math.sin(Q.legPh);
+    Q.ck=(Q.ck||0)+((s.f&128?1:0)-(Q.ck||0))*Math.min(1,dt*9); const ck=Q.ck;
     m.position.set(s.x+Math.sin(s.yaw)*.09,fyAt(s.x,s.z)-ck*.46,s.z+Math.cos(s.yaw)*.09); m.rotation.set(0,s.yaw+Math.PI,0);
     u.head.rotation.set(clamp(-s.pitch*.75,-.6,.7),0,0);
     u.body.scale.set(1+Math.sin(T.t*1.6)*.008,1,1+Math.sin(T.t*1.6)*.012);
@@ -34710,10 +34897,10 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     else { _Hh.set(-.24,.86,.03+sw*.12*walk); _pole.set(-.2,0,-1); }
     ikArm(u.arms[-1],_S.set(-.205,1.4,0),_Hh,_pole);
     tnHeld(m,k,aim?s.pitch:null);
-    N.emW=clamp((N.emW||0)+(s.em?dt/.32:-dt/.22),0,1);                                                   // they're dancing: eased in and out
-    if(s.em&&N.emId!==s.em){ N.emId=s.em; N.emT0=performance.now(); }
-    if(N.emW>0&&N.emId) emoteFigure(m,N.emId,N.emT0,emS(N.emW));
-    else { N.emId=s.em||0; if(u.armG) u.armG.visible=true; }
+    Q.emW=clamp((Q.emW||0)+(s.em?dt/.32:-dt/.22),0,1);                                                   // they're dancing: eased in and out
+    if(s.em&&Q.emId!==s.em){ Q.emId=s.em; Q.emT0=performance.now(); }
+    if(Q.emW>0&&Q.emId) emoteFigure(m,Q.emId,Q.emT0,emS(Q.emW));
+    else { Q.emId=s.em||0; if(u.armG) u.armG.visible=true; }
   }
   function tnHeld(m,k,ap){
     const u=m.userData, arm=k&&ARMS[k]?k:null;
@@ -34725,19 +34912,18 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     u.flM.visible=k==='flashlight';
   }
   function tnHud(){
-    const N=T.net, el=document.getElementById('truthCo'); if(!el) return;
-    const s=N.cur; let st;
-    if(N.gone) st='gone';
-    else if(!s) st='somewhere in the building';
-    else if(s.f&16) st='down';
-    else if(s.f&8) st='somewhere else';
-    else if(s.f&32) st='waking up';
-    else { const d=Math.hypot(s.x-T.p.x,s.z-T.p.z); st=d<2.5?'right here':Math.round(d)+' m away'; }
-    if(st!==N.stTxt){ N.stTxt=st; el.querySelector('small').textContent=st; el.classList.toggle('gone',N.gone); el.classList.toggle('down',!N.gone&&!!s&&!!(s.f&16)); }
+    const N=T.net;
+    for(const Q of N.P){ const el=Q.el; if(!el) continue; const s=Q.cur; let st;
+      if(Q.gone) st='gone';
+      else if(!s) st='somewhere in the building';
+      else if(s.f&16) st='down';
+      else if(s.f&8) st='somewhere else';
+      else if(s.f&32) st='waking up';
+      else { const d=Math.hypot(s.x-T.p.x,s.z-T.p.z); st=d<2.5?'right here':Math.round(d)+' m away'; }
+      if(st!==Q.stTxt){ Q.stTxt=st; el.querySelector('small').textContent=st; el.classList.toggle('gone',Q.gone); el.classList.toggle('down',!Q.gone&&!!s&&!!(s.f&16)); } }
     const hp=document.getElementById('truthHp'); if(hp){ const v=Math.max(0,Math.round(N.hp)); if(v!==N.hpShown){ N.hpShown=v; hp.firstChild.style.width=v+'%'; hp.classList.toggle('on',v<100); hp.classList.toggle('low',v<35); } }
     const hu=document.getElementById('truthHurt'); if(hu){ const o=(N.hurtK*.9).toFixed(2); if(o!==N.huO){ N.huO=o; hu.style.opacity=o; } }
   }
-
 
   /* ---------- emotes: B, a dance, and the camera steps out of your head to watch you ---------- */
   function emoteKeyT(){
@@ -34805,9 +34991,9 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     if(T.emote&&(T.phase!=='play'||T.inDream||T.inTape||T.inSalvia)) T.emote=null;
     const want=new Map();
     if(T.emote) want.set('me',{id:T.emote.id,k:1});
-    const N=T.net, s=N&&N.cur;
-    if(N&&!N.gone&&s&&s.em&&!(T.inDream||T.inTape||T.inSalvia)){ const d=Math.hypot(s.x-T.p.x,s.z-T.p.z);
-      want.set('mate',{id:s.em,k:Math.max(0,1-d/24)*(los(T.p.x,T.p.z,s.x,s.z)?1:.35)*.8}); }
+    const N=T.net;
+    if(N&&!(T.inDream||T.inTape||T.inSalvia)) N.P.forEach(Q=>{ const s=Q.cur; if(Q.gone||!s||!s.em) return; const d=Math.hypot(s.x-T.p.x,s.z-T.p.z);
+      want.set(Q.i?'mate'+Q.i:'mate',{id:s.em,k:Math.max(0,1-d/24)*(los(T.p.x,T.p.z,s.x,s.z)?1:.35)*.8}); });
     EmoteAudio.sync(want);
   }
 
@@ -35241,7 +35427,8 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   function monTargets(){
     const L=[], P=T.p;
     if(T.phase==='play'&&!T.inDream&&!T.inTape&&!T.inSalvia&&lvlAt(P.x,P.z)===1) L.push({who:'me',x:P.x,z:P.z,crouch:!!T.crouch,run:!!P.sprinting,flash:!!(T.flashOn&&T.hand&&T.hand.it.kind==='flashlight')});
-    const N=T.net; if(N&&N.M&&N.M.isHost&&!N.gone&&N.cur){ const s=N.cur; if(!(s.f&(8|16|32))&&lvlAt(s.x,s.z)===1) L.push({who:'mate',x:s.x,z:s.z,crouch:!!(s.f&128),run:!!(s.f&2),flash:!!(s.f&4)}); }
+    const N=T.net; if(N&&N.M&&N.M.isHost) N.P.forEach(Q=>{ const s=Q.cur; if(Q.gone||!s) return;
+      if(!(s.f&(8|16|32))&&lvlAt(s.x,s.z)===1) L.push({who:'mate:'+Q.id,x:s.x,z:s.z,crouch:!!(s.f&128),run:!!(s.f&2),flash:!!(s.f&4)}); });
     return L;
   }
   function monSees(M0,t){
@@ -35303,7 +35490,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   function monGo(p,state){ const M0=T.mon; M0.goal={x:p.x,z:p.z}; M0.state=state; M0.path=monPath(M0.x,M0.z,p.x,p.z)||[{x:p.x,z:p.z}]; M0.pathAt=M0.t; M0.stuck=0; }
   function monKill(t){
     if(t.who==='me'){ if(T.phase==='play'){ T.monKilledMe=1; SFX.tr.mGrowl&&SFX.tr.mGrowl({gain:1.6,pan:0}); die('monster'); } }
-    else if(t.who==='mate'){ netMs({k:'mk'}); }
+    else if(String(t.who).startsWith('mate')){ netMs({k:'mk',to:String(t.who).slice(5)||undefined}); }
     T.mon.tgt=null; T.mon.last=null;
   }
   /* the guest's copy: where the host says it is */
@@ -35410,7 +35597,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     SFX.tr.mHit&&SFX.tr.mHit(at3(M0.x,M0.z,1.2),head);
     if(M0.hp<=0){ M0.hp=0; M0.state='dead'; M0.dk=0; M0.deadAt=M0.t; M0.path=null; M0.tgt=null; SFX.tr.mDie&&SFX.tr.mDie(at3(M0.x,M0.z,1.4)); T.monDead=1;
       hint('It went down. The second floor is quiet now.'); return; }
-    if(M0.state!=='hunt'&&M0.state!=='attack'){ const tg=monTargets(); const who=byMate?tg.find(t=>t.who==='mate'):tg.find(t=>t.who==='me'); if(who){ M0.tgt=who; M0.last={x:who.x,z:who.z}; monSpot(); } }
+    if(M0.state!=='hunt'&&M0.state!=='attack'){ const tg=monTargets(); const who=byMate?(tg.find(t=>t.who==='mate:'+byMate)||tg.find(t=>String(t.who).startsWith('mate'))):tg.find(t=>t.who==='me'); if(who){ M0.tgt=who; M0.last={x:who.x,z:who.z}; monSpot(); } }
     if(head&&M0.state!=='attack'){ M0.state='stagger'; M0.st=.45; }
   }
   /* a hit from your gun (in the guest's game it goes to the host) */
@@ -35438,7 +35625,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
     if(e.k==='mo'&&T.monGone) return;                                                     // it's gone here: whatever the other game still says
     if(e.k==='mo'){ if(!T.mon){ monSpawn(); T.mon.remote=true; T.mon.x=e.x; T.mon.z=e.z; T.mon.hp=e.h; }
       T.mon.rx={x:e.x,z:e.z,y:e.y,s:e.s,h:e.h,j:e.j,a:e.a}; }
-    else if(e.k==='mh'){ if(T.mon&&!T.mon.remote) monDamage(!!e.hd,true); }
+    else if(e.k==='mh'){ if(T.mon&&!T.mon.remote) monDamage(!!e.hd,e.by||true); }
     else if(e.k==='mk'){ if(T.phase==='play'){ SFX.tr.mGrowl&&SFX.tr.mGrowl({gain:1.6,pan:0}); die('monster'); } }
   }
 
@@ -35633,7 +35820,7 @@ void main(){ vec2 p=vU*.012+vec2(uT*.08+uS,0.); float c=n(p)*.5+n(p*2.1)*.3+n(p*
   document.getElementById('tcB').addEventListener('click',e=>{ e.stopPropagation(); toggleAim(); });
   document.getElementById('truthNew').addEventListener('click',e=>{ e.stopPropagation(); if(T&&T.phase==='never') finish(); });
 
-  return {start,leave,get on(){ return on; },netMsg:(m,now)=>tnMsg(m,now),netLeft:n=>tnLeft(n),
+  return {start,leave,get on(){ return on; },netMsg:(m,now)=>tnMsg(m,now),netLeft:(n,id,bye)=>tnLeft(n,id,bye),
     /* for tests */
     _:{get T(){ return T; },give:giveFx,interact,teleport(x,z,yaw,pitch){ if(!T) return; T.phase='play'; T.introBlur=0; T.introTrail=0; T.p.x=x; T.p.z=z; T.p.y=EYE; if(yaw!==undefined) T.p.yaw=yaw; if(pitch!==undefined) T.p.pitch=pitch; },
       hq(){ T.noGov=true; T.rs=1; sizeTargets(); },
