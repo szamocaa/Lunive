@@ -1,3 +1,4 @@
+3.37.0: Customize (the palette button next to Settings): pick your lobby's sky, window and outline colours, and your leaderboard banner: what it shows under your name (title, character, wins, best rank, Account ID or nothing), its background and its outline. The crown is back on the #1 player's card, and the top bar no longer runs into the leaderboard button on smaller screens.
 3.36.0: Skins for all 25 characters (150 rubies each, bought in the Skins tab of Characters), rubies from 3 daily missions (30 a day), Online is always on with a Kyuchi ID, add friends by their 9-digit Account ID, hide yourself from friends, and emotes are gone.
 3.35.1: Online matchmaking is much faster and no longer gets stuck when the connection is slow. Rank 50 shows a clean MAX tag.
 3.35.0: Dances keep everyone in one piece (Crisis dances too), a new artifact set Racer Shades (+20% / +60% move speed), sounds and a squeeze on every button, and a brand new loading screen.

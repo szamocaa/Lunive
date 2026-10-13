@@ -3704,6 +3704,90 @@ body.in-game #hub .em-chip{display:none;}
 .op-old b{display:block;font:700 12px var(--ui);color:#dfe3f2;}
 .op-old small{font:500 10.5px var(--ui);color:#ffb38a;}
 
+
+/* ---------- your lobby's colours (Customize) ---------- */
+#hub.lc-win :is(#profileChip,#roadChip,#lbChip,#artDock,#mailBtn,.res .chip,#onPanel,#dmPanel,#cmdList,#mapPick,#emChip){background:var(--lc-glass) !important;}
+#hub.lc-line :is(#profileChip,#roadChip,#lbChip,#artDock,#mailBtn,.res .chip,#onPanel,#dmPanel,#cmdList,#mapPick,#emChip){border-color:var(--lc-line) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 10px 28px rgba(0,0,0,.32),0 0 16px -5px var(--lc-glow) !important;}
+#hub.lc-sky .lb-aura{background:radial-gradient(38% 48% at 22% 55%,var(--lc-sky),transparent 70%),radial-gradient(34% 44% at 72% 42%,var(--lc-sky),transparent 70%),radial-gradient(30% 40% at 50% 62%,var(--lc-sky),transparent 72%);}
+#hub .res .chip.lc-btn svg{color:#ffd6f2;}
+#hub .res .chip.lc-btn:hover svg{animation:lcWig .5s cubic-bezier(.2,.9,.3,1.4);}
+@keyframes lcWig{40%{transform:rotate(-14deg) scale(1.08);}}
+
+/* ---------- the Customize popup ---------- */
+.lc-pop{z-index:70;}
+.lc-pop.lc-lobby{background:rgba(4,5,12,.16);backdrop-filter:none;-webkit-backdrop-filter:none;}
+.lc-card{position:relative;width:min(600px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;scrollbar-width:none;padding:14px 16px;border-radius:18px;color:#fff;
+  display:flex;flex-direction:column;gap:12px;animation:popIn .35s cubic-bezier(.2,1.3,.4,1);}
+.lc-head{display:flex;align-items:center;gap:14px;}
+.lc-head>b{font:400 26px/1 var(--sk-big);letter-spacing:.05em;}
+.lc-tabs{flex:1;display:flex;gap:6px;}
+.lc-tab{border:1px solid var(--sk-line2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font:700 11px var(--sk-h);letter-spacing:.18em;padding:7px 14px;border-radius:999px;cursor:pointer;}
+.lc-tab:hover{color:#fff;}
+.lc-tab.on{background:linear-gradient(135deg,rgba(143,243,255,.2),rgba(143,123,255,.24));border-color:rgba(143,243,255,.6);color:#fff;}
+.lc-head .aa-x{position:static;flex:none;}
+.lc-body{display:flex;flex-direction:column;gap:10px;}
+.lc-row{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:13px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);}
+.lc-lab{display:flex;align-items:baseline;gap:10px;min-width:0;}
+.lc-lab b{font:700 12px var(--sk-h);letter-spacing:.2em;}
+.lc-lab small{font:500 11px var(--sk-body);color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lc-sw{display:flex;flex-wrap:wrap;gap:7px;}
+.lc-s{position:relative;flex:none;width:28px;height:28px;border-radius:8px;cursor:pointer;padding:0;border:1px solid rgba(255,255,255,.22);background:var(--c);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 4px 10px rgba(0,0,0,.3);transition:transform .15s cubic-bezier(.2,.9,.3,1.4);}
+.lc-s:hover{transform:translateY(-2px) scale(1.06);}
+.lc-s.on{outline:2px solid #fff;outline-offset:2px;}
+.lc-s.auto{background:linear-gradient(135deg,transparent 45%,#ff6a8c 46%,#ff6a8c 54%,transparent 55%),linear-gradient(180deg,#22263a,#0d0f1a);}
+.lc-s.cus{background:conic-gradient(from 30deg,#ff4d6d,#ffd24a,#3ddc84,#26d9c7,#3fa9ff,#b06bff,#ff4d6d);overflow:hidden;}
+.lc-s.cus.on{background:radial-gradient(circle at 78% 22%,#fff 0 2px,transparent 3px),var(--c);}
+.lc-s.cus input{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);opacity:0;cursor:pointer;border:0;padding:0;}
+.lc-foot{display:flex;align-items:center;gap:10px;}
+.lc-foot small{flex:1;font:500 11px var(--sk-body);color:rgba(255,255,255,.5);}
+.lc-reset{flex:none;border:1px solid var(--sk-line2);background:rgba(255,255,255,.05);color:#fff;font:700 10.5px var(--sk-h);letter-spacing:.18em;padding:7px 12px;border-radius:9px;cursor:pointer;}
+.lc-reset:hover{background:rgba(255,255,255,.1);}
+.lc-bn{display:grid;grid-template-columns:164px minmax(0,1fr);gap:10px;align-items:start;}
+.lc-prev{padding-top:22px;}
+.lc-prev .lb-pod{display:block;padding:0;}
+.lc-prev .lbp{width:100%;cursor:default;}
+.lc-prev .lbp::after{animation-delay:.4s;}
+.lc-opts{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.lc-show{display:flex;flex-wrap:wrap;gap:6px;}
+.lc-o{border:1px solid var(--sk-line2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);font:700 10px var(--sk-h);letter-spacing:.14em;padding:7px 10px;border-radius:8px;cursor:pointer;}
+.lc-o:hover{color:#fff;background:rgba(255,255,255,.08);}
+.lc-o.on{background:rgba(143,243,255,.16);border-color:rgba(143,243,255,.6);color:#fff;}
+.lc-opts .lc-sw{gap:4px;} .lc-opts .lc-s{width:22px;height:22px;border-radius:7px;}
+@media (max-width:620px){ .lc-bn{grid-template-columns:1fr;} .lc-prev{width:200px;margin:0 auto;} .lc-head>b{font-size:20px;} .lc-lab small{display:none;} }
+@media (max-height:620px){ .lc-row{padding:7px 10px;gap:6px;} .lc-s{width:24px;height:24px;} .lc-card{gap:9px;padding:10px 14px;} }
+
+/* a narrower window: the chips up top close up, so they never run into the leaderboard button */
+@media (max-width:1180px) and (min-width:861px){
+  #hub .res{gap:6px;}
+  #hub .res .chip{padding:6px 11px 6px 8px;gap:7px;font-size:14px;}
+  #hub .res .chip.gear{width:36px;height:36px;}
+}
+@media (max-width:1060px) and (min-width:861px){
+  #hub .res .chip.cc-chip{display:none;}
+  #hub .res .chip{padding:5px 9px 5px 7px;gap:6px;font-size:13px;min-height:34px;} #hub .res .chip svg{width:17px;height:17px;}
+  #hub .res .chip.gear{width:34px;height:34px;} #hub .res .chip.gear svg{width:17px;height:17px;}
+}
+@media (max-width:920px) and (min-width:861px){ #hub .res{right:12px;gap:5px;} }
+
+/* ---------- banners: a player's own background, outline and line on the podium, and on their card ---------- */
+.lbp.bn-bg,.lbc-card.bn-bg{background:var(--bn-bg) !important;}
+.lbp.bn-ol{border-color:var(--bn-ol) !important;box-shadow:0 0 0 1px var(--bn-ol),0 0 36px -8px var(--bn-glow) !important;}
+.lbc-card.bn-ol{border-color:var(--bn-ol) !important;box-shadow:0 0 0 1px var(--bn-ol),0 30px 60px -20px rgba(0,0,0,.85),0 0 50px -12px var(--bn-glow) !important;}
+.bn-ln{display:flex;align-items:center;justify-content:center;gap:6px;max-width:100%;min-height:13px;font:700 9.5px var(--sk-h);font-style:normal;letter-spacing:.16em;color:rgba(255,255,255,.72);white-space:nowrap;overflow:hidden;}
+.bn-ln b{font:400 16px/1 var(--sk-big);letter-spacing:.04em;color:#fff;}
+.bn-ln img{flex:none;width:22px;height:22px;border-radius:6px;object-fit:cover;background:#11131d;box-shadow:0 0 0 1px rgba(255,255,255,.25);}
+.bn-ln span{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:11px;letter-spacing:.06em;color:#fff;}
+.bn-ln .rank-badge{width:22px;height:22px;} .bn-ln .rank-badge b{font-size:11px;}
+.lbc-line{display:contents;}
+.lbc-card .bn-ln{font-size:10.5px;} .lbc-card .bn-ln img{width:30px;height:30px;border-radius:8px;} .lbc-card .bn-ln b{font-size:20px;} .lbc-card .bn-ln span{font-size:13px;}
+.lbc-card .bn-ln .rank-badge{width:28px;height:28px;} .lbc-card .bn-ln .rank-badge b{font-size:14px;}
+.lb-tbtn.bnb{border-color:rgba(255,160,220,.5);background:linear-gradient(135deg,rgba(255,110,199,.16),rgba(143,123,255,.14));color:#ffe0f4;}
+/* the crown sits on the card's top edge: the card doesn't scroll any more, its inside does */
+.lbc-card{max-height:none;overflow:visible;}
+.lbc-in{width:100%;max-height:calc(92vh - 50px);overflow-y:auto;scrollbar-width:thin;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.lbc-crown{z-index:3;}
 </style>
 </head>
 <body>
@@ -3807,8 +3891,9 @@ body.in-game #hub .em-chip{display:none;}
     <div class="chip" title="Coins"><svg class="coin-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="url(#coinG)" stroke="#fff" stroke-width="1.4"/><path d="M14.8 7.6a4.8 4.8 0 1 0 0 8.8 5.6 5.6 0 1 1 0-8.8z" fill="#fff7d6" opacity=".95"/></svg><b id="coinDisplay">0</b></div>
     <div class="chip ruby-chip" title="Rubies · from the daily missions · buy skins with them"><svg class="ruby-ic" viewBox="0 0 24 24"><path d="M7 3.5h10l4.5 5.2L12 21 2.5 8.7z" fill="url(#rubyG)" stroke="#ffd2dc" stroke-width=".9" stroke-linejoin="round"/><path d="M2.5 8.7h19M7 3.5l2.4 5.2L12 21l2.6-12.3L17 3.5M9.4 8.7 12 3.5l2.6 5.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round"/></svg><b id="rubyDisplay">0</b></div>
     <button class="chip tro-chip rx" data-go="road" title="Trophy Road"><svg class="tro-ic" viewBox="0 0 24 24"><path d="M7 3h10v5.2a5 5 0 0 1-10 0z" fill="url(#troG)" stroke="#fff4c8" stroke-width=".8"/><path d="M7 5H4.2a3.2 3.2 0 0 0 3.4 4.2M17 5h2.8a3.2 3.2 0 0 1-3.4 4.2" fill="none" stroke="#ffcf4a" stroke-width="1.7"/><path d="M10.4 13.2h3.2v3h-3.2z" fill="#ffb02a"/><path d="M7.6 20.4h8.8l-1-3.6H8.6z" fill="#ffb02a"/></svg><b id="troDisplay">0</b></button>
-    <div class="chip" title="Characters collected"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.5l-5.4 2.9 1-6.1L3.2 9l6.1-.9z" fill="currentColor"/></svg><b id="charCountDisplay">1/17</b></div>
+    <div class="chip cc-chip" title="Characters collected"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.5l-5.4 2.9 1-6.1L3.2 9l6.1-.9z" fill="currentColor"/></svg><b id="charCountDisplay">1/17</b></div>
     <button class="chip gear fs-btn fs-only rx" id="fsBtn" title="Fullscreen (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="chip gear lc-btn rx" id="lcBtn" title="Customize · your lobby's colours and your banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2.2-1 2.2-2.1 0-.6-.3-1.1-.6-1.5-.3-.4-.6-.9-.6-1.5 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0 0 21 9.3C21 5.8 17 3 12 3z"/><circle cx="7.6" cy="11.4" r="1.2" fill="currentColor"/><circle cx="10.4" cy="7.4" r="1.2" fill="currentColor"/><circle cx="15.2" cy="7.6" r="1.2" fill="currentColor"/></svg></button>
     <button class="chip gear rx" data-go="settings" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
 
@@ -3846,7 +3931,7 @@ body.in-game #hub .em-chip{display:none;}
   <button class="em-chip sk-chip" id="emChip" title="Skins · a new look for your character"><span class="emc-ic"><svg class="ruby-ic" viewBox="0 0 24 24"><path d="M7 3.5h10l4.5 5.2L12 21 2.5 8.7z" fill="url(#rubyG)" stroke="#ffd2dc" stroke-width=".9" stroke-linejoin="round"/><path d="M2.5 8.7h19M7 3.5l2.4 5.2L12 21l2.6-12.3L17 3.5M9.4 8.7 12 3.5l2.6 5.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round"/></svg></span><b>SKINS</b></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 3.36.0 · BETA</span>
+    <span class="hub-version">VERSION 3.37.0 · BETA</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -4013,7 +4098,7 @@ body.in-game #hub .em-chip{display:none;}
     <rect x="-190" y="-58" width="380" height="104" rx="52" fill="url(#lgBetaset)" stroke="#ffffff" stroke-width="10"/>
     <text x="0" y="22" text-anchor="middle" font-family="Fredoka,'Outfit',sans-serif" font-weight="800" font-size="74" letter-spacing="26" fill="#14163a">BETA</text>
   </g>
-</svg><div class="set-ver">VERSION 3.36.0</div></div>
+</svg><div class="set-ver">VERSION 3.37.0</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -4115,6 +4200,12 @@ body.in-game #hub .em-chip{display:none;}
   </div>
 </div>
 
+<!-- ===== CUSTOMIZE: your lobby's colours and your leaderboard banner ===== -->
+<div class="on-pop lc-pop" id="lcPop"><div class="lc-card glass">
+  <div class="lc-head"><b>CUSTOMIZE</b><div class="lc-tabs"><button class="lc-tab rx" data-t="lobby">LOBBY</button><button class="lc-tab rx" data-t="banner">BANNER</button></div><button class="aa-x rx" id="lcX" aria-label="Close">×</button></div>
+  <div class="lc-body" id="lcBody"></div>
+</div></div>
+
 <!-- ===== LEADERBOARD ===== -->
 <div id="lb-screen" class="screen hidden">
   <button class="back-chip b3 plum rx" data-back><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>BACK</button>
@@ -4122,6 +4213,7 @@ body.in-game #hub .em-chip{display:none;}
   <div class="lb-wrap glass">
     <div class="lb-tools"><span class="lb-info" id="lbInfo"></span>
       <button class="lb-tbtn adm hidden rx" id="lbAdm">CREATOR TOOLS</button>
+      <button class="lb-tbtn bnb rx" id="lbBan" title="What your podium card shows, and its colours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>MY BANNER</button>
       <button class="lb-tbtn rx" id="lbRef" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>REFRESH</button></div>
     <div class="lb-pod hidden" id="lbPod"></div>
     <div class="lb-list" id="lbList"></div>
@@ -4322,6 +4414,8 @@ const State = {
   friends: [],              // your friends' Account IDs (Online)
   friendInfo: {},           // what they looked like the last time you saw them: {aid:{n,pf,fr}}
   netHide: false,           // hidden online: nobody sees you're on
+  lobbyCol: {sky:'',win:'',line:''},   // your lobby's colours (Customize): the sky, the windows, their outline ('' = the usual)
+  banner: {s:'title',bg:'',ol:''},     // your banner on the leaderboard's podium: what it shows under your name, its background, its outline
   emoteWheel: null,         // your wheel: four slots of emote ids, 0 = empty (Characters → Emotes)
   privacy: null,            // {w,m,c,r}: wins, matches, characters, best rank hidden from others (Profile)
   nameColor: '',            // the colour of your name (Profile)
@@ -14482,6 +14576,19 @@ const Lobby=(function(){
     });
     return grp;
   }
+  /* your sky (Customize): the island stays as it is, the sky, the haze and the clouds take your colour */
+  let skyTint='';
+  const mixH=(a,b,k)=>new THREE.Color(a).lerp(new THREE.Color(b),k).getHex();
+  function applySky(){
+    if(!sky||!sky.material||!sky.material.uniforms) return;
+    const U=sky.material.uniforms, c=skyTint?parseInt(skyTint.slice(1),16):null;
+    const P=c==null?pal:{top:mixH(0x04050a,c,.32),mid:mixH(0x0c0c16,c,.66),hor:mixH(c,0xffffff,.32),low:mixH(0x0a0a12,c,.46),cloud:mixH(c,0xffffff,.6)};
+    U.uTop.value.copy(LC(P.top)); U.uMid.value.copy(LC(P.mid)); U.uHor.value.copy(LC(P.hor)); U.uLow.value.copy(LC(P.low));
+    if(scene&&scene.fog) scene.fog.color.set(new THREE.Color(P.hor).lerp(new THREE.Color(P.low),.45).getHex());
+    if(cloudMat) cloudMat.color.copy(LC(P.cloud)); cloudMatFar.color.copy(new THREE.Color(P.hor).lerp(new THREE.Color(P.mid),.35));
+    if(hemi) hemi.groundColor.copy(LC(P.low));
+  }
+  function setSky(hex){ const h=/^#[0-9a-f]{6}$/i.test(hex||'')?hex.toLowerCase():''; if(h===skyTint) return; skyTint=h; applySky(); }
   function setIsland(id){
     if(!R) init();
     id=({colosseum:'sahara',lanternbridge:'autumn',clockwork:'gallows',throne:'glacier',rooftop:'gallows',cove:'ocean',sandtemple:'sahara',grotto:'forest',graveyard:'gallows',meadow:'forest',frostkeep:'glacier',forge:'gallows',temple:'forest',sakura:'autumn',canyon:'sahara',grove:'forest',neon:'gallows',crystal:'glacier',sunflower:'forest',inferno:'gallows',cathedral:'gallows',bamboo:'forest',hedge:'dungeon',icecrypt:'dungeon'})[id]||id;
@@ -14506,6 +14613,7 @@ const Lobby=(function(){
     keyLight.color.copy(LC(pal.key)); rimLight.color.copy(LC(new THREE.Color(pal.moon).lerp(new THREE.Color(pal.mid),.3).getHex()));
     hemi.color.copy(LC(new THREE.Color(0xffffff).lerp(new THREE.Color(pal.mid),.22).getHex()));
     hemi.groundColor.copy(LC(pal.low));
+    if(skyTint) applySky();
     const pc=id==='autumn'?{n:70,colors:[0xd8581e,0xf0a83a,0xc8401e],size:.22,vy:-.5,sway:.6,box:[20,10,20],y0:-3,sprite:'leaf'}:
       id==='glacier'?{n:260,colors:[0xffffff],size:.07,vy:-.7,sway:.3,box:[22,12,22],y0:-3}:
       id==='sahara'?{n:90,colors:[0xf0d6a8],size:.05,vx:2.5,sway:.3,box:[20,4,20],y0:0}:
@@ -14972,7 +15080,7 @@ const Lobby=(function(){
     return PCACHE[key]=url;
   }
   return {dance,mateDance,danceId:()=>HD.emote?HD.emote.id:0,mateDanceId:()=>MD.emote?MD.emote.id:0,setMate,teamReady(v){ teamRdy=!!v; },get mateKey(){ return mateKey; },get mateShown(){ return !!(matePed&&matePed.visible); },
-    init,start,stop,snap,setMode,setSlow(f){ slow=+f||0; },showcase,endShowcase,setIsland,setHero,showChest,openChest,portrait,setPet,petStage,petPoke,chestStyle,get petKey(){ return petKey; },get stageKey(){ return stageKey; },cachedPortrait,burstAt,setAccent,headScreen,react,get heroKey(){return heroKey;},get mode(){return mode;},get running(){return running;},resize,
+    init,start,stop,snap,setMode,setSlow(f){ slow=+f||0; },showcase,endShowcase,setIsland,setSky,setHero,showChest,openChest,portrait,setPet,petStage,petPoke,chestStyle,get petKey(){ return petKey; },get stageKey(){ return stageKey; },cachedPortrait,burstAt,setAccent,headScreen,react,get heroKey(){return heroKey;},get mode(){return mode;},get running(){return running;},resize,
     get info(){ return R?{mem:Object.assign({},R.info.memory),calls:R.info.render.calls,tris:R.info.render.triangles,progs:R.info.programs?R.info.programs.length:0}:null; }};
 })();
 
@@ -15667,6 +15775,7 @@ function statMeters(c){
   return rows.map(([k,v,t])=>`<div class="mt"><span class="mt-k">${k}</span><span class="mt-bar"><i style="width:${Math.round(Math.max(.06,Math.min(1,v))*100)}%"></i></span><b class="mt-v">${t}</b></div>`).join('');
 }
 function refreshHub(){
+  try{ applyLobbyCol(); }catch(e){}
   setText('coinDisplay',coinText()); setText('rubyDisplay',rubyText()); try{ lobbyEmUI(); }catch(e){}
   try{ dmPaint(); }catch(e){ console.warn(e); }
   refreshArtDock(); refreshMailBtn(); netHubRefresh();
@@ -24352,7 +24461,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.36.0';
+const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='3.37.0';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -26077,7 +26186,7 @@ function lobbyEmUI(){
   b.querySelector('.emc-ic').textContent=E?'■':'♪';
   b.title=E?'Stop dancing (B)':'Emote (B)';
 }
-function hubOverlay(){ return !!document.querySelector('#showcase.on,#haul.on,#shopPop.on,#pvPop.on,#mailPop.on,#admPop.on,#banWall,#lbCard.on')||!$el('resetModal').classList.contains('hidden'); }
+function hubOverlay(){ return !!document.querySelector('#showcase.on,#haul.on,#shopPop.on,#pvPop.on,#mailPop.on,#admPop.on,#banWall,#lbCard.on,#lcPop.on')||!$el('resetModal').classList.contains('hidden'); }
 function lobbyEmoteKey(){
   if(EmoteWheel.open){ EmoteWheel.hide(); return; }
   if(S.hub.classList.contains('hidden')||hubOverlay()) return;
@@ -26611,7 +26720,7 @@ const KyCloud=(function(){
     paintIds();
   }
   /* what your profile shows others: wins, matches, characters, best rank (or ? where private), pets, who you play, your artifacts */
-  function prof(){ try{ const i=netInfo(); return JSON.stringify({w:i.w,m:i.m,cc:i.cc,ct:i.ct,br:i.br,pv:i.pv,pc:i.pc,pt:i.pt,ch:i.ch,cr:i.cr,ar:i.ar,sb:i.sb,as:i.as}).slice(0,2900); }catch(e){ return ''; } }
+  function prof(){ try{ const i=netInfo(); return JSON.stringify({bn:(()=>{ try{ return bnMine(); }catch(e){ return null; } })(),w:i.w,m:i.m,cc:i.cc,ct:i.ct,br:i.br,pv:i.pv,pc:i.pc,pt:i.pt,ch:i.ch,cr:i.cr,ar:i.ar,sb:i.sb,as:i.as}).slice(0,2900); }catch(e){ return ''; } }
   let pubAgain=false;
   async function publish(){
     const s=Kyuchi.session; if(!s||!s.aid||banned) return;
@@ -26745,7 +26854,9 @@ const KyCloud=(function(){
     let t=null; try{ if(Kyuchi.session) t=await tok(); }catch(e){}
     const r=await runQuery(t,{from:[{collectionId:'players'}],orderBy:[{field:{fieldPath:'tro'},direction:'DESCENDING'}],limit:130,
       select:{fields:['aid','n','tro','best','pf','fr','nc','ti','adm','banned','lim'].map(f=>({fieldPath:f}))}});   // no profiles: a card fetches its own
+    const was=new Map(((lb&&lb.rows)||[]).map(o=>[o.uid,o]));
     lb={at:Date.now(),rows:rowsOf(r).filter(o=>/^\d{9}$/.test(o.aid||'')&&!o.banned&&!o.adm&&ranked(o)&&!String(o.lim||'').split(',').includes('l')).slice(0,100)};
+    lb.rows.forEach(o=>{ const p=was.get(o.uid); if(p&&'bn' in p){ o.bn=p.bn; o.bnAt=p.bnAt; } });
     try{ localStorage.setItem(LB_KEY,JSON.stringify(lb)); }catch(e){}
     return lb;
   }
@@ -26765,6 +26876,63 @@ const KyCloud=(function(){
   }
   const CROWN='<svg class="lbp-crown" viewBox="0 0 32 22"><defs><linearGradient id="lbCrG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff4c2"/><stop offset=".55" stop-color="#ffd24a"/><stop offset="1" stop-color="#ff9f2e"/></linearGradient></defs><path d="M3 19L1.5 6l8 6L16 2l6.5 10 8-6L29 19z" fill="url(#lbCrG)" stroke="#fff6d0" stroke-width="1" stroke-linejoin="round"/><circle cx="16" cy="13" r="2" fill="#ff5d7a"/><circle cx="8.5" cy="15" r="1.4" fill="#8ff3ff"/><circle cx="23.5" cy="15" r="1.4" fill="#8ff3ff"/></svg>';
   const tro=n=>`${TROPHY_SVG}${(+n||0).toLocaleString('en-US')}`;
+  /* ---------- banners: a player's podium card, their way (it rides in their public profile) ---------- */
+  const BN_S=['title','char','wins','rank','id','none'];
+  function bnParse(b){ if(!Array.isArray(b)) return null;
+    const s=BN_S.includes(b[0])?b[0]:'title'; let x=b[3];
+    if(s==='char'){ const [k,sk]=String(x||'').split('@'); x=byKey(k)?k+(sk&&skinDef(k,sk)?'@'+sk:''):''; }
+    else if(s==='wins'||s==='rank') x=Math.max(s==='rank'?1:0,Math.min(s==='rank'?50:1e7,Math.round(+x||0)));
+    else x='';
+    return {s,bg:lcHex(b[1]),ol:lcHex(b[2]),x}; }
+  function bnOfPP(pp){ let p=null; try{ p=JSON.parse(pp||'null'); }catch(e){} return p&&typeof p==='object'?bnParse(p.bn):null; }
+  const myBn=()=>{ try{ return bnParse(bnMine()); }catch(e){ return null; } };
+  function bnAttr(bn){ if(!bn) return {cls:'',st:''}; let st='';
+    if(bn.bg){ const c=lcRGB(bn.bg); st+='--bn-bg:radial-gradient(120% 90% at 50% 0%,rgba('+c+',.48),transparent 66%),linear-gradient(180deg,'+lcMix(bn.bg,[12,12,20],.42,.97)+','+lcMix(bn.bg,[7,7,12],.16,.97)+');'; }
+    if(bn.ol){ const c=lcRGB(bn.ol); st+='--bn-ol:rgba('+c+',.92);--bn-glow:rgba('+c+',.55);'; }
+    return {cls:(bn.bg?' bn-bg':'')+(bn.ol?' bn-ol':''),st}; }
+  // the line under the name: their title, who they play, their wins, their best rank, their Account ID, or nothing
+  function bnLine(bn,o,cls){
+    const s=bn?bn.s:'title', none=cls==='lbp'?'<em class="lbp-ti"></em>':'';
+    if(s==='title') return o.ti?`<em class="${cls}-ti" data-t="${esc(o.ti)}">${esc(o.ti)}</em>`:none;
+    if(s==='char'&&bn.x){ const [k,sk]=bn.x.split('@'), c=byKey(k), d=sk?skinDef(k,sk):null;
+      return `<em class="bn-ln"><img alt="" data-key="${esc(bn.x)}"><span>${esc(c.name)}${d?' · '+esc(d.name):''}</span></em>`; }
+    if(s==='wins') return `<em class="bn-ln"><b>${(+bn.x||0).toLocaleString('en-US')}</b>WINS</em>`;
+    if(s==='rank') return `<em class="bn-ln">${rankBadgeR(+bn.x||1)}BEST RANK</em>`;
+    if(s==='id'&&/^\d{9}$/.test(o.aid||'')) return `<em class="bn-ln">ID<b>${fmt(o.aid)}</b></em>`;
+    return none;
+  }
+  function fillKeys(root){ root.querySelectorAll('img[data-key]').forEach(im=>{ const u=Lobby.cachedPortrait(im.dataset.key); im.src=u||Lobby.portrait(im.dataset.key); im.removeAttribute('data-key'); }); }
+  function tileHTML(o,i,you,bn){ const a=bnAttr(bn);
+    return `<button class="lbp p${i+1}${you?' you':''}${a.cls} rx" data-i="${i}" style="${a.st}">${i===0?CROWN:''}<span class="lbp-rank">${i+1}</span>
+          <span class="lbp-av">${av(o)}</span><span class="lbp-n"><b${nameStyle(o.nc)}>${esc(o.n)}</b></span>
+          ${bnLine(bn,o,'lbp')}<span class="lbp-tro">${tro(o.tro)}</span></button>`; }
+  function drawPod(){
+    const pod=$el('lbPod'); if(!pod) return;
+    const rows=lb&&lb.rows||[], s=Kyuchi.session, my=s?rows.findIndex(o=>o.uid===s.uid):-1;
+    if(!rows.length){ pod.innerHTML=''; pod.classList.add('hidden'); return; }
+    pod.classList.remove('hidden');
+    pod.innerHTML=[1,0,2].map(i=>{ const o=rows[i]; if(!o) return '<div class="lbp empty"></div>'; return tileHTML(o,i,i===my,i===my?myBn():o.bn); }).join('');
+    fillAv(pod); fillKeys(pod);
+    pod.querySelectorAll('[data-i]').forEach(b=>{ wireRx(b); b.onclick=()=>{ const i=+b.dataset.i; if(rows[i]){ showCard(rows[i],i+1); SFX.open&&SFX.open(); } }; });
+  }
+  // the top three's banners: three profile reads, kept a few minutes
+  let podBusy=false;
+  async function podBanners(rows,my){
+    if(podBusy) return;
+    const want=rows.slice(0,3).filter((o,i)=>o&&o.uid&&i!==my&&!(o.bnAt&&Date.now()-o.bnAt<180000)); if(!want.length) return;
+    podBusy=true;
+    try{ await Promise.all(want.map(async o=>{ let d=null; const c=profs.get(o.uid);
+        if(c&&Date.now()-c.at<60000) d=c.d; else { try{ d=await pub('players/'+o.uid); }catch(e){} if(d) profs.set(o.uid,{at:Date.now(),d}); }
+        if(d){ o.bn=bnOfPP(d.pp); o.bnAt=Date.now(); } }));
+      try{ localStorage.setItem(LB_KEY,JSON.stringify(lb)); }catch(e){}
+    } finally{ podBusy=false; }
+    if(S.lb&&!S.lb.classList.contains('hidden')) drawPod();
+  }
+  // yours, in Customize: the #1 card, as everyone would see it
+  function previewBanner(host){
+    const c=card(), ses=Kyuchi.session, o={uid:'me',aid:ses&&ses.aid||'',n:c.n,ti:c.ti,tro:c.tro,pf:c.pf,fr:c.fr,nc:c.nc};
+    host.innerHTML='<div class="lb-pod">'+tileHTML(o,0,false,myBn()).replace(/lbCrG/g,'lbCrGp')+'</div>'; fillAv(host); fillKeys(host);   // its own crown paint: a hidden one can't lend it
+  }
   let lbState='', lbRef=0;
   function openBoard(){
     paintAdmin(); loadXT();
@@ -26785,21 +26953,17 @@ const KyCloud=(function(){
     const rows=lb&&lb.rows||[], s=Kyuchi.session, my=s?rows.findIndex(o=>o.uid===s.uid):-1;
     info.textContent=lbState==='loading'?'Loading…':lbState==='error'?'Can\'t reach it right now · showing the last one':lbState==='soon'?'':lb?'Updated '+ago(lb.at):'';
     const empty=lbState==='loading'?'<i class="lb-spin"></i>Loading the leaderboard…':lbState==='soon'?'The leaderboard opens very soon · check back in a bit':lbState==='error'&&!rows.length?'Can\'t reach the leaderboard · check your connection':'No one is on it yet · win a trophy and be the first!';
-    if(!rows.length){ pod.innerHTML=''; pod.classList.add('hidden'); list.innerHTML=`<div class="lb-empty">${empty}</div>`; }
+    if(!rows.length){ list.innerHTML=`<div class="lb-empty">${empty}</div>`; }
     else {
-      pod.classList.remove('hidden');
-      pod.innerHTML=[1,0,2].map(i=>{ const o=rows[i]; if(!o) return '<div class="lbp empty"></div>';
-        return `<button class="lbp p${i+1}${i===my?' you':''} rx" data-i="${i}">${i===0?CROWN:''}<span class="lbp-rank">${i+1}</span>
-          <span class="lbp-av">${av(o)}</span><span class="lbp-n"><b${nameStyle(o.nc)}>${esc(o.n)}</b></span>
-          <em class="lbp-ti" data-t="${esc(o.ti||'')}">${esc(o.ti||'')}</em><span class="lbp-tro">${tro(o.tro)}</span></button>`; }).join('');
       list.innerHTML=rows.length>3?rows.slice(3).map((o,k)=>{ const i=k+3;
         return `<button class="lbr${i===my?' you':''}${i<10?' t10':''} rx" data-i="${i}" style="--k:${Math.min(k,24)}"><span class="lbr-rank">${i+1}</span>
           <span class="lbr-av">${av(o)}</span><span class="lbr-who"><b${nameStyle(o.nc)}>${esc(o.n)}</b><em data-t="${esc(o.ti||'')}">${esc(o.ti||'')}</em></span>
           <span class="lbr-tro">${tro(o.tro)}</span></button>`; }).join(''):`<div class="lb-empty small">${rows.length} on the leaderboard so far</div>`;
     }
-    const root=$el('lb-screen'); fillAv(root);
-    root.querySelectorAll('[data-i]').forEach(b=>{ wireRx(b); b.onclick=()=>{ const i=+b.dataset.i; if(rows[i]){ showCard(rows[i],i+1); SFX.open&&SFX.open(); } }; });
+    drawPod(); fillAv(list);
+    list.querySelectorAll('[data-i]').forEach(b=>{ wireRx(b); b.onclick=()=>{ const i=+b.dataset.i; if(rows[i]){ showCard(rows[i],i+1); SFX.open&&SFX.open(); } }; });
     drawMe(rows,my);
+    if(rows.length) podBanners(rows,my);
   }
   function drawMe(rows,my){
     const el=$el('lbMe'); if(!el) return; const s=Kyuchi.session;
@@ -26823,15 +26987,16 @@ const KyCloud=(function(){
   /* one player, up close: their ID to copy, and the creator's two buttons */
   function showCard(o,rank){
     const el=$el('lbCard'), s=Kyuchi.session, me=s&&o.uid===s.uid;
-    el.innerHTML=`<div class="lbc-card r${rank<=3?rank:0}"><button class="aa-x rx lbc-x" id="lbcX" aria-label="Close">×</button>
-      ${rank===1?CROWN.replace('lbp-crown','lbc-crown'):''}${rank?`<div class="lbc-rank">#${rank} ON THE LEADERBOARD</div>`:'<div class="lbc-rank">YOUR FRIEND</div>'}
+    const bn=me?myBn():o.bn!==undefined?o.bn:o.pp?bnOfPP(o.pp):null, ba=bnAttr(bn);
+    el.innerHTML=`<div class="lbc-card r${rank<=3?rank:0}${ba.cls}" style="${ba.st}"><button class="aa-x rx lbc-x" id="lbcX" aria-label="Close">×</button>
+      ${rank===1?CROWN.replace('lbp-crown','lbc-crown'):''}<div class="lbc-in">${rank?`<div class="lbc-rank">#${rank} ON THE LEADERBOARD</div>`:'<div class="lbc-rank">YOUR FRIEND</div>'}
       <span class="lbc-av">${av(o)}</span><b class="lbc-n"><span${nameStyle(o.nc)}>${esc(o.n)}</span></b>
-      ${o.ti?`<em class="lbc-ti" data-t="${esc(o.ti)}">${esc(o.ti)}</em>`:''}
+      <div class="lbc-line" id="lbcLine">${bnLine(bn,o,'lbc')}</div>
       <div class="lbc-tro">${TROPHY_SVG}<b>${(+o.tro||0).toLocaleString('en-US')}</b><small>TROPHIES</small></div>
       <button class="lbc-id rx" id="lbcId" title="Copy the Account ID"><small>ACCOUNT ID</small><b>${fmt(o.aid)}</b><i>COPY</i></button>
       <div class="lbc-more" id="lbcMore">${o.pp?profHTML(o):'<div class="lbc-none"><i class="lb-spin"></i>Loading their profile…</div>'}</div>
-      ${admin&&!me?`<div class="lbc-adm"><button class="adm-btn rx" data-a="gift">SEND A GIFT</button><button class="adm-btn warn rx" data-a="limit">LIMIT</button><button class="adm-btn bad rx" data-a="ban">BAN</button></div>`:''}</div>`;
-    fillAv(el); el.classList.add('on');
+      ${admin&&!me?`<div class="lbc-adm"><button class="adm-btn rx" data-a="gift">SEND A GIFT</button><button class="adm-btn warn rx" data-a="limit">LIMIT</button><button class="adm-btn bad rx" data-a="ban">BAN</button></div>`:''}</div></div>`;
+    fillAv(el); fillKeys(el); el.classList.add('on');
     el.dataset.uid=o.uid||''; if(o.pp) el.querySelectorAll('img[data-key]').forEach(im=>{ const u=Lobby.cachedPortrait(im.dataset.key); im.src=u||Lobby.portrait(im.dataset.key); });
     else fillProf(o);
     const close=()=>el.classList.remove('on');
@@ -26864,6 +27029,11 @@ const KyCloud=(function(){
     if(!d){ try{ d=await pub('players/'+o.uid); }catch(e){} if(d) profs.set(o.uid,{at:Date.now(),d}); }
     const el=$el('lbcMore'), card=$el('lbCard'); if(!el||!card.classList.contains('on')||card.dataset.uid!==o.uid) return;
     el.innerHTML=profHTML(Object.assign({},o,d?{pp:d.pp,tro:d.tro}:{}));
+    if(d&&!(Kyuchi.session&&o.uid===Kyuchi.session.uid)){                 // their banner, now that their profile is here
+      const bn=bnOfPP(d.pp), ba=bnAttr(bn), c=card.querySelector('.lbc-card'), ln=$el('lbcLine'); o.bn=bn; o.bnAt=Date.now();
+      if(c){ c.classList.remove('bn-bg','bn-ol'); ba.cls.split(' ').filter(Boolean).forEach(k=>c.classList.add(k)); c.setAttribute('style',ba.st); }
+      if(ln){ ln.innerHTML=bnLine(bn,o,'lbc'); fillAv(ln); fillKeys(ln); }
+    }
     el.querySelectorAll('img[data-key]').forEach(im=>{ const u=Lobby.cachedPortrait(im.dataset.key); im.src=u||Lobby.portrait(im.dataset.key); });
   }
   function copyId(aid){
@@ -27114,13 +27284,100 @@ const KyCloud=(function(){
 
   /* a friend's card, by their Account ID (from anywhere: it's public, like the leaderboard) */
   async function showAid(aid){ let o=null; try{ o=await lookup(aid); }catch(e){} if(!o){ toast('Couldn\'t load their profile right now',2600); return; } showCard(o,0); }
-  return {onSession,onBoot,onLogout,publish,claimed,openBoard,refresh,paintIds,paintChip,fmt,openAdmin,limited,limSay,findAid:lookup,showAid,get limWhy(){ return limWhy; },
+  return {previewBanner,redraw:()=>drawPod(),onSession,onBoot,onLogout,publish,claimed,openBoard,refresh,paintIds,paintChip,fmt,openAdmin,limited,limSay,findAid:lookup,showAid,get limWhy(){ return limWhy; },
     letters:()=>letters,get admin(){ return admin; },get banned(){ return !!banned; },
     _:{board,rankOf,lookup,tick,card,loadXT,get lb(){ return lb; }}};
 })();
 S.lb=document.getElementById('lb-screen'); CAM_FOR.lb='panel';
+/* ==========================================================
+   CUSTOMIZE · your lobby's colours (the sky, the windows, their outline),
+   and your banner on the leaderboard's podium (what it shows, its background,
+   its outline). The lobby's colours are yours alone; the banner rides in your
+   public profile, so everyone sees it.
+   ========================================================== */
+const LC_SW=['#7c5cff','#3fa9ff','#26d9c7','#3ddc84','#c8f04a','#ffd24a','#ff9a3c','#ff4d6d','#ff6ec7','#b06bff','#ffffff','#0b0b10'];
+const LC_ROWS=[['sky','SKY','The sky behind your character'],['win','WINDOWS','The background of every window'],['line','OUTLINE','The edge around every window']];
+const BN_ROWS=[['bg','BACKGROUND','Behind your name'],['ol','OUTLINE','The edge around your banner']];
+const BN_OPTS=[['title','TITLE'],['char','CHARACTER'],['wins','WINS'],['rank','BEST RANK'],['id','ACCOUNT ID'],['none','NOTHING']];
+const lcHex=h=>/^#[0-9a-f]{6}$/i.test(h||'')?String(h).toLowerCase():'';
+const lcRGB=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+function lcMix(h,d,k,a){ const c=lcRGB(h); return 'rgba('+c.map((v,i)=>Math.round(v*k+d[i]*(1-k))).join(',')+','+a+')'; }
+function lcObj(){ if(!State.lobbyCol||typeof State.lobbyCol!=='object') State.lobbyCol={sky:'',win:'',line:''}; return State.lobbyCol; }
+function bnObj(){ if(!State.banner||typeof State.banner!=='object') State.banner={s:'title',bg:'',ol:''}; return State.banner; }
+/* the banner you publish: [what it shows, background, outline, the thing it shows] */
+function bnMine(){
+  const B=bnObj(), s=BN_OPTS.some(o=>o[0]===B.s)?B.s:'title', k=State.selectedChar;
+  const x=s==='char'?k+(mySkin(k)?'@'+mySkin(k):''):s==='wins'?myWins():s==='rank'?bestRank():'';
+  return [s,lcHex(B.bg),lcHex(B.ol),x];
+}
+let lcLast='';
+function applyLobbyCol(){
+  const L=lcObj(), hub=$el('hub'); if(!hub) return;
+  const w=lcHex(L.win), l=lcHex(L.line), k=lcHex(L.sky), sig=w+l+k;
+  if(sig===lcLast) return; lcLast=sig;
+  hub.classList.toggle('lc-win',!!w); hub.classList.toggle('lc-line',!!l); hub.classList.toggle('lc-sky',!!k);
+  if(w){ const c=lcRGB(w); hub.style.setProperty('--lc-glass','radial-gradient(120% 90% at 0% 0%,rgba('+c+',.2),transparent 60%),linear-gradient(180deg,'+lcMix(w,[18,20,32],.32,.88)+','+lcMix(w,[9,10,18],.17,.86)+')'); }
+  if(l){ const c=lcRGB(l); hub.style.setProperty('--lc-line','rgba('+c+',.78)'); hub.style.setProperty('--lc-glow','rgba('+c+',.5)'); }
+  if(k){ const c=lcRGB(k); hub.style.setProperty('--lc-sky','rgba('+c+',.62)'); }
+  try{ Lobby.setSky(k); }catch(e){}
+}
+let lcTab='lobby', lcPubT=0;
+function lcSwatches(k,cur,def){
+  const on=lcHex(cur), pre=LC_SW.includes(on);
+  return '<div class="lc-sw" data-k="'+k+'"><button class="lc-s auto'+(on?'':' on')+' rx" data-c="" title="'+def+'"></button>'+
+    LC_SW.map(c=>'<button class="lc-s'+(on===c?' on':'')+' rx" data-c="'+c+'" style="--c:'+c+'" title="'+c+'"></button>').join('')+
+    '<label class="lc-s cus'+(on&&!pre?' on':'')+'" title="Any colour you like"'+(on&&!pre?' style="--c:'+on+'"':'')+'><input type="color" value="'+(on||'#7c5cff')+'"></label></div>';
+}
+function lcPaint(){
+  const b=$el('lcBody'), pop=$el('lcPop'); if(!b) return;
+  pop.querySelectorAll('.lc-tab').forEach(t=>t.classList.toggle('on',t.dataset.t===lcTab));
+  pop.classList.toggle('lc-lobby',lcTab==='lobby');
+  if(lcTab==='lobby'){ const L=lcObj();
+    b.innerHTML=LC_ROWS.map(([k,n,d])=>'<div class="lc-row"><div class="lc-lab"><b>'+n+'</b><small>'+d+'</small></div>'+lcSwatches(k,L[k],k==='sky'?'The map\'s own sky':'The usual')+'</div>').join('')+
+      '<div class="lc-foot"><small>Only you see your lobby\'s colours</small><button class="lc-reset rx" id="lcReset">RESET</button></div>';
+  } else { const B=bnObj(), ses=Kyuchi.session;
+    b.innerHTML='<div class="lc-bn"><div class="lc-prev" id="lcPrev"></div><div class="lc-opts">'+
+      '<div class="lc-row"><div class="lc-lab"><b>SHOW</b><small>Under your name</small></div><div class="lc-show">'+BN_OPTS.map(([v,n])=>'<button class="lc-o'+((B.s||'title')===v?' on':'')+' rx" data-s="'+v+'">'+n+'</button>').join('')+'</div></div>'+
+      BN_ROWS.map(([k,n,d])=>'<div class="lc-row"><div class="lc-lab"><b>'+n+'</b><small>'+d+'</small></div>'+lcSwatches(k,B[k],'Your place\'s colour')+'</div>').join('')+
+      '</div></div><div class="lc-foot"><small>'+(ses?'Everyone sees it when you\'re in the top 3, and on your card when they open it':'Make a Kyuchi ID to get on the leaderboard')+'</small><button class="lc-reset rx" id="lcReset">RESET</button></div>';
+    lcPrev();
+  }
+  b.querySelectorAll('button').forEach(x=>wireRx(x));
+  const O=lcTab==='lobby'?lcObj():bnObj();
+  b.querySelectorAll('.lc-sw').forEach(sw=>{ const k=sw.dataset.k;
+    sw.querySelectorAll('button[data-c]').forEach(x=>x.onclick=()=>{ O[k]=x.dataset.c; lcChanged(true); SFX.press&&SFX.press(); });
+    const inp=sw.querySelector('input'), lab=sw.querySelector('.cus');
+    inp.addEventListener('input',()=>{ O[k]=lcHex(inp.value); sw.querySelectorAll('.lc-s').forEach(x=>x.classList.remove('on')); lab.classList.add('on'); lab.style.setProperty('--c',O[k]); lcChanged(false); });
+    inp.addEventListener('change',()=>{ O[k]=lcHex(inp.value); lcChanged(true); });
+  });
+  b.querySelectorAll('.lc-o').forEach(x=>x.onclick=()=>{ bnObj().s=x.dataset.s; lcChanged(true); SFX.press&&SFX.press(); });
+  $el('lcReset').onclick=()=>{ if(lcTab==='lobby') State.lobbyCol={sky:'',win:'',line:''}; else State.banner={s:'title',bg:'',ol:''}; lcChanged(true); SFX.back&&SFX.back(); };
+}
+function lcPrev(){ const p=$el('lcPrev'); if(p) try{ KyCloud.previewBanner(p); }catch(e){ console.warn(e); } }
+/* something changed: show it at once; save it (and publish the banner) a moment later */
+function lcChanged(full){
+  if(lcTab==='lobby') applyLobbyCol(); else lcPrev();
+  if(full) lcPaint();
+  clearTimeout(lcPubT); lcPubT=setTimeout(()=>{ saveState(); if(lcTab==='banner') try{ KyCloud.publish(); }catch(e){} },700);
+}
+function openCustomize(tab){
+  if(tab) lcTab=tab; lcPaint(); $el('lcPop').classList.add('on'); SFX.open&&SFX.open();
+}
+function closeCustomize(){
+  const p=$el('lcPop'); if(!p.classList.contains('on')) return;
+  p.classList.remove('on'); clearTimeout(lcPubT); saveState();
+  try{ KyCloud.publish(); }catch(e){}
+  try{ if(S.lb&&!S.lb.classList.contains('hidden')) KyCloud.redraw(); }catch(e){}
+}
+$el('lcBtn').addEventListener('click',e=>{ e.stopPropagation(); openCustomize('lobby'); });
+$el('lcX').addEventListener('click',()=>{ closeCustomize(); SFX.back&&SFX.back(); });
+$el('lcPop').addEventListener('click',e=>{ if(e.target===$el('lcPop')) closeCustomize(); });
+document.querySelectorAll('#lcPop .lc-tab').forEach(t=>{ wireRx(t); t.addEventListener('click',()=>{ if(lcTab===t.dataset.t) return; lcTab=t.dataset.t; lcPaint(); SFX.press&&SFX.press(); }); });
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&$el('lcPop').classList.contains('on')){ e.stopImmediatePropagation(); e.preventDefault(); closeCustomize(); SFX.back&&SFX.back(); } },true);
+
 document.getElementById('lbRef').addEventListener('click',()=>{ SFX.press&&SFX.press(); KyCloud.refresh(); });
 document.getElementById('lbAdm').addEventListener('click',()=>KyCloud.openAdmin());
+document.getElementById('lbBan').addEventListener('click',()=>openCustomize('banner'));
 
 /* ---- 64e-laurent.js ---- */
 /* ==========================================================
