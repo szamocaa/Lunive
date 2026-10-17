@@ -4210,7 +4210,7 @@ html{touch-action:manipulation;}
   <button class="em-chip sk-chip" id="emChip" title="Skins · a new look for your character"><span class="emc-ic"><svg class="ruby-ic" viewBox="0 0 24 24"><path d="M7 3.5h10l4.5 5.2L12 21 2.5 8.7z" fill="url(#rubyG)" stroke="#ffd2dc" stroke-width=".9" stroke-linejoin="round"/><path d="M2.5 8.7h19M7 3.5l2.4 5.2L12 21l2.6-12.3L17 3.5M9.4 8.7 12 3.5l2.6 5.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round"/></svg></span><b>SKINS</b></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 4.0.3</span>
+    <span class="hub-version">VERSION 4.0.4</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -4372,7 +4372,7 @@ html{touch-action:manipulation;}
   <path class="spk" d="M2560 120 Q2566 172 2618 178 Q2566 184 2560 236 Q2554 184 2502 178 Q2554 172 2560 120Z" fill="url(#lgSparkset)"/>
   <path class="spk" d="M40 700 Q44 736 80 740 Q44 744 40 780 Q36 744 0 740 Q36 736 40 700Z" fill="url(#lgSparkset)"/>
   <path class="spk" d="M2380 900 Q2383 924 2407 927 Q2383 930 2380 954 Q2377 930 2353 927 Q2377 924 2380 900Z" fill="url(#lgSparkset)"/>
-</svg><div class="set-ver">VERSION 4.0.3</div></div>
+</svg><div class="set-ver">VERSION 4.0.4</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -25601,7 +25601,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='4.0.3';
+const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='4.0.4';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -37241,7 +37241,7 @@ function buildTemple(){ const M=room('temple',15,12,{floor:T.ROCK,door:7,name:'T
 
 const MAPS={}, BUILD={town:buildTown,old:buildOld,mountain:buildMountain,realm:buildRealm,shrine_in:buildShrineIn,forge_in:buildForgeIn,store_in:buildStoreIn,inn_in:buildInnIn,goro_in:buildGoroIn,emma_in:buildEmmaIn,temple:buildTemple};
 function getMap(id){ return MAPS[id]||(MAPS[id]=BUILD[id]()); }
-function rebuild(id){ delete MAPS[id]; if(G&&G.map&&G.map.id===id){ G.map=getMap(id); } }
+function rebuild(id){ delete MAPS[id]; if(G&&G.map&&G.map.id===id){ G.map=getMap(id); placeNpcs(G.map); } }
 
 /* ==========================================================
    The game: what you carry, what you know, and the loop that runs it all
@@ -37553,8 +37553,10 @@ function gotRyo(n){ S.ryo+=n; Snd.fx('buy'); toast('+'+n+' ryo','ryo'); }
 
 /* ---------- the script runner: one story moment at a time ---------- */
 function run(fn){ if(G.busy) return; G.busy=true; Promise.resolve().then(fn).catch(e=>{ console.error(e); }).finally(()=>{ G.busy=false; hideSay(); hud(true); }); }
-function walkActor(a,tx,ty,sp){ return new Promise(r=>{ a.walkTo=[tx,ty]; a.speed=sp||50; a.res=r; }); }
-function walkNpc(n,tx,ty,sp){ return new Promise(r=>{ n.walkTo=[tx,ty]; n.speed=sp||48; n.onArrive=r; }); }
+const walkEnd=(o,tx,ty,sp,fin)=>setTimeout(fin,(Math.hypot(tx-(o.x!==undefined?o.x:o.px),ty-(o.y!==undefined?o.y:o.py))/(sp||48)||0)*1000+1500);
+function walkActor(a,tx,ty,sp){ return new Promise(r=>{ a.walkTo=[tx,ty]; a.speed=sp||50; a.res=r; walkEnd(a,tx,ty,a.speed,()=>{ if(a.res===r){ a.x=tx; a.y=ty; a.walkTo=null; a.moving=false; a.res=null; r(); } }); }); }
+function walkNpc(n,tx,ty,sp){ return new Promise(r=>{ if(!n||!G.map.npcs.includes(n)||!isFinite(n.px)||!isFinite(n.py)){ if(n){ n.px=tx; n.py=ty; } return r(); }
+  n.walkTo=[tx,ty]; n.speed=sp||48; n.onArrive=r; walkEnd(n,tx,ty,n.speed,()=>{ if(n.onArrive===r){ n.px=tx; n.py=ty; n.walkTo=null; n.moving=false; n.onArrive=null; r(); } }); }); }
 async function walkHero(tx,ty,sp){ const P=G.p; G.hideHero=true; const a={x:P.x,y:P.y,dir:P.dir,fr:heroFrames(),keep:0}; G.actors.push(a); await walkActor(a,tx,ty,sp||60); P.x=a.x; P.y=a.y; P.dir=a.dir; G.actors.splice(G.actors.indexOf(a),1); G.hideHero=false; }
 function npcBy(id){ return G.map.npcs.find(n=>n.id===id); }
 
@@ -37606,17 +37608,20 @@ function listLayer(box,rows,o){
 const MENU=[['bag','Bag'],['equip','Equip'],['status','Status'],['quest','Quests'],['mem','Memories'],['map','Map'],['save','Save'],['keys','Controls'],['quit','Leave Narukami']];
 function openMenu(page){
   if(G.busy||G.mode!=='world') return; G.busy=true; Snd.fx('ok');
-  const box=$('.wr-menu'), pnl=$('.wr-panel');
-  box.innerHTML=`<div class="mh"><span>MENU</span><span>${fmtTime(S.t)}</span></div><div class="list"></div>`; box.classList.remove('hidden');
+  const box=$('.wr-menu'), pnl=$('.wr-panel'), direct=!!page;     // opened with its own key: only that page, and closing it closes everything
+  box.innerHTML=`<div class="mh"><span>MENU</span><span>${fmtTime(S.t)}</span></div><div class="list"></div>`; box.classList.toggle('hidden',direct);
   let sub=null;
   const close=()=>{ box.classList.add('hidden'); pnl.classList.add('hidden'); unlayer(M); if(sub) unlayer(sub); G.busy=false; hud(true); };
-  const M=layer(listLayer(box,MENU.map(([k,n])=>({html:n,act:()=>openPage(k)})),{back:close,visible:12}));
+  const M=layer(listLayer(box,MENU.map(([k,n])=>({html:n,act:()=>openPage(k)})),{back:close,visible:12,
+    keyx:a=>{ if(a==='click') close(); else if(a==='bag'||a==='map'||a==='quest'){ Snd.fx('ok'); openPage(a); } }}));
   const openPage=(k)=>{
     if(k==='save'){ save(); return; }
     if(k==='quit'){ unlayer(M); ask('','Leave Narukami and go back to the lobby? Your journey is saved where you stand.',['Stay','Leave'],{cancel:0}).then(i=>{ if(i===1){ close(); save(true); exit(); } else { G.layers.push(M); } }); return; }
     pnl.classList.remove('hidden','wide'); unlayer(M);
-    const back=()=>{ if(sub) unlayer(sub); sub=null; pnl.classList.add('hidden'); G.layers.push(M); M.redraw(); };
-    sub=layer(PAGES[k](pnl,back)||{key(a){ if(a==='back'||a==='menu'||a==='ok'||a==='click'){ Snd.fx('back'); back(); } }});
+    const back=()=>{ if(sub) unlayer(sub); sub=null; pnl.classList.add('hidden'); if(direct){ close(); return; } G.layers.push(M); M.redraw(); };
+    const pg=PAGES[k](pnl,back)||{key(a){ if(a==='back'||a==='menu'||a==='ok'||a==='click'){ Snd.fx('back'); back(); } }};
+    const pk=pg.key; pg.key=a=>{ if(a===k){ Snd.fx('back'); back(); return; } pk.call(pg,a); };      // M closes the map, I the bag, J the quests
+    sub=layer(pg);
   };
   if(page) openPage(page);
 }
@@ -38477,10 +38482,15 @@ function parry(){ return new Promise(res=>{
 }); }
 async function memoryMontage(){
   const box=$('.wr-mems'); const prev=Snd.id; Snd.play('memory'); bel().style.opacity='.15';
-  const L=S.mem.slice(); const dt=L.length>18?1050:L.length>10?1400:1900;
+  // at most twelve of them, the first and the last always among them, each on screen long enough to read
+  const all=S.mem.slice(), N=Math.min(12,all.length), L=N<all.length?Array.from({length:N},(_,i)=>all[Math.round(i*(all.length-1)/Math.max(1,N-1))]):all;
+  const dt=Math.min(1600,Math.max(550,7600/Math.max(1,L.length)));
+  let next=null; const LY=layer({key(a){ if((a==='ok'||a==='click'||a==='back')&&next) next(); }});
+  const hint=document.createElement('div'); hint.className='wr-hint'; hint.style.opacity=1; hint.innerHTML='<span><kbd>E</kbd>next memory</span>'; box.appendChild(hint);
   for(const m of L){ const c=document.createElement('div'); c.className='card'; c.innerHTML=`<small>${fmtTime(m.t)}${m.map?' &middot; '+esc(m.map).toUpperCase():''}</small>${rich(m.text)}`;
-    c.style.transform=`translate(${Math.round((Math.random()-.5)*24)}%,${Math.round((Math.random()-.5)*60)}%)`; box.appendChild(c); await wait(40); c.classList.add('on'); Snd.fx('memory'); await wait(dt*(keys.ok?.35:1)); c.classList.add('gone'); setTimeout(()=>c.remove(),800); }
-  await wait(700); bel().style.opacity=''; Snd.play(prev||'shogun');
+    c.style.transform=`translate(${Math.round((Math.random()-.5)*24)}%,${Math.round((Math.random()-.5)*60)}%)`; box.appendChild(c); await wait(40); c.classList.add('on'); Snd.fx('memory');
+    await new Promise(r=>{ const t=setTimeout(r,dt*(keys.ok?.4:1)); next=()=>{ clearTimeout(t); r(); }; }); next=null; c.classList.add('gone'); setTimeout(()=>c.remove(),800); }
+  unlayer(LY); hint.remove(); await wait(500); bel().style.opacity=''; Snd.play(prev||'shogun');
 }
 async function shogunTurn(){
   const f=B.foe; B.st=(B.st||0)+1;
@@ -38660,7 +38670,7 @@ function exit(){
   const cb=opts.onExit; opts={}; if(cb) try{ cb(); }catch(e){ console.error(e); }
 }
 return {start,exit,get on(){ return on; },
-  _dbg:{q:s=>$(s),get S(){ return S; },get F(){ return F; },get G(){ return G; },get B(){ return B; },run,enter,battle,flag,quest,rebuild,give,got,say,MAPS,getMap,ITEMS,FOES,ZONES,ACTS,memory,gainXP,
+  _dbg:{q:s=>$(s),mm:()=>memoryMontage(),get S(){ return S; },get F(){ return F; },get G(){ return G; },get B(){ return B; },run,enter,battle,flag,quest,rebuild,give,got,say,MAPS,getMap,ITEMS,FOES,ZONES,ACTS,memory,gainXP,
     press:a=>pressQ.push(a),hold:(a,v)=>{ keys[a]=v; },begin,toTitle,summitScene,realm,ending,credits,questNow,pMaxHP,pATK,pDEF,save,loadSlot,freshSave,setS:v=>{ S=v; F=S.f; }}};
 })();
 
