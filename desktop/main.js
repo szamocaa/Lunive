@@ -17,6 +17,8 @@ protocol.registerSchemesAsPrivileged([
 ]);
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');  // the lobby music starts without a click first
 app.commandLine.appendSwitch('ignore-gpu-blocklist');                          // use the graphics card even if the driver is on Chromium's blocklist
+app.commandLine.appendSwitch('force_high_performance_gpu');                     // a laptop with two graphics chips draws with the fast one, not the power-saving one
+app.commandLine.appendSwitch('disable-features', 'CalculateNativeWinOcclusion'); // Windows never takes the game for hidden behind an overlay (that drops its frame rate)
 
 if (!app.requestSingleInstanceLock()) app.quit();
 

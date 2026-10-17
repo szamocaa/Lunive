@@ -3047,6 +3047,14 @@ textarea.adm-in{min-height:64px;resize:vertical;font:500 13px/1.45 var(--sk-body
 /* ---- Performance mode ---- */
 body.potato *,body.potato *::before,body.potato *::after{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
 body.potato .row.gfx-lock{opacity:.4;pointer-events:none;}
+body.potato #hub .lb-aura,body.lite-ui #hub .lb-aura,body.potato .play-glow{display:none !important;}
+.gpu-row small b{color:#fff;font-weight:700;} .gpu-row.soft small b{color:#ff8a9a;}
+#gpuPop .gp-card{width:min(520px,calc(100vw - 32px));padding:22px 22px 18px;border-radius:18px;color:#fff;text-align:center;}
+#gpuPop h3{margin:2px 0 10px;font-size:20px;letter-spacing:.04em;}
+#gpuPop p{margin:0 0 10px;font-size:14px;line-height:1.5;color:rgba(255,255,255,.82);}
+#gpuPop p b{color:#fff;}
+#gpuPop .gp-ok{margin-top:8px;padding:11px 34px;border:0;border-radius:12px;cursor:pointer;font-weight:800;letter-spacing:.2em;color:#1a1300;background:linear-gradient(180deg,#fff0b8,#ffc94a);}
+#gpuPop.on{display:flex;}
 .potato-row small{max-width:440px;}
 
 /* ---- Auto Equip ---- */
@@ -4210,7 +4218,7 @@ html{touch-action:manipulation;}
   <button class="em-chip sk-chip" id="emChip" title="Skins · a new look for your character"><span class="emc-ic"><svg class="ruby-ic" viewBox="0 0 24 24"><path d="M7 3.5h10l4.5 5.2L12 21 2.5 8.7z" fill="url(#rubyG)" stroke="#ffd2dc" stroke-width=".9" stroke-linejoin="round"/><path d="M2.5 8.7h19M7 3.5l2.4 5.2L12 21l2.6-12.3L17 3.5M9.4 8.7 12 3.5l2.6 5.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round"/></svg></span><b>SKINS</b></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 4.0.4</span>
+    <span class="hub-version">VERSION 4.0.5</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -4372,7 +4380,7 @@ html{touch-action:manipulation;}
   <path class="spk" d="M2560 120 Q2566 172 2618 178 Q2566 184 2560 236 Q2554 184 2502 178 Q2554 172 2560 120Z" fill="url(#lgSparkset)"/>
   <path class="spk" d="M40 700 Q44 736 80 740 Q44 744 40 780 Q36 744 0 740 Q36 736 40 700Z" fill="url(#lgSparkset)"/>
   <path class="spk" d="M2380 900 Q2383 924 2407 927 Q2383 930 2380 954 Q2377 930 2353 927 Q2377 924 2380 900Z" fill="url(#lgSparkset)"/>
-</svg><div class="set-ver">VERSION 4.0.4</div></div>
+</svg><div class="set-ver">VERSION 4.0.5</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -4383,6 +4391,7 @@ html{touch-action:manipulation;}
     <div class="row toggle-row">Control hints <div class="switch on" id="hintsSwitch"></div></div>
     <div class="sec-label set-sec">GRAPHICS</div>
     <div class="row toggle-row potato-row"><span>Performance mode<small>For slow PCs and laptops: no shadows, grass, glow or glass blur, a lighter picture and a calmer menu, locked at a smooth 60 FPS</small></span><div class="switch" id="potatoSwitch"></div></div>
+    <div class="row toggle-row gpu-row" id="gpuRow"><span>Graphics chip<small id="gpuName">Checking...</small></span></div>
     <div class="row toggle-row gfx-row"><span>Quality<small>How much is drawn: grass, shadows, detail</small></span>
       <span class="seg" id="gfxPick"><button class="title-tile" data-q="low">Low</button><button class="title-tile" data-q="medium">Medium</button><button class="title-tile" data-q="high">High</button><button class="title-tile" data-q="ultra">Ultra</button></span></div>
     <div class="row toggle-row gfx-row"><span>Render resolution<small>Auto lowers it by itself when frames run slow</small></span>
@@ -4484,6 +4493,12 @@ html{touch-action:manipulation;}
 </div></div>
 
 <!-- ===== MISSIONS: daily and the event ===== -->
+<div class="on-pop" id="gpuPop"><div class="gp-card glass">
+  <h3>YOUR GRAPHICS CARD ISN'T BEING USED</h3>
+  <p id="gpuWhy"></p>
+  <p>Performance mode is on for now, so it runs as well as it can until then.</p>
+  <button class="gp-ok" id="gpuOk">OK</button>
+</div></div>
 <div class="on-pop ms-pop" id="msPop"><div class="ms-card glass">
   <div class="ms-head"><b>MISSIONS</b><button class="aa-x rx" id="msX" aria-label="Close">×</button></div>
   <div class="ms-body" id="msBody"></div>
@@ -14177,7 +14192,7 @@ function setGfx(q){ if(!GFX_Q[q]||q==='potato') q='high'; GFX.q=q; GFX.density=g
 /* the pixel ratio a renderer should use before the governor's own scale */
 function gfxPR(){ return Math.min(window.devicePixelRatio||1,gfxQ().pr)*GFX.rs; }
 /* the frame time the governor aims for: never faster than a 60Hz screen shows */
-function gfxTarget(){ return Math.max(16.7,GFX.fps?1000/GFX.fps:0); }
+function gfxTarget(){ return Math.max(16.7,GFX.fps?Frame.gap:0); }
 function applyGfxState(){
   GFX.potato=State.gfxPotato===true;
   setGfx(GFX.q);
@@ -14185,7 +14200,7 @@ function applyGfxState(){
   GFX.rsAuto=rs==='auto'; GFX.rs=GFX.rsAuto?1:Math.max(.5,Math.min(1.5,+rs||1)); GFX.auto=GFX.rsAuto&&!FIXED_RES;
   GFX.fps=+State.gfxFps||0; GFX.vsync=State.gfxVsync!==false; GFX.bloom=State.gfxBloom!==false; GFX.mblur=+State.gfxMblur||0;
   /* Performance mode: no glow or blur passes, and (on Auto) a softer picture to start from */
-  if(GFX.potato){ GFX.bloom=false; GFX.mblur=0; GFX.fps=60; if(GFX.rsAuto) GFX.rs=.7; }
+  if(GFX.potato){ GFX.bloom=false; GFX.mblur=0; GFX.fps=60; GFX.vsync=true; if(GFX.rsAuto) GFX.rs=.7; }
 }
 
 /* ---------- pacing the frames ----------
@@ -14195,14 +14210,21 @@ function applyGfxState(){
    limit allows (the browser still shows whole frames, so there's no tearing,
    just less waiting). A hidden tab always falls back to the screen's pace. */
 const Frame=(function(){
-  const pend=new Map(); let seq=0, last=0;
+  const pend=new Map(); let seq=0, last=0, rIv=1000/60, rPrev=0;
+  /* the gap a limit really gets: a whole number of refreshes, so 60 FPS on a 144Hz screen runs an even 72
+     (every second refresh) instead of stuttering 2-3-2-3, and on 165Hz an even 55. When no whole number
+     comes near the limit, the limit itself (frames then alternate, but average out to it exactly) */
+  const paced=cap=>{ if(!cap) return 0; const g=rIv*Math.max(1,Math.round(cap/rIv)); return g<cap*.8||g>cap*1.3?cap:g; };
   const mc=typeof MessageChannel!=='undefined'?new MessageChannel():null, queue=[];
   if(mc) mc.port1.onmessage=()=>{ const list=queue.splice(0); for(const go of list) go(); };
   function req(fn){
-    const id=++seq, gap=GFX.fps?1000/GFX.fps:0;
+    const id=++seq, cap=GFX.fps?1000/GFX.fps:0, gap=cap;
     if(GFX.vsync||document.hidden||!mc){
       const tick=t=>{ if(!pend.has(id)) return;
-        if(gap&&t-last<gap-2){ pend.set(id,{k:'raf',h:requestAnimationFrame(tick)}); return; }   // too soon for the limit: wait a refresh
+        // the screen's refresh, learnt from the refreshes themselves (a dropped frame doesn't count)
+        const d=t-rPrev; rPrev=t; if(d>2&&d<rIv*1.5) rIv+=(d-rIv)*.08;
+        const gap=paced(cap);
+        if(gap&&t-last<gap-rIv*.5){ pend.set(id,{k:'raf',h:requestAnimationFrame(tick)}); return; }   // too soon for the limit: wait a refresh
         last=(gap&&t-last<gap*2)?last+gap:t; pend.delete(id); fn(t); };
       pend.set(id,{k:'raf',h:requestAnimationFrame(tick)});
     } else {
@@ -14214,7 +14236,7 @@ const Frame=(function(){
     return id;
   }
   function cancel(id){ const p=pend.get(id); if(!p) return; pend.delete(id); if(p.k==='raf') cancelAnimationFrame(p.h); else if(p.k==='to') clearTimeout(p.h); }
-  return {req,cancel};
+  return {req,cancel,get gap(){ return GFX.vsync?paced(GFX.fps?1000/GFX.fps:0):(GFX.fps?1000/GFX.fps:0); }};
 })();
 
 /* ---------- post effects in a match: bloom and motion blur ----------
@@ -14500,6 +14522,11 @@ const Lobby=(function(){
   const LOOK_FOR={hub:[0,0,1],chars:[0,0,1],stash:[0,0,.9],show:[0,0,.7],panel:[.4,0,1],maps:[0,0,0],load:[.35,0,.5],pets:[0,0,1],petshow:[0,0,.7]};
   const lookNow={s:1,b:0,h:1,flash:0}, lookTo={s:1,b:1,h:1};
   const ENV_K=.75; let shadowN=0;
+  /* the light way to draw the lobby: the world and your character in one pass straight to the screen, at the
+     size the world is drawn anyway, with no shadow map, no multisampled layer and no compositing pass.
+     Performance mode always draws it this way, and so does any PC the lobby's governor finds too slow */
+  let lite=false;
+  const liteNow=()=>GFX.potato||Perf.lobby.tier>=1;
   const _v1=new THREE.Vector3(), _v2=new THREE.Vector3(), _v3=new THREE.Vector3();
   const cloudMatFar=new THREE.MeshBasicMaterial({vertexColors:true,color:0xffffff,fog:false,transparent:true,opacity:.55,depthWrite:false});
   const camPos=V3(0,6,18), camLook=V3(0,1,0), tgtPos=V3(), tgtLook=V3();
@@ -14546,6 +14573,7 @@ const Lobby=(function(){
   }
   function init(){
     if(R) return;
+    Perf.lobby.onTier=()=>resize();
     const cv=document.getElementById('menu3d');
     // the screen itself only ever gets one full-screen quad (the passes below are drawn off screen), so no multisampling here
     R=new THREE.WebGLRenderer({canvas:cv,antialias:false,alpha:false,powerPreference:'high-performance'});
@@ -14598,11 +14626,13 @@ const Lobby=(function(){
   }
   function resize(){
     if(!R) return;
-    R.setPixelRatio(gfxPR()*Perf.lobby.scale*(mode==='panel'?.7:1));
+    lite=liteNow();
+    R.setPixelRatio(gfxPR()*Perf.lobby.scale*(mode==='panel'?.7:1)*(lite?ENV_K:1));
     R.setSize(innerWidth,innerHeight,false); cam.aspect=innerWidth/innerHeight;
     // on tall screens pull back so the character still fits (applyShift picks the field of view)
     cam.updateProjectionMatrix(); applyShift(); applyFrame();
-    if(look){ R.getDrawingBufferSize(_v1); const w=Math.max(4,_v1.x|0), h=Math.max(4,_v1.y|0);
+    if(look&&lite){ look.rtEnv.dispose(); look.rtHero.dispose(); look.rtFace.dispose(); }     // their memory back, until they're needed again
+    else if(look){ R.getDrawingBufferSize(_v1); const w=Math.max(4,_v1.x|0), h=Math.max(4,_v1.y|0);
       look.rtEnv.setSize(Math.max(4,Math.round(w*ENV_K)),Math.max(4,Math.round(h*ENV_K))); look.rtHero.setSize(w,h); look.mat.uniforms.uRes.value.set(w,h); look.mat.uniforms.uPr.value=R.getPixelRatio(); placeBand(); }
   }
   /* ---------- the look ---------- */
@@ -14654,6 +14684,12 @@ const Lobby=(function(){
     U.uAcc.value.lerp(inkTo.acc,ki); U.uMid.value.lerp(inkTo.mid,ki); U.uInk.value.lerp(inkTo.ink,ki); U.uPaper.value.lerp(inkTo.paper,ki);
     U.uStyle.value=lookNow.s; U.uHero.value=lookNow.h; U.uBandK.value=lookNow.b<.01?0:lookNow.b; U.uFlash.value=lookNow.flash*lookNow.flash;
     U.uTime.value=t;
+    if(lite!==liteNow()) resize();
+    if(lite){
+      if(keyLight&&keyLight.castShadow) keyLight.castShadow=false;
+      cam.layers.set(0); R.setRenderTarget(null); R.render(scene,cam);
+      return;
+    }
     // 1) the world, your character included (for its shadow; the shadows are redrawn every other frame)
     if(keyLight&&keyLight.castShadow===GFX.potato) keyLight.castShadow=!GFX.potato;
     if((++shadowN)&1) R.shadowMap.needsUpdate=true;
@@ -15470,7 +15506,8 @@ void main(){
   function frame(now){
     if(!running) return;
     raf=Frame.req(frame);
-    if(slow){ if(now-drawnAt<1000/slow-2) return; drawnAt=now; }      // the auto-quality doesn't read these frames: they're slow on purpose
+    const sl=slow||(GFX.potato&&Perf.lobby.stuck?30:0);
+    if(sl){ if(now-drawnAt<800/sl) return; drawnAt=now; }          // the auto-quality doesn't read these frames: they're slow on purpose
     else if(Perf.lobby.tick(now)) resize();
     const dt=Math.min(.05,(now-(last||now))/1000); last=now; t+=dt;
     WORLD_UNI.uTime.value=t;
@@ -17255,7 +17292,7 @@ function paintGfx(){
   document.getElementById('bloomSwitch').classList.toggle('on',GFX.bloom);
   document.getElementById('potatoSwitch').classList.toggle('on',GFX.potato);
   // what Performance mode decides for you is greyed out while it's on
-  ['gfxPick','gfxFpsPick','bloomSwitch','gfxMbPick'].forEach(id=>{ const r=document.getElementById(id).closest('.row'); if(r) r.classList.toggle('gfx-lock',GFX.potato); });
+  ['gfxPick','gfxFpsPick','bloomSwitch','gfxMbPick','vsyncSwitch'].forEach(id=>{ const r=document.getElementById(id).closest('.row'); if(r) r.classList.toggle('gfx-lock',GFX.potato); });
 }
 /* a change takes effect at once: the governors start over, the lobby resizes (and a running match with it) */
 function gfxChanged(){
@@ -17285,6 +17322,44 @@ function potatoWake(){
   if(!potatoStopped) return; potatoStopped=0;
   const b=document.body, d=b.style.display; b.style.display='none'; void b.offsetHeight; b.style.display=d;
 }
+/* the graphics chip drawing the game. A software renderer (SwiftShader, Microsoft Basic Render Driver,
+   llvmpipe) means no graphics card is in use at all: everything is drawn by the processor, and no
+   setting in the game can make up for that, so the player is told what to switch on */
+const GPU=(function(){
+  let raw='';
+  try{ const c=document.createElement('canvas'), gl=c.getContext('webgl2')||c.getContext('webgl');
+    if(gl){ const e=gl.getExtension('WEBGL_debug_renderer_info'); raw=String((e&&gl.getParameter(e.UNMASKED_RENDERER_WEBGL))||gl.getParameter(gl.RENDERER)||'');
+      const lc=gl.getExtension('WEBGL_lose_context'); if(lc) lc.loseContext(); } }catch(e){}
+  const soft=/swiftshader|llvmpipe|softpipe|basic render|software/i.test(raw);
+  // "ANGLE (Intel, Intel(R) UHD Graphics 620 (0x00005917) Direct3D11 vs_5_0 ps_5_0, D3D11)" -> "Intel(R) UHD Graphics 620"
+  let name=raw; const m=/^ANGLE \((.*)\)$/.exec(raw);
+  if(m){ const p=m[1].split(', '); name=p.length>1?p[1]:p[0]; }
+  name=name.replace(/^ANGLE Metal Renderer: /,'').replace(/ \(0x[0-9a-f]+\)/ig,'').replace(/ Direct3D.*$| OpenGL.*$| vs_\d.*$/i,'').trim();
+  if(/swiftshader/i.test(raw)) name='SwiftShader (software)';
+  return {raw,name:name||'Unknown',soft};
+})();
+const IS_APP=location.protocol==='app:';
+function paintGpu(){
+  const n=document.getElementById('gpuName'), r=document.getElementById('gpuRow'); if(!n||!r) return;
+  r.classList.toggle('soft',GPU.soft);
+  const b=document.createElement('b'); b.textContent=GPU.name; n.textContent=''; n.appendChild(b);
+  if(GPU.soft) n.appendChild(document.createTextNode(' · no graphics card in use, so everything is drawn by the processor'));
+}
+function gpuWarn(){
+  const w=document.getElementById('gpuWhy');
+  if(w) w.innerHTML=IS_APP
+    ?'Lunive is being drawn by your processor instead of your graphics card, which is why it lags. <b>Update your graphics driver</b> (from Intel, AMD or NVIDIA, or through Windows Update) and restart Lunive.'
+    :'Your browser is drawing Lunive with your processor instead of your graphics card, which is why it lags. In Chrome or Edge open <b>Settings &rarr; System</b> and turn on <b>Use graphics acceleration when available</b>, then restart the browser. If it\'s already on, update your graphics driver.';
+  document.getElementById('gpuPop').classList.add('on');
+}
+/* once per computer: Performance mode goes on by itself, and the reason is shown when the lobby is up */
+function gpuCheck(){
+  paintGpu();
+  if(!GPU.soft||State.softGpu) return false;
+  State.softGpu=1; State.gfxPotato=true; saveState(); applyGfxState(); paintGfx();
+  return true;
+}
+document.getElementById('gpuOk').addEventListener('click',()=>{ document.getElementById('gpuPop').classList.remove('on'); SFX.press(); });
 /* a match that stays slow even at the lowest resolution points to Performance mode, once */
 function potatoHint(){
   if(GFX.potato||State.potatoHint) return; State.potatoHint=true; saveState();
@@ -18727,18 +18802,22 @@ function clearKillFeed(){ const box=document.getElementById('killFeed'); if(box)
 const Perf=(function(){
   function governor(isLobby){
     const tgt=gfxTarget;
-    let scale=1, ema=16.7, last=0, good=0, slowAtMin=0, changedAt=0, tier=0, graceUntil=0, backoff=1, lastUp=0;
+    let scale=1, ema=16.7, last=0, good=0, slowAtMin=0, changedAt=0, tier=0, graceUntil=0, backoff=1, lastUp=0, stuck=false, longRun=0;
     const G={
+      /* still slow at the lowest it goes, for three seconds */
+      get stuck(){ return stuck; },
       /* tier: 0 = everything; 1 = the sun's shadows off; 2 = grass and weather off as well (onTier applies it) */
       get tier(){ return tier; }, onTier:null,
       get scale(){ return scale; },
       /* a new scene: a couple of seconds of grace, since the first frames compile shaders and stutter */
-      reset(){ scale=1; ema=tgt(); last=0; good=0; slowAtMin=0; changedAt=0; tier=0; backoff=1; lastUp=0; graceUntil=performance.now()+2500; },
+      reset(){ scale=1; ema=tgt(); last=0; good=0; slowAtMin=0; changedAt=0; tier=0; backoff=1; lastUp=0; stuck=false; longRun=0; graceUntil=performance.now()+2500; },
       /* once a frame, with the rAF time; true when the scale changed */
       tick(now){
         if(!last){ last=now; return false; }
-        const dt=now-last; last=now;
-        if(dt>250||document.hidden) return false;            // a stall or a hidden tab tells us nothing
+        let dt=now-last; last=now;
+        if(document.hidden) return false;
+        if(dt>250){ if(++longRun<6) return false; dt=250; }   // one stall tells us nothing; six in a row is a machine that slow
+        else longRun=0;
         if(now<graceUntil){ ema=tgt(); return false; }
         ema+=(dt-ema)*.06;
         if(GFX.auto===false||now-changedAt<1500) return false;
@@ -18751,7 +18830,7 @@ const Perf=(function(){
           const floor=GFX.potato?.48:.55;
           if(scale>floor+.01){ scale=Math.max(floor,scale*.85); changedAt=now; ema=tgt(); return true; }
           slowAtMin+=dt;
-          if(slowAtMin>3000&&!document.body.classList.contains('lite-ui')){ document.body.classList.add('lite-ui'); changedAt=now; }
+          if(slowAtMin>3000){ stuck=true; if(!document.body.classList.contains('lite-ui')){ document.body.classList.add('lite-ui'); changedAt=now; } }
           if(!isLobby&&slowAtMin>6000&&!GFX.potato&&typeof potatoHint==='function') potatoHint();
         } else if(ema<tg*1.07){
           // smooth (at least a steady 60): after a while, try stepping back up
@@ -25601,7 +25680,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='4.0.4';
+const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='4.0.5';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -35987,6 +36066,7 @@ document.addEventListener('visibilitychange',()=>{
   settings.mobile=false;                                   // the mobile port is gone
   const coarse=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
   GFX.q=State.gfx || (coarse?'low':'high'); applyGfxState(); paintGfx();
+  const softGpu=gpuCheck();
   const li=document.getElementById('logoImg');
   if(li && li.getAttribute('src')){
     const mk=()=>{ logoTex=new THREE.Texture(li); logoTex.encoding=THREE.sRGBEncoding; logoTex.needsUpdate=true; };
@@ -36005,6 +36085,7 @@ document.addEventListener('visibilitychange',()=>{
   setTimeout(warmPortraits,2500);
   const splash=document.getElementById('bootSplash');
   if(splash){ requestAnimationFrame(()=>requestAnimationFrame(()=>{ splash.classList.add('gone'); setTimeout(()=>splash.remove(),900); })); }
+  if(softGpu) setTimeout(gpuWarn,1400);
 })();
 
 </script>
