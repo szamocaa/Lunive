@@ -4196,7 +4196,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
   <button class="em-chip sk-chip" id="emChip" title="Skins · a new look for your character"><span class="emc-ic"><svg class="ruby-ic" viewBox="0 0 24 24"><path d="M7 3.5h10l4.5 5.2L12 21 2.5 8.7z" fill="url(#rubyG)" stroke="#ffd2dc" stroke-width=".9" stroke-linejoin="round"/><path d="M2.5 8.7h19M7 3.5l2.4 5.2L12 21l2.6-12.3L17 3.5M9.4 8.7 12 3.5l2.6 5.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linejoin="round"/></svg></span><b>SKINS</b></button>
   <div class="hub-foot">
     <button class="foot-link rx" data-go="support" title="Follow the creator"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>SUPPORT</button>
-    <span class="hub-version">VERSION 4.0.1</span>
+    <span class="hub-version">VERSION 4.0.2</span>
   </div>
   <div class="ticker" aria-hidden="true"><div class="tk-run" id="tickerRun"></div></div>
 </div>
@@ -4358,7 +4358,7 @@ body.lite-ui .sg-rain,body.lite-ui .sg-wind{animation:none;}
   <path class="spk" d="M2560 120 Q2566 172 2618 178 Q2566 184 2560 236 Q2554 184 2502 178 Q2554 172 2560 120Z" fill="url(#lgSparkset)"/>
   <path class="spk" d="M40 700 Q44 736 80 740 Q44 744 40 780 Q36 744 0 740 Q36 736 40 700Z" fill="url(#lgSparkset)"/>
   <path class="spk" d="M2380 900 Q2383 924 2407 927 Q2383 930 2380 954 Q2377 930 2353 927 Q2377 924 2380 900Z" fill="url(#lgSparkset)"/>
-</svg><div class="set-ver">VERSION 4.0.1</div></div>
+</svg><div class="set-ver">VERSION 4.0.2</div></div>
     <div class="row toggle-row">Music <div class="switch on" id="musicSwitch"></div></div>
     <div class="row toggle-row slider-row">Music volume
       <span style="display:flex;align-items:center;gap:10px;"><input type="range" id="musicVolSlider" min="0" max="100" value="60"><span class="pct" id="musicVolPct">60%</span></span></div>
@@ -25587,7 +25587,7 @@ function extraStats(){
    they do a dozen times a second, and the other game draws them from that.
    A hit is worked out by whoever lands it and sent to whoever takes it.
    ========================================================== */
-const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='4.0.1';
+const NET_VER=6, NET_P='lunive/v'+NET_VER+'/', LUNIVE_VER='4.0.2';
 const NET_BROKERS=(()=>{ const m=/netbroker=([^&]+)/.exec(location.hash);
   return m?decodeURIComponent(m[1]).split(','):['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt']; })();
 
@@ -37526,7 +37526,7 @@ function ask(who,q,opts,o){
   o=o||{}; return (q?say(who,q,{keep:1,pf:o.pf}):Promise.resolve()).then(()=>new Promise(res=>{
     const box=$('.wr-choice'); let i=o.def||0;
     const draw=()=>{ box.innerHTML=opts.map((t,k)=>`<div class="opt${k===i?' on':''}" data-k="${k}">${esc(t)}</div>`).join('');
-      box.querySelectorAll('.opt').forEach(el=>{ el.onclick=()=>{ i=+el.dataset.k; pick(); }; el.onmouseenter=()=>{ if(i!==+el.dataset.k){ i=+el.dataset.k; draw(); } }; }); };
+      box.querySelectorAll('.opt').forEach(el=>{ el.onclick=()=>{ if(G.layers[G.layers.length-1]!==L) return; i=+el.dataset.k; pick(); }; el.onmouseenter=()=>{ if(G.layers[G.layers.length-1]===L&&i!==+el.dataset.k){ i=+el.dataset.k; draw(); } }; }); };
     const pick=()=>{ Snd.fx('ok'); unlayer(L); box.classList.add('hidden'); hideSay(); res(i); };
     box.classList.remove('hidden'); draw();
     const L=layer({key(a){ if(a==='up'){ i=(i+opts.length-1)%opts.length; Snd.fx('blip'); draw(); } else if(a==='down'){ i=(i+1)%opts.length; Snd.fx('blip'); draw(); }
@@ -37577,16 +37577,17 @@ function listLayer(box,rows,o){
     if(i>=0){ if(i<top) top=i; if(i>=top+vis) top=i-vis+1; }
     const L=box.querySelector('.list')||box;
     L.innerHTML=rows.slice(top,top+vis).map((r,k)=>`<div class="opt${top+k===i?' on':''}${r.off?' off':''}" data-k="${top+k}">${r.html}</div>`).join('')+(rows.length>vis?`<div class="opt" style="justify-content:center;opacity:.5;pointer-events:none">${top>0?'&#9650; ':''}${top+vis<rows.length?'&#9660;':''}</div>`:'');
-    L.querySelectorAll('.opt[data-k]').forEach(el=>{ el.onclick=()=>{ i=+el.dataset.k; draw(); pick(); }; el.onmouseenter=()=>{ if(i!==+el.dataset.k){ i=+el.dataset.k; draw(); } }; });
+    L.querySelectorAll('.opt[data-k]').forEach(el=>{ el.onclick=()=>{ if(!isTop()) return; i=+el.dataset.k; draw(); pick(); }; el.onmouseenter=()=>{ if(isTop()&&i!==+el.dataset.k){ i=+el.dataset.k; draw(); } }; });
     const d=box.querySelector('.desc'); if(d) d.innerHTML=i>=0&&rows[i]?rich(rows[i].desc||''):(o.empty||'');
     if(o.onMove) o.onMove(i);
   };
+  const isTop=()=>G.layers[G.layers.length-1]===LL;
   const pick=()=>{ if(i<0) return; const r=rows[i]; if(!r||!r.act) return; if(r.off){ Snd.fx('deny'); return; } Snd.fx('ok'); r.act(i); };
-  const L={rows, redraw(nr,ni){ if(nr) rows=L.rows=nr; if(ni!==undefined) i=ni; if(i>=rows.length) i=rows.length-1; draw(); },
+  const LL={rows, redraw(nr,ni){ if(nr) rows=LL.rows=nr; if(ni!==undefined) i=ni; if(i>=rows.length) i=rows.length-1; draw(); },
     key(a){ if(a==='up'&&i>=0){ i=(i+rows.length-1)%rows.length; Snd.fx('blip'); draw(); } else if(a==='down'&&i>=0){ i=(i+1)%rows.length; Snd.fx('blip'); draw(); }
       else if(a==='ok') pick(); else if(a==='back'||a==='menu'){ Snd.fx('back'); if(o.back) o.back(); } else if(o.keyx) o.keyx(a); },
     get i(){ return i; } };
-  draw(); return L;
+  draw(); return LL;
 }
 const MENU=[['bag','Bag'],['equip','Equip'],['status','Status'],['quest','Quests'],['mem','Memories'],['map','Map'],['save','Save'],['keys','Controls'],['quit','Leave Narukami']];
 function openMenu(page){
@@ -38542,7 +38543,7 @@ async function credits(){
 /* ==========================================================
    THE TITLE, THE LOOP, AND THE DOOR BACK TO THE LOBBY
    ========================================================== */
-let titleL=null, titleArt=null, lastSteps=0, hintT=0;
+let titleL=null, titleArt=null, lastSteps=0, hintT=0, starting=false;
 function titleScene(){
   if(titleArt) return titleArt;
   // a far mountain, a city of roofs, a girl seen from behind
@@ -38576,7 +38577,7 @@ function drawTitle(){
     const ph=Math.sin(t*4+p.s*20); cx.fillStyle=p.s>.5?'#ffc8dc':'#ff9ac0'; cx.fillRect(Math.round(p.x),Math.round(p.y),ph>0?2:1,ph>0?1:2); }
 }
 function toTitle(){
-  newWorld(); G.mode='title'; G.layers=[]; hud(); Snd.play('title');
+  newWorld(); G.mode='title'; G.layers=[]; starting=false; hud(); Snd.play('title');
   ['.wr-battle','.wr-dlg','.wr-choice','.wr-menu','.wr-panel'].forEach(s=>$(s).classList.add('hidden'));
   const el=$('.wr-title'); const sv=loadSlot();
   el.innerHTML=`<div class="logo"><b>SHOGUN'S WRATH</b><small>THE PETAL THAT FELL</small></div><div class="tm box" style="pointer-events:auto"><div class="list"></div></div>
@@ -38585,16 +38586,21 @@ function toTitle(){
   const rows=[];
   if(sv) rows.push({html:'Continue',act:()=>begin(sv)});
   rows.push({html:'New Journey',act:()=>{ if(!sv) return begin(null);
-    unlayer(titleL); ask('','Start over? Your old journey will be forgotten.',['Keep it','Start over'],{cancel:0}).then(i=>{ if(i===1) begin(null); else G.layers.push(titleL); }); }});
+    const tm=el.querySelector('.tm'); unlayer(titleL); tm.style.opacity=.4;
+    ask('','Start over? Your old journey will be forgotten.',['Keep it','Start over'],{cancel:0}).then(i=>{ tm.style.opacity='';
+      if(G.mode!=='title') return;
+      if(i===1){ const H=host.get()||{}; delete H.slot; host.put(H); begin(null); } else if(titleL) G.layers.push(titleL); }); }});
   rows.push({html:'Back to the Lobby',act:()=>exit()});
   titleL=layer(listLayer(el.querySelector('.tm'),rows,{back:()=>{}}));
 }
 async function begin(sv){
-  unlayer(titleL); titleL=null; Snd.fx('ok'); await fade(1,700);
+  if(starting||G.mode!=='title') return; starting=true;       // once only, however many times you click
+  G.layers=[]; titleL=null; hideSay(); $('.wr-choice').classList.add('hidden'); Snd.fx('ok'); await fade(1,700);
   $('.wr-title').classList.add('hidden');
   S=sv||freshSave(); F=S.f; for(const k in MAPS) delete MAPS[k];
   newWorld(); lastSteps=S.steps;
   await enter(S.map,S.x,S.y,S.dir,{instant:1,nosave:1});
+  starting=false;
   if(!F.intro){ G.mode='world'; run(intro); }
   else { G.mode='world'; quest(); await fade(0,600); showHint(); }
 }
