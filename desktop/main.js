@@ -42,10 +42,14 @@ function createWindow() {
   // links out of the game (Instagram, the download page, e-mail links) open in the normal browser, never inside the game window
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:|^mailto:/.test(url)) shell.openExternal(url); return { action: 'deny' }; });
   win.webContents.on('will-navigate', (e, url) => { if (!url.startsWith('app://')) { e.preventDefault(); if (/^https?:|^mailto:/.test(url)) shell.openExternal(url); } });
-  // F11 (or Alt+Enter) for fullscreen
+  // F11 (or Alt+Enter) for fullscreen; Ctrl and + / - never zoom the game by accident
   win.webContents.on('before-input-event', (e, i) => {
     if (i.type === 'keyDown' && (i.key === 'F11' || (i.alt && i.key === 'Enter'))) { win.setFullScreen(!win.isFullScreen()); e.preventDefault(); }
+    if (i.type === 'keyDown' && (i.control || i.meta) && ['+', '-', '=', '_'].includes(i.key)) e.preventDefault();
   });
+  // no magnifying either: the zoom stays at 100% (Ctrl + wheel and trackpad pinches are ignored)
+  win.webContents.on('did-finish-load', () => { win.webContents.setZoomFactor(1); Promise.resolve(win.webContents.setVisualZoomLevelLimits(1, 1)).catch(() => {}); });
+  win.webContents.on('zoom-changed', () => { win.webContents.setZoomFactor(1); });
   win.webContents.on('did-finish-load', () => { setTimeout(checkUpdate, 4000); });
   win.on('closed', () => { win = null; });
 }
